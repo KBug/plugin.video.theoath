@@ -339,6 +339,10 @@ msgctxt "#32077"
 msgid "Trending"
 msgstr ""
 
+msgctxt "#32078"
+msgid "[B]LambdaScrapers[/B] : Settings"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""

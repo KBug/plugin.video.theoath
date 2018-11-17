@@ -355,6 +355,10 @@ elif action == 'smuSettings':
     except: pass
     resolveurl.display_settings()
 
+elif action == 'lambdascrapersettings':
+    from resources.lib.modules import control
+    control.openSettings('0.0', 'script.module.lambdascrapers')
+
 elif action == 'download':
     import json
     from resources.lib.modules import sources
