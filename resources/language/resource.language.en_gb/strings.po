@@ -948,7 +948,7 @@ msgid "Prem"
 msgstr ""
 
 msgctxt "#32607"
-msgid "Normal"
+msgid "Norm"
 msgstr ""
 
 msgctxt "#32608"

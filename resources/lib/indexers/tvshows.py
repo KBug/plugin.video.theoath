@@ -403,7 +403,7 @@ class tvshows:
     def certifications(self):
         certificates = ['TV-G', 'TV-PG', 'TV-14', 'TV-MA']
 
-        for i in certificates: self.list.append({'name': str(i), 'url': self.certification_link % str(i).replace('-', '_').lower(), 'image': 'certificates.png', 'action': 'tvshows'})
+        for i in certificates: self.list.append({'name': str(i), 'url': self.certification_link % str(i).replace('-', '-'), 'image': 'certificates.png', 'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 
@@ -608,7 +608,7 @@ class tvshows:
             return
 
         try:
-            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.+?lister-page-next .+?'})
+            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.+?ister-page-nex.+?'})
 
             if len(next) == 0:
                 next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
