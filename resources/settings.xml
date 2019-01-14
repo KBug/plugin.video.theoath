@@ -3,7 +3,7 @@
     <category label="32310">
         <setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=artwork)" visible="!System.HasAddon(script.theoath.artwork)" />
         <setting id="appearance.1" type="select" label="32311" values="Exuary" default="Exuary" visible="false" />
-        <setting id="trakt.user" type="text" default="" visible="false" />
+        <setting id="trakt.user" type="text" default="" label="32303" visible="false" />
         <setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
         <setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-2,)" />
         <setting id="api.language" type="select" label="32316" values="AUTO|Bulgarian|Chinese|Croatian|Czech|Danish|Dutch|English|Finnish|French|German|Greek|Hebrew|Hungarian|Italian|Japanese|Korean|Norwegian|Polish|Portuguese|Romanian|Russian|Serbian|Slovak|Slovenian|Spanish|Swedish|Thai|Turkish|Ukrainian" default="AUTO" />
@@ -45,18 +45,17 @@
         <setting id="trakt.auth" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=authTrakt)" />
         <setting id="trakt.token" type="text" visible="false" label="" default="" />
         <setting id="trakt.refresh" type="text" visible="false" label="" default="" />
-        <setting id="trakt.user" label="32303" type="text" default="" visible="true" enable="false" />
+        <setting id="trakt.user" type="text" default="" label="32303" visible="true" enable="false" />
         <setting type="lsep" label="32075" />
         <setting id="trakt.client_id" type="text" label="32609" default="" />
         <setting id="trakt.client_secret" type="text" label="32610" default="" />
         <setting type="lsep" label="32343" />
-        <setting id="bookmarks" type="bool" label="32344" default="true" visible="false" />
-        <setting id="bookmarks.trakt" type="bool" label="32622" default="false" enable="!eq(-1,false) + !eq(-6,)" />
-        <setting id="bookmarks.auto" type="bool" label="32623" default="false" enable="!eq(-2,false) + !eq(-7,)" />
+        <setting id="bookmarks.trakt" type="bool" label="32622" default="false"/>
+        <setting id="bookmarks.auto" type="bool" label="32623" default="false"/>
         <setting type="lsep" label="32614" />
-        <setting id="autoTraktOnStart" type="bool" label="32615" default="False" enable="!eq(-9,)" />
-        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="!eq(-10,)" />
-        <setting type="lsep" label="32617" />
+        <setting id="autoTraktOnStart" type="bool" label="32615" default="false"/>
+        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="eq(-1,true)" />
+        <setting type="text" label="32617" enable="false" />
     </category>
     <category label="32345">
         <setting label="Module Settings" type="lsep" />
