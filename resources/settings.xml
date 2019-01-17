@@ -139,7 +139,7 @@
         <setting type="text" label="32352" enable="false" />
     </category>
     <category label="32353">
-        <setting id="subtitles" type="bool" label="32354" default="true" />
+        <setting id="subtitles" type="bool" label="32354" default="false" />
         <setting type="sep" />
         <setting id="subtitles.utf" type="bool" label="32355" enable="!eq(-2,false)" default="false" />
         <setting type="sep" />
