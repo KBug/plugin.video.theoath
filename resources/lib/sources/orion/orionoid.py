@@ -45,8 +45,18 @@ class source:
 		try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'tvshowtitle' : tvshowtitle, 'year' : year})
 		except: return None
 
+#	def episode(self, url, imdb, tvdb, title, premiered, season, episode):
+#		try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'title' : title, 'premiered' : premiered, 'season' : season, 'episode' : episode})
+#		except: return None
+
 	def episode(self, url, imdb, tvdb, title, premiered, season, episode):
-		try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'season' : season, 'episode' : episode})
+		try:
+			if url == None: return
+			url = urlparse.parse_qs(url)
+			url = dict([(i, url[i][0]) if url[i] else (i, '') for i in url])
+			url['title'], url['premiered'], url['season'], url['episode'] = title, premiered, season, episode
+			url = urllib.urlencode(url)
+			return url
 		except: return None
 
 	def _error(self):
