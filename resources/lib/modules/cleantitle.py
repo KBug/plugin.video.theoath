@@ -27,11 +27,12 @@ def get(title):
         title = title.encode('utf-8')
     except:
         pass
-    title = re.sub('&#(\d+);', '', title)
+    title = str(title)
+    title = re.sub('&#(\d);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
     title = title.replace('&quot;', '\"').replace('&amp;', '&')
-    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
-    return title
+    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\_|\.|\?)|\s', '', title)
+    return title.lower()
 
 
 def geturl(title):
@@ -41,6 +42,12 @@ def geturl(title):
     title = title.replace('/', '-')
     title = title.replace(' ', '-')
     title = title.replace('--', '-')
+    return title
+
+
+def get_url(title):
+    if title is None: return
+    title = title.replace(' ', '%20')
     return title
 
 
@@ -71,6 +78,10 @@ def query(title):
     return title
 
 
+def get_query(title):
+    if title is None: return
+    title = title.replace(' ', '.').replace(':', '').replace('.-.', '.').replace('\'', '')
+    return title
 def normalize(title):
 
     try:

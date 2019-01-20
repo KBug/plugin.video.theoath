@@ -127,6 +127,25 @@ def check_sd_url(release_link):
     except:
         return 'SD'
 
+def check_url(url):
+
+    try:
+        if '2160' in url: quality = '4K'
+        elif '1080' in url: quality = '1080p'
+        elif '720' in url: quality = '720p'
+        elif '.hd.' in url: quality = '720p'
+        elif 'hdtv' in url: quality = '720p'
+        elif 'BluRay' in url: quality = '720p'
+        elif '.BluRay.' in url: quality = '720p'
+        elif '.WEBRip.' in url: quality = '720p'
+        elif '480p' in url: quality = '480p'
+        elif any(i in ['dvdscr', 'r5', 'r6'] for i in url): quality = 'SCR'
+        elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url): quality = 'CAM'
+        else: quality = 'SD'
+        return quality
+    except:
+        return 'SD'
+
 def label_to_quality(label):
     try:
         try: label = int(re.search('(\d+)', label).group(1))

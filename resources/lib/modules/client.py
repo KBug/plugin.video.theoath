@@ -325,6 +325,11 @@ def replaceHTMLCodes(txt):
     return txt
 
 
+def replaceEscapeCodes(txt):
+    txt = HTMLParser.HTMLParser().unescape(txt)
+    return txt
+
+
 def randomagent():
     BR_VERS = [
         ['%s.0' % i for i in xrange(18, 50)],

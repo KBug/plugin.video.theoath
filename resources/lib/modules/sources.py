@@ -20,6 +20,8 @@
 
 import sys,re,json,urllib,urlparse,random,datetime,time
 
+import lambdascrapers
+
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
 from resources.lib.modules import cache
@@ -1172,16 +1174,22 @@ class sources:
 
         scraperSetting = control.setting('module.provider')
 
+        from lambdascrapers import sources
+        sourceDir1 = sources()
+        from resources.lib.sources import sources
+        sourceDir2 = sources()
+
         try:
-            if xbmc.getCondVisibility('System.HasAddon(%s)' % 'script.module.lambdascrapers') and not scraperSetting == 'Default':
-                from lambdascrapers import sources
-                self.sourceDict = sources()
-                self.module_name = control.addon('script.module.lambdascrapers').getSetting('module.provider')                 
-            else:
-                from resources.lib.sources import sources
-                self.sourceDict = sources()
-                self.module_name = 'Default'
-                control.setSetting('module.provider', 'Default')
+            if scraperSetting == 'Lambda Scrapers':
+                self.sourceDict = sourceDir1
+                self.module_name = control.addon('script.module.lambdascrapers').getSetting('module.provider')
+            if scraperSetting == 'Built-in':
+                self.sourceDict = sourceDir2
+                self.module_name = 'Built-in'
+                control.setSetting('module.provider', 'Built-in')
+            if scraperSetting == 'All':
+                self.sourceDict = sourceDir1 + sourceDir2
+                self.module_name = 'All'
         except: return
 
         try:
