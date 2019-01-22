@@ -58,19 +58,18 @@
         <setting type="text" label="32617" enable="false" />
     </category>
     <category label="32345">
-        <setting label="Module Settings" type="lsep" />
-        <setting type="sep" />
         <setting type="lsep" label="Choose from Built-in Providers or Lambda Scrapers" />
-        <setting id="module.provider" type="labelenum" label="Choose Provider Source" values="Built-in|Lambda Scrapers|All" default="Lambda Scrapers" />
+        <setting id="module.provider" type="labelenum" label="Provider Source:" values="Built-in|Lambda Scrapers|All" default="Lambda Scrapers" />
+        <setting type="sep" />
         <setting id="open.settings" type="action" label="Open Lambda Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.lambdascrapers/?mode=LambdaSettings)" />
         <setting type="sep" />
 
 		<!-- [ORION/] -->
-		<setting label="Orion - must be manually installed" type="lsep" />
-		<setting type="sep" />
+        <setting label="Built-in Providers" type="lsep" />
 		<setting id="provider.orionoid" type="bool" label="ORION" default="false" />
-		<setting id="provider.orionoid.settings" type="action" label="Settings" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" subsetting="true" visible="eq(-1,true)" />
-		<setting id="provider.orionoid.info" type="enum" label="Label" values="None|All|Provider|Popularity|Age|Popularity & Age" default="1" subsetting="true" visible="eq(-2,true)" />
+        <setting id="install.orion" subsetting="true" type="action" label="To use this you must install and configure an add-on: Orion." option="close" action="InstallAddon(script.module.orion)" enable="!System.HasAddon(script.module.orion)" visible="eq(-1,true) + !System.HasAddon(script.module.orion)"/>
+		<setting id="provider.orionoid.settings" subsetting="true" type="action" label="Settings" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" enable="System.HasAddon(script.module.orion)" visible="eq(-2,true)" />
+		<setting id="provider.orionoid.info" subsetting="true" type="enum" label="Stream Info:" values="None|All|Provider|Popularity|Age|Popularity & Age" default="1" enable="System.HasAddon(script.module.orion)" visible="eq(-3,true)" />
 		<!-- [/ORION] -->
 
     </category>
