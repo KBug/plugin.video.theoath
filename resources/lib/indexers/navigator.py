@@ -376,6 +376,7 @@ class navigator:
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32078, 'lambdascrapersettings', 'lambda.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png')
 
         self.endDirectory()
 

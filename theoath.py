@@ -359,6 +359,10 @@ elif action == 'lambdascrapersettings':
     from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.lambdascrapers')
 
+elif action == 'oathscrapersettings':
+    from resources.lib.modules import control
+    control.openSettings('0.0', 'script.module.oathscrapers')
+
 elif action == 'download':
     import json
     from resources.lib.modules import sources

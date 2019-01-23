@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.theoath" name="TheOath" provider-name="host505" version="1.2.3">
+<addon id="plugin.video.theoath" name="TheOath" provider-name="host505" version="1.3.0">
 	<requires>
 		<import addon="xbmc.python" version="2.20.0" />
 		<import addon="script.theoath.artwork" />
@@ -8,6 +8,7 @@
 		<import addon="script.module.requests" />
 		<import addon="script.module.metahandler" />
 		<import addon="script.module.beautifulsoup4" />
+		<import addon="script.module.oathscrapers" />
 		<import addon="script.module.lambdascrapers" />
 		<import addon="script.module.orion" optional="true" />
 	</requires>

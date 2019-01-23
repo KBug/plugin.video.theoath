@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    covenant Add-on
+    TheOath Add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 import sys,re,json,urllib,urlparse,random,datetime,time
 
+import oathscrapers
 import lambdascrapers
 
 from resources.lib.modules import trakt
@@ -1178,8 +1179,13 @@ class sources:
         sourceDir1 = sources()
         from resources.lib.sources import sources
         sourceDir2 = sources()
+        from oathscrapers import sources
+        sourceDir3 = sources()
 
         try:
+            if scraperSetting == 'TheOath Scrapers':
+                self.sourceDict = sourceDir3
+                self.module_name = control.addon('script.module.oathscrapers').getSetting('module.provider')
             if scraperSetting == 'Lambda Scrapers':
                 self.sourceDict = sourceDir1
                 self.module_name = control.addon('script.module.lambdascrapers').getSetting('module.provider')
@@ -1187,9 +1193,12 @@ class sources:
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in'
                 control.setSetting('module.provider', 'Built-in')
-            if scraperSetting == 'All':
+            if scraperSetting == 'TheOath + Built-in':
+                self.sourceDict = sourceDir2 + sourceDir3
+                self.module_name = 'Oath & Int'
+            if scraperSetting == 'Lambda + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'All'
+                self.module_name = 'LS & Int'
         except: return
 
         try:

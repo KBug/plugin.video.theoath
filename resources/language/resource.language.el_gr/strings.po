@@ -343,6 +343,10 @@ msgctxt "#32078"
 msgid "[B]LambdaScrapers[/B] : Settings"
 msgstr "[B]LambdaScrapers[/B] : Ρυθμίσεις"
 
+msgctxt "#32079"
+msgid "[B]OathScrapers[/B] : Settings"
+msgstr "[B]OathScrapers[/B] : Ρυθμίσεις"
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr "Ενεργό"
