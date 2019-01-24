@@ -69,64 +69,6 @@ def timeout(function, *args):
     except Exception:
         return None
 
-def bennu_download_get(function, timeout, *args, **table):
-    try:
-        response = None
-
-        f = repr(function)
-        f = re.sub('.+\smethod\s|.+function\s|\sat\s.+|\sof\s.+', '', f)
-
-        a = hashlib.md5()
-        for i in args: a.update(str(i))
-        a = str(a.hexdigest())
-    except:
-        pass
-
-    try:
-        table = table['table']
-    except:
-        table = 'rel_list'
-
-    try:
-        control.makeFile(control.dataPath)
-        dbcon = db.connect(control.cacheFile)
-        dbcur = dbcon.cursor()
-        dbcur.execute("SELECT * FROM %s WHERE func = '%s' AND args = '%s'" % (table, f, a))
-        match = dbcur.fetchone()
-
-        response = eval(match[2].encode('utf-8'))
-
-        t1 = int(match[3])
-        t2 = int(time.time())
-        update = (abs(t2 - t1) / 3600) >= int(timeout)
-        if update == False:
-            return response
-    except:
-        pass
-
-    try:
-        r = function(*args)
-        if (r == None or r == []) and not response == None:
-            return response
-        elif (r == None or r == []):
-            return r
-    except:
-        return
-
-    try:
-        r = repr(r)
-        t = int(time.time())
-        dbcur.execute("CREATE TABLE IF NOT EXISTS %s (""func TEXT, ""args TEXT, ""response TEXT, ""added TEXT, ""UNIQUE(func, args)"");" % table)
-        dbcur.execute("DELETE FROM %s WHERE func = '%s' AND args = '%s'" % (table, f, a))
-        dbcur.execute("INSERT INTO %s Values (?, ?, ?, ?)" % table, (f, a, r, t))
-        dbcon.commit()
-    except:
-        pass
-
-    try:
-        return eval(r.encode('utf-8'))
-    except:
-        pass
 
 def cache_get(key):
     # type: (str, str) -> dict or None
@@ -218,7 +160,8 @@ def cache_clear_all():
     cache_clear()
     cache_clear_meta()
     cache_clear_providers()
-        
+
+
 def _get_connection_cursor():
     conn = _get_connection()
     return conn.cursor()
@@ -248,7 +191,8 @@ def _get_connection_providers():
     conn = db.connect(control.providercacheFile)
     conn.row_factory = _dict_factory
     return conn
-    
+
+
 def _get_connection_cursor_search():
     conn = _get_connection_search()
     return conn.cursor()
@@ -285,12 +229,13 @@ def _is_cache_valid(cached_time, cache_timeout):
     diff = now - cached_time
     return (cache_timeout * 3600) > diff
 
-def cache_version_check():
 
+def cache_version_check():
     if _find_cache_version():
         cache_clear(); cache_clear_meta(); cache_clear_providers()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
-        
+
+
 def _find_cache_version():
 
     import os

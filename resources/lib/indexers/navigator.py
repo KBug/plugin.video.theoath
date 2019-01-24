@@ -83,8 +83,8 @@ class navigator:
         self.addDirectoryItem(32021, 'movies&url=oscars', 'oscar-winners.png', 'DefaultMovies.png')
         self.addDirectoryItem(32022, 'movies&url=theaters', 'in-theaters.png', 'DefaultRecentlyAddedMovies.png')
         self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('Neptune Playlists 1', 'customNavigator', 'neptune.jpg', 'DefaultMovies.png')
-        self.addDirectoryItem('Neptune Playlists 2', 'imdbLists', 'neptune.jpg', 'DefaultMovies.png')
+        self.addDirectoryItem('Poseidon Playlists 1', 'customNavigator', 'poseidon.png', 'DefaultMovies.png')
+        self.addDirectoryItem('Poseidon Playlists 2', 'imdbLists', 'poseidon.png', 'DefaultMovies.png')
         self.addDirectoryItem('Movie Mosts', 'movieMosts', 'featured.png', 'playlist.jpg')
 
         if lite == False:

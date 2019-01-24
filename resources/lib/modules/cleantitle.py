@@ -35,6 +35,20 @@ def get(title):
     return title.lower()
 
 
+def get_title(title):
+    if title is None: return
+    try:
+        title = title.encode('utf-8')
+    except:
+        pass
+    title = str(title)
+    title = re.sub('&#(\d);', '', title)
+    title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
+    title = title.replace('&quot;', '\"').replace('&amp;', '&')
+    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\_|\.|\?)|\s', '', title)
+    return title.lower()
+
+
 def geturl(title):
     if title is None: return
     title = title.lower()

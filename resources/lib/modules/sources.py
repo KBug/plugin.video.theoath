@@ -1195,10 +1195,10 @@ class sources:
                 control.setSetting('module.provider', 'Built-in')
             if scraperSetting == 'TheOath + Built-in':
                 self.sourceDict = sourceDir2 + sourceDir3
-                self.module_name = 'Oath & Int'
+                self.module_name = 'Int + Oath'
             if scraperSetting == 'Lambda + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'LS & Int'
+                self.module_name = 'Int + LS'
         except: return
 
         try:
