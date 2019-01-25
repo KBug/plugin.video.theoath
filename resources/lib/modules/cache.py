@@ -160,8 +160,7 @@ def cache_clear_all():
     cache_clear()
     cache_clear_meta()
     cache_clear_providers()
-
-
+        
 def _get_connection_cursor():
     conn = _get_connection()
     return conn.cursor()
@@ -191,7 +190,6 @@ def _get_connection_providers():
     conn = db.connect(control.providercacheFile)
     conn.row_factory = _dict_factory
     return conn
-
 
 def _get_connection_cursor_search():
     conn = _get_connection_search()
