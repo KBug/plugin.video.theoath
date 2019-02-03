@@ -403,7 +403,7 @@ class tvshows:
     def certifications(self):
         certificates = ['TV-G', 'TV-PG', 'TV-14', 'TV-MA']
 
-        for i in certificates: self.list.append({'name': str(i), 'url': self.certification_link % str(i).replace('-', '-'), 'image': 'certificates.png', 'action': 'tvshows'})
+        for i in certificates: self.list.append({'name': str(i), 'url': self.certification_link % str(i), 'image': 'certificates.png', 'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 

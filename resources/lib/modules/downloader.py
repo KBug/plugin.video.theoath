@@ -28,6 +28,7 @@ import xbmcplugin
 import xbmcvfs
 import os
 import inspect
+import sys
 
 
 def download(name, image, url):
