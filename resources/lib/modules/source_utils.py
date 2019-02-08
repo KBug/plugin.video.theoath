@@ -138,6 +138,22 @@ def check_sd_url(release_link):
     except:
         return 'SD'
 
+def check_direct_url(url):
+    try:
+        if '4k' in url: quality = '4K'
+        elif '2160p' in url: quality = '4K'
+        elif '2160' in url: quality = '4K'
+        elif '1080p' in url: quality = '1080p'
+        elif '1080' in url: quality = '1080p'
+        elif '720p' in url: quality = '720p'
+        elif '720' in url: quality = '720p'
+        elif any(i in ['dvdscr', 'r5', 'r6'] for i in url): quality = 'SCR'
+        elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url): quality = 'CAM'
+        else: quality = 'SD'
+        return quality
+    except:
+        return 'SD'
+
 def check_url(url):
 
     try:

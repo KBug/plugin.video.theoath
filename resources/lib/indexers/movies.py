@@ -101,7 +101,7 @@ class movies:
         self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
         self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
 
-################# Neptune Playlist 1 ####################
+################# Poseidon Playlists 1 (by Soulless) ####################
         self.cyber_link = 'http://www.imdb.com/search/title?count=100&keywords=cyberpunk&num_votes=3000,&title_type=feature&ref_=gnr_kw_cy,desc&count=40&start=1'
         self.epic_link = 'http://www.imdb.com/search/title?count=100&keywords=epic&num_votes=3000,&title_type=feature&ref_=gnr_kw_ep,desc&count=40&start=1'
         self.espionage_link = 'http://www.imdb.com/search/title?count=100&keywords=espionage&num_votes=3000,&title_type=feature&ref_=gnr_kw_es,desc&count=40&start=1'
@@ -170,14 +170,14 @@ class movies:
         self.star_link = 'http://www.imdb.com/search/title?count=100&keywords=star-wars&sort=moviemeter,asc&mode=detail&page=1&title_type=movie&ref_=kw_ref_typ'
         self.remakes_link = 'http://www.imdb.com/search/title?count=100&keywords=horror-movie-remake&sort=moviemeter,asc&mode=detail&page=1&title_type=movie&ref_=kw_ref_typ'
         self.bond_link = 'http://www.imdb.com/search/title?count=100&keywords=official-james-bond-series'
-################# /Neptune Playlist 1 ####################
+################# /Poseidon Playlists 1 ####################
 
 #        self._link = 'http://www.imdb.com/search/title?,desc&count=40&start=1'
 #        self._link = 'http://www.imdb.com/search/title?,desc&count=40&start=1'
 #        self._link = 'http://www.imdb.com/search/title?,desc&count=40&start=1'
 #        self._link = 'http://www.imdb.com/search/title?,desc&count=40&start=1'
 
-################# Neptune Playlist 2 ####################
+################# Poseidon Playlists 2 (by Soulless) ####################
         self.imdb1_link = 'http://www.imdb.com/list/ls004043006/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
         self.imdb2_link = 'http://www.imdb.com/list/ls054656838/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
         self.imdb3_link = 'http://www.imdb.com/list/ls027849454/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
@@ -232,7 +232,7 @@ class movies:
         self.imdb52_link = 'http://www.imdb.com/list/ls051708902/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
         self.imdb53_link = 'http://www.imdb.com/list/ls057785252/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
         self.imdb54_link = 'http://www.imdb.com/list/ls051072059/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
-################# /Neptune Playlist 2 ####################
+################# /Poseidon Playlists 2 ####################
 
 ################# Movie Mosts ####################
         self.played1_link = 'http://api.trakt.tv/movies/played/weekly?limit=40&page=1'

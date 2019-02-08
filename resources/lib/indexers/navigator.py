@@ -52,7 +52,7 @@ class navigator:
         if (traktIndicators == True and not control.setting('tv.widget.alt') == '0') or (traktIndicators == False and not control.setting('tv.widget') == '0'):
             self.addDirectoryItem(32006, 'tvWidget', 'latest-episodes.png', 'DefaultRecentlyAddedEpisodes.png')
 
-        #self.addDirectoryItem(32007, 'channels', 'channels.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32007, 'channels', 'channels.png', 'DefaultMovies.png')
         if not control.setting('furk.api') == '':
             self.addDirectoryItem('Furk.net', 'furkNavigator', 'movies.png', 'movies.png')
         self.addDirectoryItem(32008, 'toolNavigator', 'tools.png', 'DefaultAddonProgram.png')
@@ -201,7 +201,7 @@ class navigator:
             print("ERROR")
 
 
-    def custom(self, lite=False):################# Neptune Playlist 1 ####################
+    def custom(self, lite=False):################# Poseidon Playlists 1 (by Soulless) ####################
         self.addDirectoryItem('Anime', 'movies&url=anime', 'anime.jpg', 'playlist.jpg')
         self.addDirectoryItem('Avant Garde', 'movies&url=avant', 'avant.jpg', 'playlist.jpg')
         self.addDirectoryItem('Based On A True Story', 'movies&url=true', 'true.jpg', 'playlist.jpg')
@@ -274,7 +274,7 @@ class navigator:
         self.endDirectory()
 
 
-    def imdbLists(self):################# Neptune Playlist 2 ####################
+    def imdbLists(self):################# Poseidon Playlists 2 (by Soulless) ####################
         self.addDirectoryItem('Greatest Movies: 2000-2017', 'movies&url=imdb1', 'imdb.png', 'playlist.jpg')
         self.addDirectoryItem('Horror Movie Series', 'movies&url=imdb2', 'imdb.png', 'playlist.jpg')
         self.addDirectoryItem('Horror Of The Skull Posters', 'movies&url=imdb3', 'imdb.png', 'playlist.jpg')
