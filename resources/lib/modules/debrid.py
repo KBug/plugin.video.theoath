@@ -34,8 +34,12 @@ except:
     debrid_resolvers = []
 
 
-def status():
-    return debrid_resolvers != []
+def status(torrent=False):
+    debrid_check = debrid_resolvers != []
+    if debrid_check is True:
+        if torrent:
+            return True
+    return debrid_check
 
 
 def resolver(url, debrid):

@@ -551,59 +551,17 @@ class sources:
                             progressDialog.update(max(1, percent), line1, line2)
                     except:
                         break
-                        
+
                 time.sleep(0.5)
             except:
                 pass
 
-        if control.addonInfo('id') == 'plugin.video.bennu':
-            try:
-                if progressDialog: progressDialog.update(100, control.lang(30726).encode('utf-8'), control.lang(30731).encode('utf-8'))
+        try: progressDialog.close()
+        except: pass
 
-                items = self.sourcesFilter()
+        self.sourcesFilter()
 
-                if quality == 'RD': items = [i for i in items if i['debrid'] != '']
-                elif quality == 'SD': items = [i for i in items if i['quality'] == 'SD' and i['debrid'] == '']
-                elif quality == 'HD': items = [i for i in items if i['quality'] != 'SD']
-
-                if control.setting('bennu.dev.log') == 'true':
-                    log_utils.log('Sources Returned: %s' % str(items), log_utils.LOGNOTICE)
-
-                try: progressDialog.close()
-                except: pass
-
-                if quality == 'AUTO': 
-                    u = self.sourcesDirect(items)
-                    return u
-                else:
-                    meta = '{"title": "%s", "year": "%s", "imdb": "%s"}' % (title, year, imdb)
-                    '''control.window.clearProperty("plugin.video.bennu.container.items")
-                    control.window.setProperty("plugin.video.bennu.container.items", json.dumps(items))
-                    
-                    control.window.clearProperty("plugin.video.bennu.container.meta")
-                    control.window.setProperty("plugin.video.bennu.container.meta", meta)'''
-                    control.window.clearProperty(self.itemProperty)
-                    control.window.setProperty(self.itemProperty, json.dumps(items))
-                    
-                    control.window.clearProperty(self.metaProperty)
-                    control.window.setProperty(self.metaProperty, meta)
-
-                    control.sleep(200)
-                    control.execute('Container.Update(%s?action=addItem&title=%s)' % (sys.argv[0], urllib.quote_plus(title)))
-
-                    return "DIR"
-
-            except:
-                try: progressDialog.close()
-                except: pass
-                return
-        else: 
-            try: progressDialog.close()
-            except: pass
-
-            self.sourcesFilter()
-
-            return self.sources
+        return self.sources
 
     def prepareSources(self):
         try:
@@ -804,7 +762,7 @@ class sources:
         for i in self.sources:
             if 'checkquality' in i and i['checkquality'] == True:
                 if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
-        
+
         local = [i for i in self.sources if 'local' in i and i['local'] == True]
         for i in local: i.update({'language': self._getPrimaryLang() or 'en'})
         self.sources = [i for i in self.sources if not i in local]
@@ -819,12 +777,15 @@ class sources:
         for d in debrid.debrid_resolvers:
             valid_hoster = set([i['source'] for i in self.sources])
             valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster]
+
+            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if str(i['url']).startswith('magnet:')]
+            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in str(i['url'])]
+
         if debrid_only == 'false' or  debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
 
         self.sources = filter
-      
+
         for i in range(len(self.sources)):
             q = self.sources[i]['quality']            
             if q == 'HD': self.sources[i].update({'quality': '720p'})
@@ -943,7 +904,7 @@ class sources:
             call = [i[1] for i in self.sourceDict if i[0] == provider][0]
             u = url = call.resolve(url)
 
-            if url == None or (not '://' in str(url) and not local): raise Exception()
+            if url == None or (not '://' in str(url) and not local and 'magnet:' not in str(url)): raise Exception()
 
             if not local:
                 url = url[8:] if url.startswith('stack:') else url
