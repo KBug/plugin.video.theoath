@@ -36,6 +36,10 @@ class source:
 		self.cacheData = None
 		self.resolvers = None
 		self.settingInfo = int(addon.getSetting('provider.orionoid.info'))
+		self.settingStreamtype = int(addon.getSetting('orionoid.streamtype'))
+
+		if self.settingStreamtype == 0: self.StreamType = Orion.StreamHoster
+		elif self.settingStreamtype == 1: self.StreamType = Orion.StreamTorrent
 
 	def movie(self, imdb, title, localtitle, aliases, year):
 		try: return urllib.urlencode({'imdb' : imdb, 'title' : title, 'year' : year})
@@ -46,7 +50,7 @@ class source:
 		except: return None
 
 #	def episode(self, url, imdb, tvdb, title, premiered, season, episode):
-#		try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'title' : title, 'premiered' : premiered, 'season' : season, 'episode' : episode})
+#		try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'season' : season, 'episode' : episode})
 #		except: return None
 
 	def episode(self, url, imdb, tvdb, title, premiered, season, episode):
@@ -208,7 +212,7 @@ class source:
 				idTvdb = tvdb,
 				numberSeason = season,
 				numberEpisode = episode,
-				streamType = Orion.StreamHoster
+				streamType = self.StreamType
 			)
 
 			from resources.lib.modules import debrid
