@@ -72,6 +72,7 @@
         <setting id="install.orion" subsetting="true" type="action" label="To use this you must install and configure an add-on: Orion." option="close" action="InstallAddon(script.module.orion)" enable="!System.HasAddon(script.module.orion)" visible="eq(-1,true) + !System.HasAddon(script.module.orion)"/>
 		<setting id="provider.orionoid.settings" subsetting="true" type="action" label="Settings" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" enable="System.HasAddon(script.module.orion)" visible="eq(-2,true)" />
 		<setting id="provider.orionoid.info" subsetting="true" type="enum" label="Stream Info:" values="None|All|Provider|Popularity|Age|Popularity & Age" default="1" enable="System.HasAddon(script.module.orion)" visible="eq(-3,true)" />
+        <setting id="orionoid.streamtype" subsetting="true" type="enum" label="Stream Type:" values="Hoster|Torrent" default="0" enable="System.HasAddon(script.module.orion)" visible="eq(-4,true)" />
 		<!-- [/ORION] -->
 
     </category>
