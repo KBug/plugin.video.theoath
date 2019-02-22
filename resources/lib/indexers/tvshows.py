@@ -85,10 +85,10 @@ class tvshows:
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows'
         self.traktfeatured_link = 'http://api.trakt.tv/recommendations/shows?limit=40'
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=modified&order=desc&filter=titles' % self.imdb_user
-        self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=tvSeries,tvMiniSeries&start=1'
+        self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=tvSeries,tvMiniSeries&start=1'
         self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=tvSeries,tvMiniSeries&start=1'
         self.imdbwatchlist2_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
-        self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=alpha,asc' % self.imdb_user
+        self.imdbwatchlist_link = 'http://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
 ######## TV Show Mosts ########
         self.played1_link = 'http://api.trakt.tv/shows/played/weekly?limit=40&page=1'
@@ -1133,7 +1133,7 @@ class tvshows:
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tvdb_id': tvdb})
                 meta.update({'mediatype': 'tvshow'})
-                meta.update({'tvshowtitle': systitle})
+                meta.update({'tvshowtitle': i['originaltitle']})
                 meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
                 if not 'duration' in i: meta.update({'duration': '60'})
                 elif i['duration'] == '0': meta.update({'duration': '60'})

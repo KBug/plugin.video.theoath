@@ -857,6 +857,7 @@ class sources:
             except: d = self.sources[i]['debrid'] = ''
 
             if d.lower() == 'real-debrid': d = 'RD'
+            if d.lower() == 'premiumize.me': d = 'PM'
 
             if not d == '': label = '%02d | [B]%s | %s[/B] | ' % (int(i+1), d, p)
             else: label = '%02d | [B]%s[/B] | ' % (int(i+1), p)

@@ -126,7 +126,7 @@ class libmovies:
         self.infoDialog = False
 
 
-    def add(self, name, title, year, imdb, tmdb, range=False):
+    def add(self, name, title, year, imdb, range=False):
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo')\
                 and self.silentDialog is False:
             control.infoDialog(control.lang(32552).encode('utf-8'), time=10000000)
@@ -135,11 +135,11 @@ class libmovies:
         try:
             if not self.dupe_setting == 'true': raise Exception()
 
-            id = [imdb, tmdb] if not tmdb == '0' else [imdb]
-            lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["imdbnumber", "originaltitle", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
+            id = imdb
+            lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["imdbnumber", "title", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
             lib = unicode(lib, 'utf-8', errors='ignore')
             lib = json.loads(lib)['result']['movies']
-            lib = [i for i in lib if str(i['imdbnumber']) in id or (i['originaltitle'].encode('utf-8') == title and str(i['year']) == year)][0]
+            lib = [i for i in lib if str(i['imdbnumber']) in id or (i['title'].encode('utf-8') == title and str(i['year']) == year)][0]
         except:
             lib = []
 
@@ -152,7 +152,7 @@ class libmovies:
                 src = lib_tools.check_sources(title, year, imdb, None, None, None, None, None)
                 if not src: raise Exception()
 
-            self.strmFile({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tmdb': tmdb})
+            self.strmFile({'name': name, 'title': title, 'year': year, 'imdb': imdb})
             files_added += 1
         except:
             pass
@@ -180,7 +180,7 @@ class libmovies:
         for i in items:
             try:
                 if xbmc.abortRequested == True: return sys.exit()
-                self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range=True)
+                self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], range=True)
             except:
                 pass
 
@@ -205,7 +205,7 @@ class libmovies:
         for i in items:
             try:
                 if xbmc.abortRequested == True: return sys.exit()
-                self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], i['tmdb'], range=True)
+                self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], range=True)
             except:
                 pass
 
@@ -218,19 +218,19 @@ class libmovies:
 
     def strmFile(self, i):
         try:
-            name, title, year, imdb, tmdb = i['name'], i['title'], i['year'], i['imdb'], i['tmdb']
+            name, title, year, imdb = i['name'], i['title'], i['year'], i['imdb']
 
             sysname, systitle = urllib.quote_plus(name), urllib.quote_plus(title)
 
             transtitle = cleantitle.normalize(title.translate(None, '\/:*?"<>|'))
 
-            content = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s' % (sys.argv[0], sysname, systitle, year, imdb, tmdb)
+            content = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s' % (sys.argv[0], sysname, systitle, year, imdb)
 
             folder = lib_tools.make_path(self.library_folder, transtitle, year)
 
             lib_tools.create_folder(folder)
-            lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.strm'), content)
-            lib_tools.write_file(os.path.join(folder, 'movie.nfo'), lib_tools.nfo_url('movie', i))
+            lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.strm'), content)
+            lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename(transtitle) + '.' + year + '.nfo'), lib_tools.nfo_url('movie', i))
         except:
             pass
 
