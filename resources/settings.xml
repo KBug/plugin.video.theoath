@@ -3,7 +3,7 @@
     <category label="32310">
         <setting id="appearance.alt" type="action" label="32311" default="-" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=artwork)" visible="!System.HasAddon(script.theoath.artwork)" />
         <setting id="appearance.1" type="select" label="32311" values="Exuary" default="Exuary" visible="false" />
-        <setting id="trakt.user" type="text" default="" label="32303" visible="false" />
+        <setting id="trakt.authed" type="text" default="" visible="false" enable="false" />
         <setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
         <setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-2,)" />
         <setting id="api.language" type="select" label="32316" values="AUTO|Bulgarian|Chinese|Croatian|Czech|Danish|Dutch|English|Finnish|French|German|Greek|Hebrew|Hungarian|Italian|Japanese|Korean|Norwegian|Polish|Portuguese|Romanian|Russian|Serbian|Slovak|Slovenian|Spanish|Swedish|Thai|Turkish|Ukrainian" default="AUTO" />
@@ -21,6 +21,7 @@
         <setting id="tv.widget" type="enum" label="32325" lvalues="32302|32326" default="1" visible="eq(-15,)" />
         <setting id="prgr.sortorder" type="enum" label="32584" lvalues="32585|32586" default="1" visible="!eq(-16,)" />
     </category>
+
     <category label="32330">
         <setting id="hosts.mode" type="enum" label="32331" lvalues="32332|32333|32334" default="1" />
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
@@ -41,22 +42,23 @@
         <setting type="lsep" label="32372" />
         <setting id="crefresh" type="bool" label="32373" default="false" />
     </category>
+
     <category label="32315">
-        <setting id="trakt.auth" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=authTrakt)" />
+        <setting id="trakt.user" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=authTrakt)" />
         <setting id="trakt.token" type="text" visible="false" label="" default="" />
         <setting id="trakt.refresh" type="text" visible="false" label="" default="" />
-        <setting id="trakt.user" type="text" default="" label="32303" visible="true" enable="false" />
         <setting type="lsep" label="32075" />
         <setting id="trakt.client_id" type="text" label="32609" default="" />
         <setting id="trakt.client_secret" type="text" label="32610" default="" />
         <setting type="lsep" label="32343" />
-        <setting id="bookmarks.trakt" type="bool" label="32622" default="false"/>
-        <setting id="bookmarks.auto" type="bool" label="32623" default="false"/>
+        <setting id="bookmarks.trakt" type="bool" label="32622" default="false" enable="!eq(-7,)"/>
+        <setting id="bookmarks.auto" type="bool" label="32623" default="false" enable="!eq(-8,)"/>
         <setting type="lsep" label="32614" />
-        <setting id="autoTraktOnStart" type="bool" label="32615" default="false"/>
-        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="eq(-1,true)" />
+        <setting id="autoTraktOnStart" type="bool" label="32615" default="false" enable="!eq(-10,)"/>
+        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="eq(-1,true) + !eq(-11,)" />
         <setting type="text" label="32617" enable="false" />
     </category>
+
     <category label="32345">
         <setting type="lsep" label="Choose Provider Source(s)" />
         <setting id="module.provider" type="select" label="Provider Source:" values="TheOath Scrapers|Lambda Scrapers|Built-in|TheOath + Built-in|Lambda + Built-in" default="TheOath Scrapers" />
@@ -65,7 +67,6 @@
         <setting type="sep" />
         <setting id="open.Lsettings" type="action" label="Open Lambda Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.lambdascrapers/?mode=LambdaSettings)" />
         <setting type="sep" />
-
 		<!-- [ORION/] -->
         <setting label="Built-in Providers" type="lsep" />
 		<setting id="provider.orionoid" type="bool" label="ORION" default="false" />
@@ -74,8 +75,8 @@
 		<setting id="provider.orionoid.info" subsetting="true" type="enum" label="Stream Info:" values="None|All|Provider|Popularity|Age|Popularity & Age" default="1" enable="System.HasAddon(script.module.orion)" visible="eq(-3,true)" />
         <setting id="orionoid.streamtype" subsetting="true" type="enum" label="Stream Type:" values="Hoster|Torrent" default="0" enable="System.HasAddon(script.module.orion)" visible="eq(-4,true)" />
 		<!-- [/ORION] -->
-
     </category>
+
     <category label="32346">
         <setting type="lsep" label="32624" />
         <setting id="fanart.tv.user" type="text" label="32309" default="" />
@@ -89,13 +90,13 @@
         <setting type="lsep" label="32539" />
         <setting id="open_smu_settings" type="action" label="32540" enable="true" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=smuSettings)" />
         <setting type="sep" />
-        <setting type="lsep" label="Streamlord.com" />
-        <setting id="streamlord.user" type="text" label="32303" default="" />
-        <setting id="streamlord.pass" type="text" option="hidden" label="32307" default="" />
-        <setting type="sep" />
         <setting type="lsep" label="Ororo.tv" />
         <setting id="ororo.user" type="text" label="32304" default="" />
         <setting id="ororo.pass" type="text" option="hidden" label="32307" default="" />
+        <setting type="sep" />
+        <setting type="lsep" label="Streamlord.com" />
+        <setting id="streamlord.user" type="text" label="32303" default="" />
+        <setting id="streamlord.pass" type="text" option="hidden" label="32307" default="" />
         <setting type="sep" />
         <setting type="lsep" label="SerienStream.to" />
         <setting id="serienstream.user" type="text" label="32304" default="" />
@@ -111,6 +112,7 @@
         <setting id="furk.api" type="text" label="Furk API Key" default="" />
         <setting id="furk.limit" label="Limit results" type="slider" default="25" range="5,5,200" option="int" />
     </category>
+
     <category label="32541">
         <setting id="library.movie" type="folder" label="32543" default="special://userdata/addon_data/plugin.video.theoath/Movies" />
         <setting id="library.tv" type="folder" label="32544" default="special://userdata/addon_data/plugin.video.theoath/TVShows" />
@@ -127,6 +129,7 @@
         <setting id="library.check_episode" type="bool" label="32550" default="false" />
         <setting id="library.include_unknown" type="bool" label="32565" default="true" />
     </category>
+
     <category label="32347">
         <setting id="downloads" type="bool" label="32348" default="false" />
         <setting type="sep" />
@@ -136,6 +139,7 @@
         <setting type="text" label="32351" enable="false" />
         <setting type="text" label="32352" enable="false" />
     </category>
+
     <category label="32353">
         <setting id="subtitles" type="bool" label="32354" default="false" />
         <setting type="sep" />

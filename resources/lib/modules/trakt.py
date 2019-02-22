@@ -103,6 +103,7 @@ def authTrakt():
         if getTraktCredentialsInfo() == True:
             if control.yesnoDialog(control.lang(32511).encode('utf-8'), control.lang(32512).encode('utf-8'), '', 'Trakt'):
                 control.setSetting(id='trakt.user', value='')
+                control.setSetting(id='trakt.authed', value='')
                 control.setSetting(id='trakt.token', value='')
                 control.setSetting(id='trakt.refresh', value='')
             raise Exception()
@@ -139,13 +140,16 @@ def authTrakt():
         result = utils.json_loads_as_str(result)
 
         user = result['username']
+        authed = '' if user == '' else str('yes')
+
         print('info - ' + token)
         control.setSetting(id='trakt.user', value=user)
+        control.setSetting(id='trakt.authed', value=authed)
         control.setSetting(id='trakt.token', value=token)
         control.setSetting(id='trakt.refresh', value=refresh)
         raise Exception()
     except:
-        control.openSettings('3.1')
+        control.openSettings('2.1')
 
 
 def getTraktCredentialsInfo():
