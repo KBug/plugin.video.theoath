@@ -347,6 +347,10 @@ msgctxt "#32079"
 msgid "[B]OathScrapers[/B] : Settings"
 msgstr ""
 
+msgctxt "#32080"
+msgid "[B]Orion[/B] : Settings"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""

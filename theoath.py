@@ -363,6 +363,10 @@ elif action == 'oathscrapersettings':
     from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.oathscrapers')
 
+elif action == 'orionsettings':
+    from resources.lib.modules import control
+    control.openSettings('0.0', 'script.module.orion')
+
 elif action == 'download':
     import json
     from resources.lib.modules import sources
