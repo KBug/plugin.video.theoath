@@ -161,6 +161,7 @@ def movies(imdb, watched):
         else: trakt.markMovieAsNotWatched(imdb)
         trakt.cachesyncMovies()
         control.refresh()
+        control.idle()
     except:
         pass
 
@@ -182,6 +183,7 @@ def episodes(imdb, tvdb, season, episode, watched):
         else: trakt.markEpisodeAsNotWatched(tvdb, season, episode)
         trakt.cachesyncTVShows()
         control.refresh()
+        control.idle()
     except:
         pass
 
@@ -256,5 +258,5 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
         pass
 
     control.refresh()
-
+    control.idle()
 
