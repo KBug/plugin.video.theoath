@@ -154,14 +154,14 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
 
 def movies(imdb, watched):
-    control.busy()
+#    control.busy()
     try:
         if trakt.getTraktIndicatorsInfo() == False: raise Exception()
         if int(watched) == 7: trakt.markMovieAsWatched(imdb)
         else: trakt.markMovieAsNotWatched(imdb)
         trakt.cachesyncMovies()
         control.refresh()
-        control.idle()
+#        control.idle()
     except:
         pass
 
@@ -171,20 +171,20 @@ def movies(imdb, watched):
         metaget.get_meta('movie', name='', imdb_id=imdb)
         metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
         if trakt.getTraktIndicatorsInfo() == False: control.refresh()
-        control.idle()
+#        control.idle()
     except:
         pass
 
 
 def episodes(imdb, tvdb, season, episode, watched):
-    control.busy()
+#    control.busy()
     try:
         if trakt.getTraktIndicatorsInfo() == False: raise Exception()
         if int(watched) == 7: trakt.markEpisodeAsWatched(tvdb, season, episode)
         else: trakt.markEpisodeAsNotWatched(tvdb, season, episode)
         trakt.cachesyncTVShows()
         control.refresh()
-        control.idle()
+#        control.idle()
     except:
         pass
 
@@ -195,7 +195,7 @@ def episodes(imdb, tvdb, season, episode, watched):
         metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
         metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
         if trakt.getTraktIndicatorsInfo() == False: control.refresh()
-        control.idle()
+#        control.idle()
     except:
         pass
 

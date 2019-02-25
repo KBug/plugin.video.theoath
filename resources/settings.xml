@@ -55,7 +55,7 @@
         <setting id="bookmarks.auto" type="bool" label="32623" default="false" enable="!eq(-8,)"/>
         <setting type="lsep" label="32614" />
         <setting id="autoTraktOnStart" type="bool" label="32615" default="false" enable="!eq(-10,)"/>
-        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="eq(-1,true) + !eq(-11,)" />
+        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="!eq(-11,)" />
         <setting type="text" label="32617" enable="false" />
     </category>
 

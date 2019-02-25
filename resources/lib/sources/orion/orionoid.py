@@ -229,6 +229,12 @@ class source:
 			for data in results:
 				try:
 					info = []
+
+					size = data['file']['size']
+					size = float(size) / 1073741824
+					size = '%.2f GB' % size
+					info.append(size)
+
 					if self.settingInfo == 1 or self.settingInfo == 2: info.append(self._source(data, False))
 					if self.settingInfo == 1 or self.settingInfo == 3 or self.settingInfo == 5: info.append(self._popularity(data))
 					if self.settingInfo == 1 or self.settingInfo == 4 or self.settingInfo == 5: info.append(self._days(data))
