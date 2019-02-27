@@ -29,7 +29,7 @@ class source:
 		addon = xbmcaddon.Addon('plugin.video.theoath')
 		self.priority = 1
 		self.language = ['ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'nb', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'ny', 'zh', 'cv', 'kw', 'co', 'cr', 'hr', 'cs', 'da', 'dv', 'nl', 'dz', 'en', 'eo', 'et', 'ee', 'fo', 'fj', 'fi', 'fr', 'ff', 'gd', 'gl', 'lg', 'ka', 'de', 'el', 'gn', 'gu', 'ht', 'ha', 'he', 'hz', 'hi', 'ho', 'hu', 'is', 'io', 'ig', 'id', 'ia', 'ie', 'iu', 'ik', 'ga', 'it', 'ja', 'jv', 'kl', 'kn', 'kr', 'ks', 'kk', 'km', 'ki', 'rw', 'rn', 'kv', 'kg', 'ko', 'ku', 'kj', 'ky', 'lo', 'la', 'lv', 'li', 'ln', 'lt', 'lu', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'gv', 'mi', 'mr', 'mh', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'ii', 'nn', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'ps', 'fa', 'pl', 'pt', 'pa', 'qu', 'ro', 'rm', 'ru', 'sm', 'sg', 'sa', 'sc', 'sr', 'sn', 'sd', 'si', 'cu', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'uk', 'ur', 'ug', 'uz', 've', 'vi', 'vo', 'wa', 'cy', 'fy', 'wo', 'xh', 'yi', 'yo', 'za', 'zu']
-		self.key = 'VVhsQ1VVbEZVV2RVUTBKTVNVWnJaMU5wUVRSSlJYTm5VbWxDUzBsRloyZFJlVUpPU1VScloxUlRRa2hKUlVWblZHbENUa2xGYzJkUmFVRXpTVVZaWjFKcFFrdEpSVlZuVWxOQ1JrbEZOR2RXVTBKRQ=='
+		self.key = 'VkZOQ1MwbEZXV2RUZVVKUFNVVnpaMVZEUWxGSlJWVm5VVk5CTWtsRlZXZFNVMEUxU1VVMFoxTkRRbEpKUlRCblVYbENWRWxGVVdkU1UwRXhTVVZaWjA1NVFrbEpSVEJuVmxOQ1JVbEdRV2RTYVVKSg=='
 		self.domains = ['https://orionoid.com']
 		self.providers = []
 		self.cachePath = os.path.join(xbmc.translatePath(addon.getAddonInfo('profile').decode('utf-8')), 'orion.cache')
@@ -39,7 +39,9 @@ class source:
 		self.settingStreamtype = int(addon.getSetting('orionoid.streamtype'))
 
 		if self.settingStreamtype == 0: self.StreamType = Orion.StreamHoster
-		elif self.settingStreamtype == 1: self.StreamType = Orion.StreamTorrent
+		if self.settingStreamtype == 1: self.StreamType = Orion.StreamTorrent
+		else: self.StreamType = Orion.StreamHoster + Orion.StreamTorrent
+
 
 	def movie(self, imdb, title, localtitle, aliases, year):
 		try: return urllib.urlencode({'imdb' : imdb, 'title' : title, 'year' : year})
