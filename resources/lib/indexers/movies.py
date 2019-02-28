@@ -1143,6 +1143,8 @@ class movies:
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 
+                cm.append((control.lang(32081).encode('utf-8'), 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
+
                 item = control.item(label=label)
 
                 art = {}

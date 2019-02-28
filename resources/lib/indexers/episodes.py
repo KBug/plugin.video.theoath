@@ -1489,6 +1489,8 @@ class episodes:
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systvshowtitle, year, imdb, tvdb)))
 
+                cm.append((control.lang(32081).encode('utf-8'), 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
+
                 item = control.item(label=label)
 
                 art = {}
