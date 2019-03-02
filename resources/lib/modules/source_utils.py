@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    Updated for TheOath Add-on
+    Covenant Add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,38 +51,29 @@ def get_release_quality(release_name, release_link=None):
         fmt = re.split('\.|\(|\)|\[|\]|\s|-', fmt)
         fmt = [i.lower() for i in fmt]
         if '2160p' in fmt: quality = '4K'
-        if '2160' in fmt: quality = '4K'
-        if 'uhd' in fmt: quality = '4K'
-        if '1080p' in fmt: quality = '1080p'
-        if '1080' in fmt: quality = '1080p'
-        if 'fullhd' in fmt: quality = '1080p'
-        if '720p' in fmt: quality = '720p'
-        if '720' in fmt: quality = '720p'
-        #if 'brrip' in fmt: quality = '720p'
-        if 'hd' in fmt: quality = '720p'
-        #if 'HD' in fmt: quality = '720p'
-        #if '.hd.' in fmt: quality = '720p'
-        if 'hdtv' in fmt: quality = '720p'
-        #if 'BluRay' in fmt: quality = '720p'
-        #if '.WEBRip.' in fmt: quality = '720p'
-        if '480p' in fmt: quality = 'SD'
-        if '480' in fmt: quality = 'SD'
-        if '576p' in fmt: quality = 'SD'
-        if '576' in fmt: quality = 'SD'
-        if any(i in ['dvdscr', 'r5', 'r6'] for i in fmt): quality = 'SCR'
-        if any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in fmt): quality = 'CAM'
+        elif '1080p' in fmt: quality = '1080p'
+        elif '1080' in fmt: quality = '1080p'
+        elif '720p' in fmt: quality = '720p'
+        elif '720' in fmt: quality = '720p'
+        elif 'brrip' in fmt: quality = '720p'
+        elif 'hd' in fmt: quality = '720p'
+        elif 'HD' in fmt: quality = '720p'
+        elif '.hd.' in url: quality = '720p'
+        elif 'hdtv' in fmt: quality = '720p'
+        elif 'BluRay' in fmt: quality = '720p'
+        elif '.WEBRip.' in fmt: quality = '720p'
+        elif '480p' in fmt: quality = 'SD'
+        elif '480' in fmt: quality = 'SD'
+        elif any(i in ['dvdscr', 'r5', 'r6'] for i in fmt): quality = 'SCR'
+        elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in fmt): quality = 'CAM'
 
         if not quality:
             if release_link:
                 release_link = release_link.lower()
                 try: release_link = release_link.encode('utf-8')
                 except: pass
-                if '2160' in release_link: quality = '4k'
-                elif '2160p' in release_link: quality = '4k'
-                elif 'uhd' in release_link: quality = '4k'
+                if '2160' in release_link: quality = '4K'
                 elif '1080' in release_link: quality = '1080p'
-                elif '1080p' in release_link: quality = '1080p'
-                elif 'fullhd' in release_link: quality = '1080p'
                 elif '720' in release_link: quality = '720p'
                 elif '.hd' in release_link: quality = '720p'
                 else: 
@@ -91,8 +82,8 @@ def get_release_quality(release_name, release_link=None):
                     else: quality = 'SD'
             else: quality = 'SD'
         info = []
-        #if '3d' in fmt or '.3D.' in release_name: info.append('3D')
-        #if any(i in ['hevc', 'h265', 'h.265', 'x265'] for i in fmt): info.append('HEVC')
+        if '3d' in fmt or '.3D.' in release_name: info.append('3D')
+        if any(i in ['hevc', 'h265', 'x265'] for i in fmt): info.append('HEVC')
 
         return quality, info
     except:
@@ -101,84 +92,32 @@ def get_release_quality(release_name, release_link=None):
 
 def getFileType(url):
 
-    try:
-        url = url.lower().encode('utf-8')
-        url = re.sub('[^A-Za-z0-9 ]+', ' ', url)
-        url = str(url)
-    except:
-        url = str(url)
+    try: url = url.lower()
+    except: url = str(url)
     type = ''
     
-    if ' bluray ' in url: type += ' BLURAY /'
-    if ' blu ray ' in url: type += ' BLURAY /'
-    if ' bd r ' in url: type += ' BD-RIP /'
-    if ' bdr ' in url: type += ' BD-RIP /'
-    if ' bd rip ' in url: type += ' BD-RIP /'
-    if ' bdrip ' in url: type += ' BD-RIP /'
-    if ' br rip ' in url: type += ' BD-RIP /'
-    if ' brrip ' in url: type += ' BD-RIP /'
-    if ' remux ' in url: type += ' REMUX /'
-    if ' dvdrip ' in url: type += ' DVD-RIP /'
-    if ' dvd rip ' in url: type += ' DVD-RIP /'
-    if ' dvd ' in url: type += ' DVD /'
-    if ' dvdr ' in url: type += ' DVD /'
-    if ' dvd r ' in url: type += ' DVD /'
-    if ' webdl ' in url: type += ' WEB-DL /'
-    if ' web dl ' in url: type += ' WEB-DL /'
-    if ' webrip ' in url: type += ' WEBRIP /'
-    if ' web rip ' in url: type += ' WEBRIP /'
-    if ' hdtv ' in url: type += ' HDTV /'
-    if ' sdtv ' in url: type += ' SDTV /'
-    if ' hdrip ' in url: type += ' HDRIP /'
-    if ' hd rip ' in url: type += ' HDRIP /'
-    if ' uhdrip ' in url: type += ' UHDRIP /'
-    if ' uhd rip ' in url: type += ' UHDRIP /'
-    if ' r5 ' in url: type += ' R5 /'
-    if ' cam ' in url: type += ' CAM /'
-    if ' camrip ' in url: type += ' CAM /'
-    if ' cam rip ' in url: type += ' CAM /'
-    if ' ts ' in url: type += ' TS /'
-    if ' telesync ' in url: type += ' TS /'
-    if ' hdts ' in url: type += ' TS /'
-    if ' pdvd ' in url: type += ' TS /'
-    if ' scr ' in url: type += ' SCR /'
-    if ' screener ' in url: type += ' SCR /'
-    if ' dvdscr ' in url: type += ' SCR /'
-    if ' dvd scr ' in url: type += ' SCR /'
-    if ' xvid ' in url: type += ' XVID /'
-    if ' avi ' in url: type += ' AVI /'
-    if ' h 264 ' in url: type += ' H.264 /'
-    if ' h264 ' in url: type += ' H.264 /'
-    if ' x264 ' in url: type += ' H.264 /'
-    if ' avc ' in url: type += ' H.264 /'
-    if ' h 265 ' in url: type += ' HEVC /'
-    if ' h265 ' in url: type += ' HEVC /'
-    if ' x265 ' in url: type += ' HEVC /'
-    if ' hevc ' in url: type += ' HEVC /'
-    if ' hi10p ' in url: type += ' HI10P /'
-    if ' 10bit ' in url: type += ' 10BIT /'
-    if ' 3d ' in url: type += ' 3D /'
-    if ' ac3 ' in url: type += ' AC3 /'
-    if ' eac3 ' in url: type += ' EAC3 /'
-    if ' aac ' in url: type += ' AAC /'
-    if ' atmos ' in url: type += ' ATMOS /'
-    if ' truehd ' in url: type += ' TRUEHD /'
-    if ' true hd ' in url: type += ' TRUEHD /'
-    if ' dd ' in url: type += ' DD /'
-    if ' dolbydigital ' in url: type += ' DD /'
-    if ' dolby digital ' in url: type += ' DD /'
-    if ' ddplus ' in url: type += ' DD+ /'
-    if ' dd plus ' in url: type += ' DD+ /'
-    if ' dts ' in url: type += ' DTS /'
-    if ' dts hd ma ' in url: type += ' DTS.HD.MA /'
-    if ' dts hd hra ' in url: type += ' DTS.HD.HRA /'
-    if ' dts x ' in url: type += ' DTS:X /'
-    if ' dtsx ' in url: type += ' DTS:X /'
-    if ' 5 1 ' in url: type += ' 5.1 /'
-    if ' 6ch ' in url: type += ' 5.1 /'
-    if ' 7 1 ' in url: type += ' 7.1 /'
-    if ' 8ch ' in url: type += ' 7.1 /'
-    if ' subs ' in url: 
+    if 'bluray' in url: type += ' BLURAY /'
+    if '.web-dl' in url: type += ' WEB-DL /'
+    if '.web.' in url: type += ' WEB-DL /'
+    if 'hdrip' in url: type += ' HDRip /'
+    if 'bd-r' in url: type += ' BD-R /'
+    if 'bd-rip' in url: type += ' BD-RIP /'
+    if 'bd.r' in url: type += ' BD-R /'
+    if 'bd.rip' in url: type += ' BD-RIP /'
+    if 'bdr' in url: type += ' BD-R /'
+    if 'bdrip' in url: type += ' BD-RIP /'
+    if 'atmos' in url: type += ' ATMOS /'
+    if 'truehd' in url: type += ' TRUEHD /'
+    if '.dd' in url: type += ' DolbyDigital /'
+    if '5.1' in url: type += ' 5.1 /'
+    if '.xvid' in url: type += ' XVID /'
+    if '.mp4' in url: type += ' MP4 /'
+    if '.avi' in url: type += ' AVI /'
+    if 'ac3' in url: type += ' AC3 /'
+    if 'h.264' in url: type += ' H.264 /'
+    if '.x264' in url: type += ' x264 /'
+    if '.x265' in url: type += ' x265 /'
+    if 'subs' in url: 
         if type != '': type += ' - WITH SUBS'
         else: type = 'SUBS'
     type = type.rstrip('/')
