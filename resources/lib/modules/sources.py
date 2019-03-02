@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-    TheOath Add-on
+    Updated for TheOath Add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -825,19 +825,17 @@ class sources:
 
         if multi == True:
             self.sources = [i for i in self.sources if not i['language'] == 'en'] + [i for i in self.sources if i['language'] == 'en']
-        
+
         self.sources = self.sources[:2000]
 
-        extra_info = control.setting('sources.extrainfo')
         prem_identify = control.setting('prem.identify')
         if prem_identify == '': prem_identify = 'blue'
-        prem_identify = self.getPremColor(prem_identify)        
-        
+        prem_identify = self.getPremColor(prem_identify)
+
         for i in range(len(self.sources)):
-                       
-            if extra_info == 'true': t = source_utils.getFileType(self.sources[i]['url'])
-            else: t = None
-            
+
+            t = source_utils.getFileType(self.sources[i]['url'])
+
             u = self.sources[i]['url']
 
             p = self.sources[i]['provider']
@@ -845,7 +843,7 @@ class sources:
             q = self.sources[i]['quality']
 
             s = self.sources[i]['source']
-            
+
             s = s.rsplit('.', 1)[0]
 
             l = self.sources[i]['language']
@@ -859,24 +857,21 @@ class sources:
             if d.lower() == 'real-debrid': d = 'RD'
             if d.lower() == 'premiumize.me': d = 'PM'
 
-            if not d == '': label = '%02d | [B]%s | %s[/B] | ' % (int(i+1), d, p)
-            else: label = '%02d | [B]%s[/B] | ' % (int(i+1), p)
 
+            label = '%02d | ' % int(i+1)
             if multi == True and not l == 'en': label += '[B]%s[/B] | ' % l
 
-            if t:
-                if q in ['4K', '1440p', '1080p', '720p']: label += '%s | [B][I]%s [/I][/B] | [I]%s[/I] | %s' % (s, q, t, f)
-                elif q == 'SD': label += '%s | %s | [I]%s[/I]' % (s, f, t)
-                else: label += '%s | %s | [I]%s [/I] | [I]%s[/I]' % (s, f, q, t)
-            else:
-                if q in ['4K', '1440p', '1080p', '720p']: label += '%s | [B][I]%s [/I][/B] | %s' % (s, q, f)
-                elif q == 'SD': label += '%s | %s' % (s, f)
-                else: label += '%s | %s | [I]%s [/I]' % (s, f, q)
+            if not d == '':
+                label += ' %s | ' % d
+                if q in ['4K', '1440p', '1080p', '720p']: label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
+                elif q == 'SD': label += '%s | [B]%s[/B] | [I]%s[/I] | %s' % (p, s, t, f)
+                else: label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
+            else: label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
             label = label.replace('| 0 |', '|').replace(' | [I]0 [/I]', '')
             label = re.sub('\[I\]\s+\[/I\]', ' ', label)
             label = re.sub('\|\s+\|', '|', label)
             label = re.sub('\|(?:\s+|)$', '', label)
-            
+
             if d: 
                 if not prem_identify == 'nocolor':
                     self.sources[i]['label'] = ('[COLOR %s]' % (prem_identify)) + label.upper() + '[/COLOR]'
@@ -886,9 +881,9 @@ class sources:
         try: 
             if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
         except: pass
-            
+
         self.sources = [i for i in self.sources if 'label' in i]
-    
+
         return self.sources
 
 

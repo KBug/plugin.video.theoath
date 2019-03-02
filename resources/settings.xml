@@ -27,7 +27,6 @@
         <setting id="progress.dialog" type="enum" label="32335" lvalues="32336|32337" default="0" />
         <setting id="scrapers.timeout.1" type="slider" label="32312" default="45" range="10,60" option="int" />
         <setting id="prem.identify" type="enum" label="32588" lvalues="32589|32590|32591|32592|32593|32594|32595|32596|32597|32598" default="6" />
-        <setting id="sources.extrainfo" type="bool" label="32587" default="true" />
         <setting id="preemptive.termination" type="bool" label="32618" default="False" />
         <setting id="preemptive.limit" type="slider" label="32619" default="10" range="1,50" option="int" enable="eq(-1,true)" />
         <setting type="lsep" label="32338" />
