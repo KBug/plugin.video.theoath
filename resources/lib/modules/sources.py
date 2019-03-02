@@ -862,11 +862,10 @@ class sources:
             if multi == True and not l == 'en': label += '[B]%s[/B] | ' % l
 
             if not d == '':
-                label += ' %s | ' % d
-                if q in ['4K', '1440p', '1080p', '720p']: label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
-                elif q == 'SD': label += '%s | [B]%s[/B] | [I]%s[/I] | %s' % (p, s, t, f)
-                else: label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
-            else: label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
+                label += ' %s | [B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (d, q, p, s, t, f)
+            else:
+                label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
+
             label = label.replace('| 0 |', '|').replace(' | [I]0 [/I]', '')
             label = re.sub('\[I\]\s+\[/I\]', ' ', label)
             label = re.sub('\|\s+\|', '|', label)
