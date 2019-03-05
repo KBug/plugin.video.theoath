@@ -328,7 +328,7 @@ msgid "[B]HELP[/B]"
 msgstr ""
 
 msgctxt "#32075"
-msgid "Utilise your own Trakt API key:"
+msgid "Utilise your own Trakt API key (optional):"
 msgstr ""
 
 msgctxt "#32076"

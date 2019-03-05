@@ -102,13 +102,13 @@ def get_release_quality(release_name, release_link=None):
 def getFileType(url):
 
     try:
-        url = url.lower().encode('utf-8')
         url = re.sub('[^A-Za-z0-9 ]+', ' ', url)
+        url = url.lower()
         url = str(url)
     except:
         url = str(url)
     type = ''
-    
+
     if ' bluray ' in url: type += ' BLURAY /'
     if ' blu ray ' in url: type += ' BLURAY /'
     if ' bd r ' in url: type += ' BD-RIP /'
@@ -152,9 +152,9 @@ def getFileType(url):
     if ' x264 ' in url: type += ' H.264 /'
     if ' avc ' in url: type += ' H.264 /'
     if ' h 265 ' in url: type += ' HEVC /'
-    if ' h265 ' in url: type += ' HEVC /'
-    if ' x265 ' in url: type += ' HEVC /'
-    if ' hevc ' in url: type += ' HEVC /'
+    elif ' h265 ' in url: type += ' HEVC /'
+    elif ' x265 ' in url: type += ' HEVC /'
+    elif ' hevc ' in url: type += ' HEVC /'
     if ' hi10p ' in url: type += ' HI10P /'
     if ' 10bit ' in url: type += ' 10BIT /'
     if ' 3d ' in url: type += ' 3D /'
@@ -162,19 +162,21 @@ def getFileType(url):
     if ' ac3 ' in url: type += ' AC3 /'
     if ' eac3 ' in url: type += ' EAC3 /'
     if ' aac ' in url: type += ' AAC /'
-    if ' atmos ' in url: type += ' ATMOS /'
-    if ' truehd ' in url: type += ' TRUEHD /'
-    if ' true hd ' in url: type += ' TRUEHD /'
     if ' dd ' in url: type += ' DD /'
+    if ' dolby ' in url: type += ' DD /'
     if ' dolbydigital ' in url: type += ' DD /'
     if ' dolby digital ' in url: type += ' DD /'
+    if ' truehd ' in url: type += ' TRUEHD /'
+    if ' true hd ' in url: type += ' TRUEHD /'
+    if ' atmos ' in url: type += ' ATMOS /'
     if ' ddplus ' in url: type += ' DD+ /'
     if ' dd plus ' in url: type += ' DD+ /'
+    if ' ddp ' in url: type += ' DD+ /'
     if ' dts ' in url: type += ' DTS /'
-    if ' hd ma ' in url: type += ' DTS.HD.MA /'
-    if ' hdma ' in url: type += ' DTS.HD.MA /'
-    if ' hd hra ' in url: type += ' DTS.HD.HRA /'
-    if ' hdhra ' in url: type += ' DTS.HD.HRA /'
+    if ' hd ma ' in url: type += ' HD.MA /'
+    if ' hdma ' in url: type += ' HD.MA /'
+    if ' hd hra ' in url: type += ' HD.HRA /'
+    if ' hdhra ' in url: type += ' HD.HRA /'
     if ' dts x ' in url: type += ' DTS:X /'
     if ' dtsx ' in url: type += ' DTS:X /'
     if ' 5 1 ' in url: type += ' 5.1 /'

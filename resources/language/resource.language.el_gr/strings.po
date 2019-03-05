@@ -328,8 +328,8 @@ msgid "[B]HELP[/B]"
 msgstr "[B]ΒΟΗΘΕΙΑ[/B]"
 
 msgctxt "#32075"
-msgid "Utilise your own Trakt API key:"
-msgstr "Χρησιμοποιήστε το δικό σας Trakt API key:"
+msgid "Utilise your own Trakt API key (optional):"
+msgstr "Χρησιμοποιήστε το δικό σας Trakt API key (προαιρετικά):"
 
 msgctxt "#32076"
 msgid "[B]ResolveURL[/B] : Settings"

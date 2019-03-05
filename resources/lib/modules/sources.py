@@ -848,7 +848,7 @@ class sources:
 
             l = self.sources[i]['language']
 
-            try: f = (' | '.join(['[I]%s [/I]' % info.strip() for info in self.sources[i]['info'].split('|')]))
+            try: f = (' | '.join(['[I]%s[/I]' % info.strip() for info in self.sources[i]['info'].split('|')]))
             except: f = ''
 
             try: d = self.sources[i]['debrid']
@@ -866,7 +866,7 @@ class sources:
             else:
                 label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
 
-            label = label.replace('| 0 |', '|').replace(' | [I]0 [/I]', '')
+            label = label.replace('| 0 |', '|').replace(' | [I][/I]', '')
             label = re.sub('\[I\]\s+\[/I\]', ' ', label)
             label = re.sub('\|\s+\|', '|', label)
             label = re.sub('\|(?:\s+|)$', '', label)
