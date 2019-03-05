@@ -9,7 +9,7 @@
 		<import addon="script.module.metahandler" />
 		<import addon="script.module.beautifulsoup4" />
 		<import addon="script.module.oathscrapers" />
-		<import addon="script.module.lambdascrapers" optional="true" />
+		<import addon="script.module.lambdascrapers" />
 		<import addon="script.module.orion" optional="true" />
 	</requires>
 	<extension library="theoath.py" point="xbmc.python.pluginsource">
