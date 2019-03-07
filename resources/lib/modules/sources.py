@@ -299,7 +299,7 @@ class sources:
 
     def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
-        progressDialog.create("{0} ({1} Module)".format(control.addonInfo('name'), self.module_name), '')
+        progressDialog.create("{0} ({1} Module)".format('Fetching links', self.module_name), '')
         progressDialog.update(0)
 
         self.prepareSources()
