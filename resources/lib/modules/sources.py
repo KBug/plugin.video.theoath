@@ -343,7 +343,7 @@ class sources:
             localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
             #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
-            #season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
+            season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
             for i in sourceDict: threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
 
         s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
@@ -431,27 +431,27 @@ class sources:
                     if debrid_status:
                         if quality in ['0']:
                             for d in debrid_list:
-                                d_source_4k = len([e for e in self.sources if e['quality'] == '4K' and d.valid_url('', e['source'])])
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and d.valid_url('', e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url('', e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url('', e['source'])])
+                                d_source_4k = len([e for e in self.sources if e['quality'] == '4K' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['1']:
                             for d in debrid_list:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and d.valid_url('', e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url('', e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url('', e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['2']:
                             for d in debrid_list:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and d.valid_url('', e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url('', e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url('', e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['3']:
                             for d in debrid_list:
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url('', e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url('', e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         else:
                             for d in debrid_list:
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url('', e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                                  
                         d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
 
