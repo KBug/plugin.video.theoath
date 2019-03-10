@@ -44,15 +44,17 @@ def get_release_quality(release_name, release_link=None):
 
     try:
         quality = None
-        
-        release_name = release_name.upper()
 
-        fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d*E\d*|S\d*)(\.|\)|\]|\s)', '', release_name)
-        fmt = re.split('\.|\(|\)|\[|\]|\s|-', fmt)
+        fmt = re.sub('(.+)(\.|\(|\[|\s)(\d{4}|S\d+E\d+|S\d+)(\.|\)|\]|\s)', '', release_name)
+        fmt = re.split('\.|\(|\)|\[|\]|\s|-|_', fmt)
         fmt = [i.lower() for i in fmt]
-        if '2160p' in fmt: quality = '4K'
+
+        p_qual = re.search("(?:\s|%20|\.|\_|\-|\(|\{|\/|\[|^)(\d{3,4})(?:p|$)(?:$|\s|\.|\_|\-|\)|\}|\/|\]|%20)", release_name.lower())
+        if p_qual: quality = label_to_quality(p_qual.groups()[0])
+        elif '2160p' in fmt: quality = '4K'
         elif '2160' in fmt: quality = '4K'
         elif 'uhd' in fmt: quality = '4K'
+        elif '.4k.' in fmt: quality = '4K'
         elif '1080p' in fmt: quality = '1080p'
         elif '1080' in fmt: quality = '1080p'
         elif 'fullhd' in fmt: quality = '1080p'
@@ -77,7 +79,10 @@ def get_release_quality(release_name, release_link=None):
                 release_link = release_link.lower()
                 try: release_link = release_link.encode('utf-8')
                 except: pass
-                if '2160' in release_link: quality = '4k'
+                p_qual = re.search("(?:\s|%20|\.|\_|\-|\(|\{|\/|\[|^)(\d{3,4})(?:p|$)(?:$|\s|\.|\_|\-|\)|\}|\/|\]|%20)", release_link)
+                if p_qual: quality = label_to_quality(p_qual.groups()[0])
+                elif '.4k.' in release_link: quality = '4k'
+                elif '2160' in release_link: quality = '4k'
                 elif '2160p' in release_link: quality = '4k'
                 elif 'uhd' in release_link: quality = '4k'
                 elif '1080' in release_link: quality = '1080p'
@@ -277,6 +282,10 @@ def strip_domain(url):
 
 def is_host_valid(url, domains):
     try:
+        if any(x in url.lower() for x in ['.rar.', '.zip.', '.iso.']) or any(
+                url.lower().endswith(x) for x in ['.rar', '.zip']): raise Exception()
+
+        if any(x in url.lower() for x in ['youtube', 'sample', 'trailer', 'zippyshare', 'facebook']): raise Exception()
         host = __top_domain(url)
         hosts = [domain.lower() for domain in domains if host and host in domain.lower()]
 
