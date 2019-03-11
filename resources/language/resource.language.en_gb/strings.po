@@ -355,6 +355,10 @@ msgctxt "#32081"
 msgid "Clear Providers"
 msgstr ""
 
+msgctxt "#32082"
+msgid "[B]OpenScrapers[/B] : Settings"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""

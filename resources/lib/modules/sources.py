@@ -21,7 +21,7 @@
 import sys,re,json,urllib,urlparse,random,datetime,time
 
 import oathscrapers
-import lambdascrapers
+import openscrapers
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -1131,7 +1131,7 @@ class sources:
 
         scraperSetting = control.setting('module.provider')
 
-        from lambdascrapers import sources
+        from openscrapers import sources
         sourceDir1 = sources()
         from resources.lib.sources import sources
         sourceDir2 = sources()
@@ -1142,19 +1142,19 @@ class sources:
             if scraperSetting == 'TheOath Scrapers':
                 self.sourceDict = sourceDir3
                 self.module_name = control.addon('script.module.oathscrapers').getSetting('module.provider')
-            if scraperSetting == 'Lambda Scrapers':
+            if scraperSetting == 'Open Scrapers':
                 self.sourceDict = sourceDir1
-                self.module_name = control.addon('script.module.lambdascrapers').getSetting('module.provider')
+                self.module_name = control.addon('script.module.openscrapers').getSetting('module.provider')
             if scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in'
                 control.setSetting('module.provider', 'Built-in')
             if scraperSetting == 'TheOath + Built-in':
                 self.sourceDict = sourceDir2 + sourceDir3
-                self.module_name = 'Int & OS - '+control.addon('script.module.oathscrapers').getSetting('module.provider')
-            if scraperSetting == 'Lambda + Built-in':
+                self.module_name = 'Int & Oath - '+control.addon('script.module.oathscrapers').getSetting('module.provider')
+            if scraperSetting == 'Open + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Int & LS - '+control.addon('script.module.lambdascrapers').getSetting('module.provider')
+                self.module_name = 'Int & Open - '+control.addon('script.module.openscrapers').getSetting('module.provider')
         except: return
 
         try:
