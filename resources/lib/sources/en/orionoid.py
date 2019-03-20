@@ -181,6 +181,19 @@ class source:
                 return True
         return False
 
+    def _size(self, data):
+        size = data['file']['size']
+        size = float(size) / 1073741824
+        if size:
+            return str('%.2f GB' % size)
+        else:
+            size = ''
+        return None
+
+    def _name(self, data):
+        name = str(data['file']['name'])
+        if name == 'None': name = ''
+        return name
 
     def sources(self, url, hostDict, hostprDict):
         sources = []
@@ -233,24 +246,24 @@ class source:
                     info = []
 
                     try:
-                        size = data['file']['size']
-                        size = float(size) / 1073741824
-                        size = '%.2f GB' % size
-                        size = str(size)
-                        info.append(size)
-                    except:
-                        pass
-
+                        info.append(self._size(data))
+                    except: pass
                     try:
-                        name = data['file']['name']
-                        name = str(name)
-                        info.append(name)
-                    except:
-                        pass
+                        info.append(self._source(data, False))
+                    except: pass
 
-                    if self.settingInfo == 1 or self.settingInfo == 2: info.append(self._source(data, False))
-                    if self.settingInfo == 1 or self.settingInfo == 3 or self.settingInfo == 5: info.append(self._popularity(data))
-                    if self.settingInfo == 1 or self.settingInfo == 4 or self.settingInfo == 5: info.append(self._days(data))
+                    if control.setting('orion.extra.info') == 'true':
+                        try:
+                            info.append(self._name(data))
+                        except: pass
+                        try:
+                            info.append(self._popularity(data))
+                        except: pass
+                        try:
+                            info.append(self._days(data))
+                        except: pass
+
+                    info = ' | '.join(info)
 
                     orion = {}
                     try: orion['stream'] = data['id']
@@ -261,11 +274,11 @@ class source:
                     sources.append({
                         'orion' : orion,
                         'provider' : self._source(data, False),
-                        'source' : self._source(data, True),
+                        'source' : 'deb-cached' if data['stream']['type'] == OrionStream.TypeTorrent else self._source(data, True),
                         'quality' : self._quality(data),
                         'language' : self._language(data),
                         'url' : data['stream']['link'],
-                        'info' : ' | '.join(info) if len(info) > 0 else None,
+                        'info' : info,
                         'direct' : data['access']['direct'],
                         'debridonly' : self._debrid(data)
                     })
