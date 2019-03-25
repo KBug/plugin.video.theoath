@@ -84,6 +84,7 @@ class tvshows:
         self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/shows'
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/shows'
         self.traktfeatured_link = 'http://api.trakt.tv/recommendations/shows?limit=40'
+
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=modified&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=tvSeries,tvMiniSeries&start=1'
         self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=tvSeries,tvMiniSeries&start=1'
@@ -332,6 +333,7 @@ class tvshows:
         ('HGTV', '/networks/192/hgtv', 'https://i.imgur.com/INnmgLT.png'),
         ('Hallmark', '/networks/50/hallmark-channel', 'https://i.imgur.com/zXS64I8.png'),
         ('History Channel', '/networks/53/history', 'https://i.imgur.com/LEMgy6n.png'),
+        ('Hulu', '/webchannels/2/hulu', 'https://i.imgur.com/uSD2Cdw.png'),
         ('ITV', '/networks/35/itv', 'https://i.imgur.com/5Hxp5eA.png'),
         ('Lifetime', '/networks/18/lifetime', 'https://i.imgur.com/tvYbhen.png'),
         ('MTV', '/networks/22/mtv', 'https://i.imgur.com/QM6DpNW.png'),
@@ -351,6 +353,7 @@ class tvshows:
         ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
         ('Travel Channel', '/networks/82/travel-channel', 'https://i.imgur.com/mWXv7SF.png'),
         ('TruTV', '/networks/84/trutv', 'https://i.imgur.com/HnB3zfc.png'),
+        ('YouTube Red', '/webchannels/43/youtube-premium', 'https://i.imgur.com/ZfewP1Y.png'),
         ('USA', '/networks/30/usa-network', 'https://i.imgur.com/Doccw9E.png'),
         ('VH1', '/networks/55/vh1', 'https://i.imgur.com/IUtHYzA.png'),
         ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png')

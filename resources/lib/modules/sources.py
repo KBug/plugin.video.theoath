@@ -170,7 +170,7 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='Video', infoLabels = meta)
+                item.setInfo(type='video', infoLabels = meta)
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -322,9 +322,9 @@ class sources:
         sourceDict = [(i[0], i[1], i[1].language) for i in sourceDict]
         sourceDict = [(i[0], i[1]) for i in sourceDict if any(x in i[2] for x in language)]
 
-        #try: sourceDict = [(i[0], i[1], control.setting('provider.' + i[0])) for i in sourceDict]
-        #except: sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
-        #sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == 'false']
+        try: sourceDict = [(i[0], i[1], control.setting('provider.' + i[0])) for i in sourceDict]
+        except: sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
+        sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == 'false']
 
         sourceDict = [(i[0], i[1], i[1].priority) for i in sourceDict]
 
@@ -343,7 +343,7 @@ class sources:
             localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
             #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
-            season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
+            #season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
             for i in sourceDict: threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
 
         s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
@@ -409,19 +409,19 @@ class sources:
                 if len(self.sources) > 0:
                     if quality in ['0']:
                         source_4k = len([e for e in self.sources if e['quality'] == '4K' and e['debridonly'] == False])
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and e['debridonly'] == False])
+                        source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
                         source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
                     elif quality in ['1']:
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and e['debridonly'] == False])
+                        source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
                         source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
                     elif quality in ['2']:
                         source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
                         source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
                     elif quality in ['3']:
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
                         source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
                     else:
                         source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
@@ -432,22 +432,22 @@ class sources:
                         if quality in ['0']:
                             for d in debrid_list:
                                 d_source_4k = len([e for e in self.sources if e['quality'] == '4K' and d.valid_url(str(e['url']), e['source'])])
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
                                 d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['1']:
                             for d in debrid_list:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p','1080p'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
                                 d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['2']:
                             for d in debrid_list:
                                 d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
                                 d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['3']:
                             for d in debrid_list:
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p','HD'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
                                 d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
                         else:
                             for d in debrid_list:
@@ -855,7 +855,7 @@ class sources:
             except: d = self.sources[i]['debrid'] = ''
 
             if d.lower() == 'real-debrid': d = 'RD'
-            if d.lower() == 'premiumize.me': d = 'PM'
+            elif d.lower() == 'premiumize.me': d = 'PM'
 
 
             label = '%02d | ' % int(i+1)

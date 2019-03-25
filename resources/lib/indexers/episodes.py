@@ -552,7 +552,7 @@ class episodes:
         self.progress_link = 'http://api.trakt.tv/users/me/watched/shows'
         self.hiddenprogress_link = 'http://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
         self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
-        self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=10'
+        self.onDeck_link = 'http://api.trakt.tv/sync/playback/episodes?extended=full&limit=20'
         self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
         self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
         self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
@@ -1254,7 +1254,7 @@ class episodes:
             except:
                 pass
 
-                self.list = sorted(self.list, key=lambda k: utils.title_key(k['name']))
+        self.list = sorted(self.list, key=lambda k: utils.title_key(k['name']))
         return self.list
 
 
@@ -1446,6 +1446,9 @@ class episodes:
                 try: meta.update({'year': re.findall('(\d{4})', i['premiered'])[0]})
                 except: pass
                 try: meta.update({'title': i['label']})
+                except: pass
+
+                try: meta.update({'tvshowyear': i['year']}) # Kodi uses the year (the year the show started) as the year for the episode. Change it from the premiered date.
                 except: pass
 
                 sysmeta = urllib.quote_plus(json.dumps(meta))

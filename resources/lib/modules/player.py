@@ -62,7 +62,7 @@ class player(xbmc.Player):
 
             item = control.item(path=url)
             item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-            item.setInfo(type='Video', infoLabels = meta)
+            item.setInfo(type='video', infoLabels = meta)
 
             if 'plugin' in control.infoLabel('Container.PluginName'):
                 control.player.play(url, item)
