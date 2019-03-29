@@ -299,7 +299,7 @@ class sources:
 
     def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
-        progressDialog.create("{0} ({1} Module)".format('Fetching links', self.module_name), '')
+        progressDialog.create(self.module_name)
         progressDialog.update(0)
 
         self.prepareSources()
@@ -480,30 +480,35 @@ class sources:
                                     line2 = ('%s:' + '|'.join(pdiag_format)) % (string7, source_4k_label, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
                                     print line1, line2
                                 else:
+                                    control.idle()
                                     line1 = '|'.join(pdiag_bg_format[:-1]) % (source_4k_label, d_4k_label, source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label)
                             elif quality in ['1']:
                                 if not progressDialog == control.progressDialogBG:
                                     line1 = ('%s:' + '|'.join(pdiag_format[1:])) % (string6, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
                                     line2 = ('%s:' + '|'.join(pdiag_format[1:])) % (string7, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
                                 else:
+                                    control.idle()
                                     line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
                             elif quality in ['2']:
                                 if not progressDialog == control.progressDialogBG:
                                     line1 = ('%s:' + '|'.join(pdiag_format[1:])) % (string6, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
                                     line2 = ('%s:' + '|'.join(pdiag_format[1:])) % (string7, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
                                 else:
+                                    control.idle()
                                     line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
                             elif quality in ['3']:
                                 if not progressDialog == control.progressDialogBG:
                                     line1 = ('%s:' + '|'.join(pdiag_format[2:])) % (string6, d_720_label, d_sd_label, str(string4), d_total_label)
                                     line2 = ('%s:' + '|'.join(pdiag_format[2:])) % (string7, source_720_label, source_sd_label, str(string4), source_total_label)
                                 else:
+                                    control.idle()
                                     line1 = '|'.join(pdiag_bg_format[2:]) % (source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
                             else:
                                 if not progressDialog == control.progressDialogBG:
                                     line1 = ('%s:' + '|'.join(pdiag_format[3:])) % (string6, d_sd_label, str(string4), d_total_label)
                                     line2 = ('%s:' + '|'.join(pdiag_format[3:])) % (string7, source_sd_label, str(string4), source_total_label)
                                 else:
+                                    control.idle()
                                     line1 = '|'.join(pdiag_bg_format[3:]) % (source_sd_label, d_sd_label, source_total_label, d_total_label)
                         else:
                             if quality in ['0']:
@@ -826,7 +831,7 @@ class sources:
         if multi == True:
             self.sources = [i for i in self.sources if not i['language'] == 'en'] + [i for i in self.sources if i['language'] == 'en']
 
-        self.sources = self.sources[:2000]
+        self.sources = self.sources[:4000]
 
         prem_identify = control.setting('prem.identify')
         if prem_identify == '': prem_identify = 'blue'
@@ -1141,20 +1146,22 @@ class sources:
         try:
             if scraperSetting == 'TheOath Scrapers':
                 self.sourceDict = sourceDir3
-                self.module_name = control.addon('script.module.oathscrapers').getSetting('module.provider')
-            if scraperSetting == 'Open Scrapers':
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+            elif scraperSetting == 'Open Scrapers':
                 self.sourceDict = sourceDir1
-                self.module_name = control.addon('script.module.openscrapers').getSetting('module.provider')
-            if scraperSetting == 'Built-in':
+                self.module_name = 'OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+            elif scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
-                self.module_name = 'Built-in'
-                control.setSetting('module.provider', 'Built-in')
-            if scraperSetting == 'TheOath + Built-in':
+                self.module_name = 'Built-in providers:'
+            elif scraperSetting == 'TheOath + Built-in':
                 self.sourceDict = sourceDir2 + sourceDir3
-                self.module_name = 'Int & Oath - '+control.addon('script.module.oathscrapers').getSetting('module.provider')
-            if scraperSetting == 'Open + Built-in':
+                self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+            elif scraperSetting == 'Open + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Int & Open - '+control.addon('script.module.openscrapers').getSetting('module.provider')
+                self.module_name = 'Built-in + OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+            else:
+                self.sourceDict = sourceDir3
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
         except: return
 
         try:
