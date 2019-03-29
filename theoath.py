@@ -311,19 +311,15 @@ elif action == 'episodeUserlists':
     episodes.episodes().userlists()
 
 elif action == 'refresh':
-    from resources.lib.modules import control
     control.refresh()
 
 elif action == 'queueItem':
-    from resources.lib.modules import control
     control.queueItem()
 
 elif action == 'openSettings':
-    from resources.lib.modules import control
     control.openSettings(query)
 
 elif action == 'artwork':
-    from resources.lib.modules import control
     control.artwork()
 
 elif action == 'addView':
@@ -360,15 +356,12 @@ elif action == 'smuSettings':
     resolveurl.display_settings()
 
 elif action == 'openscrapersettings':
-    from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.openscrapers')
 
 elif action == 'oathscrapersettings':
-    from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.oathscrapers')
 
 elif action == 'orionsettings':
-    from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.orion')
 
 elif action == 'download':
@@ -379,7 +372,6 @@ elif action == 'download':
     except: pass
 
 elif action == 'play':
-    from resources.lib.modules import control
     control.busy()
     from resources.lib.modules import sources
     sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
@@ -419,7 +411,6 @@ elif action == 'random':
         from resources.lib.indexers import tvshows
         rlist = tvshows.tvshows().get(url, create_directory=False)
         r = sys.argv[0]+"?action=random&rtype=season"
-    from resources.lib.modules import control
     from random import randint
     import json
     try:
