@@ -509,7 +509,7 @@ class seasons:
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)
-                item.setInfo(type='Video', infoLabels = meta)
+                item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
 
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
@@ -1527,7 +1527,7 @@ class episodes:
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setProperty('IsPlayable', isPlayable)
-                item.setInfo(type='Video', infoLabels = meta)
+                item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
 
                 video_streaminfo = {'codec': 'h264'}
                 item.addStreamInfo('video', video_streaminfo)
