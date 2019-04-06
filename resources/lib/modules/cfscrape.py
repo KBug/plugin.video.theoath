@@ -38,9 +38,15 @@ class CloudflareScraper(Session):
         super(CloudflareScraper, self).__init__(*args, **kwargs)
 
         if "requests" in self.headers["User-Agent"]:
-            # Spoof Firefox on Linux if no custom User-Agent has been set
-            self.headers["User-Agent"] = DEFAULT_USER_AGENT
-            
+            # Spoof browser headers.
+            self.headers.update({
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'User-Agent': DEFAULT_USER_AGENT,
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',            
+                'DNT': '1'
+            })
 
     def request(self, method, url, *args, **kwargs):
         resp = super(CloudflareScraper, self).request(method, url, *args, **kwargs)
@@ -54,7 +60,6 @@ class CloudflareScraper(Session):
 
         # Otherwise, no Cloudflare anti-bot detected
         return resp
-    
 
     def solve_cf_challenge(self, resp, **original_kwargs):
         body = resp.text
@@ -144,16 +149,14 @@ class CloudflareScraper(Session):
         else:
             return redirect
 
-
     def cf_sample_domain_function(self, func_expression, domain):
         parameter_start_index = func_expression.find('}(') + 2
         # Send the expression with the "+" char and enclosing parenthesis included, as they are
         # stripped inside ".cf_parse_expression()'.
         sample_index = self.cf_parse_expression(
-            func_expression[parameter_start_index : func_expression.find('))', parameter_start_index) + 2]
+            func_expression[parameter_start_index : func_expression.rfind(')))')]
         )
         return ord(domain[int(sample_index)])
-    
 
     def cf_arithmetic_op(self, op, a, b):
         if op == '+':
@@ -166,7 +169,6 @@ class CloudflareScraper(Session):
             return a - b
         else:
             raise Exception('Unknown operation')
-
 
     def cf_parse_expression(self, expression, domain=None):
 
@@ -214,7 +216,6 @@ class CloudflareScraper(Session):
 
         return scraper
 
-
     ## Functions for integrating cloudflare-scrape with other applications and scripts
 
     @classmethod
@@ -246,7 +247,6 @@ class CloudflareScraper(Session):
                 },
                 scraper.headers["User-Agent"]
                )
-
 
     @classmethod
     def get_cookie_string(cls, url, user_agent=None, **kwargs):
