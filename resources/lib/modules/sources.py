@@ -170,7 +170,7 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='video', infoLabels = meta)
+                item.setInfo(type='video', infoLabels = control.metadataClean(meta))
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -1160,8 +1160,8 @@ class sources:
                 self.sourceDict = sourceDir1 + sourceDir2
                 self.module_name = 'Built-in + OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
             else:
-                self.sourceDict = sourceDir3
-                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+                self.sourceDict = sourceDir1
+                self.module_name = 'OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
         except: return
 
         try:

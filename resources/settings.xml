@@ -61,9 +61,9 @@
 
     <category label="32345">
         <setting type="lsep" label="Choose Provider Source(s)" />
-        <setting id="module.provider" type="select" label="Provider Source:" values="TheOath Scrapers|Open Scrapers|Built-in|TheOath + Built-in|Open + Built-in" default="TheOath Scrapers" />
+        <setting id="module.provider" type="select" label="Provider Source:" values="TheOath Scrapers|Open Scrapers|Built-in|TheOath + Built-in|Open + Built-in" default="Open Scrapers" />
         <setting type="sep" />
-        <setting id="open.Osettings" type="action" label="Open TheOath Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.oathscrapers/?mode=OathSettings)" />
+        <setting id="open.Osettings" type="action" label="Open TheOath Scrapers Settings" option="close" action="RunPlugin(plugin://script.module.oathscrapers/?mode=oathscrapersettings)" />
         <setting type="sep" />
         <setting id="open.Lsettings" type="action" label="Open Openscrapers Settings" option="close" action="RunPlugin(plugin://script.module.openscrapers/?mode=OpenscrapersSettings)" />
         <setting type="sep" />
