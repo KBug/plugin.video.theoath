@@ -95,6 +95,7 @@ class movies:
         self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
         self.traktfeatured_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
         self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
+        self.onDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
         self.imdblists_link = 'http://www.imdb.com/user/ur%s/lists?tab=all&sort=modified&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'http://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie&start=1'
         self.imdblist2_link = 'http://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie&start=1'
@@ -1199,6 +1200,7 @@ class movies:
 
         control.content(syshandle, 'movies')
         control.directory(syshandle, cacheToDisc=True)
+        control.sleep(200)
         views.setView('movies', {'skin.estuary': 55, 'skin.confluence': 500})
 
 
