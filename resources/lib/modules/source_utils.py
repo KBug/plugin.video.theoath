@@ -54,7 +54,7 @@ def get_release_quality(release_name, release_link=None):
         elif '2160p' in fmt: quality = '4K'
         elif '2160' in fmt: quality = '4K'
         elif 'uhd' in fmt: quality = '4K'
-        elif '.4k.' in fmt: quality = '4K'
+        elif '4k' in fmt: quality = '4K'
         elif '1080p' in fmt: quality = '1080p'
         elif '1080' in fmt: quality = '1080p'
         elif 'fullhd' in fmt: quality = '1080p'
@@ -205,6 +205,8 @@ def check_sd_url(release_link):
     try:
         release_link = release_link.lower()
         if '2160' in release_link: quality = '4K'
+        elif '4k' in release_link: quality = '4K'
+        elif 'uhd' in release_link: quality = '4K'
         elif '1080' in release_link: quality = '1080p'
         elif '720' in release_link: quality = '720p'
         elif '.hd.' in release_link: quality = '720p'
@@ -220,6 +222,7 @@ def check_direct_url(url):
         if '4k' in url: quality = '4K'
         elif '2160p' in url: quality = '4K'
         elif '2160' in url: quality = '4K'
+        elif 'uhd' in url: quality = '4K'
         elif '1080p' in url: quality = '1080p'
         elif '1080' in url: quality = '1080p'
         elif '720p' in url: quality = '720p'
@@ -236,6 +239,8 @@ def check_url(url):
     try:
         if '2160p' in url: quality = '4K'
         elif '2160' in url: quality = '4K'
+        elif '4k' in url: quality = '4K'
+        elif 'uhd' in url: quality = '4K'
         elif '1080p' in url: quality = '1080p'
         elif '1080' in url: quality = '1080p'
         elif '720p' in url: quality = '720p'
