@@ -45,7 +45,7 @@ def get_release_quality(release_name, release_link=None):
     try:
         quality = None
 
-        fmt = re.sub('[^A-Za-z0-9 ]+', ' ', release_name)
+        fmt = re.sub('[^A-Za-z0-9]+', ' ', release_name)
         fmt = str(fmt.lower())
         try: fmt = fmt.encode('utf-8')
         except: pass
@@ -107,111 +107,114 @@ def getFileType(url):
 
     try:
         url = client.replaceHTMLCodes(url)
-        url = re.sub('[^A-Za-z0-9 ]+', ' ', url)
+        url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = url.encode('utf-8')
         url = str(url.lower())
     except:
         url = str(url)
     type = ''
 
-    if ' bluray ' in url: type += ' BLURAY /'
-    if ' blu ray ' in url: type += ' BLURAY /'
-    if ' bd r ' in url: type += ' BD-RIP /'
-    if ' bdr ' in url: type += ' BD-RIP /'
-    if ' bd rip ' in url: type += ' BD-RIP /'
-    if ' bdrip ' in url: type += ' BD-RIP /'
-    if ' br rip ' in url: type += ' BD-RIP /'
-    if ' brrip ' in url: type += ' BD-RIP /'
-    if ' remux ' in url: type += ' REMUX /'
-    if ' dvdrip ' in url: type += ' DVD-RIP /'
-    if ' dvd rip ' in url: type += ' DVD-RIP /'
-    if ' dvd ' in url: type += ' DVD /'
-    if ' dvdr ' in url: type += ' DVD /'
-    if ' dvd r ' in url: type += ' DVD /'
-    if ' webdl ' in url: type += ' WEB-DL /'
-    if ' web dl ' in url: type += ' WEB-DL /'
-    elif ' web ' in url: type += ' WEBRIP /'
-    if ' web rip ' in url: type += ' WEBRIP /'
-    if ' webrip ' in url: type += ' WEBRIP /'
-    if ' hdtv ' in url: type += ' HDTV /'
-    if ' sdtv ' in url: type += ' SDTV /'
-    if ' hdrip ' in url: type += ' HDRIP /'
-    if ' hd rip ' in url: type += ' HDRIP /'
-    if ' uhdrip ' in url: type += ' UHDRIP /'
-    if ' uhd rip ' in url: type += ' UHDRIP /'
-    if ' r5 ' in url: type += ' R5 /'
-    if ' cam ' in url: type += ' CAM /'
-    if ' camrip ' in url: type += ' CAM /'
-    if ' cam rip ' in url: type += ' CAM /'
-    if ' ts ' in url: type += ' TS /'
-    if ' telesync ' in url: type += ' TS /'
-    if ' hdts ' in url: type += ' TS /'
-    if ' pdvd ' in url: type += ' TS /'
-    if ' tc ' in url: type += ' TC /'
-    if ' telecine ' in url: type += ' TC /'
-    if ' hdtc ' in url: type += ' TC /'
-    if ' scr ' in url: type += ' SCR /'
-    if ' screener ' in url: type += ' SCR /'
-    if ' dvdscr ' in url: type += ' SCR /'
-    if ' dvd scr ' in url: type += ' SCR /'
-    if ' xvid ' in url: type += ' XVID /'
-    if ' avi ' in url: type += ' AVI /'
-    if ' h 264 ' in url: type += ' H.264 /'
-    if ' h264 ' in url: type += ' H.264 /'
-    if ' x264 ' in url: type += ' H.264 /'
-    if ' avc ' in url: type += ' H.264 /'
-    if ' h 265 ' in url: type += ' HEVC /'
-    elif ' h265 ' in url: type += ' HEVC /'
-    elif ' x265 ' in url: type += ' HEVC /'
-    elif ' hevc ' in url: type += ' HEVC /'
-    if ' hi10p ' in url: type += ' HI10P /'
-    if ' 10bit ' in url: type += ' 10BIT /'
-    if ' 3d ' in url: type += ' 3D /'
-    if ' hdr ' in url: type += ' HDR /'
-    if ' imax ' in url: type += ' IMAX /'
-    if ' ac3 ' in url: type += ' AC3 /'
-    if ' eac3 ' in url: type += ' EAC3 /'
-    if ' aac ' in url: type += ' AAC /'
-    if ' dd ' in url: type += ' DD /'
-    if ' dolby ' in url: type += ' DD /'
-    if ' dolbydigital ' in url: type += ' DD /'
-    if ' dolby digital ' in url: type += ' DD /'
-    if ' truehd ' in url: type += ' TRUEHD /'
-    if ' true hd ' in url: type += ' TRUEHD /'
-    if ' atmos ' in url: type += ' ATMOS /'
-    if ' ddplus ' in url: type += ' DD+ /'
-    if ' dd plus ' in url: type += ' DD+ /'
-    if ' ddp ' in url: type += ' DD+ /'
-    if ' dts ' in url: type += ' DTS /'
-    if ' hd ma ' in url: type += ' HD.MA /'
-    if ' hdma ' in url: type += ' HD.MA /'
-    if ' hd hra ' in url: type += ' HD.HRA /'
-    if ' hdhra ' in url: type += ' HD.HRA /'
-    if ' dts x ' in url: type += ' DTS:X /'
-    if ' dtsx ' in url: type += ' DTS:X /'
-    if ' dd5 1 ' in url: type += ' DD / 5.1 /'
-    if ' 5 1 ' in url: type += ' 5.1 /'
-    if ' 6ch ' in url: type += ' 5.1 /'
-    if ' 7 1 ' in url: type += ' 7.1 /'
-    if ' 8ch ' in url: type += ' 7.1 /'
+    if any(i in url for i in [' bluray ', ' blu ray ']):
+        type += ' BLURAY /'
+    if any(i in url for i in [' bd r ', ' bdr ', ' bd rip ', ' bdrip ', ' br rip ', ' brrip ']):
+        type += ' BD-RIP /'
+    if ' remux ' in url:
+        type += ' REMUX /'
+    if any(i in url for i in [' dvdrip ', ' dvd rip ']):
+        type += ' DVD-RIP /'
+    if any(i in url for i in [' dvd ', ' dvdr ', ' dvd r ']):
+        type += ' DVD /'
+    if any(i in url for i in [' webdl ', ' web dl ']):
+        type += ' WEB-DL /'
+    if any(i in url for i in [' web ', ' web rip ', ' webrip ']):
+        type += ' WEBRIP /'
+    if ' hdtv ' in url:
+        type += ' HDTV /'
+    if ' sdtv ' in url:
+        type += ' SDTV /'
+    if any(i in url for i in [' hdrip ', ' hd rip ']):
+        type += ' HDRIP /'
+    if any(i in url for i in [' uhdrip ', ' uhd rip ']):
+        type += ' UHDRIP /'
+    if ' r5 ' in url:
+        type += ' R5 /'
+    if any(i in url for i in [' cam ', ' cam rip ', ' camrip ']):
+        type += ' CAM /'
+    if any(i in url for i in [' ts ', ' telesync ', ' hdts ', ' pdvd ']):
+        type += ' TS /'
+    if any(i in url for i in [' tc ', ' telecine ', ' hdtc ']):
+        type += ' TC /'
+    if any(i in url for i in [' scr ', ' screener ', ' dvdscr ', ' dvd scr ']):
+        type += ' SCR /'
+    if ' xvid ' in url:
+        type += ' XVID /'
+    if ' avi ' in url:
+        type += ' AVI /'
+    if any(i in url for i in [' h 264 ', ' h264 ', ' x264 ', ' avc ']):
+        type += ' H.264 /'
+    if any(i in url for i in [' h 265 ', ' h256 ', ' x265 ', ' hevc ']):
+        type += ' HEVC /'
+    if ' hi10p ' in url:
+        type += ' HI10P /'
+    if ' 10bit ' in url:
+        type += ' 10BIT /'
+    if ' 3d ' in url:
+        type += ' 3D /'
+    if ' hdr ' in url:
+        type += ' HDR /'
+    if ' imax ' in url:
+        type += ' IMAX /'
+    if ' ac3 ' in url:
+        type += ' AC3 /'
+    if ' eac3 ' in url:
+        type += ' EAC3 /'
+    if ' aac ' in url:
+        type += ' AAC /'
+    if any(i in url for i in [' dd ', ' dolby ', ' dolbydigital ', ' dolby digital ']):
+        type += ' DD /'
+    if any(i in url for i in [' truehd ', ' true hd ']):
+        type += ' TRUEHD /'
+    if ' atmos ' in url:
+        type += ' ATMOS /'
+    if any(i in url for i in [' ddplus ', ' dd plus ', ' ddp ']):
+        type += ' DD+ /'
+    if ' dts ' in url:
+        type += ' DTS /'
+    if any(i in url for i in [' hdma ', ' hd ma ']):
+        type += ' HD.MA /'
+    if any(i in url for i in [' hdhra ', ' hd hra ']):
+        type += ' HD.HRA /'
+    if any(i in url for i in [' dtsx ', ' dts x ']):
+        type += ' DTS:X /'
+    if ' dd5 1 ' in url:
+        type += ' DD / 5.1 /'
+    if any(i in url for i in [' 5 1 ', ' 6ch ']):
+        type += ' 5.1 /'
+    if any(i in url for i in [' 7 1 ', ' 8ch ']):
+        type += ' 7.1 /'
     if ' subs ' in url: 
-        if type != '': type += ' - WITH SUBS'
-        else: type = 'SUBS'
+        if type != '':
+            type += ' - WITH SUBS'
+        else:
+            type = 'SUBS'
     type = type.rstrip('/')
     return type
 
 def check_sd_url(release_link):
 
     try:
-        release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
+        release_link = re.sub('[^A-Za-z0-9]+', ' ', release_link)
         release_link = str(release_link.lower())
         try: release_link = release_link.encode('utf-8')
         except: pass
         if ' 2160 ' in release_link: quality = '4K'
+        elif ' 2160p ' in release_link: quality = '4K'
         elif ' 4k ' in release_link: quality = '4K'
         elif ' uhd ' in release_link: quality = '4K'
         elif ' 1080 ' in release_link: quality = '1080p'
-        elif ' 720 ' in release_link: quality = '720p'
+        elif ' 1080p ' in release_link: quality = '1080p'
+        elif ' fullhd ' in release_link: quality = '1080p'
+        elif ' 720p ' in release_link: quality = '720p'
         elif ' hd ' in release_link: quality = '720p'
         elif any(i in [' dvdscr ', ' r5 ', ' r6 '] for i in release_link): quality = 'SCR'
         elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in release_link): quality = 'CAM'
@@ -222,16 +225,21 @@ def check_sd_url(release_link):
 
 def check_direct_url(url):
     try:
-        if '4k' in url: quality = '4K'
-        elif '2160p' in url: quality = '4K'
-        elif '2160' in url: quality = '4K'
-        elif 'uhd' in url: quality = '4K'
-        elif '1080p' in url: quality = '1080p'
-        elif '1080' in url: quality = '1080p'
-        elif '720p' in url: quality = '720p'
-        elif '720' in url: quality = '720p'
-        elif any(i in ['dvdscr', 'r5', 'r6'] for i in url): quality = 'SCR'
-        elif any(i in ['camrip', 'tsrip', 'hdcam', 'hdts', 'dvdcam', 'dvdts', 'cam', 'telesync', 'ts'] for i in url): quality = 'CAM'
+        url = re.sub('[^A-Za-z0-9]+', ' ', url)
+        url = url.encode('utf-8')
+        url = str(url.lower())
+        if ' 4k ' in url: quality = '4K'
+        elif ' 2160p ' in url: quality = '4K'
+        elif ' 2160 ' in url: quality = '4K'
+        elif ' uhd ' in url: quality = '4K'
+        elif ' 1080p ' in url: quality = '1080p'
+        elif ' 1080 ' in url: quality = '1080p'
+        elif ' fullhd ' in url: quality = '1080p'
+        elif ' 720p ' in url: quality = '720p'
+        elif ' 720 ' in url: quality = '720p'
+        elif ' hd ' in url: quality = '720p'
+        elif any(i in [' dvdscr ', ' r5 ', ' r6 '] for i in url): quality = 'SCR'
+        elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in url): quality = 'CAM'
         else: quality = 'SD'
         return quality
     except:
@@ -240,7 +248,7 @@ def check_direct_url(url):
 def check_url(url):
     try:
         url = client.replaceHTMLCodes(url)
-        url = re.sub('[^A-Za-z0-9 ]+', ' ', url)
+        url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = url.encode('utf-8')
         url = str(url.lower())
     except:
@@ -253,10 +261,9 @@ def check_url(url):
         elif ' uhd ' in url: quality = '4K'
         elif ' 1080p ' in url: quality = '1080p'
         elif ' 1080 ' in url: quality = '1080p'
+        elif ' fullhd ' in url: quality = '1080p'
         elif ' 720p ' in url: quality = '720p'
         elif ' hd ' in url: quality = '720p'
-        elif ' 480p ' in url: quality = 'SD'
-        elif ' 480 ' in url: quality = 'SD'
         elif any(i in [' dvdscr ', ' r5 ', ' r6 '] for i in url): quality = 'SCR'
         elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in url): quality = 'CAM'
         else: quality = 'SD'

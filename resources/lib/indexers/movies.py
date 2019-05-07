@@ -173,11 +173,6 @@ class movies:
         self.bond_link = 'https://www.imdb.com/search/title?count=100&keywords=official-james-bond-series'
 ################# /Poseidon Playlists 1 ####################
 
-#        self._link = 'https://www.imdb.com/search/title?,desc&count=40&start=1'
-#        self._link = 'https://www.imdb.com/search/title?,desc&count=40&start=1'
-#        self._link = 'https://www.imdb.com/search/title?,desc&count=40&start=1'
-#        self._link = 'https://www.imdb.com/search/title?,desc&count=40&start=1'
-
 ################# Poseidon Playlists 2 (by Soulless) ####################
         self.imdb1_link = 'https://www.imdb.com/list/ls004043006/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
         self.imdb2_link = 'https://www.imdb.com/list/ls054656838/?view=detail&sort=alpha,asc&title_type=movie,tvMovie&start=1'
