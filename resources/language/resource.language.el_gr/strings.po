@@ -359,6 +359,30 @@ msgctxt "#32082"
 msgid "[B]OpenScrapers[/B] : Settings"
 msgstr "[B]OpenScrapers[/B] : Ρυθμίσεις"
 
+msgctxt "#32083"
+msgid "Choose Provider Source(s)"
+msgstr "Επιλογή Πακέτου Παρόχων"
+
+msgctxt "#32084"
+msgid "Provider Source:"
+msgstr "Πακέτο παρόχων:"
+
+msgctxt "#32085"
+msgid "Open TheOath Scrapers Settings"
+msgstr "Ρυθμίσεις TheOath Scrapers"
+
+msgctxt "#32086"
+msgid "Open Openscrapers Settings"
+msgstr "Ρυθμίσεις Openscrapers"
+
+msgctxt "#32087"
+msgid "Clear Providers Cache (recommended after provider source change)"
+msgstr "Καθαρισμός μνήμης παρόχων (συνιστάται μετά από αλλαγή πακέτου)"
+
+msgctxt "#32088"
+msgid "Built-in Providers"
+msgstr "Ενσωματωμένοι Πάροχοι"
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr "Ενεργό"

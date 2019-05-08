@@ -124,10 +124,8 @@ def getFileType(url):
         type += ' DVD-RIP /'
     if any(i in url for i in [' dvd ', ' dvdr ', ' dvd r ']):
         type += ' DVD /'
-    if any(i in url for i in [' webdl ', ' web dl ']):
-        type += ' WEB-DL /'
-    if any(i in url for i in [' web ', ' web rip ', ' webrip ']):
-        type += ' WEBRIP /'
+    if any(i in url for i in [' webdl ', ' web dl ', ' web ', ' web rip ', ' webrip ']):
+        type += ' WEB /'
     if ' hdtv ' in url:
         type += ' HDTV /'
     if ' sdtv ' in url:
