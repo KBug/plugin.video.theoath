@@ -359,6 +359,30 @@ msgctxt "#32082"
 msgid "[B]OpenScrapers[/B] : Settings"
 msgstr ""
 
+msgctxt "#32083"
+msgid "Choose Provider Source(s)"
+msgstr ""
+
+msgctxt "#32084"
+msgid "Provider Source:"
+msgstr ""
+
+msgctxt "#32085"
+msgid "Open TheOath Scrapers Settings"
+msgstr ""
+
+msgctxt "#32086"
+msgid "Open Openscrapers Settings"
+msgstr ""
+
+msgctxt "#32087"
+msgid "Clear Providers Cache (recommended after provider source change)"
+msgstr ""
+
+msgctxt "#32088"
+msgid "Built-in Providers"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""
