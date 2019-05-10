@@ -18,7 +18,7 @@
 '''
 
 
-import sys,re,json,urllib,urlparse,random,datetime,time
+import sys,re,json,urllib,urlparse,random,datetime,time,traceback
 
 import oathscrapers
 import openscrapers
@@ -775,7 +775,28 @@ class sources:
         filter = []
         filter += [i for i in self.sources if i['direct'] == True]
         filter += [i for i in self.sources if i['direct'] == False]
-        self.sources = filter
+#        self.sources = filter
+
+        ''' Filter-out duplicate links (thx doko-desuka)'''
+        try:
+            if control.setting('remove.dups') == 'true':
+                def uniqueSourcesGen(sources):
+                    uniqueURLs = set()
+                    for source in sources:
+                        if source['url'] not in uniqueURLs:
+                            uniqueURLs.add(source['url'])
+                            yield source # Yield the unique source.
+                        else:
+                            pass # Ignore further duped sources.
+
+                self.sources = list(uniqueSourcesGen(filter))
+            else:
+                self.sources = filter
+        except Exception:
+            failure = traceback.format_exc()
+            log_utils.log('DUP - Exception: ' + str(failure))
+            self.sources = filter
+        '''END'''
 
         filter = []
 
