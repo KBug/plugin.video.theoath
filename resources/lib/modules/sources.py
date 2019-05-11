@@ -743,6 +743,20 @@ class sources:
             pass
 
 
+    def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
+        uniqueURLs = set()
+        for source in sources:
+            url = source['url']
+            if isinstance(url, basestring):
+                if url not in uniqueURLs:
+                    uniqueURLs.add(url)
+                    yield source # Yield the unique source.
+                else:
+                    pass # Ignore duped sources.
+            else:
+                yield source # Always yield non-string url sources.
+
+
     def sourcesFilter(self):
 
         provider = control.setting('hosts.sort.provider')
@@ -772,30 +786,21 @@ class sources:
         for i in local: i.update({'language': self._getPrimaryLang() or 'en'})
         self.sources = [i for i in self.sources if not i in local]
 
-        filter = []
-        filter += [i for i in self.sources if i['direct'] == True]
-        filter += [i for i in self.sources if i['direct'] == False]
+#        filter = []
+#        filter += [i for i in self.sources if i['direct'] == True]
+#        filter += [i for i in self.sources if i['direct'] == False]
 #        self.sources = filter
 
-        ''' Filter-out duplicate links (thx doko-desuka)'''
+        ''' Filter-out duplicate links'''
         try:
             if control.setting('remove.dups') == 'true':
-                def uniqueSourcesGen(sources):
-                    uniqueURLs = set()
-                    for source in sources:
-                        if source['url'] not in uniqueURLs:
-                            uniqueURLs.add(source['url'])
-                            yield source # Yield the unique source.
-                        else:
-                            pass # Ignore further duped sources.
-
-                self.sources = list(uniqueSourcesGen(filter))
+                self.sources = list(self.uniqueSourcesGen(self.sources))
             else:
-                self.sources = filter
+                self.sources
         except Exception:
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
-            self.sources = filter
+            self.sources
         '''END'''
 
         filter = []
