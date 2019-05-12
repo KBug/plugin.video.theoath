@@ -18,7 +18,7 @@
 '''
 
 
-import sys,re,json,urllib,urlparse,random,datetime,time
+import sys,re,json,urllib,urlparse,random,datetime,time,traceback
 
 import oathscrapers
 import openscrapers
@@ -794,8 +794,9 @@ class sources:
         ''' Filter-out duplicate links'''
         try:
             if control.setting('remove.dups') == 'true':
-                self.sources = list(self.uniqueSourcesGen(self.sources))
-                control.infoDialog('Duplicate links removed', sound=True, icon='INFO')
+                self.sources2 = list(self.uniqueSourcesGen(self.sources))
+                dupes = int(len(self.sources) - len(self.sources2))
+                control.infoDialog('{0} duplicate links removed'.format(dupes), sound=True, icon='INFO')
             else:
                 self.sources
         except:
@@ -929,7 +930,7 @@ class sources:
             call = [i[1] for i in self.sourceDict if i[0] == provider][0]
             u = url = call.resolve(url)
 
-            if url == None or (not '://' in str(url) and not local and 'magnet:' not in str(url)): raise Exception()
+            if url == None or (not '://' in url and not local and 'magnet:' not in url): raise Exception()
 
             if not local:
                 url = url[8:] if url.startswith('stack:') else url
