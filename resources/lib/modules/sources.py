@@ -18,7 +18,7 @@
 '''
 
 
-import sys,re,json,urllib,urlparse,random,datetime,time,traceback
+import sys,re,json,urllib,urlparse,random,datetime,time
 
 import oathscrapers
 import openscrapers
@@ -795,11 +795,10 @@ class sources:
         try:
             if control.setting('remove.dups') == 'true':
                 self.sources = list(self.uniqueSourcesGen(self.sources))
+                control.infoDialog('Duplicate links removed', sound=True, icon='INFO')
             else:
                 self.sources
-        except Exception:
-            failure = traceback.format_exc()
-            log_utils.log('DUP - Exception: ' + str(failure))
+        except:
             self.sources
         '''END'''
 
@@ -809,8 +808,8 @@ class sources:
             valid_hoster = set([i['source'] for i in self.sources])
             valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
 
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if str(i['url']).startswith('magnet:')]
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in str(i['url'])]
+            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
         if debrid_only == 'false' or  debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
