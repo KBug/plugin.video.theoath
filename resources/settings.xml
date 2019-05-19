@@ -38,7 +38,7 @@
         <setting id="hosts.captcha" type="bool" label="32341" default="true" />
         <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
         <setting id="debrid.only" type="bool" label="32621" default="false" />
-        <setting id="remove.dups" type="bool" label="Filter-out duplicate links" default="false" />
+        <setting id="remove.dups" type="bool" label="Filter-out duplicate links" default="true" />
         <setting type="text" label="[I]EXPERIMENTAL[/I] - might also cause slowness on low-end devices" enable="false" subsetting="true" />
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />
         <setting type="lsep" label="32343" />
@@ -51,6 +51,7 @@
         <setting id="trakt.user" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=authTrakt)" />
         <setting id="trakt.token" type="text" visible="false" label="" default="" />
         <setting id="trakt.refresh" type="text" visible="false" label="" default="" />
+        <setting id="startup.sync.trakt.status" type="bool" label="Sync Trakt watched status on startup" default="false" enable="!eq(-2,)"/>
         <setting type="lsep" label="32075" />
         <setting id="trakt.client_id" type="text" label="32609" default="" />
         <setting id="trakt.client_secret" type="text" label="32610" default="" />

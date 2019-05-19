@@ -377,6 +377,10 @@ elif action == 'play':
     sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
     control.idle()
 
+elif action == 'playOM':
+    from resources.lib.modules import sources
+    sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
+
 elif action == 'addItem':
     from resources.lib.modules import sources
     sources.sources().addItem(title)
@@ -465,3 +469,9 @@ elif action == 'updateLibrary':
 elif action == 'service':
     from resources.lib.modules import libtools
     libtools.libepisodes().service()
+
+elif action == 'cachesyncTraktStatus':
+    from resources.lib.modules import trakt
+    trakt.cachesyncMovies()
+    trakt.cachesyncTVShows()
+    control.infoDialog('Trakt Watched Status Synced', time=1)
