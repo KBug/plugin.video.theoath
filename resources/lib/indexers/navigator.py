@@ -375,7 +375,7 @@ class navigator:
         self.addDirectoryItem(32082, 'openscrapersettings', 'openscr.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem('[B]Trakt[/B] : Sync Watched Status', 'cachesyncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32093, 'cachesyncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png')
 
         self.endDirectory()
 

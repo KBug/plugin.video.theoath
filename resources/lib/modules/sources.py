@@ -796,7 +796,7 @@ class sources:
             if control.setting('remove.dups') == 'true':
                 self.sources2 = list(self.uniqueSourcesGen(self.sources))
                 dupes = int(len(self.sources) - len(self.sources2))
-                control.infoDialog('{0} duplicate links removed'.format(dupes), sound=True, icon='INFO')
+                control.infoDialog(control.lang(32089).encode('utf-8').format(dupes), sound=True, icon='INFO')
             else:
                 self.sources
         except:
