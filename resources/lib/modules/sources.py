@@ -18,7 +18,7 @@
 '''
 
 
-import sys,re,json,urllib,urlparse,random,datetime,time,traceback
+import sys,re,json,urllib,urlparse,random,datetime,time
 
 import oathscrapers
 import openscrapers
@@ -778,9 +778,9 @@ class sources:
         if provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
-        for i in self.sources:
-            if 'checkquality' in i and i['checkquality'] == True:
-                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
+#        for i in self.sources:
+#            if 'checkquality' in i and i['checkquality'] == True:
+#                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
         local = [i for i in self.sources if 'local' in i and i['local'] == True]
         for i in local: i.update({'language': self._getPrimaryLang() or 'en'})
