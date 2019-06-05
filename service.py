@@ -39,6 +39,3 @@ if int(control.setting('schedTraktTime')) > 0:
     timeout = 3600 * int(control.setting('schedTraktTime'))
     schedTrakt = threading.Timer(timeout, syncTraktLibrary)
     schedTrakt.start()
-
-if control.setting('startup.sync.trakt.status') == 'true':
-    control.execute('RunPlugin(plugin://%s)' % 'plugin.video.theoath/?action=cachesyncTraktStatus')

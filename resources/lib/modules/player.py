@@ -45,7 +45,7 @@ class player(xbmc.Player):
             self.content = 'movie' if season == None or episode == None else 'episode'
 
             self.title = title ; self.year = year
-            self.name = urllib.quote_plus(title) + urllib.quote_plus(' (%s)' % year) if self.content == 'movie' else urllib.quote_plus(title) + urllib.quote_plus(' S%02dE%02d' % (int(season), int(episode)))
+            self.name = urllib.quote_plus(title) if self.content == 'movie' else urllib.quote_plus(title) + urllib.quote_plus(' S%01dE%01d' % (int(season), int(episode)))
             self.name = urllib.unquote_plus(self.name)
             self.season = '%01d' % int(season) if self.content == 'episode' else None
             self.episode = '%01d' % int(episode) if self.content == 'episode' else None
@@ -247,10 +247,12 @@ class player(xbmc.Player):
 
 
     def idleForPlayback(self):
-        for i in range(0, 200):
-            if control.condVisibility('Window.IsActive(busydialog)') == 1: control.idle()
-            else: break
-            control.sleep(100)
+        for i in range(0, 400):
+            if control.condVisibility('Window.IsActive(busydialog)') == 1:
+                control.sleep(100)
+            else:
+                control.execute('Dialog.Close(all,true)')
+                break
 
 
     def onAVStarted(self):
@@ -371,7 +373,7 @@ class bookmarks:
         offset = '0'
 
         if control.setting('bookmarks') == 'true':
-            if control.setting('bookmarks.trakt') == 'true':
+            if control.setting('rersume.source') == '1':
                 try:
                     from resources.lib.modules import trakt
 
@@ -389,7 +391,7 @@ class bookmarks:
                     else:
 
                         # Looking for a Movie Progress
-                        traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
+                        traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/movies?extended=full')
                         for i in traktInfo:
                             if imdb == i['movie']['ids']['imdb']:
                                 # Calculating Offset to seconds
@@ -397,9 +399,9 @@ class bookmarks:
 
                     if control.setting('bookmarks.auto') == 'false':
                         try:
-                            yes = control.dialog.contextmenu(["Resume", control.lang(32501).encode('utf-8'), ])
+                            yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
                         except:
-                            yes = control.yesnoDialog("Resume", '', '', str(name), control.lang(32503).encode('utf-8'),
+                            yes = control.yesnoDialog("Resume (Trakt)", '', '', str(name), control.lang(32503).encode('utf-8'),
                                                       control.lang(32501).encode('utf-8'))
                         if yes: offset = '0'
 

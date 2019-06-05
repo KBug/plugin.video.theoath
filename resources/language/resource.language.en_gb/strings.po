@@ -403,6 +403,18 @@ msgctxt "#32093"
 msgid "[B]Trakt[/B] : Sync Watched Status"
 msgstr ""
 
+msgctxt "#32094"
+msgid "Continue watching..."
+msgstr ""
+
+msgctxt "#32095"
+msgid "Resume point source"
+msgstr ""
+
+msgctxt "#32096"
+msgid "Trakt scrobble"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""

@@ -68,6 +68,9 @@ if action == None:
     from resources.lib.indexers import navigator
     from resources.lib.modules import cache
     cache.cache_version_check()
+    if control.setting('startup.sync.trakt.status') == 'true':
+        from resources.lib.modules import trakt
+        trakt.syncTraktStatus()
     navigator.navigator().root()
 
 elif action == "furkNavigator":
@@ -466,8 +469,7 @@ elif action == 'service':
     from resources.lib.modules import libtools
     libtools.libepisodes().service()
 
-elif action == 'cachesyncTraktStatus':
+elif action == 'syncTraktStatus':
     from resources.lib.modules import trakt
-    trakt.cachesyncMovies()
-    trakt.cachesyncTVShows()
-    control.infoDialog(control.lang(32092).encode('utf-8'), time=1)
+    trakt.syncTraktStatus()
+    control.infoDialog(control.lang(32092).encode('utf-8'))

@@ -43,25 +43,24 @@
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />
         <setting type="lsep" label="32343" />
         <setting id="bookmarks" type="bool" label="32344" default="true" />
+        <setting id="rersume.source" type="enum" label="32095" lvalues="32314|32096" default="0"/>
+        <setting id="bookmarks.auto" type="bool" label="32623" default="false"/>
         <setting type="lsep" label="32372" />
         <setting id="crefresh" type="bool" label="32373" default="false" />
     </category>
 
     <category label="32315">
         <setting id="trakt.user" type="action" label="32306" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=authTrakt)" />
-        <setting type="sep" />
         <setting id="trakt.token" type="text" visible="false" label="" default="" />
         <setting id="trakt.refresh" type="text" visible="false" label="" default="" />
-        <setting id="startup.sync.trakt.status" type="bool" label="32091" default="false" enable="!eq(-2,)"/>
         <setting type="lsep" label="32075" />
         <setting id="trakt.client_id" type="text" label="32609" default="" />
         <setting id="trakt.client_secret" type="text" label="32610" default="" />
-        <setting type="lsep" label="32343" />
-        <setting id="bookmarks.trakt" type="bool" label="32622" default="false" enable="!eq(-7,)"/>
-        <setting id="bookmarks.auto" type="bool" label="32623" default="false" enable="!eq(-8,)"/>
+        <setting type="sep" />
+        <setting id="startup.sync.trakt.status" type="bool" label="32091" default="false" enable="!eq(-6,)"/>
         <setting type="lsep" label="32614" />
-        <setting id="autoTraktOnStart" type="bool" label="32615" default="false" enable="!eq(-10,)"/>
-        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="!eq(-11,)" />
+        <setting id="autoTraktOnStart" type="bool" label="32615" default="false" enable="!eq(-8,)"/>
+        <setting id="schedTraktTime" type="slider" label="32616" default="0" range="0,24" option="int" enable="!eq(-9,)" />
         <setting type="text" label="32617" enable="false" />
     </category>
 
