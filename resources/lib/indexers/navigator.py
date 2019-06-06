@@ -362,6 +362,7 @@ class navigator:
         self.endDirectory()
 
     def tools(self):
+        self.addDirectoryItem('[B]TheOath[/B] : Changelog', 'changelog', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')

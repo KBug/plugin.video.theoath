@@ -1,49 +1,25 @@
-'''
-    Copyright (C) 2013 Sean Poyser (seanpoyser@gmail.com)
+# -*- coding: UTF-8 -*-
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+import os, xbmcgui
+from resources.lib.modules import control
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
-
-def get(version):
-    try:
-        import xbmc,xbmcgui,xbmcaddon,xbmcvfs
-
-        f = xbmcvfs.File(xbmcaddon.Addon().getAddonInfo('changelog'))
-        text = f.read() ; f.close()
-
-        label = '%s - %s' % (xbmc.getLocalizedString(24054), xbmcaddon.Addon().getAddonInfo('name'))
-
+def get():
+        changelogfile = os.path.join(control.addonPath, 'changelog.txt')
+        r = open(changelogfile)
+        text = r.read()
         id = 10147
-
-        xbmc.executebuiltin('ActivateWindow(%d)' % id)
-        xbmc.sleep(100)
-
+        control.execute('ActivateWindow(%d)' % id)
+        control.sleep(500)
         win = xbmcgui.Window(id)
-
         retry = 50
         while (retry > 0):
             try:
-                xbmc.sleep(10)
-                win.getControl(1).setLabel(label)
-                win.getControl(5).setText(text)
-                retry = 0
-            except:
+                control.sleep(10)
                 retry -= 1
-
-        return '1'
-    except:
-        return '1'
+                win.getControl(1).setLabel(' [COLOR gold] TheOath [/COLOR]v%s Changelog' % (control.addonInfo('version')))
+                win.getControl(5).setText(text)
+                return
+            except:
+                pass
 
 

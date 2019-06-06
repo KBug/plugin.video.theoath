@@ -43,8 +43,8 @@
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />
         <setting type="lsep" label="32343" />
         <setting id="bookmarks" type="bool" label="32344" default="true" />
-        <setting id="rersume.source" type="enum" label="32095" lvalues="32314|32096" default="0"/>
-        <setting id="bookmarks.auto" type="bool" label="32623" default="false"/>
+        <setting id="rersume.source" type="enum" label="32095" lvalues="32314|32096" default="0" enable="eq(-1,true)" />
+        <setting id="bookmarks.auto" type="bool" label="32623" default="false" enable="eq(-2,true)" />
         <setting type="lsep" label="32372" />
         <setting id="crefresh" type="bool" label="32373" default="false" />
     </category>

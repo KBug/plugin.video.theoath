@@ -392,11 +392,11 @@ msgid "Filter-out duplicate links"
 msgstr ""
 
 msgctxt "#32091"
-msgid "Sync Trakt watched status on startup"
+msgid "Sync with Trakt watched status on add-on startup"
 msgstr ""
 
 msgctxt "#32092"
-msgid "Trakt Watched Status Synced"
+msgid "TheOath <=> Trakt Synced"
 msgstr ""
 
 msgctxt "#32093"
@@ -664,7 +664,7 @@ msgid "When playback ends..."
 msgstr ""
 
 msgctxt "#32373"
-msgid "Force container refresh"
+msgid "Refresh watched status"
 msgstr ""
 
 msgctxt "#32401"

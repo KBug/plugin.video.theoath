@@ -472,4 +472,7 @@ elif action == 'service':
 elif action == 'syncTraktStatus':
     from resources.lib.modules import trakt
     trakt.syncTraktStatus()
-    control.infoDialog(control.lang(32092).encode('utf-8'))
+
+elif action == 'changelog':
+    from resources.lib.modules import changelog
+    changelog.get()	
