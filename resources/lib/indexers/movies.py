@@ -272,6 +272,10 @@ class movies:
                 self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
                 if idx == True: self.worker(level=0)
 
+            elif u in self.trakt_link and '/sync/playback/' in url:
+                self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+                if idx == True: self.worker()
+
             elif u in self.trakt_link:
                 self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
                 if idx == True: self.worker()

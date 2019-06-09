@@ -1,8 +1,14 @@
-[B][COLOR gold]v1.6.8[/COLOR][/B]
+[B][COLOR gold]v1.6.10[/COLOR][/B]
+- Removed cache from the 'Continue watching' movies list, so that Trakt scrobbles can be
+    accessed directly after a scrobble whitout having to clear cache first
+    (list is limited to 20 items only so shouldn't cause problems)
+- Some player module Leia adjustments
+
+[B][COLOR gold]v1.6.9[/COLOR][/B]
 - Added changelog
 - Some more settings/menus/wording adjustments
 
-[B][COLOR gold]v1.6.7[/COLOR][/B]
+[B][COLOR gold]v1.6.8[/COLOR][/B]
 - Fix sync with Trakt scrobbles
 - Sync with trakt now occurs on add-on launch (optional) instead of kodi launch
 - Rearrange settings/menus/wording a bit
@@ -10,10 +16,10 @@
       'Resume point source': choose between Trakt scrobbles or locally saved resume points
     - "Trakt On Deck" became 'Continue watching'
 
-[B][COLOR gold]v1.6.6[/COLOR][/B]
+[B][COLOR gold]v1.6.7[/COLOR][/B]
 - Added option to sync watched statuses from Trakt on startup and manually via Tools menu
 
-[B][COLOR gold]v1.6.5[/COLOR][/B]
+[B][COLOR gold]v1.6.6[/COLOR][/B]
 - Added duplicate links removal option, original code from doko-desuka - thx,
       adjusted to show notification with number of removed duplicate links
 

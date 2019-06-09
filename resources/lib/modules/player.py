@@ -248,7 +248,7 @@ class player(xbmc.Player):
 
     def idleForPlayback(self):
         for i in range(0, 400):
-            if control.condVisibility('Window.IsActive(busydialog)') == 1:
+            if control.condVisibility('Window.IsActive(busydialog)') == 1 or control.condVisibility('Window.IsActive(busydialognocancel)') == 1:
                 control.sleep(100)
             else:
                 control.execute('Dialog.Close(all,true)')
@@ -256,20 +256,19 @@ class player(xbmc.Player):
 
 
     def onAVStarted(self):
-        try:
-            if int(control.getKodiVersion()) >= 18:
-                control.execute('Dialog.Close(all,true)')
-                if not self.offset == '0': self.seekTime(float(self.offset))
-                subtitles().get(self.name, self.imdb, self.season, self.episode)
-                self.idleForPlayback()
-        except:
-            pass
-
-    def onPlayBackStarted(self):
         control.execute('Dialog.Close(all,true)')
         if not self.offset == '0': self.seekTime(float(self.offset))
         subtitles().get(self.name, self.imdb, self.season, self.episode)
-        self.idleForPlayback()
+        self.idleForPlayback
+
+    def onPlayBackStarted(self):
+        if int(control.getKodiVersion()) < 18:
+            control.execute('Dialog.Close(all,true)')
+            if not self.offset == '0': self.seekTime(float(self.offset))
+            subtitles().get(self.name, self.imdb, self.season, self.episode)
+            self.idleForPlayback()
+        else:
+            self.onAVStarted()
 
     def onPlayBackStopped(self):
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
