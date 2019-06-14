@@ -45,7 +45,7 @@ class player(xbmc.Player):
             self.content = 'movie' if season == None or episode == None else 'episode'
 
             self.title = title ; self.year = year
-            self.name = urllib.quote_plus(title) if self.content == 'movie' else urllib.quote_plus(title) + urllib.quote_plus(' S%01dE%01d' % (int(season), int(episode)))
+            self.name = urllib.quote_plus(title) + urllib.quote_plus(' (%s)' % year) if self.content == 'movie' else urllib.quote_plus(title) + urllib.quote_plus(' S%01dE%01d' % (int(season), int(episode)))
             self.name = urllib.unquote_plus(self.name)
             self.season = '%01d' % int(season) if self.content == 'episode' else None
             self.episode = '%01d' % int(episode) if self.content == 'episode' else None
@@ -379,7 +379,6 @@ class bookmarks:
                     if not episode is None:
 
                         # Looking for a Episode progress
-
                         traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
                         for i in traktInfo:
                             if imdb == i['show']['ids']['imdb']:
@@ -387,6 +386,7 @@ class bookmarks:
                                 if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
                                     # Calculating Offset to seconds
                                     offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
+                                    seekable = 2 < i['progress'] < 92
                     else:
 
                         # Looking for a Movie Progress
@@ -395,8 +395,9 @@ class bookmarks:
                             if imdb == i['movie']['ids']['imdb']:
                                 # Calculating Offset to seconds
                                 offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
+                                seekable = 2 < i['progress'] < 92
 
-                    if control.setting('bookmarks.auto') == 'false':
+                    if control.setting('bookmarks.auto') == 'false' and seekable:
                         try:
                             yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
                         except:

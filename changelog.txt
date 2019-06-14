@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.6.11[/COLOR][/B]
+- Fix issue where all items appear the 'Resume' dialog when resume point set to
+    Trakt scrobbles. Now it only appears when the watched % is between 2 and 92.
+
 [B][COLOR gold]v1.6.10[/COLOR][/B]
 - Removed cache from the 'Continue watching' movies list, so that Trakt scrobbles can be
     accessed directly after a scrobble whitout having to clear cache first
