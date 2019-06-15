@@ -21,7 +21,8 @@
 import sys,re,json,urllib,urlparse,random,datetime,time
 
 import oathscrapers
-import openscrapers
+try: import openscrapers
+except: pass
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -1160,14 +1161,20 @@ class sources:
 
         self.metaProperty = 'plugin.video.theoath.container.meta'
 
-        scraperSetting = control.setting('module.provider')
+        if control.condVisibility('System.HasAddon(script.module.openscrapers)'):
+            scraperSetting = control.setting('module.provider')
+        else:
+            scraperSetting = control.setting('module.provider.alt')
 
-        from openscrapers import sources
-        sourceDir1 = sources()
         from resources.lib.sources import sources
         sourceDir2 = sources()
         from oathscrapers import sources
         sourceDir3 = sources()
+        try:
+            from openscrapers import sources
+            sourceDir1 = sources()
+        except:
+            pass
 
         try:
             if scraperSetting == 'TheOath Scrapers':
@@ -1186,8 +1193,9 @@ class sources:
                 self.sourceDict = sourceDir1 + sourceDir2
                 self.module_name = 'Built-in + OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
             else:
-                self.sourceDict = sourceDir1
-                self.module_name = 'OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+                self.sourceDict = sourceDir3
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+                control.setSetting('module.provider', 'TheOath Scrapers')
         except: return
 
         try:

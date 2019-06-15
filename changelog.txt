@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.7.0[/COLOR][/B]
+- Switched default scraper package to TheOath scrapers
+- Openscrapers are now an OPTIONAL installation
+
 [B][COLOR gold]v1.6.11[/COLOR][/B]
 - Fix issue where all items appear the 'Resume' dialog when resume point set to
     Trakt scrobbles. Now it only appears when the watched % is between 2 and 92.
