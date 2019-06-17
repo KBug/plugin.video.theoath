@@ -387,6 +387,7 @@ class bookmarks:
                                     # Calculating Offset to seconds
                                     offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
                                     seekable = 2 < i['progress'] < 92
+                                    if not seekable: offset = '0'
                     else:
 
                         # Looking for a Movie Progress
@@ -396,6 +397,7 @@ class bookmarks:
                                 # Calculating Offset to seconds
                                 offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
                                 seekable = 2 < i['progress'] < 92
+                                if not seekable: offset = '0'
 
                     if control.setting('bookmarks.auto') == 'false' and seekable:
                         try:

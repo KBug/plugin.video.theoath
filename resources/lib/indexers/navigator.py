@@ -370,13 +370,15 @@ class navigator:
         self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
-#        self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png')
-#        self.addDirectoryItem(32078, 'lambdascrapersettings', 'lambda.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32082, 'openscrapersettings', 'openscr.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32093, 'syncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png')
+        if control.condVisibility('System.HasAddon(script.module.openscrapers)'):
+            self.addDirectoryItem(32082, 'openscrapersettings', 'openscr.png', 'DefaultAddonProgram.png')
+        if control.condVisibility('System.HasAddon(script.module.orion)'):
+            self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png')
+        if trakt.getTraktCredentialsInfo():
+            self.addDirectoryItem(32093, 'syncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png')
+#        self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
 
         self.endDirectory()
 
