@@ -1182,7 +1182,7 @@ class sources:
                 self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
             elif scraperSetting == 'Open Scrapers':
                 self.sourceDict = sourceDir1
-                self.module_name = 'OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'OpenScrapers:'
             elif scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in providers:'
@@ -1191,7 +1191,7 @@ class sources:
                 self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
             elif scraperSetting == 'Open + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Built-in + OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'Built-in + OpenScrapers:'
             else:
                 self.sourceDict = sourceDir3
                 self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
@@ -1206,11 +1206,14 @@ class sources:
         except:
             self.hostDict = []
 
-        self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net']
+        self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
 
-        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se']
+        self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
+                            'vev.io', 'vidup.me', 'vidup.tv', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
+                            'hugefiles.net', 'thevideo.me', 'streamin.to']
 
-        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com']
+        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
+                           'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com']
 
         self.hostblockDict = []
 

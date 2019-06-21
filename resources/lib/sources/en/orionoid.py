@@ -185,7 +185,7 @@ class source:
         size = data['file']['size']
         size = float(size) / 1073741824
         if size:
-            return str('%.2f GB' % size)
+            return str('[B]%.2f GB[/B]' % size)
         else:
             size = ''
         return None
@@ -274,7 +274,7 @@ class source:
                     sources.append({
                         'orion' : orion,
                         'provider' : self._source(data, False),
-                        'source' : 'deb-cached' if data['stream']['type'] == OrionStream.TypeTorrent else self._source(data, True),
+                        'source' : 'Torrent' if data['stream']['type'] == OrionStream.TypeTorrent else self._source(data, True),
                         'quality' : self._quality(data),
                         'language' : self._language(data),
                         'url' : data['stream']['link'],
