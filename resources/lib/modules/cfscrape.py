@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import ast
 import logging
 import operator as op
@@ -121,19 +123,15 @@ class CloudflareScraper(Session):
 
         if hasattr(ssl, 'PROTOCOL_TLS'):
             ciphers = [
-                'ECDHE-ECDSA-AES128-GCM-SHA256', 'ECDHE-RSA-AES128-GCM-SHA256', 'ECDHE-ECDSA-AES256-GCM-SHA384',
-                'ECDHE-RSA-AES256-GCM-SHA384', 'ECDHE-ECDSA-CHACHA20-POLY1305-SHA256',
-                'ECDHE-RSA-CHACHA20-POLY1305-SHA256',
-                'ECDHE-RSA-AES128-CBC-SHA', 'ECDHE-RSA-AES256-CBC-SHA', 'RSA-AES128-GCM-SHA256',
-                'RSA-AES256-GCM-SHA384',
-                'ECDHE-RSA-AES128-GCM-SHA256', 'RSA-AES256-SHA', '3DES-EDE-CBC'
+                'ECDHE-ECDSA-AES128-GCM-SHA256', 'ECDHE-RSA-AES128-GCM-SHA256', 'ECDHE-ECDSA-CHACHA20-POLY1305-SHA256',
+                'ECDHE-RSA-CHACHA20-POLY1305-SHA256', 'ECDHE-RSA-AES128-CBC-SHA', 'ECDHE-RSA-AES256-CBC-SHA',
+                'RSA-AES128-GCM-SHA256', 'RSA-AES256-GCM-SHA384', 'ECDHE-RSA-AES128-GCM-SHA256',
+                'RSA-AES256-SHA', '3DES-EDE-CBC'
             ]
-
+ 
             if hasattr(ssl, 'PROTOCOL_TLSv1_3'):
-                ciphers.insert(0,
-                               ['GREASE_3A', 'GREASE_6A', 'AES128-GCM-SHA256', 'AES256-GCM-SHA256', 'AES256-GCM-SHA384',
-                                'CHACHA20-POLY1305-SHA256'])
-
+                ciphers.insert(0, ['GREASE_3A', 'GREASE_6A', 'AES128-GCM-SHA256', 'AES256-GCM-SHA256', 'AES256-GCM-SHA384', 'CHACHA20-POLY1305-SHA256'])
+ 
             ctx = ssl.SSLContext(getattr(ssl, 'PROTOCOL_TLSv1_3', ssl.PROTOCOL_TLSv1_2))
 
             for cipher in ciphers:
@@ -314,3 +312,5 @@ class CloudflareScraper(Session):
 
 
 create_scraper = CloudflareScraper
+
+

@@ -64,6 +64,12 @@ def get_url(title):
     return title
 
 
+def get_query_(title):
+    if title is None: return
+    title = title.replace(' ', '_').replace(':', '').replace('.-.', '.').replace('\'', '').replace(",", '').replace("'", '')
+    return title
+
+
 def get_simple(title):
     if title is None: return
     title = title.lower()
@@ -72,7 +78,6 @@ def get_simple(title):
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
     title = title.replace('&quot;', '\"').replace('&amp;', '&')
     title = re.sub('\n|\(|\)|\[|\]|\{|\}|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
-    title = re.sub(r'<.*?>', '', title, count=0)
     return title
 
 

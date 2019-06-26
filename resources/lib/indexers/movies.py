@@ -354,7 +354,7 @@ class movies:
 
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
-            dbcur.execute("DELETE FROM movies WHERE term = '%s'" % q)
+            dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
             dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q))
             dbcon.commit()
             dbcur.close()
@@ -376,7 +376,7 @@ class movies:
 
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
-            dbcur.execute("DELETE FROM movies WHERE term = '%s'" % q)
+            dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
             dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
             dbcon.commit()
             dbcur.close()
