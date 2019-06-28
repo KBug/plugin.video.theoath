@@ -886,8 +886,13 @@ class sources:
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
 
+            if d.lower() == 'alldebrid': d = 'AD'
+            if d.lower() == 'debrid-link.fr': d = 'DL.FR'
+            if d.lower() == 'linksnappy': d = 'LS'
+            if d.lower() == 'megadebrid': d = 'MD'
+            if d.lower() == 'premiumize.me': d = 'PM'
             if d.lower() == 'real-debrid': d = 'RD'
-            elif d.lower() == 'premiumize.me': d = 'PM'
+            if d.lower() == 'zevera': d = 'ZVR'
 
 
             label = '%02d | ' % int(i+1)
