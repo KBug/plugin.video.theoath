@@ -1,3 +1,9 @@
+[B][COLOR gold]v1.7.4[/COLOR][/B]
+- Fixed issue with links skipping in the background while resolveurl was trying to
+    transfer un-cached torrents to the debrid service, preventing the procedure.
+- Orionoid scraper updates
+- Micro-updates to menus, modules, cfscrape etc
+
 [B][COLOR gold]v1.7.0[/COLOR][/B]
 - Switched default scraper package to TheOath scrapers
 - Openscrapers are now an OPTIONAL installation

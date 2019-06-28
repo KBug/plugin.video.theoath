@@ -241,7 +241,19 @@ class sources:
                     w = workers.Thread(self.sourcesResolve, items[i])
                     w.start()
 
-                    offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
+                    #offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
+                    if items[i].get('debrid').lower() == 'real-debrid':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'alldebrid':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'premiumize.me':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'linksnappy':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
+
+                    if items[i].get('source') in self.hostcapDict: offset = 60 * 2
+                    elif items[i].get('source').lower() == 'torrent' and no_skip: offset = float('inf')
+                    else: offset = 0
 
                     m = ''
 
