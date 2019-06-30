@@ -359,9 +359,13 @@ def syncSeason(imdb):
 
 
 def syncTraktStatus():
-    cachesyncMovies()
-    cachesyncTVShows()
-    control.infoDialog(control.lang(32092).encode('utf-8'))
+    try:
+        cachesyncMovies()
+        cachesyncTVShows()
+        control.infoDialog(control.lang(32092).encode('utf-8'))
+    except:
+        control.infoDialog('Trakt server error')
+        pass
 
 
 def markMovieAsWatched(imdb):
