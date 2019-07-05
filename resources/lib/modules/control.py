@@ -87,6 +87,8 @@ def sleep (time):
 
 execute = xbmc.executebuiltin
 
+installAddon = execute('InstallAddon()')
+
 skin = xbmc.getSkinDir()
 
 player = xbmc.Player()
@@ -308,12 +310,15 @@ def getCurrentViewId():
     win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
     return str(win.getFocusId())
 
+
 def refresh():
     return execute('Container.Refresh')
+
 
 def busy():
     if int(getKodiVersion()) >= 18: return execute('ActivateWindow(busydialognocancel)')
     else: return execute('ActivateWindow(busydialog)')
+
 
 def idle():
     if int(getKodiVersion()) >= 18: return execute('Dialog.Close(busydialognocancel)')
@@ -323,10 +328,20 @@ def idle():
 def queueItem():
     return execute('Action(Queue)')
 
+
 def metadataClean(metadata): # Filter out non-existing/custom keys. Otherise there are tons of errors in Kodi 18 log.
     if metadata == None: return metadata
     allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink', 'top250', 'setid', 'tracknumber', 'rating', 'userrating', 'watched', 'playcount', 'overlay', 'cast', 'castandrole', 'director', 'mpaa', 'plot', 'plotoutline', 'title', 'originaltitle', 'sorttitle', 'duration', 'studio', 'tagline', 'writer', 'tvshowtitle', 'premiered', 'status', 'set', 'setoverview', 'tag', 'imdbnumber', 'code', 'aired', 'credits', 'lastplayed', 'album', 'artist', 'votes', 'path', 'trailer', 'dateadded', 'mediatype', 'dbid']
     return {k: v for k, v in metadata.iteritems() if k in allowed}
 
+
 def getKodiVersion():
     return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
+
+
+def installAddon(addonId):
+    addonPath = os.path.join(xbmc.translatePath('special://home/addons'), addonId)
+    if not os.path.exists(addonPath)==True:
+        xbmc.executebuiltin('InstallAddon(%s)' % (addonId))
+    else:
+        infoDialog('{0} is already installed'.format(addonId), sound=True)
