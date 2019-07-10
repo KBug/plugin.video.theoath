@@ -19,7 +19,6 @@
 
 
 import urlparse,sys,urllib
-from resources.lib.modules import control
 import xbmcgui
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
@@ -67,7 +66,11 @@ windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
 if action == None:
     from resources.lib.indexers import navigator
     from resources.lib.modules import cache
+    from resources.lib.modules import control
     cache.cache_version_check()
+    if control.setting('startup.sync.trakt.status') == 'true':
+        from resources.lib.modules import trakt
+        trakt.syncTraktStatus()
     navigator.navigator().root()
 
 elif action == "furkNavigator":
@@ -311,15 +314,19 @@ elif action == 'episodeUserlists':
     episodes.episodes().userlists()
 
 elif action == 'refresh':
+    from resources.lib.modules import control
     control.refresh()
 
 elif action == 'queueItem':
+    from resources.lib.modules import control
     control.queueItem()
 
 elif action == 'openSettings':
+    from resources.lib.modules import control
     control.openSettings(query)
 
 elif action == 'artwork':
+    from resources.lib.modules import control
     control.artwork()
 
 elif action == 'addView':
@@ -355,13 +362,28 @@ elif action == 'smuSettings':
     except: pass
     resolveurl.display_settings()
 
-elif action == 'openscrapersettings':
-    control.openSettings('0.0', 'script.module.openscrapers')
-
 elif action == 'oathscrapersettings':
+    from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.oathscrapers')
 
+elif action == 'installOpenscrapers':
+    from resources.lib.modules import control
+    control.installAddon('script.module.openscrapers')
+    control.sleep(200)
+    control.refresh()
+
+elif action == 'openscrapersettings':
+    from resources.lib.modules import control
+    control.openSettings('0.0', 'script.module.openscrapers')
+
+elif action == 'installOrion':
+    from resources.lib.modules import control
+    control.installAddon('script.module.orion')
+    control.sleep(200)
+    control.refresh()
+
 elif action == 'orionsettings':
+    from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.orion')
 
 elif action == 'download':
@@ -372,6 +394,7 @@ elif action == 'download':
     except: pass
 
 elif action == 'play':
+    from resources.lib.modules import control
     control.busy()
     from resources.lib.modules import sources
     sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
@@ -414,6 +437,7 @@ elif action == 'random':
     from random import randint
     import json
     try:
+        from resources.lib.modules import control
         rand = randint(1,len(rlist))-1
         for p in ['title','year','imdb','tvdb','season','episode','tvshowtitle','premiered','select']:
             if rtype == "show" and p == "tvshowtitle":
@@ -432,6 +456,7 @@ elif action == 'random':
             except: pass
         control.execute('RunPlugin(%s)' % r)
     except:
+        from resources.lib.modules import control
         control.infoDialog(control.lang(32537).encode('utf-8'), time=8000)
 
 elif action == 'movieToLibrary':
@@ -465,3 +490,11 @@ elif action == 'updateLibrary':
 elif action == 'service':
     from resources.lib.modules import libtools
     libtools.libepisodes().service()
+
+elif action == 'syncTraktStatus':
+    from resources.lib.modules import trakt
+    trakt.syncTraktStatus()
+
+elif action == 'changelog':
+    from resources.lib.modules import changelog
+    changelog.get()	

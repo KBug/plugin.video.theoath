@@ -31,7 +31,7 @@ from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,json,urllib,urlparse,datetime,xbmc
+import os,sys,re,json,urllib,urlparse,datetime
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -42,7 +42,7 @@ class movies:
         self.list = []
 
         self.imdb_link = 'https://www.imdb.com'
-        self.trakt_link = 'http://api.trakt.tv'
+        self.trakt_link = 'https://api.trakt.tv'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
         self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
@@ -55,7 +55,7 @@ class movies:
         self.lang = control.apiLanguage()['trakt']
         self.hidecinema = control.setting('hidecinema')
 
-        self.search_link = 'http://api.trakt.tv/search/movie?limit=20&page=1&query='
+        self.search_link = 'https://api.trakt.tv/search/movie?limit=20&page=1&query='
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
         self.tm_art_link = 'http://api.themoviedb.org/3/movie/%s/images?api_key=%s&language=en-US&include_image_language=en,%s,null' % ('%s', self.tm_user, self.lang)
@@ -87,15 +87,15 @@ class movies:
             self.boxoffice_link = 'https://www.imdb.com/search/title?title_type=movie,tvMovie&production_status=released&sort=boxoffice_gross_us,desc&count=40&start=1'
 
         self.added_link  = 'https://www.imdb.com/search/title?title_type=movie,tvMovie&languages=en&num_votes=500,&production_status=released&release_date=%s,%s&sort=release_date,desc&count=20&start=1' % (self.year_date, self.today_date)
-        self.trending_link = 'http://api.trakt.tv/movies/trending?limit=40&page=1'
-        self.traktlists_link = 'http://api.trakt.tv/users/me/lists'
-        self.traktlikedlists_link = 'http://api.trakt.tv/users/likes/lists?limit=1000000'
-        self.traktlist_link = 'http://api.trakt.tv/users/%s/lists/%s/items'
-        self.traktcollection_link = 'http://api.trakt.tv/users/me/collection/movies'
-        self.traktwatchlist_link = 'http://api.trakt.tv/users/me/watchlist/movies'
-        self.traktfeatured_link = 'http://api.trakt.tv/recommendations/movies?limit=40'
-        self.trakthistory_link = 'http://api.trakt.tv/users/me/history/movies?limit=40&page=1'
-        self.onDeck_link = 'http://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
+        self.trending_link = 'https://api.trakt.tv/movies/trending?limit=40&page=1'
+        self.traktlists_link = 'https://api.trakt.tv/users/me/lists'
+        self.traktlikedlists_link = 'https://api.trakt.tv/users/likes/lists?limit=1000000'
+        self.traktlist_link = 'https://api.trakt.tv/users/%s/lists/%s/items'
+        self.traktcollection_link = 'https://api.trakt.tv/users/me/collection/movies'
+        self.traktwatchlist_link = 'https://api.trakt.tv/users/me/watchlist/movies'
+        self.traktfeatured_link = 'https://api.trakt.tv/recommendations/movies?limit=40'
+        self.trakthistory_link = 'https://api.trakt.tv/users/me/history/movies?limit=40&page=1'
+        self.onDeck_link = 'https://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
         self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=modified&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie&start=1'
         self.imdblist2_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie&start=1'
@@ -231,18 +231,18 @@ class movies:
 ################# /Poseidon Playlists 2 ####################
 
 ################# Movie Mosts ####################
-        self.played1_link = 'http://api.trakt.tv/movies/played/weekly?limit=40&page=1'
-        self.played2_link = 'http://api.trakt.tv/movies/played/monthly?limit=40&page=1'
-        self.played3_link = 'http://api.trakt.tv/movies/played/yearly?limit=40&page=1'
-        self.played4_link = 'http://api.trakt.tv/movies/played/all?limit=40&page=1'
-        self.collected1_link = 'http://api.trakt.tv/movies/collected/weekly?limit=40&page=1'
-        self.collected2_link = 'http://api.trakt.tv/movies/collected/monthly?limit=40&page=1'
-        self.collected3_link = 'http://api.trakt.tv/movies/collected/yearly?limit=40&page=1'
-        self.collected4_link = 'http://api.trakt.tv/movies/collected/all?limit=40&page=1'
-        self.watched1_link = 'http://api.trakt.tv/movies/watched/weekly?limit=40&page=1'
-        self.watched2_link = 'http://api.trakt.tv/movies/watched/monthly?limit=40&page=1'
-        self.watched3_link = 'http://api.trakt.tv/movies/watched/yearly?limit=40&page=1'
-        self.watched4_link = 'http://api.trakt.tv/movies/watched/all?limit=40&page=1'
+        self.played1_link = 'https://api.trakt.tv/movies/played/weekly?limit=40&page=1'
+        self.played2_link = 'https://api.trakt.tv/movies/played/monthly?limit=40&page=1'
+        self.played3_link = 'https://api.trakt.tv/movies/played/yearly?limit=40&page=1'
+        self.played4_link = 'https://api.trakt.tv/movies/played/all?limit=40&page=1'
+        self.collected1_link = 'https://api.trakt.tv/movies/collected/weekly?limit=40&page=1'
+        self.collected2_link = 'https://api.trakt.tv/movies/collected/monthly?limit=40&page=1'
+        self.collected3_link = 'https://api.trakt.tv/movies/collected/yearly?limit=40&page=1'
+        self.collected4_link = 'https://api.trakt.tv/movies/collected/all?limit=40&page=1'
+        self.watched1_link = 'https://api.trakt.tv/movies/watched/weekly?limit=40&page=1'
+        self.watched2_link = 'https://api.trakt.tv/movies/watched/monthly?limit=40&page=1'
+        self.watched3_link = 'https://api.trakt.tv/movies/watched/yearly?limit=40&page=1'
+        self.watched4_link = 'https://api.trakt.tv/movies/watched/all?limit=40&page=1'
 ################# /Movie Mosts ####################
 
     def get(self, url, idx=True, create_directory=True):
@@ -271,6 +271,10 @@ class movies:
             elif u in self.trakt_link and self.search_link in url:
                 self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
                 if idx == True: self.worker(level=0)
+
+            elif u in self.trakt_link and '/sync/playback/' in url:
+                self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+                if idx == True: self.worker()
 
             elif u in self.trakt_link:
                 self.list = cache.get(self.trakt_list, 24, url, self.trakt_user)
@@ -350,7 +354,7 @@ class movies:
 
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
-            dbcur.execute("DELETE FROM movies WHERE term = '%s'" % q)
+            dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
             dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q))
             dbcon.commit()
             dbcur.close()
@@ -372,7 +376,7 @@ class movies:
 
             dbcon = database.connect(control.searchFile)
             dbcur = dbcon.cursor()
-            dbcur.execute("DELETE FROM movies WHERE term = '%s'" % q)
+            dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
             dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
             dbcon.commit()
             dbcur.close()

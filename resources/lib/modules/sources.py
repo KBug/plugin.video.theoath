@@ -21,7 +21,8 @@
 import sys,re,json,urllib,urlparse,random,datetime,time
 
 import oathscrapers
-import openscrapers
+try: import openscrapers
+except: pass
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -240,7 +241,19 @@ class sources:
                     w = workers.Thread(self.sourcesResolve, items[i])
                     w.start()
 
-                    offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
+                    #offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
+                    if items[i].get('debrid').lower() == 'real-debrid':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'alldebrid':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'premiumize.me':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'linksnappy':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
+
+                    if items[i].get('source') in self.hostcapDict: offset = 60 * 2
+                    elif items[i].get('source').lower() == 'torrent' and no_skip: offset = float('inf')
+                    else: offset = 0
 
                     m = ''
 
@@ -743,6 +756,20 @@ class sources:
             pass
 
 
+    def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
+        uniqueURLs = set()
+        for source in sources:
+            url = source['url']
+            if isinstance(url, basestring):
+                if url not in uniqueURLs:
+                    uniqueURLs.add(url)
+                    yield source # Yield the unique source.
+                else:
+                    pass # Ignore duped sources.
+            else:
+                yield source # Always yield non-string url sources.
+
+
     def sourcesFilter(self):
 
         provider = control.setting('hosts.sort.provider')
@@ -764,18 +791,30 @@ class sources:
         if provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
-        for i in self.sources:
-            if 'checkquality' in i and i['checkquality'] == True:
-                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
+#        for i in self.sources:
+#            if 'checkquality' in i and i['checkquality'] == True:
+#                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
         local = [i for i in self.sources if 'local' in i and i['local'] == True]
         for i in local: i.update({'language': self._getPrimaryLang() or 'en'})
         self.sources = [i for i in self.sources if not i in local]
 
-        filter = []
-        filter += [i for i in self.sources if i['direct'] == True]
-        filter += [i for i in self.sources if i['direct'] == False]
-        self.sources = filter
+#        filter = []
+#        filter += [i for i in self.sources if i['direct'] == True]
+#        filter += [i for i in self.sources if i['direct'] == False]
+#        self.sources = filter
+
+        ''' Filter-out duplicate links'''
+        try:
+            if control.setting('remove.dups') == 'true':
+                self.sources2 = list(self.uniqueSourcesGen(self.sources))
+                dupes = int(len(self.sources) - len(self.sources2))
+                control.infoDialog(control.lang(32089).encode('utf-8').format(dupes), sound=True, icon='INFO')
+            else:
+                self.sources
+        except:
+            self.sources
+        '''END'''
 
         filter = []
 
@@ -783,8 +822,8 @@ class sources:
             valid_hoster = set([i['source'] for i in self.sources])
             valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
 
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if str(i['url']).startswith('magnet:')]
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in str(i['url'])]
+            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
         if debrid_only == 'false' or  debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
@@ -859,8 +898,13 @@ class sources:
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
 
+            if d.lower() == 'alldebrid': d = 'AD'
+            if d.lower() == 'debrid-link.fr': d = 'DL.FR'
+            if d.lower() == 'linksnappy': d = 'LS'
+            if d.lower() == 'megadebrid': d = 'MD'
+            if d.lower() == 'premiumize.me': d = 'PM'
             if d.lower() == 'real-debrid': d = 'RD'
-            elif d.lower() == 'premiumize.me': d = 'PM'
+            if d.lower() == 'zevera': d = 'ZVR'
 
 
             label = '%02d | ' % int(i+1)
@@ -904,7 +948,7 @@ class sources:
             call = [i[1] for i in self.sourceDict if i[0] == provider][0]
             u = url = call.resolve(url)
 
-            if url == None or (not '://' in str(url) and not local and 'magnet:' not in str(url)): raise Exception()
+            if url == None or (not '://' in url and not local and 'magnet:' not in url): raise Exception()
 
             if not local:
                 url = url[8:] if url.startswith('stack:') else url
@@ -985,6 +1029,19 @@ class sources:
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
+                    if items[i].get('debrid').lower() == 'real-debrid':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'alldebrid':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'premiumize.me':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
+                    if items[i].get('debrid').lower() == 'linksnappy':
+                        no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
+
+                    if items[i].get('source') in self.hostcapDict: offset = 60 * 2
+                    elif items[i].get('source').lower() == 'torrent' and no_skip: offset = float('inf')
+                    else: offset = 0
+
                     m = ''
 
                     for x in range(3600):
@@ -996,10 +1053,10 @@ class sources:
 
                         k = control.condVisibility('Window.IsActive(virtualkeyboard)')
                         if k: m += '1'; m = m[-1]
-                        if (w.is_alive() == False or x > 30) and not k: break
+                        if (w.is_alive() == False or x > 30 + offset) and not k: break
                         k = control.condVisibility('Window.IsActive(yesnoDialog)')
                         if k: m += '1'; m = m[-1]
-                        if (w.is_alive() == False or x > 30) and not k: break
+                        if (w.is_alive() == False or x > 30 + offset) and not k: break
                         time.sleep(0.5)
 
 
@@ -1134,14 +1191,20 @@ class sources:
 
         self.metaProperty = 'plugin.video.theoath.container.meta'
 
-        scraperSetting = control.setting('module.provider')
+        if control.condVisibility('System.HasAddon(script.module.openscrapers)'):
+            scraperSetting = control.setting('module.provider')
+        else:
+            scraperSetting = control.setting('module.provider.alt')
 
-        from openscrapers import sources
-        sourceDir1 = sources()
         from resources.lib.sources import sources
         sourceDir2 = sources()
         from oathscrapers import sources
         sourceDir3 = sources()
+        try:
+            from openscrapers import sources
+            sourceDir1 = sources()
+        except:
+            pass
 
         try:
             if scraperSetting == 'TheOath Scrapers':
@@ -1149,7 +1212,7 @@ class sources:
                 self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
             elif scraperSetting == 'Open Scrapers':
                 self.sourceDict = sourceDir1
-                self.module_name = 'OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'OpenScrapers:'
             elif scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in providers:'
@@ -1158,10 +1221,11 @@ class sources:
                 self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
             elif scraperSetting == 'Open + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Built-in + OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'Built-in + OpenScrapers:'
             else:
-                self.sourceDict = sourceDir1
-                self.module_name = 'OpenScrapers (' + str(control.addon('script.module.openscrapers').getSetting('module.provider')) + ' module):'
+                self.sourceDict = sourceDir3
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+                control.setSetting('module.provider', 'TheOath Scrapers')
         except: return
 
         try:
@@ -1172,11 +1236,14 @@ class sources:
         except:
             self.hostDict = []
 
-        self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net']
+        self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
 
-        self.hostcapDict = ['hugefiles.net', 'kingfiles.net', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'vidup.me', 'streamin.to', 'torba.se']
+        self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
+                            'vev.io', 'vidup.me', 'vidup.tv', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
+                            'hugefiles.net', 'thevideo.me', 'streamin.to']
 
-        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptobox.com', 'uptostream.com', 'xvidstage.com', 'streamango.com']
+        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
+                           'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com']
 
         self.hostblockDict = []
 

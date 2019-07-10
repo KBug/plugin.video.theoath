@@ -45,7 +45,7 @@ class player(xbmc.Player):
             self.content = 'movie' if season == None or episode == None else 'episode'
 
             self.title = title ; self.year = year
-            self.name = urllib.quote_plus(title) + urllib.quote_plus(' (%s)' % year) if self.content == 'movie' else urllib.quote_plus(title) + urllib.quote_plus(' S%02dE%02d' % (int(season), int(episode)))
+            self.name = urllib.quote_plus(title) + urllib.quote_plus(' (%s)' % year) if self.content == 'movie' else urllib.quote_plus(title) + urllib.quote_plus(' S%01dE%01d' % (int(season), int(episode)))
             self.name = urllib.unquote_plus(self.name)
             self.season = '%01d' % int(season) if self.content == 'episode' else None
             self.episode = '%01d' % int(episode) if self.content == 'episode' else None
@@ -247,32 +247,33 @@ class player(xbmc.Player):
 
 
     def idleForPlayback(self):
-        for i in range(0, 200):
-            if control.condVisibility('Window.IsActive(busydialog)') == 1: control.idle()
-            else: break
-            control.sleep(100)
+        for i in range(0, 400):
+            if control.condVisibility('Window.IsActive(busydialog)') == 1 or control.condVisibility('Window.IsActive(busydialognocancel)') == 1:
+                control.sleep(100)
+            else:
+                control.execute('Dialog.Close(all,true)')
+                break
 
 
     def onAVStarted(self):
-        try:
-            if int(control.getKodiVersion()) >= 18:
-                control.execute('Dialog.Close(all,true)')
-                if not self.offset == '0': self.seekTime(float(self.offset))
-                subtitles().get(self.name, self.imdb, self.season, self.episode)
-                self.idleForPlayback()
-        except:
-            pass
-
-    def onPlayBackStarted(self):
         control.execute('Dialog.Close(all,true)')
         if not self.offset == '0': self.seekTime(float(self.offset))
         subtitles().get(self.name, self.imdb, self.season, self.episode)
-        self.idleForPlayback()
+        self.idleForPlayback
+
+    def onPlayBackStarted(self):
+        if int(control.getKodiVersion()) < 18:
+            control.execute('Dialog.Close(all,true)')
+            if not self.offset == '0': self.seekTime(float(self.offset))
+            subtitles().get(self.name, self.imdb, self.season, self.episode)
+            self.idleForPlayback()
+        else:
+            self.onAVStarted()
 
     def onPlayBackStopped(self):
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
         if control.setting('crefresh') == 'true':
-            xbmc.executebuiltin('Container.Refresh')
+            control.refresh()
 
         try:
             if (self.currentTime / self.totalTime) >= .90:
@@ -283,7 +284,7 @@ class player(xbmc.Player):
         self.libForPlayback()
         self.onPlayBackStopped()
         if control.setting('crefresh') == 'true':
-            xbmc.executebuiltin('Container.Refresh')
+            control.refresh()
 
 
 class subtitles:
@@ -371,14 +372,13 @@ class bookmarks:
         offset = '0'
 
         if control.setting('bookmarks') == 'true':
-            if control.setting('bookmarks.trakt') == 'true':
+            if control.setting('rersume.source') == '1':
                 try:
                     from resources.lib.modules import trakt
 
                     if not episode is None:
 
                         # Looking for a Episode progress
-
                         traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
                         for i in traktInfo:
                             if imdb == i['show']['ids']['imdb']:
@@ -386,20 +386,24 @@ class bookmarks:
                                 if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
                                     # Calculating Offset to seconds
                                     offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
+                                    seekable = 2 < i['progress'] < 92
+                                    if not seekable: offset = '0'
                     else:
 
                         # Looking for a Movie Progress
-                        traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
+                        traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/movies?extended=full')
                         for i in traktInfo:
                             if imdb == i['movie']['ids']['imdb']:
                                 # Calculating Offset to seconds
                                 offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
+                                seekable = 2 < i['progress'] < 92
+                                if not seekable: offset = '0'
 
-                    if control.setting('bookmarks.auto') == 'false':
+                    if control.setting('bookmarks.auto') == 'false' and seekable:
                         try:
-                            yes = control.dialog.contextmenu(["Resume", control.lang(32501).encode('utf-8'), ])
+                            yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
                         except:
-                            yes = control.yesnoDialog("Resume", '', '', str(name), control.lang(32503).encode('utf-8'),
+                            yes = control.yesnoDialog("Resume (Trakt)", '', '', str(name), control.lang(32503).encode('utf-8'),
                                                       control.lang(32501).encode('utf-8'))
                         if yes: offset = '0'
 

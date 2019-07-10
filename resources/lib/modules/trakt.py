@@ -31,7 +31,7 @@ from resources.lib.modules import control
 from resources.lib.modules import log_utils
 from resources.lib.modules import utils
 
-BASE_URL = 'http://api.trakt.tv'
+BASE_URL = 'https://api.trakt.tv'
 V2_API_KEY = control.setting('trakt.client_id')
 CLIENT_SECRET = control.setting('trakt.client_secret')
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
@@ -355,6 +355,16 @@ def syncSeason(imdb):
         indicators = ['%01d' % int(i[0]) for i in indicators if not False in i[1]]
         return indicators
     except:
+        pass
+
+
+def syncTraktStatus():
+    try:
+        cachesyncMovies()
+        cachesyncTVShows()
+        control.infoDialog(control.lang(32092).encode('utf-8'))
+    except:
+        control.infoDialog('Trakt server error')
         pass
 
 

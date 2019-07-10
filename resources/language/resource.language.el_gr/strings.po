@@ -383,6 +383,34 @@ msgctxt "#32088"
 msgid "Built-in Providers"
 msgstr "Ενσωματωμένοι Πάροχοι"
 
+msgctxt "#32089"
+msgid "{0} duplicate links removed"
+msgstr "{0} διπλότυπα links αφαιρέθηκαν"
+
+msgctxt "#32090"
+msgid "Filter-out duplicate links"
+msgstr "Φιλτράρισμα διπλότυπων links"
+
+msgctxt "#32091"
+msgid "Sync with Trakt watched status on add-on startup"
+msgstr "Συγχρονισμός με Trakt watched status στην εκκίνηση του πρόσθετου"
+
+msgctxt "#32092"
+msgid "TheOath <=> Trakt Synced"
+msgstr "Συγχρονισμός TheOath <=> Trakt επιτυχής"
+
+msgctxt "#32093"
+msgid "[B]Trakt[/B] : Sync Watched Status"
+msgstr "[B]Trakt[/B] : Συγχρονισμός κατάστασης προβληθέντων"
+
+msgctxt "#32094"
+msgid "Continue watching..."
+msgstr "Συνέχιση παρακολούθησης..."
+
+msgctxt "#32095"
+msgid "Resume point source"
+msgstr "Πηγή σημείου συνέχισης"
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr "Ενεργό"
@@ -404,8 +432,8 @@ msgid "ID"
 msgstr "ID"
 
 msgctxt "#32306"
-msgid "Authorise"
-msgstr "Εξουσιοδότηση"
+msgid "[B]Authorise[/B]"
+msgstr "[B]Εξουσιοδότηση[/B]"
 
 msgctxt "#32307"
 msgid "Password"
@@ -626,6 +654,10 @@ msgstr "Γλώσσα Παρόχων"
 msgctxt "#32372"
 msgid "When playback ends..."
 msgstr "Όταν τελειώσει η αναπαραγωγή..."
+
+msgctxt "#32373"
+msgid "Refresh watched status"
+msgstr "Ανανέωση κατάστασης προβολής"
 
 msgctxt "#32401"
 msgid "No stream available"
