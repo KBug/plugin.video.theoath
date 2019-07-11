@@ -400,7 +400,7 @@ msgid "TheOath <=> Trakt Synced"
 msgstr ""
 
 msgctxt "#32093"
-msgid "[B]Trakt[/B] : Sync Watched Status"
+msgid "[B]TRAKT[/B] : Sync Watched Status"
 msgstr ""
 
 msgctxt "#32094"

@@ -87,8 +87,6 @@ def sleep (time):
 
 execute = xbmc.executebuiltin
 
-installAddon = execute('InstallAddon()')
-
 skin = xbmc.getSkinDir()
 
 player = xbmc.Player()
