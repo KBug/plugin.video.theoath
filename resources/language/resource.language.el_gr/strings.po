@@ -400,8 +400,8 @@ msgid "TheOath <=> Trakt Synced"
 msgstr "Συγχρονισμός TheOath <=> Trakt επιτυχής"
 
 msgctxt "#32093"
-msgid "[B]Trakt[/B] : Sync Watched Status"
-msgstr "[B]Trakt[/B] : Συγχρονισμός κατάστασης προβληθέντων"
+msgid "[B]TRAKT[/B] : Sync Watched Status"
+msgstr "[B]TRAKT[/B] : Συγχρονισμός κατάστασης προβληθέντων"
 
 msgctxt "#32094"
 msgid "Continue watching..."
