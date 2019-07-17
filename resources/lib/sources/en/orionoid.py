@@ -35,7 +35,6 @@ class source:
         self.cachePath = os.path.join(xbmc.translatePath(control.addonInfo('profile').decode('utf-8')), 'orion.cache')
         self.cacheData = None
         self.resolvers = None
-        self.settingInfo = int(control.setting('provider.orionoid.info'))
         self.settingStreamtype = int(control.setting('orionoid.streamtype'))
 
         if self.settingStreamtype == 0: self.StreamType = Orion.StreamHoster

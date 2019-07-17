@@ -39,7 +39,6 @@
         <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
         <setting id="debrid.only" type="bool" label="32621" default="false" />
         <setting id="remove.dups" type="bool" label="32090" default="true" />
-        <setting type="text" label="[I]EXPERIMENTAL[/I] - might also cause slowness on low-end devices" enable="false" subsetting="true" />
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />
         <setting type="lsep" label="32343" />
         <setting id="bookmarks" type="bool" label="32344" default="true" />
