@@ -1,4 +1,12 @@
-[B][COLOR gold]v1.7.4[/COLOR][/B]
+[B][COLOR gold]v1.8.0[/COLOR][/B]
+- Sources appearance modifications [I](only tested with the default skin)[/I] :
+    * added option for different color for the extra source infos (rip type, codec, size etc)
+    * added option for double-line source appearance (extra source info text gets splited)
+    * added simple source view option: lacks extra source info and coloring
+       (ideal for non-debrid users - free hosters do not provide reliable infos anyway)
+- Corresponding colored text on color selection settings (idea taken from Seren)
+
+[B][COLOR gold]v1.7.8[/COLOR][/B]
 - Fixed orionoid scraper (thx orion team for pointing out the bug)
 
 [B][COLOR gold]v1.7.4[/COLOR][/B]

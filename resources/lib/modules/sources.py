@@ -862,7 +862,7 @@ class sources:
 
         filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict and not 'debrid' in i]
         self.sources = [i for i in self.sources if not i in filter]
-        
+
         multi = [i['language'] for i in self.sources]
         multi = [x for y,x in enumerate(multi) if x not in multi[:y]]
         multi = True if len(multi) > 1 else False
@@ -872,11 +872,20 @@ class sources:
 
         self.sources = self.sources[:4000]
 
-        prem_identify = control.setting('prem.identify')
-        if prem_identify == '': prem_identify = 'blue'
-        prem_identify = self.getPremColor(prem_identify)
 
         for i in range(len(self.sources)):
+
+            try: d = self.sources[i]['debrid']
+            except: d = self.sources[i]['debrid'] = ''
+
+            prem_identify = control.setting('prem.identify')
+            if d == '': prem_identify = 'nocolor'
+            if prem_identify == '': prem_identify = 'gold'
+            prem_identify = self.getPremColor(prem_identify)
+
+            sec_identify = control.setting('sec.identify')
+            if sec_identify == '': sec_identify = 'cyan'
+            sec_identify = self.getPremColor(sec_identify)
 
             t = source_utils.getFileType(self.sources[i]['url'])
 
@@ -895,8 +904,6 @@ class sources:
             try: f = (' | '.join(['[I]%s[/I]' % info.strip() for info in self.sources[i]['info'].split('|')]))
             except: f = ''
 
-            try: d = self.sources[i]['debrid']
-            except: d = self.sources[i]['debrid'] = ''
 
             if d.lower() == 'alldebrid': d = 'AD'
             if d.lower() == 'debrid-link.fr': d = 'DL.FR'
@@ -907,24 +914,30 @@ class sources:
             if d.lower() == 'zevera': d = 'ZVR'
 
 
-            label = '%02d | ' % int(i+1)
-            if multi == True and not l == 'en': label += '[B]%s[/B] | ' % l
+            if int(control.setting('linesplit')) == 1:
+                label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
+                if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
 
-            if not d == '':
-                label += '%s | [B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (d, q, p, s, t, f)
+                label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR]\n      [COLOR %s][I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
+
+                label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('\n      [COLOR %s][I][/I] | [/COLOR]' % sec_identify, '\n ').replace('[I][/I] | %s' % f, '%s' % f)
+
+            elif int(control.setting('linesplit')) == 2:
+                label = '%02d' % int(i+1)
+                if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+
+                label += ' | %s | [B]%s[/B] | %s | [B]%s[/B]' % (d, q, p, s)
+                label = label.replace(' |  |', ' |')
+
             else:
-                label += '[B]%s[/B] | %s | [B]%s[/B] | [I]%s[/I] | %s' % (q, p, s, t, f)
+                label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
+                if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
 
-            label = label.replace('| 0 |', '|').replace(' | [I][/I]', '')
-            label = re.sub('\[I\]\s+\[/I\]', ' ', label)
-            label = re.sub('\|\s+\|', '|', label)
-            label = re.sub('\|(?:\s+|)$', '', label)
+                label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][COLOR %s] | [I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
 
-            if d: 
-                if not prem_identify == 'nocolor':
-                    self.sources[i]['label'] = ('[COLOR %s]' % (prem_identify)) + label.upper() + '[/COLOR]'
-                else: self.sources[i]['label'] = label.upper()
-            else: self.sources[i]['label'] = label.upper()
+                label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('[COLOR %s] | [/COLOR]' % sec_identify, '')
+
+            self.sources[i]['label'] = '[UPPERCASE]' + label + '[/UPPERCASE]'
 
         try: 
             if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
@@ -1275,6 +1288,6 @@ class sources:
         elif n == '6': n = 'gold'
         elif n == '7': n = 'magenta'
         elif n == '8': n = 'yellowgreen'
-        elif n == '9': n = 'nocolor'
-        else: n == 'blue'
+        elif n == '9': n = ''
+        else: n = ''
         return n

@@ -948,39 +948,39 @@ msgid "Premium Source Identifier Color"
 msgstr ""
 
 msgctxt "#32589"
-msgid "Blue"
+msgid "[COLOR=blue]Blue[/COLOR]"
 msgstr ""
 
 msgctxt "#32590"
-msgid "Red"
+msgid "[COLOR=red]Red[/COLOR]"
 msgstr ""
 
 msgctxt "#32591"
-msgid "Yellow"
+msgid "[COLOR=yellow]Yellow[/COLOR]"
 msgstr ""
 
 msgctxt "#32592"
-msgid "Deep Pink"
+msgid "[COLOR=deeppink]Deep Pink[/COLOR]"
 msgstr ""
 
 msgctxt "#32593"
-msgid "Cyan"
+msgid "[COLOR=cyan]Cyan[/COLOR]"
 msgstr ""
 
 msgctxt "#32594"
-msgid "Lawn Green"
+msgid "[COLOR=lawngreen]Lawn Green[/COLOR]"
 msgstr ""
 
 msgctxt "#32595"
-msgid "Gold"
+msgid "[COLOR=gold]Gold[/COLOR]"
 msgstr ""
 
 msgctxt "#32596"
-msgid "Magenta"
+msgid "[COLOR=magenta]Magenta[/COLOR]"
 msgstr ""
 
 msgctxt "#32597"
-msgid "Yellow Green"
+msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
 msgstr ""
 
 msgctxt "#32598"
@@ -1095,6 +1095,26 @@ msgctxt "#32625"
 msgid "TMDb"
 msgstr ""
 
+msgctxt "#32626"
+msgid "Secondary Color"
+msgstr ""
+
 msgctxt "#32627"
 msgid "IMDb"
+msgstr ""
+
+msgctxt "#32628"
+msgid "Source selection appearance"
+msgstr ""
+
+msgctxt "#32629"
+msgid "Single line"
+msgstr ""
+
+msgctxt "#32630"
+msgid "Double line"
+msgstr ""
+
+msgctxt "#32631"
+msgid "Simple"
 msgstr ""
