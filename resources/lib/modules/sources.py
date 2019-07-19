@@ -232,7 +232,7 @@ class sources:
                 try:
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -878,14 +878,13 @@ class sources:
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
 
-            prem_identify = control.setting('prem.identify')
-            if d == '': prem_identify = 'nocolor'
+            prem_color = control.setting('prem.identify')
+            prem_identify = self.getPremColor(prem_color)
             if prem_identify == '': prem_identify = 'gold'
-            prem_identify = self.getPremColor(prem_identify)
 
-            sec_identify = control.setting('sec.identify')
+            sec_color = control.setting('sec.identify')
+            sec_identify = self.getPremColor(sec_color)
             if sec_identify == '': sec_identify = 'cyan'
-            sec_identify = self.getPremColor(sec_identify)
 
             t = source_utils.getFileType(self.sources[i]['url'])
 
@@ -915,25 +914,35 @@ class sources:
 
 
             if int(control.setting('linesplit')) == 1:
-                label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
-                if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+                if not d == '':
+                    label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
+                    if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR]\n      [COLOR %s][I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
 
-                label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR]\n      [COLOR %s][I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
+                else:
+                    label = '%02d' % int(i+1)
+                    if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+                    label += ' | [B]%s[/B] | %s | [B]%s[/B]\n      [COLOR %s][I]%s[/I] | %s[/COLOR]' % (q, p, s, sec_identify, t, f)
 
-                label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('\n      [COLOR %s][I][/I] | [/COLOR]' % sec_identify, '\n ').replace('[I][/I] | %s' % f, '%s' % f)
+                label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('[I][/I] | ', ' ').replace('[I][/I] | %s' % f, '%s' % f)
 
             elif int(control.setting('linesplit')) == 2:
                 label = '%02d' % int(i+1)
                 if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-
                 label += ' | %s | [B]%s[/B] | %s | [B]%s[/B]' % (d, q, p, s)
+
                 label = label.replace(' |  |', ' |')
 
             else:
-                label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
-                if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+                if not d == '':
+                    label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
+                    if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][COLOR %s] | [I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
 
-                label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][COLOR %s] | [I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
+                else:
+                    label = '%02d' % int(i+1)
+                    if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
+                    label += ' | [B]%s[/B] | %s | [B]%s[/B][COLOR %s] | [I]%s[/I] | %s[/COLOR]' % (q, p, s, sec_identify, t, f)
 
                 label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('[COLOR %s] | [/COLOR]' % sec_identify, '')
 
@@ -1038,7 +1047,7 @@ class sources:
 
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -1288,6 +1297,6 @@ class sources:
         elif n == '6': n = 'gold'
         elif n == '7': n = 'magenta'
         elif n == '8': n = 'yellowgreen'
-        elif n == '9': n = ''
-        else: n = ''
+        elif n == '9': n = 'nocolor'
+        else: n = 'gold'
         return n
