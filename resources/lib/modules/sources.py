@@ -232,7 +232,7 @@ class sources:
                 try:
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n      ', ' |'))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -1047,7 +1047,7 @@ class sources:
 
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n      ', ' |'))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -1147,7 +1147,7 @@ class sources:
         for i in range(len(items)):
             try:
                 if progressDialog.iscanceled(): break
-                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']), str(' '))
+                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n      ', ' |'))
             except:
                 progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -1297,6 +1297,18 @@ class sources:
         elif n == '6': n = 'gold'
         elif n == '7': n = 'magenta'
         elif n == '8': n = 'yellowgreen'
-        elif n == '9': n = 'nocolor'
+        elif n == '9': n = 'white'
+        elif n == '10': n = 'black'
+        elif n == '11': n = 'crimson'
+        elif n == '12': n = 'goldenrod'
+        elif n == '13': n = 'powderblue'
+        elif n == '14': n = 'deepskyblue'
+        elif n == '15': n = 'springgreen'
+        elif n == '16': n = 'darkcyan'
+        elif n == '17': n = 'aquamarine'
+        elif n == '18': n = 'mediumturquoise'
+        elif n == '19': n = 'khaki'
+        elif n == '20': n = 'darkorange'
+        elif n == '21': n = 'none'
         else: n = 'gold'
         return n

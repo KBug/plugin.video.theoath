@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.8.2[/COLOR][/B]
+- Fixed autoplay & cosmetic regressions caused by previous commits
+- Added more color options
+
 [B][COLOR gold]v1.8.0[/COLOR][/B]
 - Sources appearance modifications [I](only tested with the default skin)[/I] :
     * added option for different color for the extra source infos (rip type, codec, size etc)

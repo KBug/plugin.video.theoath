@@ -415,6 +415,94 @@ msgctxt "#32096"
 msgid "Trakt scrobble"
 msgstr ""
 
+msgctxt "#32200"
+msgid "No Color"
+msgstr ""
+
+msgctxt "#32201"
+msgid "[COLOR=blue]Blue[/COLOR]"
+msgstr ""
+
+msgctxt "#32202"
+msgid "[COLOR=red]Red[/COLOR]"
+msgstr ""
+
+msgctxt "#32203"
+msgid "[COLOR=yellow]Yellow[/COLOR]"
+msgstr ""
+
+msgctxt "#32204"
+msgid "[COLOR=deeppink]Deep Pink[/COLOR]"
+msgstr ""
+
+msgctxt "#32205"
+msgid "[COLOR=cyan]Cyan[/COLOR]"
+msgstr ""
+
+msgctxt "#32206"
+msgid "[COLOR=lawngreen]Lawn Green[/COLOR]"
+msgstr ""
+
+msgctxt "#32207"
+msgid "[COLOR=gold]Gold[/COLOR]"
+msgstr ""
+
+msgctxt "#32208"
+msgid "[COLOR=magenta]Magenta[/COLOR]"
+msgstr ""
+
+msgctxt "#32209"
+msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
+msgstr ""
+
+msgctxt "#32210"
+msgid "[COLOR=white]White[/COLOR]"
+msgstr ""
+
+msgctxt "#32211"
+msgid "[COLOR=black]Black[/COLOR]"
+msgstr ""
+
+msgctxt "#32212"
+msgid "[COLOR=crimson]Crimson[/COLOR]"
+msgstr ""
+
+msgctxt "#32213"
+msgid "[COLOR=goldenrod]Goldenrod[/COLOR]"
+msgstr ""
+
+msgctxt "#32214"
+msgid "[COLOR=powderblue]Powderblue[/COLOR]"
+msgstr ""
+
+msgctxt "#32215"
+msgid "[COLOR=deepskyblue]Deepsky Blue[/COLOR]"
+msgstr ""
+
+msgctxt "#32216"
+msgid "[COLOR=springgreen]Spring Green[/COLOR]"
+msgstr ""
+
+msgctxt "#32217"
+msgid "[COLOR=darkcyan]Dark Cyan[/COLOR]"
+msgstr ""
+
+msgctxt "#32218"
+msgid "[COLOR=aquamarine]Aquamarine[/COLOR]"
+msgstr ""
+
+msgctxt "#32219"
+msgid "[COLOR=mediumturquoise]Medium Turquoise[/COLOR]"
+msgstr ""
+
+msgctxt "#32220"
+msgid "[COLOR=khaki]Khaki[/COLOR]"
+msgstr ""
+
+msgctxt "#32221"
+msgid "[COLOR=darkorange]Dark Orange[/COLOR]"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr ""
@@ -945,46 +1033,6 @@ msgstr ""
 
 msgctxt "#32588"
 msgid "Premium Source Identifier Color"
-msgstr ""
-
-msgctxt "#32589"
-msgid "[COLOR=blue]Blue[/COLOR]"
-msgstr ""
-
-msgctxt "#32590"
-msgid "[COLOR=red]Red[/COLOR]"
-msgstr ""
-
-msgctxt "#32591"
-msgid "[COLOR=yellow]Yellow[/COLOR]"
-msgstr ""
-
-msgctxt "#32592"
-msgid "[COLOR=deeppink]Deep Pink[/COLOR]"
-msgstr ""
-
-msgctxt "#32593"
-msgid "[COLOR=cyan]Cyan[/COLOR]"
-msgstr ""
-
-msgctxt "#32594"
-msgid "[COLOR=lawngreen]Lawn Green[/COLOR]"
-msgstr ""
-
-msgctxt "#32595"
-msgid "[COLOR=gold]Gold[/COLOR]"
-msgstr ""
-
-msgctxt "#32596"
-msgid "[COLOR=magenta]Magenta[/COLOR]"
-msgstr ""
-
-msgctxt "#32597"
-msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
-msgstr ""
-
-msgctxt "#32598"
-msgid "No Color"
 msgstr ""
 
 msgctxt "#32599"

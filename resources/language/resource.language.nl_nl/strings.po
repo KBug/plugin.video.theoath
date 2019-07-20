@@ -415,6 +415,94 @@ msgctxt "#32096"
 msgid "Trakt scrobble"
 msgstr "Trakt scrobble"
 
+msgctxt "#32200"
+msgid "No Color"
+msgstr "Geen kleur"
+
+msgctxt "#32201"
+msgid "[COLOR=blue]Blue[/COLOR]"
+msgstr "[COLOR=blue]Blauw[/COLOR]"
+
+msgctxt "#32202"
+msgid "[COLOR=red]Red[/COLOR]"
+msgstr "[COLOR=red]Rood[/COLOR]"
+
+msgctxt "#32203"
+msgid "[COLOR=yellow]Yellow[/COLOR]"
+msgstr "[COLOR=yellow]Geel[/COLOR]"
+
+msgctxt "#32204"
+msgid "[COLOR=deeppink]Deep Pink[/COLOR]"
+msgstr "[COLOR=deeppink]Donker roze[/COLOR]"
+
+msgctxt "#32205"
+msgid "[COLOR=cyan]Cyan[/COLOR]"
+msgstr "[COLOR=cyan]Cyan[/COLOR]"
+
+msgctxt "#32206"
+msgid "[COLOR=lawngreen]Lawn Green[/COLOR]"
+msgstr "[COLOR=lawngreen]Grasgroen[/COLOR]"
+
+msgctxt "#32207"
+msgid "[COLOR=gold]Gold[/COLOR]"
+msgstr "[COLOR=gold]Goud[/COLOR]"
+
+msgctxt "#32208"
+msgid "[COLOR=magenta]Magenta[/COLOR]"
+msgstr "[COLOR=magenta]Magenta[/COLOR]"
+
+msgctxt "#32209"
+msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
+msgstr "[COLOR=yellowgreen]Geel groen[/COLOR]"
+
+msgctxt "#32210"
+msgid "[COLOR=white]White[/COLOR]"
+msgstr "[COLOR=white]Wit[/COLOR]"
+
+msgctxt "#32211"
+msgid "[COLOR=black]Black[/COLOR]"
+msgstr ""
+
+msgctxt "#32212"
+msgid "[COLOR=crimson]Crimson[/COLOR]"
+msgstr ""
+
+msgctxt "#32213"
+msgid "[COLOR=goldenrod]Goldenrod[/COLOR]"
+msgstr ""
+
+msgctxt "#32214"
+msgid "[COLOR=powderblue]Powderblue[/COLOR]"
+msgstr ""
+
+msgctxt "#32215"
+msgid "[COLOR=deepskyblue]Deepsky Blue[/COLOR]"
+msgstr ""
+
+msgctxt "#32216"
+msgid "[COLOR=springgreen]Spring Green[/COLOR]"
+msgstr ""
+
+msgctxt "#32217"
+msgid "[COLOR=darkcyan]Dark Cyan[/COLOR]"
+msgstr ""
+
+msgctxt "#32218"
+msgid "[COLOR=aquamarine]Aquamarine[/COLOR]"
+msgstr ""
+
+msgctxt "#32219"
+msgid "[COLOR=mediumturquoise]Medium Turquoise[/COLOR]"
+msgstr ""
+
+msgctxt "#32220"
+msgid "[COLOR=khaki]Khaki[/COLOR]"
+msgstr ""
+
+msgctxt "#32221"
+msgid "[COLOR=darkorange]Dark Orange[/COLOR]"
+msgstr ""
+
 msgctxt "#32301"
 msgid "Enabled"
 msgstr "Ingeschakeld"
@@ -984,8 +1072,8 @@ msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
 msgstr "[COLOR=yellowgreen]Geel groen[/COLOR]"
 
 msgctxt "#32598"
-msgid "No Color"
-msgstr "Geen kleur"
+msgid "[COLOR=white]White[/COLOR]"
+msgstr "[COLOR=white]Wit[/COLOR]"
 
 msgctxt "#32599"
 msgid "Getting genre information from Trakt"
