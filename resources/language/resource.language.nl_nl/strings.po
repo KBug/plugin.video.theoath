@@ -1035,46 +1035,6 @@ msgctxt "#32588"
 msgid "Premium Source Identifier Color"
 msgstr "Premium bron kleur"
 
-msgctxt "#32589"
-msgid "[COLOR=blue]Blue[/COLOR]"
-msgstr "[COLOR=blue]Blauw[/COLOR]"
-
-msgctxt "#32590"
-msgid "[COLOR=red]Red[/COLOR]"
-msgstr "[COLOR=red]Rood[/COLOR]"
-
-msgctxt "#32591"
-msgid "[COLOR=yellow]Yellow[/COLOR]"
-msgstr "[COLOR=yellow]Geel[/COLOR]"
-
-msgctxt "#32592"
-msgid "[COLOR=deeppink]Deep Pink[/COLOR]"
-msgstr "[COLOR=deeppink]Donker roze[/COLOR]"
-
-msgctxt "#32593"
-msgid "[COLOR=cyan]Cyan[/COLOR]"
-msgstr "[COLOR=cyan]Cyan[/COLOR]"
-
-msgctxt "#32594"
-msgid "[COLOR=lawngreen]Lawn Green[/COLOR]"
-msgstr "[COLOR=lawngreen]Grasgroen[/COLOR]"
-
-msgctxt "#32595"
-msgid "[COLOR=gold]Gold[/COLOR]"
-msgstr "[COLOR=gold]Goud[/COLOR]"
-
-msgctxt "#32596"
-msgid "[COLOR=magenta]Magenta[/COLOR]"
-msgstr "[COLOR=magenta]Magenta[/COLOR]"
-
-msgctxt "#32597"
-msgid "[COLOR=yellowgreen]Yellow Green[/COLOR]"
-msgstr "[COLOR=yellowgreen]Geel groen[/COLOR]"
-
-msgctxt "#32598"
-msgid "[COLOR=white]White[/COLOR]"
-msgstr "[COLOR=white]Wit[/COLOR]"
-
 msgctxt "#32599"
 msgid "Getting genre information from Trakt"
 msgstr "Genre-informatie verkrijgen van Trakt"

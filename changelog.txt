@@ -1,3 +1,10 @@
+[B][COLOR gold]v1.8.3[/COLOR][/B]
+- Dupes checker tweaks:
+    * now using infohash for magnet links instead of url check, so hopefully no more dupes
+      accross torrent providers
+    * fixed bug in dupes filter (thx Gkobu)
+- cfscrape update (no idea who mod'ed it, but props towards them)
+
 [B][COLOR gold]v1.8.2[/COLOR][/B]
 - Fixed autoplay & cosmetic regressions caused by previous commits
 - Added more color options

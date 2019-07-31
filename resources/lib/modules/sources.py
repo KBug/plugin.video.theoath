@@ -759,7 +759,9 @@ class sources:
     def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
         uniqueURLs = set()
         for source in sources:
-            url = source['url']
+            url = str(source['url']).lower()
+            if url.startswith('magnet:'):
+                url = re.findall(r'btih:(.*?)&', url)[0]# parse infohash from magnet and use that instead of url
             if isinstance(url, basestring):
                 if url not in uniqueURLs:
                     uniqueURLs.add(url)
@@ -807,8 +809,9 @@ class sources:
         ''' Filter-out duplicate links'''
         try:
             if control.setting('remove.dups') == 'true':
-                self.sources2 = list(self.uniqueSourcesGen(self.sources))
-                dupes = int(len(self.sources) - len(self.sources2))
+                stotal = len(self.sources)
+                self.sources = list(self.uniqueSourcesGen(self.sources))
+                dupes = int(stotal - len(self.sources))
                 control.infoDialog(control.lang(32089).encode('utf-8').format(dupes), sound=True, icon='INFO')
             else:
                 self.sources
@@ -1267,7 +1270,7 @@ class sources:
         self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
                            'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com']
 
-        self.hostblockDict = []
+        self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv']
 
     def enableAll(self):
         try:
