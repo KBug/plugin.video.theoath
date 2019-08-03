@@ -759,7 +759,7 @@ class sources:
     def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
         uniqueURLs = set()
         for source in sources:
-            url = source['url'].lower()
+            url = str(source['url']).lower()
             if url.startswith('magnet:'):
                 hash = re.findall(r'btih:(\w{40})', url)[0]# parse infohash from magnet and use that instead of url
                 if hash:
@@ -821,6 +821,7 @@ class sources:
             import traceback
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
+            control.infoDialog('Dupes filter failed', sound=True, icon='INFO')
             self.sources
         '''END'''
 
