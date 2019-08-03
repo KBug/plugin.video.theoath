@@ -759,9 +759,11 @@ class sources:
     def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
         uniqueURLs = set()
         for source in sources:
-            url = str(source['url']).lower()
+            url = source['url'].lower()
             if url.startswith('magnet:'):
-                url = re.findall(r'btih:(.*?)&', url)[0]# parse infohash from magnet and use that instead of url
+                hash = re.findall(r'btih:(\w{40})', url)[0]# parse infohash from magnet and use that instead of url
+                if hash:
+                    url = hash
             if isinstance(url, basestring):
                 if url not in uniqueURLs:
                     uniqueURLs.add(url)
@@ -816,6 +818,9 @@ class sources:
             else:
                 self.sources
         except:
+            import traceback
+            failure = traceback.format_exc()
+            log_utils.log('DUP - Exception: ' + str(failure))
             self.sources
         '''END'''
 
@@ -951,7 +956,7 @@ class sources:
 
             self.sources[i]['label'] = '[UPPERCASE]' + label + '[/UPPERCASE]'
 
-        try: 
+        try:
             if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
         except: pass
 
