@@ -1,3 +1,8 @@
+[B][COLOR gold]v1.8.5[/COLOR][/B]
+- Fix episodes thumb appearance in Estuary
+- Append only the bare minimum of metadata on sources directory
+- Various modules updates
+
 [B][COLOR gold]v1.8.3[/COLOR][/B]
 - Dupes checker tweaks:
     * now using infohash for magnet links instead of url check, so hopefully no more dupes

@@ -29,7 +29,7 @@ def get(title):
         pass
     title = re.sub('&#(\d+);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-    title = title.replace('&quot;', '\"').replace('&amp;', '&')
+    title = title.replace('&quot;', '\"').replace('&amp;', '&').replace('–', '-')
     title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
     return title
 
@@ -43,7 +43,7 @@ def get_title(title):
     title = str(title)
     title = re.sub('&#(\d);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-    title = title.replace('&quot;', '\"').replace('&amp;', '&')
+    title = title.replace('&quot;', '\"').replace('&amp;', '&').replace('–', '-')
     title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\_|\.|\?)|\s', '', title)
     return title.lower()
 
@@ -52,21 +52,19 @@ def geturl(title):
     if title is None: return
     title = title.lower()
     title = title.translate(None, ':*?"\'\.<>|&!,')
-    title = title.replace('/', '-')
-    title = title.replace(' ', '-')
-    title = title.replace('--', '-')
+    title = title.replace('/', '-').replace(' ', '-').replace('--', '-').replace('–', '-')
     return title
 
 
 def get_url(title):
     if title is None: return
-    title = title.replace(' ', '%20')
+    title = title.replace(' ', '%20').replace('–', '-')
     return title
 
 
 def get_query_(title):
     if title is None: return
-    title = title.replace(' ', '_').replace(':', '').replace('.-.', '.').replace('\'', '').replace(",", '').replace("'", '')
+    title = title.replace(' ', '_').replace(':', '').replace('.-.', '.').replace('\'', '').replace(",", '').replace("'", '').replace('–', '-')
     return title
 
 
@@ -76,7 +74,7 @@ def get_simple(title):
     title = re.sub('(\d{4})', '', title)
     title = re.sub('&#(\d+);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-    title = title.replace('&quot;', '\"').replace('&amp;', '&')
+    title = title.replace('&quot;', '\"').replace('&amp;', '&').replace('–', '-')
     title = re.sub('\n|\(|\)|\[|\]|\{|\}|\s(vs|v[.])\s|(:|;|-|–|"|,|\'|\_|\.|\?)|\s', '', title).lower()
     return title
 
@@ -86,20 +84,20 @@ def getsearch(title):
     title = title.lower()
     title = re.sub('&#(\d+);', '', title)
     title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-    title = title.replace('&quot;', '\"').replace('&amp;', '&')
+    title = title.replace('&quot;', '\"').replace('&amp;', '&').replace('–', '-')
     title = re.sub('\\\|/|-|–|:|;|\*|\?|"|\'|<|>|\|', '', title).lower()
     return title
 
 
 def query(title):
     if title is None: return
-    title = title.replace('\'', '').rsplit(':', 1)[0].rsplit(' -', 1)[0].replace('-', ' ')
+    title = title.replace('\'', '').rsplit(':', 1)[0].rsplit(' -', 1)[0].replace('-', ' ').replace('–', ' ')
     return title
 
 
 def get_query(title):
     if title is None: return
-    title = title.replace(' ', '.').replace(':', '').replace('.-.', '.').replace('\'', '')
+    title = title.replace(' ', '.').replace(':', '').replace('.-.', '.').replace('\'', '').replace('–', '.')
     return title
 
 
@@ -113,6 +111,5 @@ def normalize(title):
 
 
 def clean_search_query(url):
-    url = url.replace('-','+')
-    url = url.replace(' ', '+')
+    url = url.replace('-','+').replace(' ', '+').replace('–', '+')
     return url

@@ -98,6 +98,11 @@ class sources:
 
     def addItem(self, title):
 
+        def sourcesDirMeta(metadata):
+            if metadata == None: return metadata
+            allowed = ['poster', 'fanart', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
+            return {k: v for k, v in metadata.iteritems() if k in allowed}
+
         control.playlist.clear()
         items = control.window.getProperty(self.itemProperty)
         items = json.loads(items)
@@ -106,9 +111,10 @@ class sources:
 
         meta = control.window.getProperty(self.metaProperty)
         meta = json.loads(meta)
+        meta = sourcesDirMeta(meta)
 
         # (Kodi bug?) [name,role] is incredibly slow on this directory, [name] is barely tolerable, so just nuke it for speed!
-        if 'cast' in meta: del(meta['cast'])
+        #if 'cast' in meta: del(meta['cast'])
 
         sysaddon = sys.argv[0]
 
@@ -134,11 +140,11 @@ class sources:
         if thumb == '0': thumb = poster
         if thumb == '0': thumb = fanart
 
-        banner = meta['banner'] if 'banner' in meta else '0'
-        if banner == '0': banner = poster
+        #banner = meta['banner'] if 'banner' in meta else '0'
+        #if banner == '0': banner = poster
 
         if poster == '0': poster = control.addonPoster()
-        if banner == '0': banner = control.addonBanner()
+        #if banner == '0': banner = control.addonBanner()
         if not control.setting('fanart') == 'true': fanart = '0'
         if fanart == '0': fanart = control.addonFanart()
         if thumb == '0': thumb = control.addonFanart()
@@ -163,7 +169,7 @@ class sources:
 
                 item = control.item(label=label)
 
-                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'banner': banner})
+                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster})
 
                 item.setProperty('Fanart_Image', fanart)
 
@@ -171,7 +177,7 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='video', infoLabels = control.metadataClean(meta))
+                item.setInfo(type='video', infoLabels = meta)
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -795,6 +801,9 @@ class sources:
         if provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
+        if not HEVC == 'true':
+            self.sources = [i for i in self.sources if not any(value in str(i['url']).lower() for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265'])]
+
 #        for i in self.sources:
 #            if 'checkquality' in i and i['checkquality'] == True:
 #                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
@@ -956,10 +965,6 @@ class sources:
                 label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('[COLOR %s] | [/COLOR]' % sec_identify, '')
 
             self.sources[i]['label'] = '[UPPERCASE]' + label + '[/UPPERCASE]'
-
-        try:
-            if not HEVC == 'true': self.sources = [i for i in self.sources if not 'HEVC' in i['label']]
-        except: pass
 
         self.sources = [i for i in self.sources if 'label' in i]
 

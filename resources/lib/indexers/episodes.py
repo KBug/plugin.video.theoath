@@ -548,7 +548,7 @@ class episodes:
         #https://api.trakt.tv/calendars/all/shows/date[30]/31 #use this for new episodes?
         #self.mycalendar_link = 'https://api.trakt.tv/calendars/my/shows/date[29]/60/'
         self.mycalendar_link = 'https://api.trakt.tv/calendars/my/shows/date[30]/31/' #go back 30 and show all shows aired until tomorrow
-        self.trakthistory_link = 'https://api.trakt.tv/users/me/history/shows?limit=300'
+        self.trakthistory_link = 'https://api.trakt.tv/users/me/history/shows?limit=80'
         self.progress_link = 'https://api.trakt.tv/users/me/watched/shows'
         self.hiddenprogress_link = 'https://api.trakt.tv/users/hidden/progress_watched?limit=1000&type=show'
         self.calendar_link = 'http://api.tvmaze.com/schedule?date=%s'
@@ -717,6 +717,7 @@ class episodes:
             exc_type, exc_obj, exc_tb = sys.exc_info()
             print(exc_type, exc_tb.tb_lineno)
             return
+
 
         for item in items:
             try:
@@ -1504,7 +1505,7 @@ class episodes:
                     art.update({'poster': addonPoster})
 
                 if 'thumb' in i and not i['thumb'] == '0':
-                    art.update({'icon': i['thumb'], 'thumb': i['thumb']})
+                    art.update({'icon': i['thumb'], 'thumb': i['thumb'], 'poster': i['thumb']})
                 elif 'fanart' in i and not i['fanart'] == '0':
                     art.update({'icon': i['fanart'], 'thumb': i['fanart']})
                 elif 'poster' in i and not i['poster'] == '0':

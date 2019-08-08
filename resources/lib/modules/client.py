@@ -26,6 +26,12 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
         if not url:
             return
 
+        if not headers:
+            if not mobile:
+                headers = randomagent()
+            else:
+                headers = randommobileagent()
+
         handlers = []
 
         if proxy is not None:
@@ -471,7 +477,7 @@ class cfcookie:
         if 'type="hidden" name="pass"' in result:
             passval = re.findall('name="pass" value="(.*?)"', result)[0]
             query = '%scdn-cgi/l/chk_jschl?pass=%s&jschl_vc=%s&jschl_answer=%s' % (
-            netloc, urllib.quote_plus(passval), jschl, answer)
+                netloc, urllib.quote_plus(passval), jschl, answer)
             time.sleep(6)
 
         opener.addheaders = [('User-Agent', ua),
@@ -553,7 +559,7 @@ class sucuri:
             s = re.sub(r'document\.cookie', 'cookie', s)
 
             cookie = ''
-            exec s
+            exec(s)
             self.cookie = re.compile('([^=]+)=(.*)').findall(cookie)[0]
             self.cookie = '%s=%s' % (self.cookie[0], self.cookie[1])
 
