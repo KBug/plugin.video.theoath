@@ -21,7 +21,7 @@
 import pkgutil
 import os.path
 
-from resources.lib.modules import log_utils
+from resources.lib.modules import log_utils, control
 
 __all__ = [x[1] for x in os.walk(os.path.dirname(__file__))][0]
 
@@ -38,7 +38,10 @@ def sources():
                     module = loader.find_module(module_name).load_module(module_name)
 
                     # [ORION/]
-                    if module_name == 'orionoid': module_name = 'orion'
+                    if module_name == 'orionoid':
+                        if not control.setting('orion.color') == 'No color':
+                            module_name = '[COLOR %s]orion[/COLOR]' % control.setting('orion.color')
+                        else: module_name = 'orion'
                     # [/ORION]
 
                     sourceDict.append((module_name, module.source()))

@@ -1,3 +1,6 @@
+[B][COLOR gold]v1.8.6[/COLOR][/B]
+- Added extra color option for Orion streams (Provider label only - optional)
+
 [B][COLOR gold]v1.8.5[/COLOR][/B]
 - Fix episodes thumb appearance in Estuary
 - Append only the bare minimum of metadata on sources directory

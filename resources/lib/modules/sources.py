@@ -543,14 +543,14 @@ class sources:
 
                         if debrid_status:
                             if len(info) > 6: line3 = string3 % (str(len(info)))
-                            elif len(info) > 0: line3 = string3 % (', '.join(info))
+                            elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
                             else: break
                             percent = int(100 * float(i) / (2 * timeout) + 0.5)
                             if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1, line2, line3)
                             else: progressDialog.update(max(1, percent), line1, line3)
                         else:
                             if len(info) > 6: line2 = string3 % (str(len(info)))
-                            elif len(info) > 0: line2 = string3 % (', '.join(info))
+                            elif len(info) > 0: line2 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
                             else: break
                             percent = int(100 * float(i) / (2 * timeout) + 0.5)
                             progressDialog.update(max(1, percent), line1, line2)
