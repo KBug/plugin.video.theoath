@@ -168,8 +168,8 @@ msgid "IMDb Watchlist"
 msgstr "Λίστα παρακολούθησης IMDb"
 
 msgctxt "#32035"
-msgid "Recommendations"
-msgstr "Προτάσεις"
+msgid "Trakt Recommendations"
+msgstr "Προτάσεις Trakt"
 
 msgctxt "#32036"
 msgid "History"

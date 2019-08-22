@@ -238,7 +238,7 @@ class sources:
                 try:
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n      ', ' |'))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -918,7 +918,7 @@ class sources:
 
             l = self.sources[i]['language']
 
-            try: f = (' | '.join(['[I]%s[/I]' % info.strip() for info in self.sources[i]['info'].split('|')]))
+            try: f = (' / '.join(['%s' % info.strip() for info in self.sources[i]['info'].split('|')]))
             except: f = ''
 
 
@@ -935,34 +935,30 @@ class sources:
                 if not d == '':
                     label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR]\n      [COLOR %s][I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
+                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR]\n    [COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
 
                 else:
                     label = '%02d' % int(i+1)
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-                    label += ' | [B]%s[/B] | %s | [B]%s[/B]\n      [COLOR %s][I]%s[/I] | %s[/COLOR]' % (q, p, s, sec_identify, t, f)
-
-                label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('[I][/I] | ', ' ').replace('[I][/I] | %s' % f, '%s' % f)
+                    label += ' | [B]%s[/B] | %s | [B]%s[/B]\n    [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
 
             elif int(control.setting('linesplit')) == 2:
                 label = '%02d' % int(i+1)
                 if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                 label += ' | %s | [B]%s[/B] | %s | [B]%s[/B]' % (d, q, p, s)
 
-                label = label.replace(' |  |', ' |')
-
             else:
                 if not d == '':
                     label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][COLOR %s] | [I]%s[/I] | %s[/COLOR]' % (d, q, p, s, sec_identify, t, f)
+                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B] | [/COLOR][COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
 
                 else:
                     label = '%02d' % int(i+1)
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-                    label += ' | [B]%s[/B] | %s | [B]%s[/B][COLOR %s] | [I]%s[/I] | %s[/COLOR]' % (q, p, s, sec_identify, t, f)
+                    label += ' | [B]%s[/B] | %s | [B]%s[/B] | [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
 
-                label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace(' | [I][/I]', '').replace('[COLOR %s] | [/COLOR]' % sec_identify, '')
+            label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace('[I] /[/I]', '').replace('[I] /%s[/I]' % t, '[I]%s[/I]' % t).replace('[I]%s /[/I]' % f, '[I]%s[/I]' % f)
 
             self.sources[i]['label'] = '[UPPERCASE]' + label + '[/UPPERCASE]'
 
@@ -1061,7 +1057,7 @@ class sources:
 
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n      ', ' |'))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
@@ -1161,7 +1157,7 @@ class sources:
         for i in range(len(items)):
             try:
                 if progressDialog.iscanceled(): break
-                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n      ', ' |'))
+                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
             except:
                 progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
 
