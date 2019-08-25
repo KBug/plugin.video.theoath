@@ -61,9 +61,6 @@ class sources:
 
             title = tvshowtitle if not tvshowtitle == None else title
 
-            if control.window.getProperty('PseudoTVRunning') == 'True':
-                return control.resolve(int(sys.argv[1]), True, control.item(path=str(self.sourcesDirect(items))))
-
             if len(items) > 0:
 
                 if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
@@ -156,7 +153,7 @@ class sources:
 
         for i in range(len(items)):
             try:
-                label = items[i]['label']
+                label = str(items[i]['label'])
 
                 syssource = urllib.quote_plus(json.dumps([items[i]]))
 
@@ -390,7 +387,7 @@ class sources:
         line1 = line2 = line3 = ""
         debrid_only = control.setting('debrid.only')
 
-        pre_emp =  control.setting('preemptive.termination')
+        pre_emp = control.setting('preemptive.termination')
         pre_emp_limit = control.setting('preemptive.limit')
 
         source_4k = d_source_4k = 0
@@ -398,17 +395,19 @@ class sources:
         source_720 = d_source_720 = 0
         source_sd = d_source_sd = 0
         total = d_total = 0
-        
+
         debrid_list = debrid.debrid_resolvers
         debrid_status = debrid.status()
         
         total_format = '[COLOR %s][B]%s[/B][/COLOR]'
         pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
         pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
-        
+
         for i in range(0, 4 * timeout):
             if str(pre_emp) == 'true':
-                if quality in ['1','0']:
+                if quality in ['0', '1']:
+                    if (source_4k + d_source_4k) >= int(pre_emp_limit): break
+                elif quality in ['1']:
                     if (source_1080 + d_source_1080) >= int(pre_emp_limit): break
                 elif quality in ['2']:
                     if (source_720 + d_source_720) >= int(pre_emp_limit): break
@@ -471,7 +470,7 @@ class sources:
                         else:
                             for d in debrid_list:
                                 d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
-                                 
+
                         d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
 
                 if debrid_status:
@@ -623,12 +622,13 @@ class sources:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             match = dbcur.fetchone()
-            t1 = int(re.sub('[^0-9]', '', str(match[5])))
-            t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
-            update = abs(t2 - t1) > 60
-            if update == False:
-                sources = eval(match[4].encode('utf-8'))
-                return self.sources.extend(sources)
+            if match is not None:
+                t1 = int(re.sub('[^0-9]', '', str(match[5])))
+                t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
+                update = abs(t2 - t1) > 60
+                if update == False:
+                    sources = eval(match[4].encode('utf-8'))
+                    return self.sources.extend(sources)
         except:
             pass
 
@@ -636,7 +636,8 @@ class sources:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(url[4].encode('utf-8'))
+            if url is not None:
+                url = eval(url[4].encode('utf-8'))
         except:
             pass
 
@@ -674,12 +675,13 @@ class sources:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             match = dbcur.fetchone()
-            t1 = int(re.sub('[^0-9]', '', str(match[5])))
-            t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
-            update = abs(t2 - t1) > 60
-            if update == False:
-                sources = eval(match[4].encode('utf-8'))
-                return self.sources.extend(sources)
+            if match is not None:
+                t1 = int(re.sub('[^0-9]', '', str(match[5])))
+                t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
+                update = abs(t2 - t1) > 60
+                if update == False:
+                    sources = eval(match[4].encode('utf-8'))
+                    return self.sources.extend(sources)
         except:
             pass
 
@@ -765,8 +767,11 @@ class sources:
     def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
         uniqueURLs = set()
         for source in sources:
-            url = str(source['url']).lower()
-            if url.startswith('magnet:'):
+            try:
+                url = str(source['url']).lower()
+            except:
+                url = source['url']
+            if 'magnet:' in url:
                 hash = re.findall(r'btih:(\w{40})', url)[0]# parse infohash from magnet and use that instead of url
                 if hash:
                     url = hash
@@ -843,7 +848,7 @@ class sources:
             filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
             filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
-        if debrid_only == 'false' or  debrid.status() == False:
+        if debrid_only == 'false' or debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
 
         self.sources = filter
@@ -1209,7 +1214,7 @@ class sources:
             return []
 
     def _getPrimaryLang(self):
-        langDict = {'English': 'en', 'German': 'de', 'German+English': 'de', 'French': 'fr', 'French+English': 'fr', 'Portuguese': 'pt', 'Portuguese+English': 'pt', 'Polish': 'pl', 'Polish+English': 'pl', 'Korean': 'ko', 'Korean+English': 'ko', 'Russian': 'ru', 'Russian+English': 'ru', 'Spanish': 'es', 'Spanish+English': 'es', 'Italian': 'it', 'Italian+English': 'it', 'Greek': 'gr', 'Greek+English': 'gr'} 
+        langDict = {'English': 'en', 'German': 'de', 'German+English': 'de', 'French': 'fr', 'French+English': 'fr', 'Portuguese': 'pt', 'Portuguese+English': 'pt', 'Polish': 'pl', 'Polish+English': 'pl', 'Korean': 'ko', 'Korean+English': 'ko', 'Russian': 'ru', 'Russian+English': 'ru', 'Spanish': 'es', 'Spanish+English': 'es', 'Italian': 'it', 'Italian+English': 'it', 'Greek': 'gr', 'Greek+English': 'gr'}
         name = control.setting('providers.lang')
         lang = langDict.get(name)
         return lang
