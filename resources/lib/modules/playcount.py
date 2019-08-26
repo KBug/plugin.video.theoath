@@ -28,7 +28,7 @@ def getMovieIndicators(refresh=False):
     try:
         if trakt.getTraktIndicatorsInfo() == True: raise Exception()
         from metahandler import metahandlers
-        indicators = metahandlers.MetaData(preparezip=False)
+        indicators = metahandlers.MetaData()
         return indicators
     except:
         pass
@@ -47,7 +47,7 @@ def getTVShowIndicators(refresh=False):
     try:
         if trakt.getTraktIndicatorsInfo() == True: raise Exception()
         from metahandler import metahandlers
-        indicators = metahandlers.MetaData(preparezip=False)
+        indicators = metahandlers.MetaData()
         return indicators
     except:
         pass
@@ -123,7 +123,7 @@ def markMovieDuringPlayback(imdb, watched):
 
     try:
         from metahandler import metahandlers
-        metaget = metahandlers.MetaData(preparezip=False)
+        metaget = metahandlers.MetaData()
         metaget.get_meta('movie', name='', imdb_id=imdb)
         metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
     except:
@@ -145,7 +145,7 @@ def markEpisodeDuringPlayback(imdb, tvdb, season, episode, watched):
 
     try:
         from metahandler import metahandlers
-        metaget = metahandlers.MetaData(preparezip=False)
+        metaget = metahandlers.MetaData()
         metaget.get_meta('tvshow', name='', imdb_id=imdb)
         metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
         metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
@@ -167,7 +167,7 @@ def movies(imdb, watched):
 
     try:
         from metahandler import metahandlers
-        metaget = metahandlers.MetaData(preparezip=False)
+        metaget = metahandlers.MetaData()
         metaget.get_meta('movie', name='', imdb_id=imdb)
         metaget.change_watched('movie', name='', imdb_id=imdb, watched=int(watched))
         if trakt.getTraktIndicatorsInfo() == False: control.refresh()
@@ -190,7 +190,7 @@ def episodes(imdb, tvdb, season, episode, watched):
 
     try:
         from metahandler import metahandlers
-        metaget = metahandlers.MetaData(preparezip=False)
+        metaget = metahandlers.MetaData()
         metaget.get_meta('tvshow', name='', imdb_id=imdb)
         metaget.get_episode_meta('', imdb_id=imdb, season=season, episode=episode)
         metaget.change_watched('episode', '', imdb_id=imdb, season=season, episode=episode, watched=int(watched))
@@ -210,7 +210,7 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
         from metahandler import metahandlers
         from resources.lib.indexers import episodes
 
-        metaget = metahandlers.MetaData(preparezip=False)
+        metaget = metahandlers.MetaData()
 
         name = control.addonInfo('name')
 

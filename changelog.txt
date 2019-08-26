@@ -1,3 +1,11 @@
+[B][COLOR gold]v1.8.9[/COLOR][/B]
+- Fix toggling watched status when Trakt isn't auth'ed or indicators are set to 'Local"
+    and Metahandler 3.99.x is installed
+
+[B][COLOR gold]v1.8.8[/COLOR][/B]
+- Fix dupes filter for openscrapers
+- Minor code tweaks/settings adj
+
 [B][COLOR gold]v1.8.6[/COLOR][/B]
 - Added extra color option for Orion streams (Provider label only - optional)
 
