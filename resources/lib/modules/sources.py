@@ -767,14 +767,9 @@ class sources:
     def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
         uniqueURLs = set()
         for source in sources:
-            try:
-                url = str(source['url']).lower()
-            except:
-                url = source['url']
+            url = json.dumps(source['url'])
             if 'magnet:' in url:
-                hash = re.findall(r'btih:(\w{40})', url)[0]# parse infohash from magnet and use that instead of url
-                if hash:
-                    url = hash
+                url = url.lower()[:60]
             if isinstance(url, basestring):
                 if url not in uniqueURLs:
                     uniqueURLs.add(url)
