@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.8.11[/COLOR][/B]
+- Added Polish translation - thx kodiultimate
+- Some code adjustments suggested by Venom's dev - thx
+
 [B][COLOR gold]v1.8.9[/COLOR][/B]
 - Fix toggling watched status when Trakt isn't auth'ed or indicators are set to 'Local"
     and Metahandler 3.99.x is installed

@@ -174,7 +174,7 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='video', infoLabels = meta)
+                item.setInfo(type='video', infoLabels = control.metadataClean(meta))
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -890,19 +890,18 @@ class sources:
 
         self.sources = self.sources[:4000]
 
+        prem_color = control.setting('prem.identify')
+        prem_identify = self.getPremColor(prem_color)
+        if prem_identify == '': prem_identify = 'gold'
+
+        sec_color = control.setting('sec.identify')
+        sec_identify = self.getPremColor(sec_color)
+        if sec_identify == '': sec_identify = 'cyan'
 
         for i in range(len(self.sources)):
 
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
-
-            prem_color = control.setting('prem.identify')
-            prem_identify = self.getPremColor(prem_color)
-            if prem_identify == '': prem_identify = 'gold'
-
-            sec_color = control.setting('sec.identify')
-            sec_identify = self.getPremColor(sec_color)
-            if sec_identify == '': sec_identify = 'cyan'
 
             t = source_utils.getFileType(self.sources[i]['url'])
 
