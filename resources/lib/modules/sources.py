@@ -97,7 +97,7 @@ class sources:
 
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
-            allowed = ['poster', 'fanart', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'director', 'plot', 'trailer', 'mediatype']
+            allowed = ['poster', 'fanart', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
             return {k: v for k, v in metadata.iteritems() if k in allowed}
 
         control.playlist.clear()
@@ -254,7 +254,7 @@ class sources:
                     if items[i].get('debrid').lower() == 'linksnappy':
                         no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
 
-                    if items[i].get('source') in self.hostcapDict: offset = 60 * 2
+                    if items[i].get('source').lower() in self.hostcapDict: offset = 60 * 2
                     elif items[i].get('source').lower() == 'torrent' and no_skip: offset = float('inf')
                     else: offset = 0
 
@@ -1069,7 +1069,7 @@ class sources:
                     if items[i].get('debrid').lower() == 'linksnappy':
                         no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
 
-                    if items[i].get('source') in self.hostcapDict: offset = 60 * 2
+                    if items[i].get('source').lower() in self.hostcapDict: offset = 60 * 2
                     elif items[i].get('source').lower() == 'torrent' and no_skip: offset = float('inf')
                     else: offset = 0
 

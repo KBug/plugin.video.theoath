@@ -71,7 +71,7 @@ def get_release_quality(release_name, release_link=None):
         elif ' 576p ' in fmt: quality = 'SD'
         elif ' 576 ' in fmt: quality = 'SD'
         elif any(i in [' dvdscr ', ' r5 ', ' r6 '] for i in fmt): quality = 'SCR'
-        elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in fmt): quality = 'CAM'
+        elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hd cam ', ' cam rip ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in fmt): quality = 'CAM'
 
         if not quality:
             if release_link:
@@ -91,7 +91,7 @@ def get_release_quality(release_name, release_link=None):
                 elif ' hd ' in release_link: quality = '720p'
                 else: 
                     if any(i in [' dvdscr ', ' r5 ', ' r6 '] for i in release_link): quality = 'SCR'
-                    elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in release_link): quality = 'CAM'
+                    elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hd cam ', ' cam rip ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in release_link): quality = 'CAM'
                     else: quality = 'SD'
             else: quality = 'SD'
         info = []
@@ -136,7 +136,7 @@ def getFileType(url):
         type += ' UHDRIP /'
     if ' r5 ' in url:
         type += ' R5 /'
-    if any(i in url for i in [' cam ', ' cam rip ', ' camrip ']):
+    if any(i in url for i in [' cam ', ' hdcam ', ' hd cam ', ' cam rip ', ' camrip ']):
         type += ' CAM /'
     if any(i in url for i in [' ts ', ' telesync ', ' hdts ', ' pdvd ']):
         type += ' TS /'
@@ -190,11 +190,10 @@ def getFileType(url):
         type += ' 5.1 /'
     if any(i in url for i in [' 7 1 ', ' 8ch ']):
         type += ' 7.1 /'
-    if ' subs ' in url: 
-        if type != '':
-            type += ' - WITH SUBS'
-        else:
-            type = 'SUBS'
+    if any (i in url for i in [' subs ', ' subbed ', ' sub ']):
+        type += ' SUBS /'
+    if any (i in url for i in [' dub ', ' dubbed ', ' dublado ']):
+        type += ' DUB /'
     type = type.rstrip('/')
     return type
 
