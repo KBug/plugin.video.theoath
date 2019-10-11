@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-    Updated for TheOath Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -898,6 +899,10 @@ class sources:
         sec_identify = self.getPremColor(sec_color)
         if sec_identify == '': sec_identify = 'cyan'
 
+        double_line = int(control.setting('linesplit')) == 1
+        simple = int(control.setting('linesplit')) == 2
+        single_line = int(control.setting('linesplit')) == 0
+
         for i in range(len(self.sources)):
 
             try: d = self.sources[i]['debrid']
@@ -930,7 +935,7 @@ class sources:
             if d.lower() == 'zevera': d = 'ZVR'
 
 
-            if int(control.setting('linesplit')) == 1:
+            if double_line:
                 if not d == '':
                     label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
@@ -941,7 +946,7 @@ class sources:
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                     label += ' | [B]%s[/B] | %s | [B]%s[/B]\n    [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
 
-            elif int(control.setting('linesplit')) == 2:
+            elif simple:
                 label = '%02d' % int(i+1)
                 if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                 label += ' | %s | [B]%s[/B] | %s | [B]%s[/B]' % (d, q, p, s)
