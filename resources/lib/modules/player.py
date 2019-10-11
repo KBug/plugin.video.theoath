@@ -29,6 +29,7 @@ except: from pysqlite2 import dbapi2 as database
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
 from resources.lib.modules import playcount
+from resources.lib.modules import trakt
 
 
 
@@ -274,20 +275,18 @@ class player(xbmc.Player):
     def onPlayBackStopped(self):
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
 
-        try:
-            from resources.lib.modules import trakt
-            if trakt.getTraktCredentialsInfo() == False: raise Exception()
-            if control.setting('trakt.scrobble') == 'true':
+        if control.setting('trakt.scrobble') == 'true' and trakt.getTraktCredentialsInfo() == True:
+            try:
                 percent = float((self.currentTime / self.totalTime) * 100)
                 trakt.scrobbleMovie(self.imdb, percent) if self.content == 'movie' else trakt.scrobbleEpisode(self.tvdb, self.season, self.episode, percent)
                 if control.setting('trakt.scrobble.notify') == 'true':
                     control.infoDialog('Trakt: Scrobbled', time=1000)
-        except:
-            import traceback
-            from resources.lib.modules import log_utils
-            failure = traceback.format_exc()
-            log_utils.log('Scrobble - Exception: ' + str(failure))
-            control.infoDialog('Scrobble Failed')
+            except:
+                import traceback
+                from resources.lib.modules import log_utils
+                failure = traceback.format_exc()
+                log_utils.log('Scrobble - Exception: ' + str(failure))
+                control.infoDialog('Scrobble Failed')
 
         try:
             if (self.currentTime / self.totalTime) >= .90:
@@ -388,9 +387,8 @@ class bookmarks:
         offset = '0'
 
         if control.setting('bookmarks') == 'true':
-            if control.setting('rersume.source') == '1':
+            if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
                 try:
-                    from resources.lib.modules import trakt
 
                     if not episode is None:
 
@@ -402,7 +400,7 @@ class bookmarks:
                                 if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
                                     # Calculating Offset to seconds
                                     offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
-                                    seekable = i['progress'] <= 95
+                                    seekable = 1 < i['progress'] < 95
                                     if not seekable: offset = '0'
                     else:
 
@@ -412,7 +410,7 @@ class bookmarks:
                             if imdb == i['movie']['ids']['imdb']:
                                 # Calculating Offset to seconds
                                 offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
-                                seekable = i['progress'] <= 95
+                                seekable = 1 < i['progress'] < 95
                                 if not seekable: offset = '0'
 
                     if control.setting('bookmarks.auto') == 'false' and seekable:
