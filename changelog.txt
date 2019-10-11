@@ -1,3 +1,9 @@
+[B][COLOR gold]v1.9.0[/COLOR][/B]
+- Added Trakt Scrobble function. NOTE: Do Not enable this if you use scrobbling for
+    http sources through the official Trakt add-on, to avoid double scrobbling.
+    * Basic scrobbling functionality - currently only Scrobble on Stop is supported.
+- Other minor code tweaks
+
 [B][COLOR gold]v1.8.11[/COLOR][/B]
 - Added Polish translation - thx kodiultimate
 - Some code adjustments suggested by Venom's dev - thx

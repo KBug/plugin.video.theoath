@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    Covenant Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -364,7 +365,7 @@ def syncTraktStatus():
         cachesyncTVShows()
         control.infoDialog(control.lang(32092).encode('utf-8'))
     except:
-        control.infoDialog('Trakt server error')
+        control.infoDialog('Trakt sync failed')
         pass
 
 
@@ -394,6 +395,16 @@ def markEpisodeAsWatched(tvdb, season, episode):
 def markEpisodeAsNotWatched(tvdb, season, episode):
     season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
     return __getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})[0]
+
+
+def scrobbleMovie(imdb, watched_percent):
+    if not imdb.startswith('tt'): imdb = 'tt' + imdb
+    return __getTrakt('/scrobble/pause', {"movie": {"ids": {"imdb": imdb}}, "progress": watched_percent})[0]
+
+
+def scrobbleEpisode(tvdb, season, episode, watched_percent):
+    season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
+    return __getTrakt('/scrobble/pause', {"show": {"ids": {"tvdb": tvdb}}, "episode": {"season": season, "number": episode}, "progress": watched_percent})[0]
 
 
 def getMovieTranslation(id, lang, full=False):

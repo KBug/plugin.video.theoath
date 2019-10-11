@@ -1,6 +1,6 @@
 # Addon Name: TheOath
 # Addon id: plugin.video.theoath
-# Addon Provider: TheOath
+# Addon Provider: host505
 # Translators: Polish - KodiUltimate
 # Translators:
 # Translators:
@@ -408,7 +408,7 @@ msgid "Continue watching..."
 msgstr "Kontynuuj Oglądanie"
 
 msgctxt "#32095"
-msgid "Resume point source"
+msgid "Resume Point source:"
 msgstr "Przywróć Punkt Źródeł"
 
 msgctxt "#32200"

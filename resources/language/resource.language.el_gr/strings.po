@@ -1,8 +1,8 @@
 # Addon Name: TheOath
 # Addon id: plugin.video.theoath
-# Addon Provider: TheOath
-# Translators:
-# Translators:
+# Addon Provider: host505
+# Translators: lambda81
+# Translators: host505
 # Translators:
 # Translators:
 # Translators:
@@ -22,9 +22,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: TheOath\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2017-05-30 09:11+0000\n"
-"Last-Translator: Viper2k4\n"
-"Language-Team: Greek (http://www.transifex.com/)\n"
+"PO-Revision-Date: 2019-10-11 09:11+0000\n"
+"Last-Translator: host505\n"
+"Language-Team:\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -408,8 +408,20 @@ msgid "Continue watching..."
 msgstr "Συνέχιση παρακολούθησης..."
 
 msgctxt "#32095"
-msgid "Resume point source"
+msgid "Resume Point source:"
 msgstr "Πηγή σημείου συνέχισης"
+
+msgctxt "#32097"
+msgid "Enable scrobbling"
+msgstr "Ενεργοποίηση scrobbling"
+
+msgctxt "#32098"
+msgid "NOTE: Do Not enable this if you scrobble through the Trakt add-on.[CR]Also note that only scrobble on Stop currently works."
+msgstr "!!Μην ενεργοποιήσετε αν χρησιμοποιείτε το Trakt add-on για scrobbling.[CR]Προς το παρόν μόνο το Scrobble on Stop λειτουργεί."
+
+msgctxt "#32099"
+msgid "Show notification on scrobble"
+msgstr "Εμφάνιση ειδοποίησης κατά το scrobble"
 
 msgctxt "#32200"
 msgid "No Color"

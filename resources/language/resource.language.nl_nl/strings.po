@@ -1,6 +1,6 @@
 # Addon Name: TheOath
 # Addon id: plugin.video.theoath
-# Addon Provider: theoath
+# Addon Provider: host505
 # Translators:
 # Translators:
 # Translators:
@@ -408,11 +408,11 @@ msgid "Continue watching..."
 msgstr "Doorgaan met kijken..."
 
 msgctxt "#32095"
-msgid "Resume point source"
+msgid "Resume Point source:"
 msgstr "Bron hervatten bron"
 
 msgctxt "#32096"
-msgid "Trakt scrobble"
+msgid "Trakt scrobbles"
 msgstr "Trakt scrobble"
 
 msgctxt "#32200"

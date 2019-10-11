@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 '''
-    Covenant Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -272,19 +273,34 @@ class player(xbmc.Player):
 
     def onPlayBackStopped(self):
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
-        if control.setting('crefresh') == 'true':
-            control.refresh()
+
+        try:
+            from resources.lib.modules import trakt
+            if trakt.getTraktCredentialsInfo() == False: raise Exception()
+            if control.setting('trakt.scrobble') == 'true':
+                percent = float((self.currentTime / self.totalTime) * 100)
+                trakt.scrobbleMovie(self.imdb, percent) if self.content == 'movie' else trakt.scrobbleEpisode(self.tvdb, self.season, self.episode, percent)
+                if control.setting('trakt.scrobble.notify') == 'true':
+                    control.infoDialog('Trakt: Scrobbled', time=1000)
+        except:
+            import traceback
+            from resources.lib.modules import log_utils
+            failure = traceback.format_exc()
+            log_utils.log('Scrobble - Exception: ' + str(failure))
+            control.infoDialog('Scrobble Failed')
 
         try:
             if (self.currentTime / self.totalTime) >= .90:
                 self.libForPlayback()
-        except: pass
+        except:
+            pass
+
+        if control.setting('crefresh') == 'true':
+            control.refresh()
 
     def onPlayBackEnded(self):
         self.libForPlayback()
         self.onPlayBackStopped()
-        if control.setting('crefresh') == 'true':
-            control.refresh()
 
 
 class subtitles:
@@ -386,7 +402,7 @@ class bookmarks:
                                 if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
                                     # Calculating Offset to seconds
                                     offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
-                                    seekable = 2 < i['progress'] < 92
+                                    seekable = i['progress'] <= 95
                                     if not seekable: offset = '0'
                     else:
 
@@ -396,7 +412,7 @@ class bookmarks:
                             if imdb == i['movie']['ids']['imdb']:
                                 # Calculating Offset to seconds
                                 offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
-                                seekable = 2 < i['progress'] < 92
+                                seekable = i['progress'] <= 95
                                 if not seekable: offset = '0'
 
                     if control.setting('bookmarks.auto') == 'false' and seekable:
@@ -471,5 +487,3 @@ class bookmarks:
             dbcon.commit()
         except:
             pass
-
-
