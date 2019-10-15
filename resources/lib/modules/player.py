@@ -278,9 +278,10 @@ class player(xbmc.Player):
         if control.setting('trakt.scrobble') == 'true' and trakt.getTraktCredentialsInfo() == True:
             try:
                 percent = float((self.currentTime / self.totalTime) * 100)
-                trakt.scrobbleMovie(self.imdb, percent) if self.content == 'movie' else trakt.scrobbleEpisode(self.tvdb, self.season, self.episode, percent)
-                if control.setting('trakt.scrobble.notify') == 'true':
-                    control.infoDialog('Trakt: Scrobbled', time=1000)
+                if 1 < percent < 95:
+                    trakt.scrobbleMovie(self.imdb, percent) if self.content == 'movie' else trakt.scrobbleEpisode(self.tvdb, self.season, self.episode, percent)
+                    if control.setting('trakt.scrobble.notify') == 'true':
+                        control.infoDialog('Trakt: Scrobbled', time=1000)
             except:
                 import traceback
                 from resources.lib.modules import log_utils
