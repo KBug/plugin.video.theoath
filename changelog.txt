@@ -1,3 +1,6 @@
+[B][COLOR gold]v1.9.3[/COLOR][/B]
+- Scrobble/bookmarks/resume optimisations
+
 [B][COLOR gold]v1.9.0[/COLOR][/B]
 - Added Trakt Scrobble function. NOTE: Do Not enable this if you use scrobbling for
     http sources through the official Trakt add-on, to avoid double scrobbling.

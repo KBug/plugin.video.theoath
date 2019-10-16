@@ -259,20 +259,55 @@ class player(xbmc.Player):
 
     def onAVStarted(self):
         control.execute('Dialog.Close(all,true)')
-        if not self.offset == '0': self.seekTime(float(self.offset))
+
+        if control.setting('bookmarks') == 'true' and not self.offset == '0' and self.isPlayingVideo(): 
+            if control.setting('bookmarks.auto') == 'true':
+                self.seekTime(float(self.offset))
+            else:
+                if control.setting('rersume.source') == '1':
+                    yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
+                    if not yes:
+                        self.seekTime(float(self.offset))
+                else:
+                    minutes, seconds = divmod(float(self.offset), 60);
+                    hours, minutes = divmod(minutes, 60)
+                    label = '%02d:%02d:%02d' % (hours, minutes, seconds)
+                    label = (control.lang(32502) % label).encode('utf-8')
+                    yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
+                    if not yes:
+                        self.seekTime(float(self.offset))
+
         subtitles().get(self.name, self.imdb, self.season, self.episode)
         self.idleForPlayback
 
     def onPlayBackStarted(self):
         if int(control.getKodiVersion()) < 18:
             control.execute('Dialog.Close(all,true)')
-            if not self.offset == '0': self.seekTime(float(self.offset))
+
+            if control.setting('bookmarks') == 'true' and not self.offset == '0' and self.isPlayingVideo(): 
+                if control.setting('bookmarks.auto') == 'true':
+                    self.seekTime(float(self.offset))
+                else:
+                    if control.setting('rersume.source') == '1':
+                        yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
+                        if not yes:
+                            self.seekTime(float(self.offset))
+                    else:
+                        minutes, seconds = divmod(float(self.offset), 60);
+                        hours, minutes = divmod(minutes, 60)
+                        label = '%02d:%02d:%02d' % (hours, minutes, seconds)
+                        label = (control.lang(32502) % label).encode('utf-8')
+                        yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
+                        if not yes:
+                            self.seekTime(float(self.offset))
+
             subtitles().get(self.name, self.imdb, self.season, self.episode)
-            self.idleForPlayback()
+            self.idleForPlayback
         else:
             self.onAVStarted()
 
     def onPlayBackStopped(self):
+        control.sleep(2500)
         bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
 
         if control.setting('trakt.scrobble') == 'true' and trakt.getTraktCredentialsInfo() == True:
@@ -387,83 +422,60 @@ class bookmarks:
     def get(self, name, season, episode, imdb, year='0'):
         offset = '0'
 
-        if control.setting('bookmarks') == 'true':
-            if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
-                try:
+        if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
+            try:
 
-                    if not episode is None:
+                if not episode is None:
 
-                        # Looking for a Episode progress
-                        traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
-                        for i in traktInfo:
-                            if imdb == i['show']['ids']['imdb']:
-                                # Checking Episode Number
-                                if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
-                                    # Calculating Offset to seconds
-                                    offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
-                                    seekable = 1 < i['progress'] < 95
-                                    if not seekable: offset = '0'
-                    else:
-
-                        # Looking for a Movie Progress
-                        traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/movies?extended=full')
-                        for i in traktInfo:
-                            if imdb == i['movie']['ids']['imdb']:
+                    # Looking for a Episode progress
+                    traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
+                    for i in traktInfo:
+                        if imdb == i['show']['ids']['imdb']:
+                            # Checking Episode Number
+                            if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
                                 # Calculating Offset to seconds
-                                offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
+                                offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
                                 seekable = 1 < i['progress'] < 95
-                                if not seekable: offset = '0'
+                                if not seekable:
+                                    offset = '0'
+                else:
 
-                    if control.setting('bookmarks.auto') == 'false' and seekable:
-                        try:
-                            yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
-                        except:
-                            yes = control.yesnoDialog("Resume (Trakt)", '', '', str(name), control.lang(32503).encode('utf-8'),
-                                                      control.lang(32501).encode('utf-8'))
-                        if yes: offset = '0'
+                    # Looking for a Movie Progress
+                    traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/movies?extended=full')
+                    for i in traktInfo:
+                        if imdb == i['movie']['ids']['imdb']:
+                            # Calculating Offset to seconds
+                            offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
+                            seekable = 1 < i['progress'] < 95
+                            if not seekable:
+                                offset = '0'
 
-                    return offset
+                return offset
 
-                except:
-                    return '0'
-            else:
-                try:
-                    offset = '0'
+            except:
+                return '0'
 
-                    if not control.setting('bookmarks') == 'true': raise Exception()
-
-                    idFile = hashlib.md5()
-                    for i in name: idFile.update(str(i))
-                    for i in year: idFile.update(str(i))
-                    idFile = str(idFile.hexdigest())
-
-                    dbcon = database.connect(control.bookmarksFile)
-                    dbcur = dbcon.cursor()
-                    dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
-                    match = dbcur.fetchone()
-                    self.offset = str(match[1])
-                    dbcon.commit()
-                    if self.offset == '0': raise Exception()
-
-                    minutes, seconds = divmod(float(self.offset), 60);
-                    hours, minutes = divmod(minutes, 60)
-                    label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-                    label = (control.lang(32502) % label).encode('utf-8')
-
-                    if control.setting('bookmarks.auto') == 'false':
-
-                        try:
-                            yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
-                        except:
-                            yes = control.yesnoDialog(label, '', '', str(name), control.lang(32503).encode('utf-8'),
-                                                      control.lang(32501).encode('utf-8'))
-                        if yes: self.offset = '0'
-
-                    return self.offset
-                except:
-                    return offset
         else:
-            return offset
+            try:
+                offset = '0'
+
+                idFile = hashlib.md5()
+                for i in name: idFile.update(str(i))
+                for i in year: idFile.update(str(i))
+                idFile = str(idFile.hexdigest())
+
+                dbcon = database.connect(control.bookmarksFile)
+                dbcur = dbcon.cursor()
+                dbcur.execute("SELECT * FROM bookmark WHERE idFile = '%s'" % idFile)
+                match = dbcur.fetchone()
+                self.offset = str(match[1])
+                dbcon.commit()
+                if self.offset == '0':
+                    raise Exception()
+
+                return self.offset
+            except:
+                return offset
 
 
     def reset(self, currentTime, totalTime, name, year='0'):
@@ -471,7 +483,7 @@ class bookmarks:
             if not control.setting('bookmarks') == 'true': raise Exception()
 
             timeInSeconds = str(currentTime)
-            ok = int(currentTime) > 180 and (currentTime / totalTime) <= .92
+            ok = int(currentTime) > 120 and (currentTime / totalTime) <= .95
 
             idFile = hashlib.md5()
             for i in name: idFile.update(str(i))
