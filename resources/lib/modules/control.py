@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    //theoath Add-on//
-    Updated for TheOath Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -339,7 +339,7 @@ def getKodiVersion():
 
 def installAddon(addonId):
     addonPath = os.path.join(xbmc.translatePath('special://home/addons'), addonId)
-    if not os.path.exists(addonPath)==True:
+    if not os.path.exists(addonPath) == True:
         xbmc.executebuiltin('InstallAddon(%s)' % (addonId))
     else:
         infoDialog('{0} is already installed'.format(addonId), sound=True)

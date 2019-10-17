@@ -455,6 +455,13 @@ class seasons:
                 except: pass
                 try: meta.update({'tvshowtitle': i['label']})
                 except: pass
+                try:
+                    seasonYear = i['premiered']
+                    seasonYear = re.findall('(\d{4})', seasonYear)[0]
+                    seasonYear = seasonYear.encode('utf-8')
+                    meta.update({'year': seasonYear})
+                except:
+                    pass
 
                 try:
                     if season in indicators: meta.update({'playcount': 1, 'overlay': 7})

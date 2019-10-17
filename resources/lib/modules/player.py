@@ -264,9 +264,9 @@ class player(xbmc.Player):
             if control.setting('bookmarks.auto') == 'true':
                 self.seekTime(float(self.offset))
             else:
-                if control.setting('rersume.source') == '1':
+                if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
                     yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
-                    if not yes:
+                    if yes == 0:
                         self.seekTime(float(self.offset))
                 else:
                     minutes, seconds = divmod(float(self.offset), 60);
@@ -274,11 +274,11 @@ class player(xbmc.Player):
                     label = '%02d:%02d:%02d' % (hours, minutes, seconds)
                     label = (control.lang(32502) % label).encode('utf-8')
                     yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
-                    if not yes:
+                    if yes == 0:
                         self.seekTime(float(self.offset))
 
         subtitles().get(self.name, self.imdb, self.season, self.episode)
-        self.idleForPlayback
+        self.idleForPlayback()
 
     def onPlayBackStarted(self):
         if int(control.getKodiVersion()) < 18:
@@ -288,9 +288,9 @@ class player(xbmc.Player):
                 if control.setting('bookmarks.auto') == 'true':
                     self.seekTime(float(self.offset))
                 else:
-                    if control.setting('rersume.source') == '1':
+                    if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
                         yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
-                        if not yes:
+                        if yes == 0:
                             self.seekTime(float(self.offset))
                     else:
                         minutes, seconds = divmod(float(self.offset), 60);
@@ -298,11 +298,11 @@ class player(xbmc.Player):
                         label = '%02d:%02d:%02d' % (hours, minutes, seconds)
                         label = (control.lang(32502) % label).encode('utf-8')
                         yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
-                        if not yes:
+                        if yes == 0:
                             self.seekTime(float(self.offset))
 
             subtitles().get(self.name, self.imdb, self.season, self.episode)
-            self.idleForPlayback
+            self.idleForPlayback()
         else:
             self.onAVStarted()
 
