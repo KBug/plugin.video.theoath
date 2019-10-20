@@ -280,43 +280,43 @@ msgid "[B]%s[/B] : %s"
 msgstr ""
 
 msgctxt "#32063"
-msgid "Play using..."
+msgid "[I]Select source[/I]"
 msgstr ""
 
 msgctxt "#32064"
-msgid "Auto Play"
+msgid "[I]Auto Play[/I]"
 msgstr ""
 
 msgctxt "#32065"
-msgid "Queue item"
+msgid "[I]Queue item[/I]"
 msgstr ""
 
 msgctxt "#32066"
-msgid "Watched in TheOath"
+msgid "[I]Watched in TheOath[/I]"
 msgstr ""
 
 msgctxt "#32067"
-msgid "Unwatched in TheOath"
+msgid "[I]Unwatched in TheOath[/I]"
 msgstr ""
 
 msgctxt "#32068"
-msgid "Watched in Trakt"
+msgid "[I]Watched in Trakt[/I]"
 msgstr ""
 
 msgctxt "#32069"
-msgid "Unwatched in Trakt"
+msgid "[I]Unwatched in Trakt[/I]"
 msgstr ""
 
 msgctxt "#32070"
-msgid "Trakt Manager"
+msgid "[I]Trakt Manager[/I]"
 msgstr ""
 
 msgctxt "#32071"
-msgid "Browse Series"
+msgid "[I]Browse Series[/I]"
 msgstr ""
 
 msgctxt "#32072"
-msgid "Refresh"
+msgid "[I]Refresh[/I]"
 msgstr ""
 
 msgctxt "#32073"
@@ -352,7 +352,7 @@ msgid "[B]Orion[/B] : Settings"
 msgstr ""
 
 msgctxt "#32081"
-msgid "Clear Providers"
+msgid "[I]Clear Providers[/I]"
 msgstr ""
 
 msgctxt "#32082"
@@ -425,6 +425,14 @@ msgstr ""
 
 msgctxt "#32099"
 msgid "Show notification on scrobble"
+msgstr ""
+
+msgctxt "#32100"
+msgid "[I]Find similar[/I]"
+msgstr ""
+
+msgctxt "#32101"
+msgid "[I]Information[/I]"
 msgstr ""
 
 msgctxt "#32200"
@@ -776,7 +784,7 @@ msgid "Playback outside TheOath is not allowed"
 msgstr ""
 
 msgctxt "#32403"
-msgid "Download"
+msgid "[I]Download[/I]"
 msgstr ""
 
 msgctxt "#32404"
@@ -876,7 +884,7 @@ msgid "2) When prompted enter : [COLOR skyblue]%s[/COLOR]"
 msgstr ""
 
 msgctxt "#32535"
-msgid "Play Random"
+msgid "[I]Play Random[/I]"
 msgstr ""
 
 msgctxt "#32536"
@@ -940,7 +948,7 @@ msgid "Check first episode of season before adding it"
 msgstr ""
 
 msgctxt "#32551"
-msgid "Add to Library"
+msgid "[I]Add to Library[/I]"
 msgstr ""
 
 msgctxt "#32552"

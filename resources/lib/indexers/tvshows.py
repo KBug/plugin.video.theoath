@@ -1125,6 +1125,10 @@ class tvshows:
 
         addToLibrary = control.lang(32551).encode('utf-8')
 
+        findSimilar = control.lang(32100).encode('utf-8')
+
+        infoMenu = control.lang(32101).encode('utf-8')
+
         for i in items:
             try:
                 label = i['title']
@@ -1161,7 +1165,7 @@ class tvshows:
 
                 cm = []
 
-                cm.append(('Find similar',
+                cm.append((findSimilar,
                            'ActivateWindow(10025,%s?action=tvshows&url=https://api.trakt.tv/shows/%s/related,return)' % (
                            sysaddon, imdb)))
 
@@ -1177,7 +1181,7 @@ class tvshows:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&tvdb=%s&content=tvshow)' % (sysaddon, sysname, tvdb)))
 
                 if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                    cm.append((infoMenu, 'Action(Info)'))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
 

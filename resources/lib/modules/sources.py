@@ -82,7 +82,8 @@ class sources:
                     url = self.sourcesDirect(items)
 
 
-            if url == None:
+            if url == 'close://' or url == None:
+                self.url = url
                 return self.errorForSources()
 
             try: meta = json.loads(meta)

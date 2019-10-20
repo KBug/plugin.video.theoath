@@ -215,6 +215,8 @@ class channels:
 
         refreshMenu = control.lang(32072).encode('utf-8')
 
+        infoMenu = control.lang(32101).encode('utf-8')
+
 
         for i in items:
             try:
@@ -249,7 +251,7 @@ class channels:
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
                 if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                    cm.append((infoMenu, 'Action(Info)'))
 
 
                 item = control.item(label=label)

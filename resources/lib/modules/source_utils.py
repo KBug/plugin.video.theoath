@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    Updated for TheOath Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ def get_release_quality(release_name, release_link=None):
         quality = None
 
         fmt = re.sub('[^A-Za-z0-9]+', ' ', release_name)
-        fmt = str(fmt.lower())
+        fmt = fmt.lower()
         try: fmt = fmt.encode('utf-8')
         except: pass
 
@@ -77,7 +78,7 @@ def get_release_quality(release_name, release_link=None):
             if release_link:
                 release_link = client.replaceHTMLCodes(release_link)
                 release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
-                release_link = str(release_link.lower())
+                release_link = release_link.lower()
                 try: release_link = release_link.encode('utf-8')
                 except: pass
                 if ' 4k ' in release_link: quality = '4k'
@@ -109,7 +110,7 @@ def getFileType(url):
         url = client.replaceHTMLCodes(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = url.encode('utf-8')
-        url = str(url.lower())
+        url = url.lower()
     except:
         url = str(url)
     type = ''
@@ -168,6 +169,8 @@ def getFileType(url):
         type += ' EAC3 /'
     if ' aac ' in url:
         type += ' AAC /'
+    if ' aac5 1 ' in url:
+        type += ' AAC / 5.1 /'
     if any(i in url for i in [' dd ', ' dolby ', ' dolbydigital ', ' dolby digital ']):
         type += ' DD /'
     if any(i in url for i in [' truehd ', ' true hd ']):
@@ -201,7 +204,7 @@ def check_sd_url(release_link):
 
     try:
         release_link = re.sub('[^A-Za-z0-9]+', ' ', release_link)
-        release_link = str(release_link.lower())
+        release_link = release_link.lower()
         try: release_link = release_link.encode('utf-8')
         except: pass
         if ' 2160 ' in release_link: quality = '4K'
@@ -224,7 +227,7 @@ def check_direct_url(url):
     try:
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = url.encode('utf-8')
-        url = str(url.lower())
+        url = url.lower()
         if ' 4k ' in url: quality = '4K'
         elif ' 2160p ' in url: quality = '4K'
         elif ' 2160 ' in url: quality = '4K'
@@ -247,7 +250,7 @@ def check_url(url):
         url = client.replaceHTMLCodes(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = url.encode('utf-8')
-        url = str(url.lower())
+        url = url.lower()
     except:
         url = str(url)
 

@@ -429,6 +429,8 @@ class seasons:
 
         addToLibrary = control.lang(32551).encode('utf-8')
 
+        infoMenu = control.lang(32101).encode('utf-8')
+
 
         for i in items:
             try:
@@ -487,7 +489,7 @@ class seasons:
                     cm.append((traktManagerMenu, 'RunPlugin(%s?action=traktManager&name=%s&tvdb=%s&content=tvshow)' % (sysaddon, sysname, tvdb)))
 
                 if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                    cm.append((infoMenu, 'Action(Info)'))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systitle, year, imdb, tvdb)))
 
@@ -1419,6 +1421,10 @@ class episodes:
 
         addToLibrary = control.lang(32551).encode('utf-8')
 
+        infoMenu = control.lang(32101).encode('utf-8')
+
+        clearProviders = control.lang(32081).encode('utf-8')
+
         for i in items:
             try:
                 if not 'label' in i: i['label'] = i['title']
@@ -1496,11 +1502,11 @@ class episodes:
                     cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
                 if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                    cm.append((infoMenu, 'Action(Info)'))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=tvshowToLibrary&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, systvshowtitle, year, imdb, tvdb)))
 
-                cm.append((control.lang(32081).encode('utf-8'), 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
+                cm.append((clearProviders, 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
 
                 item = control.item(label=label)
 

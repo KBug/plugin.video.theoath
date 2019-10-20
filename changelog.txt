@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.9.5[/COLOR][/B]
+- Fix crash on sources list dialog exit
+- Made add-on's context menu items labels italics, to differ from Kodi's ones
+
 [B][COLOR gold]v1.9.3[/COLOR][/B]
 - Scrobble/bookmarks/resume optimisations
 

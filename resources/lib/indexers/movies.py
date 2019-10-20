@@ -1082,6 +1082,12 @@ class movies:
 
         addToLibrary = control.lang(32551).encode('utf-8')
 
+        clearProviders = control.lang(32081).encode('utf-8')
+
+        findSimilar = control.lang(32100).encode('utf-8')
+
+        infoMenu = control.lang(32101).encode('utf-8')
+
         for i in items:
             try:
                 label = '%s (%s)' % (i['title'], i['year'])
@@ -1116,7 +1122,7 @@ class movies:
 
                 cm = []
 
-                cm.append(('Find similar',
+                cm.append((findSimilar,
                            'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (
                            sysaddon, imdb)))
 
@@ -1139,11 +1145,11 @@ class movies:
                 cm.append((playbackMenu, 'RunPlugin(%s?action=alterSources&url=%s&meta=%s)' % (sysaddon, sysurl, sysmeta)))
 
                 if isOld == True:
-                    cm.append((control.lang2(19033).encode('utf-8'), 'Action(Info)'))
+                    cm.append((infoMenu, 'Action(Info)'))
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 
-                cm.append((control.lang(32081).encode('utf-8'), 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
+                cm.append((clearProviders, 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
 
                 item = control.item(label=label)
 
