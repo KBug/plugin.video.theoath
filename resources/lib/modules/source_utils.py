@@ -147,7 +147,7 @@ def getFileType(url):
         type += ' SCR /'
     if ' xvid ' in url:
         type += ' XVID /'
-    if ' avi ' in url:
+    if ' avi' in url:
         type += ' AVI /'
     if any(i in url for i in [' h 264 ', ' h264 ', ' x264 ', ' avc ']):
         type += ' H.264 /'
@@ -189,13 +189,15 @@ def getFileType(url):
         type += ' DTS:X /'
     if ' dd5 1 ' in url:
         type += ' DD / 5.1 /'
+    if ' ddp5 1 ' in url:
+        type += ' DD+ / 5.1 /'
     if any(i in url for i in [' 5 1 ', ' 6ch ']):
         type += ' 5.1 /'
     if any(i in url for i in [' 7 1 ', ' 8ch ']):
         type += ' 7.1 /'
-    if any (i in url for i in [' subs ', ' subbed ', ' sub ']):
+    if any(i in url for i in [' subs ', ' subbed ', ' sub ']):
         type += ' SUBS /'
-    if any (i in url for i in [' dub ', ' dubbed ', ' dublado ']):
+    if any(i in url for i in [' dub ', ' dubbed ', ' dublado ']):
         type += ' DUB /'
     type = type.rstrip('/')
     return type
