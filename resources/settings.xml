@@ -9,7 +9,7 @@
         <setting id="indicators.alt" type="enum" label="32313" lvalues="32314|32315" default="1" visible="!eq(-1,)" />
         <setting id="indicators" type="enum" label="32313" lvalues="32314" default="0" visible="eq(-2,)" />
         <setting id="api.language" type="select" label="32316" values="AUTO|Bulgarian|Chinese|Croatian|Czech|Danish|Dutch|English|Finnish|French|German|Greek|Hebrew|Hungarian|Italian|Japanese|Korean|Norwegian|Polish|Portuguese|Romanian|Russian|Serbian|Slovak|Slovenian|Spanish|Swedish|Thai|Turkish|Ukrainian" default="AUTO" />
-        <setting id="providers.lang" type="select" label="32360" values="English|German|German+English|Greek|Greek+English|Polish|Polish+English|Spanish|Spanish+English" default="English" />
+        <setting id="providers.lang" type="select" label="32360" values="English|French|French+English|German|German+English|Greek|Greek+English|Korean|Korean+English|Polish|Polish+English|Russian|Russian+English|Spanish|Spanish+English" default="English" />
         <setting id="fanart" type="bool" label="32318" default="false" />
         <setting id="hidecinema" type="bool" label="32571" default="false" />
         <setting type="lsep" label="32319" />
