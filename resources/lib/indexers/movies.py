@@ -50,6 +50,7 @@ class movies:
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tm_user = control.setting('tm.user')
+        if self.tm_user == '': self.tm_user = 'Z2V0X3lvdXJz'.decode('base64')
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = str(control.setting('fanart.tv.user')) + str(control.setting('tm.user'))
         self.lang = control.apiLanguage()['trakt']
@@ -865,7 +866,7 @@ class movies:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': 'NGQ4ZjJjMTU5MjZkNDNiNDQzNzc0MmNkOTY4ODc2ZjI='.decode('base64')}
+        self.fanart_tv_headers = {'api-key': 'Z2V0X3lvdXJz'.decode('base64')}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 

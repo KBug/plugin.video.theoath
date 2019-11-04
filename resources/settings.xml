@@ -91,7 +91,7 @@
         <setting type="lsep" label="32624" />
         <setting id="fanart.tv.user" type="text" label="32309" default="" />
         <setting type="lsep" label="32625" />
-        <setting id="tm.user" type="text" option="hidden" label="32309" default="e49ced95ceb262abfc10d8acf46f8bc4" />
+        <setting id="tm.user" type="text" option="hidden" label="32309" default="" />
         <setting type="lsep" label="32627" />
         <setting id="imdb.user" type="text" label="32303" default="" />
         <setting type="lsep" label="32539" />

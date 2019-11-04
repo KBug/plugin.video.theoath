@@ -45,7 +45,7 @@ class tvshows:
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'http://www.tvmaze.com'
         self.logo_link = 'https://i.imgur.com/'
-        self.tvdb_key = 'MUI2NkRDQkQxNEM3MzdENw=='
+        self.tvdb_key = 'Z2V0X3lvdXJz'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
@@ -851,7 +851,7 @@ class tvshows:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': 'NGQ4ZjJjMTU5MjZkNDNiNDQzNzc0MmNkOTY4ODc2ZjI='.decode('base64')}
+        self.fanart_tv_headers = {'api-key': 'Z2V0X3lvdXJz'.decode('base64')}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 

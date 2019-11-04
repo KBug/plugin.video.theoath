@@ -877,8 +877,8 @@ msgid "2) When prompted enter : [COLOR skyblue]%s[/COLOR]"
 msgstr "2) Όταν σας ζητηθεί εισάγετε : [COLOR skyblue]%s[/COLOR]"
 
 msgctxt "#32535"
-msgid "[/I]Play Random[/I]"
-msgstr "[/I]Τυχαία αναπαραγωγή[/I]"
+msgid "[I]Play Random[/I]"
+msgstr "[I]Τυχαία αναπαραγωγή[/I]"
 
 msgctxt "#32536"
 msgid "Playing"
