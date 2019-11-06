@@ -82,8 +82,9 @@
         <setting id="install.orion" subsetting="true" type="action" label="To use this you must install and configure an add-on: Orion." option="close" action="InstallAddon(script.module.orion)" enable="!System.HasAddon(script.module.orion)" visible="eq(-1,true) + !System.HasAddon(script.module.orion)"/>
         <setting id="provider.orionoid.settings" subsetting="true" type="action" label="Open Orion module settings" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" enable="System.HasAddon(script.module.orion)" visible="eq(-2,true)" />
         <setting id="orionoid.streamtype" subsetting="true" type="enum" label="Stream Type:" values="Hosters|Torrents|All" default="0" enable="System.HasAddon(script.module.orion)" visible="eq(-3,true)" />
-        <setting id="orion.extra.info" subsetting="true" type="bool" label="Extra stream infos (filename, popularity, age)" default="true" enable="System.HasAddon(script.module.orion)" visible="eq(-4,true)" />
-        <setting id="orion.color" subsetting="true" type="select" label="Orion label color:" values="No color|blue|red|yellow|deeppink|cyan|lawngreen|gold|magenta|yellowgreen|white|black|crimson|goldenrod|powderblue|deepskyblue|springgreen|darkcyan|aquamarine|mediumturquoise|khaki|darkorange" default="No color" enable="System.HasAddon(script.module.orion)" visible="eq(-5,true)" />
+        <setting id="orion.extra.info" subsetting="true" type="bool" label="Extra stream info (popularity, age)" default="true" enable="System.HasAddon(script.module.orion)" visible="eq(-4,true)" />
+        <setting id="orion.info.filename" subsetting="true" type="bool" label="Extra stream info (filename)" default="false" enable="System.HasAddon(script.module.orion)" visible="eq(-5,true)" />
+        <setting id="orion.color" subsetting="true" type="select" label="Orion label color:" values="No color|blue|red|yellow|deeppink|cyan|lawngreen|gold|magenta|yellowgreen|white|black|crimson|goldenrod|powderblue|deepskyblue|springgreen|darkcyan|aquamarine|mediumturquoise|khaki|darkorange" default="No color" enable="System.HasAddon(script.module.orion)" visible="eq(-6,true)" />
         <!-- [/ORION] -->
     </category>
 
