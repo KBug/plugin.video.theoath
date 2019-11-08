@@ -886,7 +886,7 @@ class sources:
             filter = [i for i in self.sources if i['source'].lower() in self.hostcapDict and not 'debrid' in i]
             self.sources = [i for i in self.sources if not i in filter]
 
-        filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict and not 'debrid' in i]
+        filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict]# and not 'debrid' in i]
         self.sources = [i for i in self.sources if not i in filter]
 
         multi = [i['language'] for i in self.sources]
@@ -1290,10 +1290,12 @@ class sources:
                             'vev.io', 'vidup.me', 'vidup.tv', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
                             'hugefiles.net', 'thevideo.me', 'streamin.to']
 
-        self.hosthqDict = ['gvideo', 'google.com', 'openload.io', 'openload.co', 'oload.tv', 'thevideo.me', 'rapidvideo.com', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
-                           'xvidstage.com', 'streamango.com', 'xstreamcdn.com', 'idtbox.com']
+        self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
+                           'xvidstage.com', 'xstreamcdn.com', 'idtbox.com']
 
-        self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv']
+        self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv', 'streamango.com', 'streamcherry.com',
+                              'openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
+                              'rapidvideo.com', 'rapidvideo.is', 'rapidvid.to']
 
     def enableAll(self):
         try:

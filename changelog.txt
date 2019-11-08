@@ -1,3 +1,11 @@
+[B][COLOR gold]v1.9.10[/COLOR][/B]
+- Added some dead hosts to the 'block' dict
+
+[B][COLOR gold]v1.9.9[/COLOR][/B]
+- Replaced API keys
+    (it seems that some folks forked/cloned TheOath but didn't bother replacing my API keys.
+     Now the old ones have been deleted)
+
 [B][COLOR gold]v1.9.7[/COLOR][/B]
 - Added more providers language options in settings, to support Openscrapers's newly
     added language scrapers
