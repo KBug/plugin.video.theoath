@@ -1038,7 +1038,7 @@ class sources:
 
     def sourcesDialog(self, items):
         try:
-            
+
             labels = [i['label'] for i in items]
 
             select = control.selectDialog(labels)
@@ -1200,7 +1200,7 @@ class sources:
         name = control.setting('providers.lang')
         return langDict.get(name, ['en'])
 
-        
+
     def getLocalTitle(self, title, imdb, tvdb, content):
         lang = self._getPrimaryLang()
         if not lang:
@@ -1287,14 +1287,14 @@ class sources:
         self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org']
 
         self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
-                            'vev.io', 'vidup.me', 'vidup.tv', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
-                            'hugefiles.net', 'thevideo.me', 'streamin.to']
+                            'vev.io', 'vidup.me', 'vidup.tv', 'vidup.io', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
+                            'hugefiles.net', 'hugefiles.cc', 'thevideo.me', 'streamin.to']
 
         self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
                            'xvidstage.com', 'xstreamcdn.com', 'idtbox.com']
 
         self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv', 'streamango.com', 'streamcherry.com',
-                              'openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
+                              'openload.io', 'openload.co', 'openload.pw', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'oload.space', 'oload.monster',
                               'rapidvideo.com', 'rapidvideo.is', 'rapidvid.to']
 
     def enableAll(self):

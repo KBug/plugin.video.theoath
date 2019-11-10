@@ -435,6 +435,30 @@ msgctxt "#32101"
 msgid "[I]Information[/I]"
 msgstr ""
 
+msgctxt "#32102"
+msgid "To use this you must install and configure an add-on: Orion.[CR]    Account required."
+msgstr ""
+
+msgctxt "#32103"
+msgid "Open Orion module settings"
+msgstr ""
+
+msgctxt "#32104"
+msgid "Stream Type:"
+msgstr ""
+
+msgctxt "#32105"
+msgid "Extra stream info (popularity, age)"
+msgstr ""
+
+msgctxt "#32106"
+msgid "Extra stream info (filename)"
+msgstr ""
+
+msgctxt "#32107"
+msgid "Orion label color:"
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""
@@ -1028,7 +1052,7 @@ msgid "Results Limit"
 msgstr ""
 
 msgctxt "#32582"
-msgid "Personal API keys provide quicker API responses."
+msgid "Personal API keys provide quicker API responses.[CR]Please support the metadata sites however you can (tmdb, tvdb, fanart.tv)"
 msgstr ""
 
 msgctxt "#32583"

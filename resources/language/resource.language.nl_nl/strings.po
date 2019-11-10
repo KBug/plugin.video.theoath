@@ -1008,7 +1008,7 @@ msgid "Results Limit"
 msgstr "Resultatenlimiet"
 
 msgctxt "#32582"
-msgid "Personal API keys provide quicker API responses."
+msgid "Personal API keys provide quicker API responses.[CR]Please support the metadata sites however you can (tmdb, tvdb, fanart.tv)"
 msgstr "Perssonlijke API sleutel, zorgt voor snellere API antwoorden."
 
 msgctxt "#32583"

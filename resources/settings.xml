@@ -79,20 +79,19 @@
         <!-- [ORION/] -->
         <setting label="32088" type="lsep" />
         <setting id="provider.orionoid" type="bool" label="ORION" default="false" />
-        <setting id="install.orion" subsetting="true" type="action" label="To use this you must install and configure an add-on: Orion." option="close" action="InstallAddon(script.module.orion)" enable="!System.HasAddon(script.module.orion)" visible="eq(-1,true) + !System.HasAddon(script.module.orion)"/>
-        <setting id="provider.orionoid.settings" subsetting="true" type="action" label="Open Orion module settings" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" enable="System.HasAddon(script.module.orion)" visible="eq(-2,true)" />
-        <setting id="orionoid.streamtype" subsetting="true" type="enum" label="Stream Type:" values="Hosters|Torrents|All" default="0" enable="System.HasAddon(script.module.orion)" visible="eq(-3,true)" />
-        <setting id="orion.extra.info" subsetting="true" type="bool" label="Extra stream info (popularity, age)" default="true" enable="System.HasAddon(script.module.orion)" visible="eq(-4,true)" />
-        <setting id="orion.info.filename" subsetting="true" type="bool" label="Extra stream info (filename)" default="false" enable="System.HasAddon(script.module.orion)" visible="eq(-5,true)" />
-        <setting id="orion.color" subsetting="true" type="select" label="Orion label color:" values="No color|blue|red|yellow|deeppink|cyan|lawngreen|gold|magenta|yellowgreen|white|black|crimson|goldenrod|powderblue|deepskyblue|springgreen|darkcyan|aquamarine|mediumturquoise|khaki|darkorange" default="No color" enable="System.HasAddon(script.module.orion)" visible="eq(-6,true)" />
+        <setting id="install.orion" subsetting="true" type="action" label="32102" option="close" action="InstallAddon(script.module.orion)" enable="!System.HasAddon(script.module.orion)" visible="eq(-1,true)"/>
+        <setting id="provider.orionoid.settings" subsetting="true" type="action" label="32103" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" enable="System.HasAddon(script.module.orion)" visible="eq(-2,true)" />
+        <setting id="orionoid.streamtype" subsetting="true" type="enum" label="32104" values="Hosters|Torrents|All" default="0" enable="System.HasAddon(script.module.orion)" visible="eq(-3,true)" />
+        <setting id="orion.extra.info" subsetting="true" type="bool" label="32105" default="true" enable="System.HasAddon(script.module.orion)" visible="eq(-4,true)" />
+        <setting id="orion.info.filename" subsetting="true" type="bool" label="32106" default="false" enable="System.HasAddon(script.module.orion)" visible="eq(-5,true)" />
+        <setting id="orion.color" subsetting="true" type="select" label="32107" values="No color|blue|red|yellow|deeppink|cyan|lawngreen|gold|magenta|yellowgreen|white|black|crimson|goldenrod|powderblue|deepskyblue|springgreen|darkcyan|aquamarine|mediumturquoise|khaki|darkorange" default="No color" enable="System.HasAddon(script.module.orion)" visible="eq(-6,true)" />
         <!-- [/ORION] -->
     </category>
 
     <category label="32346">
-        <setting type="lsep" label="32624" />
-        <setting id="fanart.tv.user" type="text" label="32309" default="" />
-        <setting type="lsep" label="32625" />
-        <setting id="tm.user" type="text" option="hidden" label="32309" default="" />
+        <setting type="lsep" label="32582" />
+        <setting id="fanart.tv.user" type="text" label="Fanart.tv personal API key" default="" />
+        <setting id="tm.user" type="text" option="hidden" label="TMDB API key" default="" />
         <setting type="lsep" label="32627" />
         <setting id="imdb.user" type="text" label="32303" default="" />
         <setting type="lsep" label="32539" />
