@@ -50,7 +50,7 @@ class movies:
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tm_user = control.setting('tm.user')
-        if self.tm_user == '': self.tm_user = 'Z2V0X3lvdXJz'.decode('base64')
+        if self.tm_user == '' or self.tm_user == 'e49ced95ceb262abfc10d8acf46f8bc4': self.tm_user = 'Z2V0X3lvdXJz'.decode('base64')
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = str(control.setting('fanart.tv.user')) + str(control.setting('tm.user'))
         self.lang = control.apiLanguage()['trakt']

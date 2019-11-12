@@ -22,7 +22,6 @@ import pkgutil
 import os.path
 
 from resources.lib.modules import log_utils
-from resources.lib.modules.control import setting
 
 __all__ = [x[1] for x in os.walk(os.path.dirname(__file__))][0]
 
@@ -40,6 +39,7 @@ def sources():
 
                     # [ORION/]
                     if module_name == 'orionoid':
+                        from resources.lib.modules.control import setting
                         if not setting('orion.color') == 'No color':
                             module_name = '[COLOR %s]orion[/COLOR]' % setting('orion.color')
                         else: module_name = 'orion'

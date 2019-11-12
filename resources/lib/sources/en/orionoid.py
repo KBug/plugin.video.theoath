@@ -29,7 +29,7 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'nb', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'ny', 'zh', 'cv', 'kw', 'co', 'cr', 'hr', 'cs', 'da', 'dv', 'nl', 'dz', 'en', 'eo', 'et', 'ee', 'fo', 'fj', 'fi', 'fr', 'ff', 'gd', 'gl', 'lg', 'ka', 'de', 'el', 'gr', 'gn', 'gu', 'ht', 'ha', 'he', 'hz', 'hi', 'ho', 'hu', 'is', 'io', 'ig', 'id', 'ia', 'ie', 'iu', 'ik', 'ga', 'it', 'ja', 'jv', 'kl', 'kn', 'kr', 'ks', 'kk', 'km', 'ki', 'rw', 'rn', 'kv', 'kg', 'ko', 'ku', 'kj', 'ky', 'lo', 'la', 'lv', 'li', 'ln', 'lt', 'lu', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'gv', 'mi', 'mr', 'mh', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'ii', 'nn', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'ps', 'fa', 'pl', 'pt', 'pa', 'qu', 'ro', 'rm', 'ru', 'sm', 'sg', 'sa', 'sc', 'sr', 'sn', 'sd', 'si', 'cu', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'uk', 'ur', 'ug', 'uz', 've', 'vi', 'vo', 'wa', 'cy', 'fy', 'wo', 'xh', 'yi', 'yo', 'za', 'zu']
-        self.key = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+        self.key = 'xxxxx'
         self.domains = ['https://orionoid.com']
         self.providers = []
         self.cachePath = os.path.join(xbmc.translatePath(control.addonInfo('profile').decode('utf-8')), 'orion.cache')
@@ -123,12 +123,14 @@ class source:
         except: return 'en'
 
     def _source(self, data, label = True):
-        if label:
+        if data['stream']['type'] == OrionStream.TypeTorrent:
+            return 'Torrent'
+        elif label:
             try: hoster = data['stream']['hoster']
-            except: pass
+            except: hoster = None
             if hoster: return hoster
             try: source = data['stream']['source']
-            except: pass
+            except: source = None
             return source if source else ''
         else:
             try: return data['stream']['source']
@@ -225,7 +227,7 @@ class source:
 
             if settingStreamtype == 0: StreamType = Orion.StreamHoster
             elif settingStreamtype == 1: StreamType = Orion.StreamTorrent
-            else: StreamType = Orion.StreamTorrent + Orion.StreamHoster
+            else: StreamType = [Orion.StreamTorrent, Orion.StreamHoster]
 
             results = orion.streams(
                 type = type,
@@ -234,7 +236,8 @@ class source:
                 idTvdb = tvdb,
                 numberSeason = season,
                 numberEpisode = episode,
-                streamType = StreamType
+                streamType = StreamType,
+                protocolTorrent = Orion.ProtocolMagnet
             )
 
             from resources.lib.modules import debrid
@@ -282,7 +285,7 @@ class source:
                     sources.append({
                         'orion' : orion,
                         'provider' : self._source(data, False),
-                        'source' : 'Torrent' if data['stream']['type'] == OrionStream.TypeTorrent else self._source(data, True),
+                        'source' : self._source(data, True),
                         'quality' : self._quality(data),
                         'language' : self._language(data),
                         'url' : self._link(data),
