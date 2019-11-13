@@ -1244,37 +1244,38 @@ class sources:
         else:
             scraperSetting = control.setting('module.provider.alt')
 
+        from oathscrapers import sources
+        sourceDir1 = sources()
         from resources.lib.sources import sources
         sourceDir2 = sources()
-        from oathscrapers import sources
-        sourceDir3 = sources()
         try:
             from openscrapers import sources
-            sourceDir1 = sources()
+            sourceDir3 = sources()
         except:
             pass
 
         try:
             if scraperSetting == 'TheOath Scrapers':
-                self.sourceDict = sourceDir3
+                self.sourceDict = sourceDir1
                 self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
             elif scraperSetting == 'Open Scrapers':
-                self.sourceDict = sourceDir1
+                self.sourceDict = sourceDir3
                 self.module_name = 'OpenScrapers:'
             elif scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in providers:'
             elif scraperSetting == 'TheOath + Built-in':
-                self.sourceDict = sourceDir2 + sourceDir3
+                self.sourceDict = sourceDir1 + sourceDir2
                 self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
             elif scraperSetting == 'Open + Built-in':
-                self.sourceDict = sourceDir1 + sourceDir2
+                self.sourceDict = sourceDir3 + sourceDir2
                 self.module_name = 'Built-in + OpenScrapers:'
             else:
-                self.sourceDict = sourceDir3
+                self.sourceDict = sourceDir1
                 self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
                 control.setSetting('module.provider', 'TheOath Scrapers')
-        except: return
+        except:
+            return
 
         try:
             self.hostDict = resolveurl.relevant_resolvers(order_matters=True)

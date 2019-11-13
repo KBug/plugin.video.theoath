@@ -265,16 +265,16 @@ class player(xbmc.Player):
                 self.seekTime(float(self.offset))
             else:
                 if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
-                    yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
-                    if yes == 0:
+                    yes = control.yesnoDialog(control.lang2(12022).format('Trakt scrobble?').encode('utf-8'), None, None, heading=control.lang2(13404).encode('utf-8'))
+                    if yes:
                         self.seekTime(float(self.offset))
                 else:
                     minutes, seconds = divmod(float(self.offset), 60);
                     hours, minutes = divmod(minutes, 60)
                     label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-                    label = (control.lang(32502) % label).encode('utf-8')
-                    yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
-                    if yes == 0:
+                    label = (control.lang2(12022).format(label).encode('utf-8'))
+                    yes = control.yesnoDialog(label, None, None, heading=control.lang2(13404).encode('utf-8'))
+                    if yes:
                         self.seekTime(float(self.offset))
 
         subtitles().get(self.name, self.imdb, self.season, self.episode)
@@ -289,16 +289,16 @@ class player(xbmc.Player):
                     self.seekTime(float(self.offset))
                 else:
                     if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
-                        yes = control.dialog.contextmenu(["Resume (Trakt)", control.lang(32501).encode('utf-8'), ])
-                        if yes == 0:
+                        yes = control.yesnoDialog(control.lang2(12022).format('Trakt scrobble?').encode('utf-8'), None, None, heading=control.lang2(13404).encode('utf-8'))
+                        if yes:
                             self.seekTime(float(self.offset))
                     else:
                         minutes, seconds = divmod(float(self.offset), 60);
                         hours, minutes = divmod(minutes, 60)
                         label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-                        label = (control.lang(32502) % label).encode('utf-8')
-                        yes = control.dialog.contextmenu([label, control.lang(32501).encode('utf-8'), ])
-                        if yes == 0:
+                        label = (control.lang2(12022).format(label).encode('utf-8'))
+                        yes = control.yesnoDialog(label, None, None, heading=control.lang2(13404).encode('utf-8'))
+                        if yes:
                             self.seekTime(float(self.offset))
 
             subtitles().get(self.name, self.imdb, self.season, self.episode)

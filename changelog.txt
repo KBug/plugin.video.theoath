@@ -1,3 +1,10 @@
+[B][COLOR gold]v1.9.13[/COLOR][/B]
+- Replaced buggy "Resume" context menu dialog with a yes/no dialog
+
+[B][COLOR gold]v1.9.12[/COLOR][/B]
+- orionoid adjustments
+- Bypass old (deleted) tmdb key if still stored in addon_data settings.xml
+
 [B][COLOR gold]v1.9.10[/COLOR][/B]
 - Added some dead hosts to the 'block' dict
 
