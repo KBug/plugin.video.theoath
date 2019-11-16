@@ -1,3 +1,9 @@
+[B][COLOR gold]v1.9.14[/COLOR][/B]
+- Adjusted to TheTVDB API changes for tv shows to work
+    *season posters, some meta and show posters for trakt-based lists (eg People Watching,
+     TV Show Mosts etc) still don't get fetched
+- Added Disney+ to Networks
+
 [B][COLOR gold]v1.9.13[/COLOR][/B]
 - Replaced buggy "Resume" context menu dialog with a yes/no dialog
 

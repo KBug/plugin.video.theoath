@@ -55,12 +55,12 @@ class tvshows:
 
         self.search_link = 'https://api.trakt.tv/search/show?limit=20&page=1&query='
         self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'http://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
-        self.tvdb_by_imdb = 'http://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'http://thetvdb.com/api/GetSeries.php?seriesname=%s'
-        self.tvdb_image = 'http://thetvdb.com/banners/'
+        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
+        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
+        self.tvdb_image = 'https://thetvdb.com/banners/'
 
         self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
         self.personlist_link = 'https://www.imdb.com/search/name?count=100&gender=male,female'
@@ -322,6 +322,7 @@ class tvshows:
         ('Crackle', '/webchannels/4/crackle', 'https://i.imgur.com/53kqZSY.png'),
         ('Discovery Channel', '/networks/66/discovery-channel', 'https://i.imgur.com/8UrXnAB.png'),
         ('Discovery ID', '/networks/89/investigation-discovery', 'https://i.imgur.com/07w7BER.png'),
+        ('Disney+', '/webchannels/287/disney', 'https://i.imgur.com/DVrPgbM.png'),
         ('Disney Channel', '/networks/78/disney-channel', 'https://i.imgur.com/ZCgEkp6.png'),
         ('Disney XD', '/networks/25/disney-xd', 'https://i.imgur.com/PAJJoqQ.png'),
         ('E! Entertainment', '/networks/43/e', 'https://i.imgur.com/3Delf9f.png'),
