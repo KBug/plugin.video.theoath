@@ -26,7 +26,7 @@ from resources.lib.modules import client
 
 class tvMaze:
     def __init__(self, show_id = None):
-        self.api_url = 'http://api.tvmaze.com/%s%s'
+        self.api_url = 'https://api.tvmaze.com/%s%s'
         self.show_id = show_id
 
 

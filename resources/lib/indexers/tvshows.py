@@ -43,7 +43,7 @@ class tvshows:
 
         self.imdb_link = 'https://www.imdb.com'
         self.trakt_link = 'https://api.trakt.tv'
-        self.tvmaze_link = 'http://www.tvmaze.com'
+        self.tvmaze_link = 'https://www.tvmaze.com'
         self.logo_link = 'https://i.imgur.com/'
         self.tvdb_key = 'Z2V0X3lvdXJz'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
@@ -54,8 +54,8 @@ class tvshows:
         self.lang = control.apiLanguage()['tvdb']
 
         self.search_link = 'https://api.trakt.tv/search/show?limit=20&page=1&query='
-        self.tvmaze_info_link = 'http://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
+        self.tvmaze_info_link = 'https://api.tvmaze.com/shows/%s'
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.zip.xml' % (self.tvdb_key.decode('base64'), '%s', self.lang)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
         self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'

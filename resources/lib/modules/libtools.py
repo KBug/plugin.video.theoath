@@ -72,9 +72,9 @@ class lib_tools:
 
     @staticmethod
     def nfo_url(media_string, ids):
-        tvdb_url = 'http://thetvdb.com/?tab=series&id=%s'
+        tvdb_url = 'https://thetvdb.com/?tab=series&id=%s'
         tmdb_url = 'https://www.themoviedb.org/%s/%s'
-        imdb_url = 'http://www.imdb.com/title/%s/'
+        imdb_url = 'https://www.imdb.com/title/%s/'
 
         if 'tvdb' in ids:
             return tvdb_url % (str(ids['tvdb']))
