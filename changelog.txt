@@ -1,3 +1,9 @@
+[B][COLOR gold]v1.9.16[/COLOR][/B]
+- Added "Clear Settings file" options on Tools menu for TheOath & Oathscrapers
+    *removes obsolete settings entries from add-on's addon_data settings.xml, to
+     increase speed and reduce log spamming.
+     Main code function taken from Fen (thanks), adjusted for TheOath
+
 [B][COLOR gold]v1.9.14[/COLOR][/B]
 - Adjusted to TheTVDB API changes for tv shows to work
     *season posters, some meta and show posters for trakt-based lists (eg People Watching,

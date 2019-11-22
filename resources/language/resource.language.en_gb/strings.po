@@ -459,6 +459,22 @@ msgctxt "#32107"
 msgid "Orion label color:"
 msgstr ""
 
+msgctxt "#32108"
+msgid "[B]TheOath[/B] : Clean Settings file"
+msgstr ""
+
+msgctxt "#32109"
+msgid "[B]Oathscrapers[/B] : Clean Settings file"
+msgstr ""
+
+msgctxt "#32110"
+msgid "{} Obsolete Settings Entries Removed"
+msgstr ""
+
+msgctxt "#32111"
+msgid "No Obselete Settings to Remove"
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""

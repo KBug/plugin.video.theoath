@@ -498,3 +498,11 @@ elif action == 'syncTraktStatus':
 elif action == 'changelog':
     from resources.lib.modules import changelog
     changelog.get()	
+
+elif action == 'cleanOathSettings':
+    from resources.lib.modules import control
+    control.clean_settings("plugin.video.theoath")
+
+elif action == 'cleanOathscrapersSettings':
+    from resources.lib.modules import control
+    control.clean_settings("script.module.oathscrapers")

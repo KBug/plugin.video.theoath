@@ -455,6 +455,22 @@ msgctxt "#32107"
 msgid "Orion label color:"
 msgstr "Χρώμα ετικέτας Orion:"
 
+msgctxt "#32108"
+msgid "[B]TheOath[/B] : Clean Settings file"
+msgstr "[B]TheOath[/B] : Καθαρισμός Αρχείου Ρυθμίσεων"
+
+msgctxt "#32109"
+msgid "[B]Oathscrapers[/B] : Clean Settings file"
+msgstr "[B]Oathscrapers[/B] : Καθαρισμός Αρχείου Ρυθμίσεων"
+
+msgctxt "#32110"
+msgid "{} Obsolete Settings Entries Removed"
+msgstr "{} Παρωχημένες Ρυθμίσεις Αφαιρέθηκαν"
+
+msgctxt "#32111"
+msgid "No Obselete Settings to Remove"
+msgstr "Δεν βρέθηκαν παρωχημένες ρυθμίσεις"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"

@@ -337,9 +337,53 @@ def getKodiVersion():
     return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
 
 
-def installAddon(addonId):
-    addonPath = os.path.join(xbmc.translatePath('special://home/addons'), addonId)
-    if not os.path.exists(addonPath) == True:
-        xbmc.executebuiltin('InstallAddon(%s)' % (addonId))
+def installAddon(addon_id):
+    addon_path = os.path.join(xbmc.translatePath('special://home/addons'), addon_id)
+    if not os.path.exists(addon_path) == True:
+        xbmc.executebuiltin('InstallAddon(%s)' % (addon_id))
     else:
-        infoDialog('{0} is already installed'.format(addonId), sound=True)
+        infoDialog('{0} is already installed'.format(addon_id), sound=True)
+
+
+def clean_settings(addon_id):
+    import xml.etree.ElementTree as ET
+    __addon__ = xbmcaddon.Addon(id=addon_id)
+    addon_path = os.path.join(xbmc.translatePath('special://home/addons'), addon_id)
+    profile_dir = xbmc.translatePath(__addon__.getAddonInfo('profile'))
+    settings_xml = os.path.join(profile_dir, 'settings.xml')
+    active_settings_xml = os.path.join(addon_path, 'resources', 'settings.xml')
+    def _make_content(dict_object):
+        removed_settings_number = 0
+        content = '<settings version="2">'
+        for item in dict_object:
+            if item['id'] in active_settings:
+                if 'default' in item and 'value' in item: content += '\n    <setting id="%s" default="%s">%s</setting>' % (item['id'], item['default'], item['value'])
+                elif 'default' in item: content += '\n    <setting id="%s" default="%s"></setting>' % (item['id'], item['default'])
+                elif 'value' in item: content += '\n    <setting id="%s">%s</setting>' % (item['id'], item['value'])
+                else: content += '\n    <setting id="%s"></setting>'
+            else: removed_settings_number += 1
+        content += '\n</settings>'
+        return content, removed_settings_number
+    active_settings = []
+    root = ET.parse(active_settings_xml).getroot()
+    for item in root.findall('./category/setting'):
+        setting_id = item.get('id')
+        if setting_id: active_settings.append(setting_id)
+    current_user_settings = []
+    root = ET.parse(settings_xml).getroot()
+    for item in root:
+        dict_item = {}
+        setting_id = item.get('id')
+        setting_default = item.get('default')
+        setting_value = item.text
+        dict_item['id'] = setting_id
+        if setting_value: dict_item['value'] = setting_value
+        if setting_default: dict_item['default'] = setting_default
+        current_user_settings.append(dict_item)
+    if len(active_settings) == len(current_user_settings): return infoDialog(lang(32111).encode('utf-8'))
+    try: new_content, removed_settings_number = _make_content(current_user_settings)
+    except: return infoDialog('Error Cleaning Settings.xml. Old settings.xml file Restored.')
+    nfo_file = xbmcvfs.File(settings_xml, 'w')
+    nfo_file.write(new_content)
+    nfo_file.close()
+    return infoDialog(lang(32110).encode('utf-8').format(str(removed_settings_number)))

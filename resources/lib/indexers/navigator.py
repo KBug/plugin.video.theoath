@@ -370,6 +370,8 @@ class navigator:
         self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32108, 'cleanOathSettings', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32109, 'cleanOathscrapersSettings', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png')
         if not control.condVisibility('System.HasAddon(script.module.openscrapers)'):
