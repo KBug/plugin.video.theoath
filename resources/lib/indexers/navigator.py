@@ -372,7 +372,6 @@ class navigator:
         self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32108, 'cleanOathSettings', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32109, 'cleanOathscrapersSettings', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png')
         if not control.condVisibility('System.HasAddon(script.module.openscrapers)'):
             self.addDirectoryItem('[B]Openscrapers[/B] : Install', 'installOpenscrapers', 'openscr.png', 'DefaultAddonProgram.png')
@@ -382,6 +381,7 @@ class navigator:
             self.addDirectoryItem('[B]Orion[/B] : Install', 'installOrion', 'orion.png', 'DefaultAddonProgram.png')
         else:
             self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png')
         if trakt.getTraktCredentialsInfo():
             self.addDirectoryItem(32093, 'syncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')

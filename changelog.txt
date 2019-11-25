@@ -1,5 +1,8 @@
+[B][COLOR gold]v1.9.17[/COLOR][/B]
+- Re:fix tvdb
+
 [B][COLOR gold]v1.9.16[/COLOR][/B]
-- Added "Clear Settings file" options on Tools menu for TheOath & Oathscrapers
+- Added "Clean Settings file" options on Tools menu for TheOath & Oathscrapers
     *removes obsolete settings entries from add-on's addon_data settings.xml, to
      increase speed and reduce log spamming.
      Main code function taken from Fen (thanks), adjusted for TheOath

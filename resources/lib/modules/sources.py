@@ -1257,7 +1257,7 @@ class sources:
         try:
             if scraperSetting == 'TheOath Scrapers':
                 self.sourceDict = sourceDir1
-                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):'
             elif scraperSetting == 'Open Scrapers':
                 self.sourceDict = sourceDir3
                 self.module_name = 'OpenScrapers:'
@@ -1266,13 +1266,13 @@ class sources:
                 self.module_name = 'Built-in providers:'
             elif scraperSetting == 'TheOath + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):'
             elif scraperSetting == 'Open + Built-in':
                 self.sourceDict = sourceDir3 + sourceDir2
                 self.module_name = 'Built-in + OpenScrapers:'
             else:
                 self.sourceDict = sourceDir1
-                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('module.provider')) + ' module):'
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):'
                 control.setSetting('module.provider', 'TheOath Scrapers')
         except:
             return
