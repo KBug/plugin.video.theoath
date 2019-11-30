@@ -77,7 +77,7 @@
         <setting id="install.openscrapers" subsetting="true" type="action" label="Install Openscrapers" option="close" action="InstallAddon(script.module.openscrapers)" visible="!System.HasAddon(script.module.openscrapers)" />
         <setting id="clear.providers.cache" subsetting="true" type="action" label="32087" action="RunPlugin(plugin://plugin.video.theoath/?action=clearCacheProviders)" />
         <!-- [ORION/] -->
-        <setting label="32088" type="lsep" />
+        <setting type="lsep" label="32088" />
         <setting id="provider.orionoid" type="bool" label="ORION" default="false" />
         <setting id="install.orion" subsetting="true" type="action" label="32102" option="close" action="InstallAddon(script.module.orion)" enable="!System.HasAddon(script.module.orion)" visible="eq(-1,true)"/>
         <setting id="provider.orionoid.settings" subsetting="true" type="action" label="32103" option="close" action="RunPlugin(plugin://script.module.orion?action=dialogSettings)" enable="System.HasAddon(script.module.orion)" visible="eq(-2,true)" />

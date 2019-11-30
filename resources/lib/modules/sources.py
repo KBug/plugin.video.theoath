@@ -772,10 +772,12 @@ class sources:
             pass
 
 
-    def uniqueSourcesGen(self, sources):# remove duplicate links code by doko-desuka
+    def uniqueSourcesGen(self, sources):
         uniqueURLs = set()
         for source in sources:
-            url = json.dumps(source['url'])
+            #url = json.dumps(source['url'])
+            #url = source['url']
+            url = source.get('url')
             if 'magnet:' in url:
                 url = url.lower()[:60]
             if isinstance(url, basestring):
