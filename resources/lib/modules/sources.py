@@ -21,10 +21,6 @@
 
 import sys,re,json,urllib,urlparse,random,datetime,time
 
-import oathscrapers
-try: import openscrapers
-except: pass
-
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
 from resources.lib.modules import cache
@@ -35,7 +31,7 @@ from resources.lib.modules import debrid
 from resources.lib.modules import workers
 from resources.lib.modules import source_utils
 from resources.lib.modules import log_utils
-from resources.lib.modules import thexem
+#from resources.lib.modules import thexem
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
@@ -1246,13 +1242,13 @@ class sources:
         else:
             scraperSetting = control.setting('module.provider.alt')
 
-        from oathscrapers import sources
-        sourceDir1 = sources()
-        from resources.lib.sources import sources
-        sourceDir2 = sources()
+        import oathscrapers
+        sourceDir1 = oathscrapers.sources()
+        from resources.lib import sources
+        sourceDir2 = sources.sources()
         try:
-            from openscrapers import sources
-            sourceDir3 = sources()
+            import openscrapers
+            sourceDir3 = openscrapers.sources()
         except:
             pass
 
