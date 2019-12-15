@@ -301,6 +301,7 @@ class tvshows:
         ('Adult Swim', '/networks/10/adult-swim', 'https://i.imgur.com/jCqbRcS.png'),
         ('Amazon', '/webchannels/3/amazon', 'https://i.imgur.com/ru9DDlL.png'),
         ('Animal Planet', '/networks/92/animal-planet', 'https://i.imgur.com/olKc4RP.png'),
+        ('Apple TV+', '/webchannels/310/apple-tv', 'https://i.imgur.com/nDYN2qr.png'),
         ('Audience', '/networks/31/audience-network', 'https://i.imgur.com/5Q3mo5A.png'),
         ('BBC America', '/networks/15/bbc-america', 'https://i.imgur.com/TUHDjfl.png'),
         ('BBC Four', '/networks/51/bbc-four', 'https://i.imgur.com/PNDalgw.png'),

@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.9.21[/COLOR][/B]
+- Fixed seasons/episodes sort order (another regression from the tvdb fiasko)
+- Added AppleTV+ to Networks
+
 [B][COLOR gold]v1.9.20[/COLOR][/B]
 - Added option to include/exclude special episodes when adding shows to Kodi library
 
