@@ -1,3 +1,9 @@
+[B][COLOR gold]v1.9.20[/COLOR][/B]
+- Added option to include/exclude special episodes when adding shows to Kodi library
+
+[B][COLOR gold]v1.9.18[/COLOR][/B]
+- Fixed TV calendar
+
 [B][COLOR gold]v1.9.17[/COLOR][/B]
 - Re:fix tvdb
 

@@ -120,6 +120,7 @@
         <setting id="library.check_movie" type="bool" label="32549" default="false" />
         <setting id="library.check_episode" type="bool" label="32550" default="false" />
         <setting id="library.include_unknown" type="bool" label="32565" default="true" />
+        <setting id="library.include_special" type="bool" label="32566" default="true" />
     </category>
 
     <category label="32347">

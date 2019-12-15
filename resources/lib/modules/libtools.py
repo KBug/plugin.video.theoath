@@ -243,6 +243,7 @@ class libtvshows:
 
         self.check_setting = control.setting('library.check_episode') or 'false'
         self.include_unknown = control.setting('library.include_unknown') or 'true'
+        self.include_special = control.setting('library.include_special')
         self.library_setting = control.setting('library.update') or 'true'
         self.dupe_setting = control.setting('library.check') or 'true'
 
@@ -285,6 +286,9 @@ class libtvshows:
             lib = ['S%02dE%02d' % (int(i['season']), int(i['episode'])) for i in lib]
 
             items = [i for i in items if not 'S%02dE%02d' % (int(i['season']), int(i['episode'])) in lib]
+
+            if self.include_special == 'false':
+                items = [i for i in items if not str(i['season']) == '0']
         except:
             pass
 
@@ -399,6 +403,7 @@ class libepisodes:
 
         self.library_setting = control.setting('library.update') or 'true'
         self.include_unknown = control.setting('library.include_unknown') or 'true'
+        self.include_special = control.setting('library.include_special')
         self.property = '%s_service_property' % control.addonInfo('name').lower()
 
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
@@ -541,6 +546,9 @@ class libepisodes:
 
                     premiered = i.get('premiered', '0')
                     if (premiered != '0' and int(re.sub('[^0-9]', '', str(premiered))) > int(self.date)) or (premiered == '0' and not self.include_unknown):
+                        continue
+
+                    if str(i.get('season')) == '0' and self.include_special == 'false':
                         continue
 
                     libtvshows().strmFile(i)

@@ -1040,6 +1040,10 @@ msgctxt "#32565"
 msgid "Include episodes with unknown air dates"
 msgstr "Συμπερίληψη επεισοδίων με άγνωστη ημερομηνία προβολής"
 
+msgctxt "#32566"
+msgid "Include special episodes"
+msgstr "Συμπερίληψη special επεισοδίων"
+
 msgctxt "#32570"
 msgid "Show unaired seasons/episodes"
 msgstr "Εμφάνιση μη μεταδομένων σεζόν/επεισοδίων"
