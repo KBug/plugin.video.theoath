@@ -439,7 +439,7 @@ class seasons:
                 label = '%s %s' % (labelMenu, i['season'])
                 try:
                     if i['unaired'] == 'true':
-                        label = '[COLOR darkred][I]%s[/I][/COLOR]' % label
+                        label = '[COLOR crimson][I]%s[/I][/COLOR]' % label
                 except:
                     pass
                 systitle = sysname = urllib.quote_plus(i['tvshowtitle'])
@@ -1440,7 +1440,7 @@ class episodes:
                 
                 try:
                     if i['unaired'] == 'true':
-                        label = '[COLOR darkred][I]%s[/I][/COLOR]' % label
+                        label = '[COLOR crimson][I]%s[/I][/COLOR]' % label
                 except:
                     pass
 

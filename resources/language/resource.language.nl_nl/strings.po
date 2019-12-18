@@ -1092,7 +1092,7 @@ msgid "24HR delay before import"
 msgstr "24 uur vertraging vóór importering"
 
 msgctxt "#32613"
-msgid "Include Special Episodes"
+msgid "Show Special Episodes"
 msgstr "Voeg speciale afleveringen toe"
 
 msgctxt "#32614"

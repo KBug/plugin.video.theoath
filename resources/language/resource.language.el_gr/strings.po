@@ -1044,6 +1044,18 @@ msgctxt "#32566"
 msgid "Include special episodes"
 msgstr "Συμπερίληψη special επεισοδίων"
 
+msgctxt "#32567"
+msgid "IMDb watchlist/user lists sort by:"
+msgstr "Ταξινόμηση IMDb watchlist/προσωπικών λιστών:"
+
+msgctxt "#32568"
+msgid "Recently added"
+msgstr "Προστέθηκαν πρόσφατα"
+
+msgctxt "#32569"
+msgid "Title"
+msgstr "Αλφαβητικά"
+
 msgctxt "#32570"
 msgid "Show unaired seasons/episodes"
 msgstr "Εμφάνιση μη μεταδομένων σεζόν/επεισοδίων"
@@ -1101,7 +1113,7 @@ msgid "24HR delay before import"
 msgstr "24ωρη καθυστέρηση από την μετάδοση πριν την εισαγωγή"
 
 msgctxt "#32613"
-msgid "Include Special Episodes"
+msgid "Show Special Episodes"
 msgstr "Εμφάνιση Special επεισοδίων"
 
 msgctxt "#32614"

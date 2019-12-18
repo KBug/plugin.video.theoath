@@ -1036,7 +1036,7 @@ msgid "24HR delay before import"
 msgstr "Opóźnij importowanie o 24 godziny"
 
 msgctxt "#32613"
-msgid "Include Special Episodes"
+msgid "Show Special Episodes"
 msgstr "Zawieraj Specjalne Odcinki"
 
 msgctxt "#32614"

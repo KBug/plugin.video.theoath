@@ -1051,6 +1051,18 @@ msgctxt "#32566"
 msgid "Include special episodes"
 msgstr ""
 
+msgctxt "#32567"
+msgid "IMDb watchlist/user lists sort by:"
+msgstr ""
+
+msgctxt "#32568"
+msgid "Recently added"
+msgstr ""
+
+msgctxt "#32569"
+msgid "Title"
+msgstr ""
+
 msgctxt "#32570"
 msgid "Show unaired seasons/episodes"
 msgstr ""
@@ -1156,7 +1168,7 @@ msgid "24HR delay before import"
 msgstr ""
 
 msgctxt "#32613"
-msgid "Include Special Episodes"
+msgid "Show Special Episodes"
 msgstr ""
 
 msgctxt "#32614"

@@ -721,6 +721,11 @@ class tvshows:
         except:
             pass
 
+        if control.setting('imdb.sort.order') == '1':
+            list = self.imdblist2_link
+        else:
+            list = self.imdblist_link
+
         for item in items:
             try:
                 name = client.parseDOM(item, 'a')[0]
@@ -729,7 +734,7 @@ class tvshows:
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = url = url.split('/list/', 1)[-1].strip('/')
-                url = self.imdblist_link % url
+                url = list % url
                 url = client.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
