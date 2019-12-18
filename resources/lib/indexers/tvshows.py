@@ -459,7 +459,9 @@ class tvshows:
             pass
 
         self.list = userlists
-        for i in range(0, len(self.list)): self.list[i].update({'image': 'userlists.png', 'action': 'tvshows'})
+        for i in range(0, len(self.list)):
+            self.list[i].update({'action': 'tvshows'})
+        self.list = sorted(self.list, key=lambda k: (k['image'], k['name'].lower()))
         self.addDirectory(self.list)
         return self.list
 
@@ -577,11 +579,10 @@ class tvshows:
                 url = self.traktlist_link % url
                 url = url.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'context': url})
+                self.list.append({'name': name, 'url': url, 'context': url, 'image': 'trakt.png'})
             except:
                 pass
 
-        self.list = sorted(self.list, key=lambda k: utils.title_key(k['name']))
         return self.list
 
 
@@ -738,11 +739,10 @@ class tvshows:
                 url = client.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'context': url})
+                self.list.append({'name': name, 'url': url, 'context': url, 'image': 'imdb.png'})
             except:
                 pass
 
-        self.list = sorted(self.list, key=lambda k: utils.title_key(k['name']))
         return self.list
 
 

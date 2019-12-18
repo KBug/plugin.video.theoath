@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.9.23[/COLOR][/B]
+- Fixed episodes order when 'Flatten seasons' is enabled
+- Appended relevant icon (imdb/trakt) on user lists & sorted them by site/name
+
 [B][COLOR gold]v1.9.22[/COLOR][/B]
 - Added IMDb watchlist/user lists sorting options
 - Added support for more content types for IMDb watchlist/user lists

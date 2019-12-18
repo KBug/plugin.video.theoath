@@ -16,7 +16,7 @@ def get():
             try:
                 control.sleep(10)
                 retry -= 1
-                win.getControl(1).setLabel(' [COLOR gold] TheOath [/COLOR]v%s Changelog' % (control.addonInfo('version')))
+                win.getControl(1).setLabel('[COLOR gold]TheOath [/COLOR] --Changelog--')
                 win.getControl(5).setText(text)
                 return
             except:
