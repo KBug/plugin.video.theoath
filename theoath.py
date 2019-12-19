@@ -499,10 +499,6 @@ elif action == 'changelog':
     from resources.lib.modules import changelog
     changelog.get()	
 
-elif action == 'cleanOathSettings':
+elif action == 'cleanSettings':
     from resources.lib.modules import control
-    control.clean_settings('plugin.video.theoath')
-
-elif action == 'cleanOathscrapersSettings':
-    from resources.lib.modules import control
-    control.clean_settings('script.module.oathscrapers')
+    control.clean_settings()

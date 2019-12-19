@@ -1,3 +1,6 @@
+[B][COLOR gold]v1.9.24[/COLOR][/B]
+- Trigger 'Clean settings file' function on add-on startup after update, to fix issue with scraping
+
 [B][COLOR gold]v1.9.23[/COLOR][/B]
 - Fixed episodes order when 'Flatten seasons' is enabled
 - Appended relevant icon (imdb/trakt) on user lists & sorted them by site/name
