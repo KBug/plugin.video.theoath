@@ -95,7 +95,7 @@ class sources:
 
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
-            allowed = ['poster', 'fanart', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
+            allowed = ['poster', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
             return {k: v for k, v in metadata.iteritems() if k in allowed}
 
         control.playlist.clear()
@@ -172,7 +172,7 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='video', infoLabels = control.metadataClean(meta))
+                item.setInfo(type='video', infoLabels = sourcesDirMeta(meta))
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
