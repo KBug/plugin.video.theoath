@@ -569,8 +569,8 @@ msgid "Disabled"
 msgstr "Ανενεργό"
 
 msgctxt "#32303"
-msgid "User"
-msgstr "Όνομα χρήστη"
+msgid "User ID"
+msgstr "ID χρήστη"
 
 msgctxt "#32304"
 msgid "Email"

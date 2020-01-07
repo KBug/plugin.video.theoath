@@ -512,7 +512,7 @@ msgid "Disabled"
 msgstr "Uitgeschakeld"
 
 msgctxt "#32303"
-msgid "User"
+msgid "User ID"
 msgstr "Gebruiker"
 
 msgctxt "#32304"

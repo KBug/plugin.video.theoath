@@ -508,7 +508,7 @@ msgid "Disabled"
 msgstr "Wyłączone"
 
 msgctxt "#32303"
-msgid "User"
+msgid "User ID"
 msgstr "Użytkownik"
 
 msgctxt "#32304"
