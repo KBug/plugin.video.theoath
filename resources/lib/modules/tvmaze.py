@@ -20,6 +20,8 @@
 
 import urllib,json
 
+import requests
+
 from resources.lib.modules import cache
 from resources.lib.modules import client
 
@@ -131,7 +133,7 @@ class tvMaze:
     def episodeAbsoluteNumber(self, thetvdb, season, episode):
         try:
             url = 'https://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % ('Z2V0X3lvdXJz'.decode('base64'), thetvdb, int(season), int(episode))
-            return int(client.parseDOM(client.request(url), 'absolute_number')[0])
+            return int(client.parseDOM(requests.get(url).content, 'absolute_number')[0])
         except:
             pass
 
@@ -141,7 +143,7 @@ class tvMaze:
     def getTVShowTranslation(self, thetvdb, lang):
         try:
             url = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % ('Z2V0X3lvdXJz'.decode('base64'), thetvdb, lang)
-            r = client.request(url)
+            r = requests.get(url).content
             title = client.parseDOM(r, 'SeriesName')[0]
             title = client.replaceHTMLCodes(title)
             title = title.encode('utf-8')

@@ -33,6 +33,8 @@ from resources.lib.indexers import navigator
 
 import os,sys,re,json,urllib,urlparse,datetime
 
+import requests
+
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
 action = params.get('action')
@@ -341,7 +343,7 @@ class tvshows:
         ('MTV', '/networks/22/mtv', 'https://i.imgur.com/QM6DpNW.png'),
         ('NBC', '/networks/1/nbc', 'https://i.imgur.com/yPRirQZ.png'),
         ('National Geographic', '/networks/42/national-geographic-channel', 'https://i.imgur.com/XCGNKVQ.png'),
-        ('Netflix', '/webchannels/1/netflix', 'https://i.imgur.com/jI5c3bw.png'),
+        ('Netflix', '/webchannels/1/netflix', 'https://i.imgur.com/02VN1wq.png'),
         ('Nickelodeon', '/networks/27/nickelodeon', 'https://i.imgur.com/OUVoqYc.png'),
         ('PBS', '/networks/85/pbs', 'https://i.imgur.com/r9qeDJY.png'),
         ('Showtime', '/networks/9/showtime', 'https://i.imgur.com/SawAYkO.png'),
@@ -902,7 +904,8 @@ class tvshows:
             if tvdb == '0' and not imdb == '0':
                 url = self.tvdb_by_imdb % imdb
 
-                result = client.request(url, timeout='10')
+                #result = client.request(url, timeout='10')
+                result = requests.get(url).content
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
@@ -920,7 +923,8 @@ class tvshows:
 
                 years = [str(self.list[i]['year']), str(int(self.list[i]['year'])+1), str(int(self.list[i]['year'])-1)]
 
-                tvdb = client.request(url, timeout='10')
+                #tvdb = client.request(url, timeout='10')
+                tvdb = requests.get(url).content
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -934,7 +938,8 @@ class tvshows:
 
 
             url = self.tvdb_info_link % tvdb
-            item = client.request(url, timeout='10')
+            #item = client.request(url, timeout='10')
+            item = requests.get(url).content
             if item == None: raise Exception()
 
             if imdb == '0':

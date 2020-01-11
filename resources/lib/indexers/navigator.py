@@ -374,42 +374,42 @@ class navigator:
         self.endDirectory()
 
     def tools(self):
-        self.addDirectoryItem('[B]TheOath[/B] : Changelog', 'changelog', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('[B]TheOath[/B] : Changelog', 'changelog', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32108, 'cleanSettings', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32108, 'cleanSettings', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png', isFolder=False)
         if not control.condVisibility('System.HasAddon(script.module.openscrapers)'):
-            self.addDirectoryItem('[B]Openscrapers[/B] : Install', 'installOpenscrapers', 'openscr.png', 'DefaultAddonProgram.png')
+            self.addDirectoryItem('[B]Openscrapers[/B] : Install', 'installOpenscrapers', 'openscr.png', 'DefaultAddonProgram.png', isFolder=False)
         else:
-            self.addDirectoryItem(32082, 'openscrapersettings', 'openscr.png', 'DefaultAddonProgram.png')
+            self.addDirectoryItem(32082, 'openscrapersettings', 'openscr.png', 'DefaultAddonProgram.png', isFolder=False)
         if not control.condVisibility('System.HasAddon(script.module.orion)'):
-            self.addDirectoryItem('[B]Orion[/B] : Install', 'installOrion', 'orion.png', 'DefaultAddonProgram.png')
+            self.addDirectoryItem('[B]Orion[/B] : Install', 'installOrion', 'orion.png', 'DefaultAddonProgram.png', isFolder=False)
         else:
-            self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png')
+            self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png', isFolder=False)
         if trakt.getTraktCredentialsInfo():
-            self.addDirectoryItem(32093, 'syncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png')
+            self.addDirectoryItem(32093, 'syncTraktStatus', 'trakt.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png', isFolder=False)
 
         self.endDirectory()
 
     def library(self):
-        self.addDirectoryItem(32557, 'openSettings&query=5.0', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32557, 'openSettings&query=5.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32558, 'updateLibrary&query=tool', 'library_update.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32559, control.setting('library.movie'), 'movies.png', 'DefaultMovies.png', isAction=False)
         self.addDirectoryItem(32560, control.setting('library.tv'), 'tvshows.png', 'DefaultTVShows.png', isAction=False)
 
         if trakt.getTraktCredentialsInfo():
-            self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'DefaultMovies.png')
-            self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png')
-            self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'DefaultTVShows.png')
-            self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png')
+            self.addDirectoryItem(32561, 'moviesToLibrary&url=traktcollection', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+            self.addDirectoryItem(32562, 'moviesToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultMovies.png', isFolder=False)
+            self.addDirectoryItem(32563, 'tvshowsToLibrary&url=traktcollection', 'trakt.png', 'DefaultTVShows.png', isFolder=False)
+            self.addDirectoryItem(32564, 'tvshowsToLibrary&url=traktwatchlist', 'trakt.png', 'DefaultTVShows.png', isFolder=False)
 
         self.endDirectory()
 
@@ -481,7 +481,7 @@ class navigator:
 
 
     def clearCache(self):
-        control.idle()
+        #control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
         from resources.lib.modules import cache
@@ -489,7 +489,7 @@ class navigator:
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def clearCacheMeta(self):
-        control.idle()
+        #control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
         from resources.lib.modules import cache
@@ -497,7 +497,7 @@ class navigator:
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def clearCacheProviders(self):
-        control.idle()
+        #control.idle()
 #        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
 #        if not yes: return
         from resources.lib.modules import cache
@@ -505,7 +505,7 @@ class navigator:
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def clearCacheSearch(self):
-        control.idle()
+        #control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
         from resources.lib.modules import cache
@@ -513,7 +513,7 @@ class navigator:
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def clearCacheAll(self):
-        control.idle()
+        #control.idle()
         yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
         if not yes: return
         from resources.lib.modules import cache

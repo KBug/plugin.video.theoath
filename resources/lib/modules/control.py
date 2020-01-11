@@ -359,11 +359,12 @@ def clean_settings():
         content += '\n</settings>'
         return content
     try:
-        removed_settings = []
         for addon_id in ('plugin.video.theoath', 'script.module.oathscrapers'):
+            removed_settings = []
             active_settings = []
             current_user_settings = []
             addon = xbmcaddon.Addon(id=addon_id)
+            addon_name = addon.getAddonInfo('name')
             addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
             profile_dir = xbmc.translatePath(addon.getAddonInfo('profile'))
             active_settings_xml = os.path.join(addon_dir, 'resources', 'settings.xml')
@@ -387,6 +388,6 @@ def clean_settings():
             nfo_file.write(new_content)
             nfo_file.close()
             sleep(200)
-            infoDialog(lang(32110).encode('utf-8').format(str(len(removed_settings))))
+            infoDialog(lang(32110).encode('utf-8').format(str(len(removed_settings))), heading=addon_name)
     except:
-        infoDialog('Error Cleaning Settings.xml. Old settings.xml files Restored.')
+        infoDialog('Error Cleaning Settings.xml. Old settings.xml files Restored.', heading=addon_name)

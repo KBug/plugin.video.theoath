@@ -1,3 +1,7 @@
+[B][COLOR gold]v1.9.27[/COLOR][/B]
+- TV Shows/tvdb fix - thx 123Venom!
+- Various other code updates
+
 [B][COLOR gold]v1.9.26[/COLOR][/B]
 - Settings fix
 

@@ -159,14 +159,12 @@ def getFileType(url):
         type += ' 10BIT /'
     if ' 3d ' in url:
         type += ' 3D /'
-    if ' hdr ' in url:
+    if any(i in url for i in [' hdr ', ' hdr10 ', ' dolby vision ', ' hlg ']):
         type += ' HDR /'
     if ' imax ' in url:
         type += ' IMAX /'
-    if ' ac3 ' in url:
+    if any(i in url for i in [' ac3 ', ' ac 3 ']):
         type += ' AC3 /'
-    if ' eac3 ' in url:
-        type += ' EAC3 /'
     if ' aac ' in url:
         type += ' AAC /'
     if ' aac5 1 ' in url:
@@ -177,7 +175,7 @@ def getFileType(url):
         type += ' TRUEHD /'
     if ' atmos ' in url:
         type += ' ATMOS /'
-    if any(i in url for i in [' ddplus ', ' dd plus ', ' ddp ']):
+    if any(i in url for i in [' ddplus ', ' dd plus ', ' ddp ', ' eac3 ', ' eac 3 ']):
         type += ' DD+ /'
     if ' dts ' in url:
         type += ' DTS /'
