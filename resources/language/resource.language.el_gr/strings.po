@@ -721,8 +721,8 @@ msgid "SD Hosters in Auto Play"
 msgstr "Ροές SD σε αυτόματη αναπαραγωγή"
 
 msgctxt "#32341"
-msgid "Hosters with captchas"
-msgstr "Ροές με captcha"
+msgid "Enable Hosters with captchas"
+msgstr "Ενεργοποίηση ροών με captcha"
 
 msgctxt "#32342"
 msgid "Sort by Provider"
@@ -799,6 +799,14 @@ msgstr "Σε αυτήν την περίπτωση χρησιμοποιήστε �
 msgctxt "#32360"
 msgid "Providers Language"
 msgstr "Γλώσσα Παρόχων"
+
+msgctxt "#32362"
+msgid "Disable CloudFlare protected providers"
+msgstr "Απενεργοποίηση πηγών προστατευμένων με CloudFlare"
+
+msgctxt "#32363"
+msgid "Enable HEVC streams"
+msgstr "Ενεργοποίηση HEVC ροών"
 
 msgctxt "#32372"
 msgid "When playback ends..."

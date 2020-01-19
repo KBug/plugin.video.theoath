@@ -1,3 +1,8 @@
+[B][COLOR gold]v1.9.28[/COLOR][/B]
+- Moved CAM/SCR results at the bottom of the source list
+- Added option to disable Cloudflare-enabled sites scraping
+    *greatly improves scraping time, at the cost of some (well, many...) sources
+
 [B][COLOR gold]v1.9.27[/COLOR][/B]
 - TV Shows/tvdb fix - thx 123Venom!
 - Various other code updates

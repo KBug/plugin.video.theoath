@@ -664,7 +664,7 @@ msgid "SD Hosters in Auto Play"
 msgstr "SD Bronnen Automatisch Afspelen"
 
 msgctxt "#32341"
-msgid "Hosters with captchas"
+msgid "Enable Hosters with captchas"
 msgstr "Bronnen met captchas"
 
 msgctxt "#32342"
@@ -744,7 +744,7 @@ msgid "Providers Language"
 msgstr "Taal van bronnen"
 
 msgctxt "#32363"
-msgid "HEVC"
+msgid "Enable HEVC streams"
 msgstr "HEVC"
 
 msgctxt "#32372"

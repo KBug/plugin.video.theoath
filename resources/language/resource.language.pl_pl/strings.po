@@ -660,7 +660,7 @@ msgid "SD Hosters in Auto Play"
 msgstr "Autoodtwarzanie Jakośći SD"
 
 msgctxt "#32341"
-msgid "Hosters with captchas"
+msgid "Enable Hosters with captchas"
 msgstr "Hostingi z captcha"
 
 msgctxt "#32342"

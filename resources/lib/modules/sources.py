@@ -172,7 +172,7 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='video', infoLabels = sourcesDirMeta(meta))
+                item.setInfo(type='video', infoLabels = control.metadataClean(meta))
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -334,7 +334,7 @@ class sources:
         else:
             sourceDict = [(i[0], i[1], getattr(i[1], 'tvshow', None)) for i in sourceDict]
             genres = trakt.getGenre('show', 'tvdb', tvdb)
-        
+
         sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter or any(x in i[1].genre_filter for x in genres)]
         sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == None]
 
@@ -345,6 +345,9 @@ class sources:
         try: sourceDict = [(i[0], i[1], control.setting('provider.' + i[0])) for i in sourceDict]
         except: sourceDict = [(i[0], i[1], 'true') for i in sourceDict]
         sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == 'false']
+
+        if control.setting('cf.disable') == 'true':
+            sourceDict = [(i[0], i[1]) for i in sourceDict if not any(x in i[0].lower() for x in self.sourcecfDict)]
 
         sourceDict = [(i[0], i[1], i[1].priority) for i in sourceDict]
 
@@ -626,13 +629,12 @@ class sources:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             match = dbcur.fetchone()
-            if match is not None:
-                t1 = int(re.sub('[^0-9]', '', str(match[5])))
-                t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
-                update = abs(t2 - t1) > 60
-                if update == False:
-                    sources = eval(match[4].encode('utf-8'))
-                    return self.sources.extend(sources)
+            t1 = int(re.sub('[^0-9]', '', str(match[5])))
+            t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
+            update = abs(t2 - t1) > 60
+            if update == False:
+                sources = eval(match[4].encode('utf-8'))
+                return self.sources.extend(sources)
         except:
             pass
 
@@ -640,8 +642,7 @@ class sources:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            if url is not None:
-                url = eval(url[4].encode('utf-8'))
+            url = eval(url[4].encode('utf-8'))
         except:
             pass
 
@@ -679,13 +680,12 @@ class sources:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             match = dbcur.fetchone()
-            if match is not None:
-                t1 = int(re.sub('[^0-9]', '', str(match[5])))
-                t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
-                update = abs(t2 - t1) > 60
-                if update == False:
-                    sources = eval(match[4].encode('utf-8'))
-                    return self.sources.extend(sources)
+            t1 = int(re.sub('[^0-9]', '', str(match[5])))
+            t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
+            update = abs(t2 - t1) > 60
+            if update == False:
+                sources = eval(match[4].encode('utf-8'))
+                return self.sources.extend(sources)
         except:
             pass
 
@@ -855,29 +855,30 @@ class sources:
         self.sources = filter
 
         for i in range(len(self.sources)):
-            q = self.sources[i]['quality']            
+            q = self.sources[i]['quality']
             if q == 'HD': self.sources[i].update({'quality': '720p'})
 
         filter = []
         filter += local
 
-        if quality in ['0']: filter += [i for i in self.sources if i['quality'] == '4K' and 'debrid' in i]
-        if quality in ['0']: filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i and 'memberonly' in i]
-        if quality in ['0']: filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i and not 'memberonly' in i]
+        if quality in ['0']:
+            filter += [i for i in self.sources if i['quality'] == '4K' and 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i]
 
-        if quality in ['0', '1']: filter += [i for i in self.sources if i['quality'] == '1440p' and 'debrid' in i]
-        if quality in ['0', '1']: filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i and 'memberonly' in i]
-        if quality in ['0', '1']: filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i and not 'memberonly' in i]
+        if quality in ['0', '1']:
+            filter += [i for i in self.sources if i['quality'] == '1440p' and 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i]
 
-        if quality in ['0', '1', '2']: filter += [i for i in self.sources if i['quality'] == '1080p' and 'debrid' in i]
-        if quality in ['0', '1', '2']: filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i and 'memberonly' in i]
-        if quality in ['0', '1', '2']: filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i and not 'memberonly' in i]
+        if quality in ['0', '1', '2']:
+            filter += [i for i in self.sources if i['quality'] == '1080p' and 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i]
 
-        if quality in ['0', '1', '2', '3']: filter += [i for i in self.sources if i['quality'] == '720p' and 'debrid' in i]
-        if quality in ['0', '1', '2', '3']: filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i and 'memberonly' in i]
-        if quality in ['0', '1', '2', '3']: filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i and not 'memberonly' in i]
+        if quality in ['0', '1', '2', '3']:
+            filter += [i for i in self.sources if i['quality'] == '720p' and 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i]
 
-        filter += [i for i in self.sources if i['quality'] in ['SD', 'SCR', 'CAM']]
+        filter += [i for i in self.sources if i['quality'] == 'SD']
+        filter += [i for i in self.sources if i['quality'] in ['SCR', 'CAM']]
         self.sources = filter
 
         if not captcha == 'true':
@@ -1295,6 +1296,10 @@ class sources:
         self.hostblockDict = ['zippyshare.com', 'youtube.com', 'facebook.com', 'twitch.tv', 'streamango.com', 'streamcherry.com',
                               'openload.io', 'openload.co', 'openload.pw', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'oload.space', 'oload.monster',
                               'rapidvideo.com', 'rapidvideo.is', 'rapidvid.to']
+
+        self.sourcecfDict = ['123123movies', '123movieshubz', 'extramovies', 'movie4kis', 'projectfree', 'rapidmoviez', 'rlsbb', 'scenerls', 'timewatch', 'tvmovieflix', '1337x', 'btdb', 'ytsam',
+                             'animebase', 'filmpalast', 'hdfilme', 'iload', 'movietown', '1putlocker', 'animetoon', 'azmovie', 'cartoonhdto', 'cmoviestv', 'freefmovies', 'ganoolcam', 'projectfreetv', 'putlockeronl',
+                             'sharemovies', 'solarmoviefree', 'tvbox', 'xwatchseries', '0day', '2ddl', 'doublr', 'pirateiro']
 
     def enableAll(self):
         try:

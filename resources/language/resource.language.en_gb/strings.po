@@ -724,7 +724,7 @@ msgid "SD Hosters in Auto Play"
 msgstr ""
 
 msgctxt "#32341"
-msgid "Hosters with captchas"
+msgid "Enable Hosters with captchas"
 msgstr ""
 
 msgctxt "#32342"
@@ -803,8 +803,12 @@ msgctxt "#32360"
 msgid "Providers Language"
 msgstr ""
 
+msgctxt "#32362"
+msgid "Disable CloudFlare protected providers"
+msgstr ""
+
 msgctxt "#32363"
-msgid "HEVC"
+msgid "Enable HEVC streams"
 msgstr ""
 
 msgctxt "#32372"
