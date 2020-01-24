@@ -31,7 +31,7 @@ from resources.lib.modules import utils
 
 import os,sys,re,json,zipfile,StringIO,urllib,urlparse,datetime#,urllib2
 
-#import requests
+import requests
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -84,8 +84,7 @@ class seasons:
                 url = self.tvdb_by_imdb % imdb
 
                 #result = client.request(url, timeout='10')
-                #result = requests.get(url).content
-                result = control.get_tvdb(url)
+                result = requests.get(url).content
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
@@ -104,8 +103,7 @@ class seasons:
                 years = [str(year), str(int(year)+1), str(int(year)-1)]
 
                 #tvdb = client.request(url, timeout='10')
-                #tvdb = requests.get(url).content
-                tvdb = control.get_tvdb(url)
+                tvdb = requests.get(url).content
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -126,8 +124,7 @@ class seasons:
             url = self.tvdb_info_link % (tvdb, 'en')
             #data = urllib2.urlopen(url, timeout=30).read()
             #zip = zipfile.ZipFile(StringIO.StringIO(data))
-            #data = requests.get(url)
-            data = control.get_tvdb(url)
+            data = requests.get(url).content
             zip = zipfile.ZipFile(StringIO.StringIO(data))
             result = zip.read('en.xml')
             artwork = zip.read('banners.xml')
@@ -142,8 +139,7 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, 'en')
                 #data = urllib2.urlopen(url, timeout=30).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                #data = requests.get(url)
-                data = control.get_tvdb(url)
+                data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('en.xml')
                 artwork = zip.read('banners.xml')
@@ -153,8 +149,7 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, lang)
                 #data = urllib2.urlopen(url, timeout=30).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                #data = requests.get(url)
-                data = control.get_tvdb(url)
+                data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result2 = zip.read('%s.xml' % lang)
                 zip.close()
@@ -890,8 +885,7 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib2.urlopen(url, timeout=10).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                #data = requests.get(url)
-                data = control.get_tvdb(url)
+                data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
@@ -1094,8 +1088,7 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib2.urlopen(url, timeout=10).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                #data = requests.get(url)
-                data = control.get_tvdb(url)
+                data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')

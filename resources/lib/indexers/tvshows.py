@@ -33,7 +33,7 @@ from resources.lib.indexers import navigator
 
 import os,sys,re,json,urllib,urlparse,datetime
 
-#import requests
+import requests
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -766,8 +766,7 @@ class tvshows:
             try:
                 url = self.tvmaze_info_link % i
 
-                #item = requests.get(url).content
-                item = control.get_tvdb(url)
+                item = requests.get(url).content
                 item = json.loads(item)
 
                 title = item['name']
@@ -906,8 +905,7 @@ class tvshows:
                 url = self.tvdb_by_imdb % imdb
 
                 #result = client.request(url, timeout='10')
-                #result = requests.get(url).content
-                result = control.get_tvdb(url)
+                result = requests.get(url).content
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
@@ -931,8 +929,7 @@ class tvshows:
                 years = [str(self.list[i]['year']), str(int(self.list[i]['year'])+1), str(int(self.list[i]['year'])-1)]
 
                 #tvdb = client.request(url, timeout='10')
-                #tvdb = requests.get(url).content
-                tvdb = control.get_tvdb(url)
+                tvdb = requests.get(url).content
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -947,8 +944,7 @@ class tvshows:
 
             url = self.tvdb_info_link % tvdb
             #item = client.request(url, timeout='10')
-            #item = requests.get(url).content
-            item = control.get_tvdb(url)
+            item = requests.get(url).content
             if item == None: raise Exception()
 
             if imdb == '0':
