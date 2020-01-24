@@ -33,7 +33,7 @@ from resources.lib.indexers import navigator
 
 import os,sys,re,json,urllib,urlparse,datetime
 
-import requests
+#import requests
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -507,7 +507,7 @@ class tvshows:
                 year = item['year']
                 year = re.sub('[^0-9]', '', str(year))
 
-                if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+                if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
 
                 imdb = item['ids']['imdb']
                 if imdb == None or imdb == '': imdb = '0'
@@ -640,7 +640,7 @@ class tvshows:
                 year = re.findall('(\d{4})', year[0])[0]
                 year = year.encode('utf-8')
 
-                if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+                if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
 
                 imdb = client.parseDOM(item, 'a', ret='href')[0]
                 imdb = re.findall('(tt\d*)', imdb)[0]
@@ -766,7 +766,8 @@ class tvshows:
             try:
                 url = self.tvmaze_info_link % i
 
-                item = client.request(url)
+                #item = requests.get(url).content
+                item = control.get_tvdb(url)
                 item = json.loads(item)
 
                 title = item['name']
@@ -778,7 +779,7 @@ class tvshows:
                 year = re.findall('(\d{4})', year)[0]
                 year = year.encode('utf-8')
 
-                if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
+                if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
 
                 imdb = item['externals']['imdb']
                 if imdb == None or imdb == '': imdb = '0'
@@ -905,15 +906,21 @@ class tvshows:
                 url = self.tvdb_by_imdb % imdb
 
                 #result = client.request(url, timeout='10')
-                result = requests.get(url).content
+                #result = requests.get(url).content
+                result = control.get_tvdb(url)
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
 
                 try: name = client.parseDOM(result, 'SeriesName')[0]
                 except: name = '0'
-                dupe = re.findall('[***]Duplicate (\d*)[***]', name)
-                if dupe: tvdb = str(dupe[0])
+                dupe = re.findall('[***]Duplicate Series[***]', name)
+                if dupe or name == '':
+                    try:
+                        #tvdb = str(dupe[0])
+                        tvdb = client.parseDOM(result, 'seriesid')[1]
+                    except:
+                        pass
 
                 if tvdb == '': tvdb = '0'
 
@@ -924,7 +931,8 @@ class tvshows:
                 years = [str(self.list[i]['year']), str(int(self.list[i]['year'])+1), str(int(self.list[i]['year'])-1)]
 
                 #tvdb = client.request(url, timeout='10')
-                tvdb = requests.get(url).content
+                #tvdb = requests.get(url).content
+                tvdb = control.get_tvdb(url)
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -934,12 +942,13 @@ class tvshows:
                 tvdb = [x[0][0] for x in tvdb if any(y in x[2] for y in years)][0]
                 tvdb = client.parseDOM(tvdb, 'seriesid')[0]
 
-                if tvdb == '': tvdb = '0'
+                if tvdb == '' or tvdb is None: tvdb = '0'
 
 
             url = self.tvdb_info_link % tvdb
             #item = client.request(url, timeout='10')
-            item = requests.get(url).content
+            #item = requests.get(url).content
+            item = control.get_tvdb(url)
             if item == None: raise Exception()
 
             if imdb == '0':
@@ -1152,7 +1161,7 @@ class tvshows:
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tvdb_id': tvdb})
                 meta.update({'mediatype': 'tvshow'})
-                meta.update({'tvshowtitle': i['originaltitle']})
+                #meta.update({'tvshowtitle': i['originaltitle']})
                 meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
                 if not 'duration' in i: meta.update({'duration': '60'})
                 elif i['duration'] == '0': meta.update({'duration': '60'})

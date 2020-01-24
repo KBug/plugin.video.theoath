@@ -31,7 +31,7 @@ from resources.lib.modules import utils
 
 import os,sys,re,json,zipfile,StringIO,urllib,urlparse,datetime#,urllib2
 
-import requests
+#import requests
 
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -44,7 +44,7 @@ class seasons:
         self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
-        self.today_date = (self.datetime).strftime('%Y-%m-%d')
+        self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.tvdb_key = 'Z2V0X3lvdXJz'
 
         self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
@@ -84,7 +84,8 @@ class seasons:
                 url = self.tvdb_by_imdb % imdb
 
                 #result = client.request(url, timeout='10')
-                result = requests.get(url).content
+                #result = requests.get(url).content
+                result = control.get_tvdb(url)
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
@@ -103,7 +104,8 @@ class seasons:
                 years = [str(year), str(int(year)+1), str(int(year)-1)]
 
                 #tvdb = client.request(url, timeout='10')
-                tvdb = requests.get(url).content
+                #tvdb = requests.get(url).content
+                tvdb = control.get_tvdb(url)
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -124,8 +126,9 @@ class seasons:
             url = self.tvdb_info_link % (tvdb, 'en')
             #data = urllib2.urlopen(url, timeout=30).read()
             #zip = zipfile.ZipFile(StringIO.StringIO(data))
-            data = requests.get(url)
-            zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+            #data = requests.get(url)
+            data = control.get_tvdb(url)
+            zip = zipfile.ZipFile(StringIO.StringIO(data))
             result = zip.read('en.xml')
             artwork = zip.read('banners.xml')
             zip.close()
@@ -139,8 +142,9 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, 'en')
                 #data = urllib2.urlopen(url, timeout=30).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                data = requests.get(url)
-                zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+                #data = requests.get(url)
+                data = control.get_tvdb(url)
+                zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('en.xml')
                 artwork = zip.read('banners.xml')
                 zip.close()
@@ -149,8 +153,9 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, lang)
                 #data = urllib2.urlopen(url, timeout=30).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                data = requests.get(url)
-                zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+                #data = requests.get(url)
+                data = control.get_tvdb(url)
+                zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result2 = zip.read('%s.xml' % lang)
                 zip.close()
             else:
@@ -552,8 +557,8 @@ class episodes:
         self.tvmaze_link = 'https://api.tvmaze.com'
         self.tvdb_key = 'Z2V0X3lvdXJz'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
-        self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
-        self.today_date = (self.datetime).strftime('%Y-%m-%d')
+        self.systime = self.datetime.strftime('%Y%m%d%H%M%S%f')
+        self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.trakt_user = control.setting('trakt.user').strip()
         self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
@@ -885,8 +890,9 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib2.urlopen(url, timeout=10).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                data = requests.get(url)
-                zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+                #data = requests.get(url)
+                data = control.get_tvdb(url)
+                zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
@@ -1088,8 +1094,9 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib2.urlopen(url, timeout=10).read()
                 #zip = zipfile.ZipFile(StringIO.StringIO(data))
-                data = requests.get(url)
-                zip = zipfile.ZipFile(StringIO.StringIO(data.content))
+                #data = requests.get(url)
+                data = control.get_tvdb(url)
+                zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()

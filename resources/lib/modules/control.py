@@ -391,3 +391,16 @@ def clean_settings():
             infoDialog(lang(32110).encode('utf-8').format(str(len(removed_settings))), heading=addon_name)
     except:
         infoDialog('Error Cleaning Settings.xml. Old settings.xml files Restored.', heading=addon_name)
+
+
+def get_tvdb(url):
+    import requests
+    from resources.lib.modules import client
+    try:
+        req = requests.get(url).content
+        test = client.parseDOM(req, 'Data')[0]
+        result = req if not test == '' else client.request(url, timeout='25')
+    except:
+        result = client.request(url, timeout='25')
+    return result
+

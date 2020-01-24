@@ -1,3 +1,6 @@
+[B][COLOR gold]v1.9.29[/COLOR][/B]
+- Attempt to fix various issues with TV Shows
+
 [B][COLOR gold]v1.9.28[/COLOR][/B]
 - Moved CAM/SCR results at the bottom of the source list
 - Added option to disable Cloudflare-enabled sites scraping
