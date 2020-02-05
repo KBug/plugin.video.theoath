@@ -387,10 +387,10 @@ class sources:
 
         try: timeout = int(control.setting('scrapers.timeout.1'))
         except: pass
-        
+
         quality = control.setting('hosts.quality')
         if quality == '': quality = '0'
-        
+
         line1 = line2 = line3 = ""
         debrid_only = control.setting('debrid.only')
 
@@ -405,7 +405,7 @@ class sources:
 
         debrid_list = debrid.debrid_resolvers
         debrid_status = debrid.status()
-        
+
         total_format = '[COLOR %s][B]%s[/B][/COLOR]'
         pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
         pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
@@ -433,50 +433,41 @@ class sources:
 
                 if len(self.sources) > 0:
                     if quality in ['0']:
-                        source_4k = len([e for e in self.sources if e['quality'] == '4K' and e['debridonly'] == False])
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
+                        source_4k = len([e for e in self.sources if e['quality'].lower() == '4k' and e['debridonly'] == False])
+                        source_1080 = len([e for e in self.sources if e['quality'].lower() == '1080p' and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'].lower() in ['720p', 'hd'] and e['debridonly'] == False])
+                        source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and e['debridonly'] == False])
                     elif quality in ['1']:
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
+                        source_1080 = len([e for e in self.sources if e['quality'].lower() == '1080p' and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'].lower() in ['720p', 'hd'] and e['debridonly'] == False])
+                        source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and e['debridonly'] == False])
                     elif quality in ['2']:
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
-                    elif quality in ['3']:
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
+                        source_720 = len([e for e in self.sources if e['quality'].lower() in ['720p', 'hd'] and e['debridonly'] == False])
+                        source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and e['debridonly'] == False])
                     else:
-                        source_sd = len([e for e in self.sources if e['quality'] == 'SD' and e['debridonly'] == False])
+                        source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and e['debridonly'] == False])
 
                     total = source_4k + source_1080 + source_720 + source_sd
 
                     if debrid_status:
                         if quality in ['0']:
                             for d in debrid_list:
-                                d_source_4k = len([e for e in self.sources if e['quality'] == '4K' and d.valid_url(str(e['url']), e['source'])])
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_4k = len([e for e in self.sources if e['quality'].lower() == '4k' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'].lower() == '1080p' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'].lower() in ['720p', 'hd'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['1']:
                             for d in debrid_list:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1440p', '1080p'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'].lower() == '1080p' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'].lower() in ['720p', 'hd'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and d.valid_url(str(e['url']), e['source'])])
                         elif quality in ['2']:
                             for d in debrid_list:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
-                        elif quality in ['3']:
-                            for d in debrid_list:
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'].lower() in ['720p', 'hd'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and d.valid_url(str(e['url']), e['source'])])
                         else:
                             for d in debrid_list:
-                                d_source_sd = len([e for e in self.sources if e['quality'] == 'SD' and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'].lower() in ['sd', 'scr', 'cam'] and d.valid_url(str(e['url']), e['source'])])
 
                         d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
 
@@ -516,13 +507,6 @@ class sources:
                                     line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
                             elif quality in ['2']:
                                 if not progressDialog == control.progressDialogBG:
-                                    line1 = ('%s:' + '|'.join(pdiag_format[1:])) % (string6, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
-                                    line2 = ('%s:' + '|'.join(pdiag_format[1:])) % (string7, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                                else:
-                                    control.idle()
-                                    line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
-                            elif quality in ['3']:
-                                if not progressDialog == control.progressDialogBG:
                                     line1 = ('%s:' + '|'.join(pdiag_format[2:])) % (string6, d_720_label, d_sd_label, str(string4), d_total_label)
                                     line2 = ('%s:' + '|'.join(pdiag_format[2:])) % (string7, source_720_label, source_sd_label, str(string4), source_total_label)
                                 else:
@@ -541,8 +525,6 @@ class sources:
                             elif quality in ['1']:
                                 line1 = '|'.join(pdiag_format[1:]) % (source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
                             elif quality in ['2']:
-                                line1 = '|'.join(pdiag_format[1:]) % (source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                            elif quality in ['3']:
                                 line1 = '|'.join(pdiag_format[2:]) % (source_720_label, source_sd_label, str(string4), source_total_label)
                             else:
                                 line1 = '|'.join(pdiag_format[3:]) % (source_sd_label, str(string4), source_total_label)
@@ -856,29 +838,22 @@ class sources:
 
         for i in range(len(self.sources)):
             q = self.sources[i]['quality']
-            if q == 'HD': self.sources[i].update({'quality': '720p'})
+            if q in ['hd', 'HD']: self.sources[i].update({'quality': '720p'})
 
         filter = []
         filter += local
 
         if quality in ['0']:
-            filter += [i for i in self.sources if i['quality'] == '4K' and 'debrid' in i]
-            filter += [i for i in self.sources if i['quality'] == '4K' and not 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] in ['4K', '4k']]
 
         if quality in ['0', '1']:
-            filter += [i for i in self.sources if i['quality'] == '1440p' and 'debrid' in i]
-            filter += [i for i in self.sources if i['quality'] == '1440p' and not 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] in ['1080p', '1080P']]
 
         if quality in ['0', '1', '2']:
-            filter += [i for i in self.sources if i['quality'] == '1080p' and 'debrid' in i]
-            filter += [i for i in self.sources if i['quality'] == '1080p' and not 'debrid' in i]
+            filter += [i for i in self.sources if i['quality'] in ['720p', '720P']]
 
-        if quality in ['0', '1', '2', '3']:
-            filter += [i for i in self.sources if i['quality'] == '720p' and 'debrid' in i]
-            filter += [i for i in self.sources if i['quality'] == '720p' and not 'debrid' in i]
-
-        filter += [i for i in self.sources if i['quality'] == 'SD']
-        filter += [i for i in self.sources if i['quality'] in ['SCR', 'CAM']]
+        filter += [i for i in self.sources if i['quality'] in ['sd', 'SD']]
+        filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
         self.sources = filter
 
         if not captcha == 'true':
@@ -905,9 +880,9 @@ class sources:
         sec_identify = self.getPremColor(sec_color)
         if sec_identify == '': sec_identify = 'cyan'
 
-        double_line = int(control.setting('linesplit')) == 1
-        simple = int(control.setting('linesplit')) == 2
-        single_line = int(control.setting('linesplit')) == 0
+        double_line = control.setting('linesplit') == '1'
+        simple = control.setting('linesplit') == '2'
+        single_line = control.setting('linesplit') == '0'
 
         for i in range(len(self.sources)):
 
@@ -1153,7 +1128,7 @@ class sources:
         items = [i for i in items if ('autoplay' in i and i['autoplay'] == True) or not 'autoplay' in i]
 
         if control.setting('autoplay.sd') == 'true':
-            items = [i for i in items if not i['quality'] in ['4K', '1440p', '1080p', 'HD']]
+            items = [i for i in items if not i['quality'].lower() in ['4k', '1080p', '720p', 'hd']]
 
         u = None
 

@@ -912,13 +912,11 @@ class tvshows:
 
                 try: name = client.parseDOM(result, 'SeriesName')[0]
                 except: name = '0'
-                dupe = re.findall('[***]Duplicate Series[***]', name)
-                if dupe or name == '':
+                if '*Duplicate' in name or name == '':
                     try:
-                        #tvdb = str(dupe[0])
                         tvdb = client.parseDOM(result, 'seriesid')[1]
                     except:
-                        pass
+                        tvdb = '0'
 
                 if tvdb == '': tvdb = '0'
 

@@ -43,6 +43,7 @@ class seasons:
 
         self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
+        self.specials = control.setting('tv.specials') or 'true'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.tvdb_key = 'Z2V0X3lvdXJz'
@@ -123,7 +124,6 @@ class seasons:
 
             url = self.tvdb_info_link % (tvdb, 'en')
             #data = urllib2.urlopen(url, timeout=30).read()
-            #zip = zipfile.ZipFile(StringIO.StringIO(data))
             data = requests.get(url).content
             zip = zipfile.ZipFile(StringIO.StringIO(data))
             result = zip.read('en.xml')
@@ -138,7 +138,6 @@ class seasons:
 
                 url = self.tvdb_info_link % (tvdb, 'en')
                 #data = urllib2.urlopen(url, timeout=30).read()
-                #zip = zipfile.ZipFile(StringIO.StringIO(data))
                 data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('en.xml')
@@ -148,7 +147,6 @@ class seasons:
             if not lang == 'en':
                 url = self.tvdb_info_link % (tvdb, lang)
                 #data = urllib2.urlopen(url, timeout=30).read()
-                #zip = zipfile.ZipFile(StringIO.StringIO(data))
                 data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result2 = zip.read('%s.xml' % lang)
@@ -169,7 +167,7 @@ class seasons:
 
             episodes = [i for i in result if '<EpisodeNumber>' in i]
 
-            if control.setting('tv.specials') == 'true':
+            if self.specials == 'true':
                 episodes = [i for i in episodes]
             else:
                 episodes = [i for i in episodes if not '<SeasonNumber>0</SeasonNumber>' in i]
@@ -557,6 +555,7 @@ class episodes:
         self.trakt_user = control.setting('trakt.user').strip()
         self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
+        self.specials = control.setting('tv.specials') or 'true'
 
         self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key.decode('base64'), '%s', '%s')
         self.tvdb_image = 'https://thetvdb.com/banners/'
@@ -884,7 +883,6 @@ class episodes:
             try:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib2.urlopen(url, timeout=10).read()
-                #zip = zipfile.ZipFile(StringIO.StringIO(data))
                 data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
@@ -898,8 +896,8 @@ class episodes:
                 num = [x for x,y in enumerate(item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
                 item = [y for x,y in enumerate(item) if x > num][0]
 
-                print lang
-                print item
+                #print lang
+                #print item
 
                 premiered = client.parseDOM(item, 'FirstAired')[0]
                 if premiered == '' or '-00' in premiered: premiered = '0'
@@ -911,7 +909,7 @@ class episodes:
                 if status == '': status = 'Ended'
                 status = client.replaceHTMLCodes(status)
                 status = status.encode('utf-8')
-                
+
                 unaired = ''
 
                 if status == 'Ended': pass
@@ -928,6 +926,8 @@ class episodes:
                 season = client.parseDOM(item, 'SeasonNumber')[0]
                 season = '%01d' % int(season)
                 season = season.encode('utf-8')
+                if int(season) == 0 and self.specials != 'true':
+                    raise Exception()
 
                 episode = client.parseDOM(item, 'EpisodeNumber')[0]
                 episode = re.sub('[^0-9]', '', '%01d' % int(episode))
@@ -1049,7 +1049,9 @@ class episodes:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes', 'unaired': unaired, '_last_watched': i['_last_watched'], '_sort_key': max(i['_last_watched'],premiered)})
+                self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
+                                  'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
+                                  'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes', 'unaired': unaired, '_last_watched': i['_last_watched'], '_sort_key': max(i['_last_watched'],premiered)})
             except:
                 pass
 
@@ -1087,7 +1089,6 @@ class episodes:
             try:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib2.urlopen(url, timeout=10).read()
-                #zip = zipfile.ZipFile(StringIO.StringIO(data))
                 data = requests.get(url).content
                 zip = zipfile.ZipFile(StringIO.StringIO(data))
                 result = zip.read('%s.xml' % lang)
@@ -1118,6 +1119,8 @@ class episodes:
                 season = client.parseDOM(item, 'SeasonNumber')[0]
                 season = '%01d' % int(season)
                 season = season.encode('utf-8')
+                if int(season) == 0 and self.specials != 'true':
+                    raise Exception()
 
                 episode = client.parseDOM(item, 'EpisodeNumber')[0]
                 episode = re.sub('[^0-9]', '', '%01d' % int(episode))

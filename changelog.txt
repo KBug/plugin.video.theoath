@@ -1,3 +1,6 @@
+[B][COLOR gold]v1.9.31[/COLOR][/B]
+- Code cleanup
+
 [B][COLOR gold]v1.9.29[/COLOR][/B]
 - Attempt to fix various issues with TV Shows
 
