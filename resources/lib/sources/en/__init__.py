@@ -9,7 +9,7 @@
 	this stuff is worth it, you can buy me a beer in return.
 '''
 
-import os.path
+import os
 
 files = os.listdir(os.path.dirname(__file__))
 __all__ = [filename[:-3] for filename in files if not filename.startswith('__') and filename.endswith('.py')]

@@ -19,7 +19,7 @@
 '''
 
 import pkgutil
-import os.path
+import os
 
 from resources.lib.modules import log_utils
 
