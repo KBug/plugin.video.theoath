@@ -36,6 +36,22 @@ RES_SD = [' 576 ', ' 576p ', ' 576i ', ' sd576 ', ' 576sd ', ' 480 ', ' 480p ', 
 SCR = [' scr ', ' screener ', ' dvdscr ', ' dvd scr ', ' r5 ', ' r6 ']
 CAM = [' camrip ', ' tsrip ', ' hdcam ', ' hd cam ', ' cam rip ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts ']
 
+def get_qual(term):
+    if any(i in term for i in RES_4K):
+        return '4k'
+    elif any(i in term for i in RES_1080):
+        return '1080p'
+    elif any(i in term for i in RES_720):
+        return '720p'
+    elif any(i in term for i in RES_SD):
+        return 'sd'
+    elif any(i in term for i in SCR):
+        return 'scr'
+    elif any(i in term for i in CAM):
+        return 'cam'
+    else:
+        return 'sd'
+
 def is_anime(content, type, type_id):
     try:
         r = trakt.getGenre(content, type, type_id)
@@ -58,18 +74,7 @@ def get_release_quality(release_name, release_link=None):
         try: fmt = fmt.encode('utf-8')
         except: pass
 
-        if any(i in fmt for i in RES_4K):
-            quality = '4k'
-        elif any(i in fmt for i in RES_1080):
-            quality = '1080p'
-        elif any(i in fmt for i in RES_720):
-            quality = '720p'
-        elif any(i in fmt for i in RES_SD):
-            quality = 'sd'
-        elif any(i in fmt for i in SCR):
-            quality = 'scr'
-        elif any(i in fmt for i in CAM):
-            quality = 'cam'
+        quality = get_qual(fmt)
 
         if not quality:
             if release_link:
@@ -78,18 +83,8 @@ def get_release_quality(release_name, release_link=None):
                 release_link = release_link.lower()
                 try: release_link = release_link.encode('utf-8')
                 except: pass
-                if any(i in release_link for i in RES_4K):
-                    quality = '4k'
-                elif any(i in release_link for i in RES_1080):
-                    quality = '1080p'
-                elif any(i in release_link for i in RES_720):
-                    quality = '720p'
-                elif any(i in release_link for i in RES_SD):
-                    quality = 'sd'
-                elif any(i in release_link for i in SCR):
-                    quality = 'scr'
-                elif any(i in release_link for i in CAM):
-                    quality = 'cam'
+
+                quality = get_qual(release_link)
             else: quality = 'sd'
         info = []
         #if '3d' in fmt or '.3D.' in release_name: info.append('3D')
@@ -202,22 +197,7 @@ def check_sd_url(release_link):
         release_link = release_link.lower()
         try: release_link = release_link.encode('utf-8')
         except: pass
-        if ' 2160 ' in release_link: quality = '4k'
-        elif ' 2160p ' in release_link: quality = '4k'
-        elif ' 4k ' in release_link: quality = '4k'
-        elif ' uhd ' in release_link: quality = '4k'
-        elif ' ultrahd ' in release_link: quality = '4k'
-        elif ' ultra hd ' in release_link: quality = '4k'
-        elif ' 1080 ' in release_link: quality = '1080p'
-        elif ' 1080p ' in release_link: quality = '1080p'
-        elif ' m1080p ' in release_link: quality = '1080p'
-        elif ' full hd ' in release_link: quality = '1080p'
-        elif ' fullhd ' in release_link: quality = '1080p'
-        elif ' 720p ' in release_link: quality = '720p'
-        elif ' hd ' in release_link: quality = '720p'
-        elif any(i in [' dvdscr ', ' r5 ', ' r6 '] for i in release_link): quality = 'scr'
-        elif any(i in [' camrip ', ' tsrip ', ' hdcam ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts '] for i in release_link): quality = 'cam'
-        else: quality = 'sd'
+        quality = get_qual(release_link)
         return quality
     except:
         return 'sd'
@@ -228,19 +208,7 @@ def check_direct_url(url):
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = url.encode('utf-8')
         url = url.lower()
-        if any(i in url for i in RES_4K):
-            quality = '4k'
-        elif any(i in url for i in RES_1080):
-            quality = '1080p'
-        elif any(i in url for i in RES_720):
-            quality = '720p'
-        elif any(i in url for i in RES_SD):
-            quality = 'sd'
-        elif any(i in url for i in SCR):
-            quality = 'scr'
-        elif any(i in url for i in CAM):
-            quality = 'cam'
-        else: quality = 'sd'
+        quality = get_qual(url)
         return quality
     except:
         return 'sd'
@@ -255,19 +223,7 @@ def check_url(url):
         url = str(url)
 
     try:
-        if any(i in url for i in RES_4K):
-            quality = '4k'
-        elif any(i in url for i in RES_1080):
-            quality = '1080p'
-        elif any(i in url for i in RES_720):
-            quality = '720p'
-        elif any(i in url for i in RES_SD):
-            quality = 'sd'
-        elif any(i in url for i in SCR):
-            quality = 'scr'
-        elif any(i in url for i in CAM):
-            quality = 'cam'
-        else: quality = 'sd'
+        quality = get_qual(url)
         return quality
     except:
         return 'sd'
@@ -279,8 +235,6 @@ def label_to_quality(label):
 
         if label >= 2160:
             return '4K'
-        elif label >= 1440:
-            return '1440p'
         elif label >= 1080:
             return '1080p'
         elif 720 <= label < 1080:

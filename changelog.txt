@@ -1,3 +1,8 @@
+[B][COLOR gold]v1.9.32[/COLOR][/B]
+- Fixed Clean Settings File function for Kodi versions older than 18 (thx Tikipeter!)
+- More code cleanup (Note: re-set your "Max Quality" setting - 1440p option has been removed)
+- Orionoid tweaks
+
 [B][COLOR gold]v1.9.31[/COLOR][/B]
 - Code cleanup
 

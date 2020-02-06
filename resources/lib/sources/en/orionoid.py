@@ -100,10 +100,8 @@ class source:
     def _quality(self, data):
         try:
             quality = data['video']['quality']
-            if quality in [Orion.QualityHd8k, Orion.QualityHd6k, Orion.QualityHd4k]:
+            if quality in [Orion.QualityHd8k, Orion.QualityHd6k, Orion.QualityHd4k, Orion.QualityHd2k]:
                 return '4K'
-            elif quality in [Orion.QualityHd2k]:
-                return '1440p'
             elif quality in [Orion.QualityHd1080]:
                 return '1080p'
             elif quality in [Orion.QualityHd720]:
@@ -123,9 +121,7 @@ class source:
         except: return 'en'
 
     def _source(self, data, label = True):
-        if data['stream']['type'] == OrionStream.TypeTorrent:
-            return 'Torrent'
-        elif label:
+        if label:
             try: hoster = data['stream']['hoster']
             except: hoster = None
             if hoster: return hoster
@@ -285,7 +281,7 @@ class source:
                     sources.append({
                         'orion' : orion,
                         'provider' : self._source(data, False),
-                        'source' : self._source(data, True),
+                        'source' : 'Torrent' if data['stream']['type'] == OrionStream.TypeTorrent else self._source(data, True),
                         'quality' : self._quality(data),
                         'language' : self._language(data),
                         'url' : self._link(data),
