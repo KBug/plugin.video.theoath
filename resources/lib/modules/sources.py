@@ -117,6 +117,8 @@ class sources:
 
         downloads = True if control.setting('downloads') == 'true' and not (control.setting('movie.download.path') == '' or control.setting('tv.download.path') == '') else False
 
+        listMeta = control.setting('source.list.meta')
+
         systitle = sysname = urllib.quote_plus(title)
 
         if 'tvshowtitle' in meta and 'season' in meta and 'episode' in meta:
@@ -172,7 +174,9 @@ class sources:
                 item.addStreamInfo('video', video_streaminfo)
 
                 item.addContextMenuItems(cm)
-                item.setInfo(type='video', infoLabels = control.metadataClean(meta))
+
+                info_labels = control.metadataClean(meta) if listMeta == 'true' else None
+                item.setInfo(type='video', infoLabels=info_labels)
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -768,6 +772,50 @@ class sources:
                 yield source # Always yield non-string url sources.
 
 
+    def sourcesProcessTorrents(self, torrentSources):#adjusted Fen code
+        if control.setting('check.torr.cache') == 'false': return
+        if len(torrentSources) == 0: return
+        try:
+            from resources.lib.modules import debridcheck
+            xbmc.sleep(1000)
+            DBCheck = debridcheck.DebridCheck()
+            hashList = []
+            cachedTorrents = []
+            uncachedTorrents = []
+            #uncheckedTorrents = []
+            for i in torrentSources:
+                try:
+                    r = re.findall(r'btih:(\w{40})', str(i['url']))[0]
+                    if r:
+                        infoHash = r.lower()
+                        i['info_hash'] = infoHash
+                        hashList.append(infoHash)
+                except: torrentSources.remove(i)
+            if len(torrentSources) == 0: return torrentSources
+            torrentSources = [i for i in torrentSources if 'info_hash' in i]
+            hashList = list(set(hashList))
+            xbmc.sleep(1000)
+            cachedRDHashes = DBCheck.run(hashList)
+            cachedRDSources = [dict(i.items() + [('cache_provider', 'Real-Debrid')]) for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
+            for i in cachedRDSources: i.update({'source': 'cached torrent'})
+            for i in [('Real-Debrid', cachedRDSources)]:
+                cachedTorrents.extend(i[1])
+            #if self.uncachedTorrents == 'true':
+            cachedHashes = list(set(cachedRDHashes))
+            uncachedTorrents = [dict(i.items() + [('cache_provider', 'Uncached')]) for i in torrentSources if not i['info_hash'] in cachedHashes]
+            for i in uncachedTorrents: i.update({'source': 'un-cached torrent'})
+            #if self.uncheckedTorrents == 'true':
+            #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
+            #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
+            return cachedTorrents + uncachedTorrents# + uncheckedTorrents
+        except:
+            import traceback
+            failure = traceback.format_exc()
+            log_utils.log('Torrent check - Exception: ' + str(failure))
+            control.infoDialog('Error Processing Torrents')
+            return
+
+
     def sourcesFilter(self):
 
         provider = control.setting('hosts.sort.provider')
@@ -822,14 +870,23 @@ class sources:
             self.sources
         '''END'''
 
+        torrentSources = self.sourcesProcessTorrents([i for i in self.sources if 'magnet:' in i['url']])
+
         filter = []
 
         for d in debrid.debrid_resolvers:
             valid_hoster = set([i['source'] for i in self.sources])
             valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
 
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+            try:
+                filter += [dict(i.items() + [('debrid', d.name)]) for i in torrentSources if i.get('source', 'torrent') == 'cached torrent']
+                #filter += [dict(i.items() + [('debrid', d.name)]) for i in torrentSources if i.get('source', 'torrent') == 'unchecked torrent']
+                filter += [dict(i.items() + [('debrid', d.name)]) for i in torrentSources if i.get('source', 'torrent') == 'un-cached torrent']
+            except:
+                filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
             filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+            # filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
+            # filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
         if debrid_only == 'false' or debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]

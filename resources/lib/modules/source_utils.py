@@ -49,8 +49,6 @@ def get_qual(term):
         return 'scr'
     elif any(i in term for i in CAM):
         return 'cam'
-    else:
-        return 'sd'
 
 def is_anime(content, type, type_id):
     try:
@@ -85,6 +83,7 @@ def get_release_quality(release_name, release_link=None):
                 except: pass
 
                 quality = get_qual(release_link)
+
             else: quality = 'sd'
         info = []
         #if '3d' in fmt or '.3D.' in release_name: info.append('3D')
@@ -198,6 +197,8 @@ def check_sd_url(release_link):
         try: release_link = release_link.encode('utf-8')
         except: pass
         quality = get_qual(release_link)
+        if not quality:
+            quality = 'sd'
         return quality
     except:
         return 'sd'
@@ -209,6 +210,8 @@ def check_direct_url(url):
         url = url.encode('utf-8')
         url = url.lower()
         quality = get_qual(url)
+        if not quality:
+            quality = 'sd'
         return quality
     except:
         return 'sd'
@@ -224,6 +227,8 @@ def check_url(url):
 
     try:
         quality = get_qual(url)
+        if not quality:
+            quality = 'sd'
         return quality
     except:
         return 'sd'

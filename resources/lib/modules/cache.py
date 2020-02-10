@@ -160,7 +160,9 @@ def cache_clear_all():
     cache_clear()
     cache_clear_meta()
     cache_clear_providers()
-        
+    from resources.lib.modules import debridcheck
+    debridcheck.DebridCache().clear_database()
+
 def _get_connection_cursor():
     conn = _get_connection()
     return conn.cursor()
@@ -232,7 +234,7 @@ def cache_version_check():
     if _find_cache_version():
         cache_clear()
         cache_clear_providers()
-        control.execute('RunPlugin(plugin://%s)' % 'plugin.video.theoath/?action=cleanSettings')
+        #control.execute('RunPlugin(plugin://%s)' % 'plugin.video.theoath/?action=cleanSettings')
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
 

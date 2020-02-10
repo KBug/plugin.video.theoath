@@ -380,6 +380,7 @@ class navigator:
         self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
         self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem('[B]TheOath[/B] : Clear debrid checks...', 'clearDebridCheck', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32108, 'cleanSettings', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
@@ -510,6 +511,13 @@ class navigator:
         if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear_search()
+        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+
+    def clearDebridCheck(self):
+        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        if not yes: return
+        from resources.lib.modules import debridcheck
+        debridcheck.DebridCache().clear_database()
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
     def clearCacheAll(self):

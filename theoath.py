@@ -173,6 +173,10 @@ elif action == 'clearCacheProviders':
     from resources.lib.indexers import navigator
     navigator.navigator().clearCacheProviders()
 
+elif action == 'clearDebridCheck':
+    from resources.lib.indexers import navigator
+    navigator.navigator().clearDebridCheck()
+
 elif action == 'clearCacheSearch':
     from resources.lib.indexers import navigator
     navigator.navigator().clearCacheSearch()
