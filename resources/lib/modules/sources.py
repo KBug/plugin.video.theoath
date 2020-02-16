@@ -791,23 +791,23 @@ class sources:
                         i['info_hash'] = infoHash
                         hashList.append(infoHash)
                 except: torrentSources.remove(i)
-            if len(torrentSources) == 0: return torrentSources
-            torrentSources = [i for i in torrentSources if 'info_hash' in i]
-            hashList = list(set(hashList))
-            xbmc.sleep(1000)
-            cachedRDHashes = DBCheck.run(hashList)
-            cachedRDSources = [dict(i.items() + [('cache_provider', 'Real-Debrid')]) for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
-            for i in cachedRDSources: i.update({'source': 'cached torrent'})
-            for i in [('Real-Debrid', cachedRDSources)]:
-                cachedTorrents.extend(i[1])
-            #if self.uncachedTorrents == 'true':
-            cachedHashes = list(set(cachedRDHashes))
-            uncachedTorrents = [dict(i.items() + [('cache_provider', 'Uncached')]) for i in torrentSources if not i['info_hash'] in cachedHashes]
-            for i in uncachedTorrents: i.update({'source': 'un-cached torrent'})
-            #if self.uncheckedTorrents == 'true':
-            #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
-            #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
-            return cachedTorrents + uncachedTorrents# + uncheckedTorrents
+            if len(torrentSources) > 0:
+                torrentSources = [i for i in torrentSources if 'info_hash' in i]
+                hashList = list(set(hashList))
+                xbmc.sleep(1000)
+                cachedRDHashes = DBCheck.run(hashList)
+                cachedRDSources = [i for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
+                for i in cachedRDSources: i.update({'source': 'cached torrent'})
+                for i in [('cached torrent', cachedRDSources)]:
+                    cachedTorrents.extend(i[1])
+                #if self.uncachedTorrents == 'true':
+                cachedHashes = list(set(cachedRDHashes))
+                uncachedTorrents = [i for i in torrentSources if not i['info_hash'] in cachedHashes]
+                for i in uncachedTorrents: i.update({'source': 'un-cached torrent'})
+                #if self.uncheckedTorrents == 'true':
+                #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
+                #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
+                return cachedTorrents + uncachedTorrents# + uncheckedTorrents
         except:
             import traceback
             failure = traceback.format_exc()

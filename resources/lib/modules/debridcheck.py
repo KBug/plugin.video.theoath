@@ -15,10 +15,9 @@ import requests
 from threading import Thread
 from resources.lib.modules import control
 
-import resolveurl
 from resolveurl.plugins.realdebrid import RealDebridResolver
 
-__token__ = RealDebridResolver.get_setting('token')
+__token__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token')
 __rest_base_url__ = 'https://api.real-debrid.com/rest/1.0/'
 
 progressDialog = control.progressDialog

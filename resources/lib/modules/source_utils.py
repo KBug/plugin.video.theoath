@@ -183,6 +183,8 @@ def getFileType(url):
         type += ' 5.1 /'
     if any(i in url for i in [' 7 1 ', ' 8ch ']):
         type += ' 7.1 /'
+    if ' korsub ' in url:
+        type += ' HC-SUBS /'
     if any(i in url for i in [' subs ', ' subbed ', ' sub ']):
         type += ' SUBS /'
     if any(i in url for i in [' dub ', ' dubbed ', ' dublado ']):

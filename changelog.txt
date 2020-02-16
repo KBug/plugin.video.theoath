@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.0.1[/COLOR][/B]
+- Debrid cache check updates
+
 [B][COLOR gold]v2.0.0[/COLOR][/B]
 - Added Real-Debrid torrents cache check
     *Expiremental. Most code adjusted from Fen add-on - many thanks
