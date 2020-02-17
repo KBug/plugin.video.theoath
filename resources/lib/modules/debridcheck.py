@@ -15,10 +15,12 @@ import requests
 from threading import Thread
 from resources.lib.modules import control
 
-from resolveurl.plugins.realdebrid import RealDebridResolver
-
 __token__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token')
+__client_id__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_id')
+__client_secret__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_secret')
+__refresh__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_refresh')
 __rest_base_url__ = 'https://api.real-debrid.com/rest/1.0/'
+__auth_url__ = 'https://api.real-debrid.com/oauth/v2/'
 
 progressDialog = control.progressDialog
 
@@ -53,10 +55,23 @@ def _get(url):
         url += "&auth_token=%s" % __token__
     response = requests.get(url).text
     if 'bad_token' in response or 'Bad Request' in response:
-        RealDebridResolver().refresh_token()
+        refreshToken()
         response = _get(original_url)
     try: return to_utf8(json.loads(response))
     except: return to_utf8(response)
+
+def refreshToken():
+    data = {'client_id': __client_id__,
+            'client_secret': __client_secret__,
+            'code': __refresh__,
+            'grant_type': 'http://oauth.net/grant_type/device/1.0'}
+    url = __auth_url__ + 'token'
+    response = requests.post(url, data=data)
+    response = json.loads(response.text)
+    if 'access_token' in response: _token = response['access_token']
+    if 'refresh_token' in response: _refresh = response['refresh_token']
+    control.addon('script.module.resolveurl').setSetting('RealDebridResolver_token', _token)
+    control.addon('script.module.resolveurl').setSetting('RealDebridResolver_refresh', _refresh)
 
 def check_cache(hashes):
     hash_string = '/'.join(hashes)
