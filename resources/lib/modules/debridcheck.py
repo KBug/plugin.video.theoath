@@ -5,13 +5,14 @@
 ##--                                       Please retain this credit                                         --##
 
 
-import xbmc, xbmcgui, xbmcvfs
+import xbmc, xbmcgui
 import os
 import json
 import time
 import datetime
-import sqlite3 as database
 import requests
+try: from sqlite3 import dbapi2 as database
+except: from pysqlite2 import dbapi2 as database
 from threading import Thread
 from resources.lib.modules import control
 
@@ -22,7 +23,7 @@ __refresh__ = control.addon('script.module.resolveurl').getSetting('RealDebridRe
 __rest_base_url__ = 'https://api.real-debrid.com/rest/1.0/'
 __auth_url__ = 'https://api.real-debrid.com/oauth/v2/'
 
-progressDialog = control.progressDialog
+progressDialog = control.progressDialogBG
 
 def chunks(l, n):
     """
@@ -93,7 +94,7 @@ class DebridCheck:
         self.starting_debrids_display = []
 
     def run(self, hash_list):
-        xbmc.sleep(500)
+        control.sleep(500)
         self.hash_list = hash_list
         self._query_local_cache(self.hash_list)
         self.rd_cached_hashes = [str(i[0]) for i in self.cached_hashes if str(i[1]) == 'rd' and str(i[2]) == 'True']
@@ -104,15 +105,14 @@ class DebridCheck:
                 self.main_threads.append(Thread(target=self.starting_debrids[i][1]))
                 self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
             [i.start() for i in self.main_threads]
-            [i.join() for i in self.main_threads] 
-            self.debrid_check_dialog()
-        xbmc.sleep(500)
+            [i.join() for i in self.main_threads]
+            #self.debrid_check_dialog()
+        control.sleep(500)
         return self.rd_cached_hashes
 
     def debrid_check_dialog(self):
-        control.busy()
         timeout = 20
-        progressDialog.create('TheOath Debrid', 'Please Wait..', '..', '..')
+        progressDialog.create(control.addonInfo('name'), 'Checking debrid-cache, please wait..')
         progressDialog.update(0)
         start_time = time.time()
         for i in range(0, 200):
@@ -128,10 +128,10 @@ class DebridCheck:
                 current_time = time.time()
                 current_progress = current_time - start_time
                 try:
-                    line2 = 'Checking Debrid Providers'
-                    line3 = 'Remaining Debrid Checks: %s' % ', '.join(remaining_debrids).upper()
+                    head = 'Checking Debrid Providers'
+                    msg = 'Remaining Debrid Checks: %s' % ', '.join(remaining_debrids).upper()
                     percent = int((current_progress/float(timeout))*100)
-                    progressDialog.update(percent, '', line2, line3)
+                    progressDialog.update(percent, head, msg)
                 except: pass
                 time.sleep(0.2)
                 if len(alive_threads) == 0: break
@@ -141,7 +141,7 @@ class DebridCheck:
             progressDialog.close()
         except Exception:
             pass
-        xbmc.sleep(200)
+        control.sleep(200)
 
     def RD_cache_checker(self):
         hash_chunk_list = list(chunks(self.rd_hashes_unchecked, 100))
@@ -173,7 +173,6 @@ class DebridCheck:
 
 class DebridCache:
     def __init__(self):
-        self.datapath = control.dataPath
         self.dbfile = control.dbFile
 
     def get_all(self, hash_list):
@@ -212,8 +211,8 @@ class DebridCache:
         except: pass
 
     def check_database(self):
-        if not xbmcvfs.exists(self.datapath):
-            xbmcvfs.mkdirs(self.datapath)
+        if not os.path.exists(control.dataPath):
+            control.makeFile(control.dataPath)
         dbcon = database.connect(self.dbfile)
         dbcon.execute("""CREATE TABLE IF NOT EXISTS debrid_data
                       (hash text not null, debrid text not null, cached text, expires integer, unique (hash, debrid))

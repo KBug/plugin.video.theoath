@@ -261,7 +261,7 @@ class sources:
 
                     if items[i].get('source').lower() in self.hostcapDict:
                         offset = 60 * 2
-                    elif items[i].get('source').lower() == 'torrent':# and no_skip:
+                    elif 'torrent' in items[i].get('source').lower():# and no_skip:
                         offset = float('inf')
                     else:
                         offset = 0
@@ -773,11 +773,10 @@ class sources:
 
 
     def sourcesProcessTorrents(self, torrentSources):#adjusted Fen code
-        if control.setting('check.torr.cache') == 'false': return
-        if len(torrentSources) == 0: return
+        if not (control.setting('check.torr.cache') == 'true' and debrid.status() == True and len(torrentSources) > 0): return
         try:
             from resources.lib.modules import debridcheck
-            xbmc.sleep(1000)
+            control.sleep(1000)
             DBCheck = debridcheck.DebridCheck()
             hashList = []
             cachedTorrents = []
@@ -791,23 +790,23 @@ class sources:
                         i['info_hash'] = infoHash
                         hashList.append(infoHash)
                 except: torrentSources.remove(i)
-            if len(torrentSources) > 0:
-                torrentSources = [i for i in torrentSources if 'info_hash' in i]
-                hashList = list(set(hashList))
-                xbmc.sleep(1000)
-                cachedRDHashes = DBCheck.run(hashList)
-                cachedRDSources = [i for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
-                for i in cachedRDSources: i.update({'source': 'cached torrent'})
-                for i in [('cached torrent', cachedRDSources)]:
-                    cachedTorrents.extend(i[1])
-                #if self.uncachedTorrents == 'true':
-                cachedHashes = list(set(cachedRDHashes))
-                uncachedTorrents = [i for i in torrentSources if not i['info_hash'] in cachedHashes]
-                for i in uncachedTorrents: i.update({'source': 'un-cached torrent'})
-                #if self.uncheckedTorrents == 'true':
-                #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
-                #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
-                return cachedTorrents + uncachedTorrents# + uncheckedTorrents
+            if len(torrentSources) == 0: return torrentSources
+            torrentSources = [i for i in torrentSources if 'info_hash' in i]
+            hashList = list(set(hashList))
+            control.sleep(1000)
+            cachedRDHashes = DBCheck.run(hashList)
+            cachedRDSources = [i for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
+            for i in cachedRDSources: i.update({'source': 'cached torrent'})
+            for i in [('cached torrent', cachedRDSources)]:
+                cachedTorrents.extend(i[1])
+            #if self.uncachedTorrents == 'true':
+            cachedHashes = list(set(cachedRDHashes))
+            uncachedTorrents = [i for i in torrentSources if not i['info_hash'] in cachedHashes]
+            for i in uncachedTorrents: i.update({'source': 'un-cached torrent'})
+            #if self.uncheckedTorrents == 'true':
+            #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
+            #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
+            return cachedTorrents + uncachedTorrents# + uncheckedTorrents
         except:
             import traceback
             failure = traceback.format_exc()
@@ -855,7 +854,7 @@ class sources:
 
         ''' Filter-out duplicate links'''
         try:
-            if control.setting('remove.dups') == 'true':
+            if control.setting('remove.dups') == 'true' and len(self.sources) > 1:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
                 dupes = int(stotal - len(self.sources))
@@ -885,8 +884,6 @@ class sources:
             except:
                 filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
             filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
-            # filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if 'magnet:' in i['url']]
-            # filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
         if debrid_only == 'false' or debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
@@ -1116,7 +1113,7 @@ class sources:
 
                     if items[i].get('source').lower() in self.hostcapDict:
                         offset = 60 * 2
-                    elif items[i].get('source').lower() == 'torrent':# and no_skip:
+                    elif 'torrent' in items[i].get('source').lower():# and no_skip:
                         offset = float('inf')
                     else:
                         offset = 0
