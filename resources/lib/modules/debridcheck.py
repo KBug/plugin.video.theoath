@@ -106,7 +106,7 @@ class DebridCheck:
                 self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
             [i.start() for i in self.main_threads]
             [i.join() for i in self.main_threads]
-            #self.debrid_check_dialog()
+            self.debrid_check_dialog()
         control.sleep(500)
         return self.rd_cached_hashes
 

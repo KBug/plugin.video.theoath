@@ -1,3 +1,7 @@
+[B][COLOR gold]v2.0.4[/COLOR][/B]
+- Fix: prevent torrents resolved by services other than R-D to be checked/marked,
+    if services other than R-D are also enabled
+
 [B][COLOR gold]v2.0.3[/COLOR][/B]
 - Debrid cache check updates
 
