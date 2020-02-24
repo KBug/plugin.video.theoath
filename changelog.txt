@@ -1,3 +1,8 @@
+[B][COLOR gold]v2.0.5[/COLOR][/B]
+- Trailers: for now user's youtube add-on's api key will be used (provided one was deleted)
+    ie trailers will only work if user has an already working youtube add-on
+- Hopefully fixed r-d cache check failing if r-d token had expired
+
 [B][COLOR gold]v2.0.4[/COLOR][/B]
 - Fix: prevent torrents resolved by services other than R-D to be checked/marked,
     if services other than R-D are also enabled

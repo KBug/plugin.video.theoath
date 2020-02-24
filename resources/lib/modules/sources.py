@@ -803,7 +803,7 @@ class sources:
             #if self.uncachedTorrents == 'true':
             cachedHashes = list(set(cachedRDHashes))
             uncachedTorrents = [i for i in torrentSources if not i['info_hash'] in cachedHashes]
-            for i in uncachedTorrents: i.update({'source': 'un-cached torrent'})
+            for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]un-cached torrent[/COLOR]'})
             #if self.uncheckedTorrents == 'true':
             #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
             #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
@@ -884,7 +884,7 @@ class sources:
                             i.update({'debrid': d.name})
                     torrentSources = self.sourcesProcessTorrents([i for i in self.sources if ('magnet:' in i['url'] and i.get('debrid', '').lower() == 'real-debrid')])
                     filter += [i for i in torrentSources if i.get('source') == 'cached torrent']
-                    filter += [i for i in torrentSources if i.get('source') == 'un-cached torrent']
+                    filter += [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]un-cached torrent[/COLOR]']
                 except:
                     import traceback
                     failure = traceback.format_exc()

@@ -2,7 +2,7 @@
 
 
 ##-- Fen add-on's debrid cache check module adjusted for TheOath/Exodus code base - all credits to Tikipeter --##
-##--                                       Please retain this credit                                         --##
+##--                                        Please retain this credit                                        --##
 
 
 import xbmc, xbmcgui
@@ -16,12 +16,6 @@ except: from pysqlite2 import dbapi2 as database
 from threading import Thread
 from resources.lib.modules import control
 
-__token__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token')
-__client_id__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_id')
-__client_secret__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_secret')
-__refresh__ = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_refresh')
-__rest_base_url__ = 'https://api.real-debrid.com/rest/1.0/'
-__auth_url__ = 'https://api.real-debrid.com/oauth/v2/'
 
 progressDialog = control.progressDialogBG
 
@@ -47,38 +41,50 @@ def to_utf8(obj):
     except: pass
     return obj
 
-def _get(url):
-    original_url = url
-    url = __rest_base_url__ + url
-    if '?' not in url:
-        url += "?auth_token=%s" % __token__
-    else:
-        url += "&auth_token=%s" % __token__
-    response = requests.get(url).text
-    if 'bad_token' in response or 'Bad Request' in response:
-        refreshToken()
-        response = _get(original_url)
-    try: return to_utf8(json.loads(response))
-    except: return to_utf8(response)
+class RDapi:
+    def __init__(self):
+        self.token = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token')
+        self.client_id = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_id')
+        self.client_secret = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_secret')
+        self.refresh = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_refresh')
+        self.rest_base_url = 'https://api.real-debrid.com/rest/1.0/'
+        self.oauth_url = 'https://api.real-debrid.com/oauth/v2/'
 
-def refreshToken():
-    data = {'client_id': __client_id__,
-            'client_secret': __client_secret__,
-            'code': __refresh__,
-            'grant_type': 'http://oauth.net/grant_type/device/1.0'}
-    url = __auth_url__ + 'token'
-    response = requests.post(url, data=data)
-    response = json.loads(response.text)
-    if 'access_token' in response: _token = response['access_token']
-    if 'refresh_token' in response: _refresh = response['refresh_token']
-    control.addon('script.module.resolveurl').setSetting('RealDebridResolver_token', _token)
-    control.addon('script.module.resolveurl').setSetting('RealDebridResolver_refresh', _refresh)
+    def _get(self, url):
+        original_url = url
+        url = self.rest_base_url + url
+        if '?' not in url:
+            url += "?auth_token=%s" % self.token
+        else:
+            url += "&auth_token=%s" % self.token
+        response = requests.get(url).text
+        if 'bad_token' in response or 'Bad Request' in response:
+            self.refreshToken()
+            response = self._get(original_url)
+        try: resp = to_utf8(json.loads(response))
+        except: resp = to_utf8(response)
+        #from resources.lib.modules import log_utils
+        #log_utils.log('RDapi-' + str(resp))
+        return resp
 
-def check_cache(hashes):
-    hash_string = '/'.join(hashes)
-    url = 'torrents/instantAvailability/%s' % hash_string
-    response = _get(url)
-    return response
+    def refreshToken(self):
+        data = {'client_id': self.client_id,
+                'client_secret': self.client_secret,
+                'code': self.refresh,
+                'grant_type': 'http://oauth.net/grant_type/device/1.0'}
+        url = self.oauth_url + 'token'
+        response = requests.post(url, data=data)
+        response = json.loads(response.text)
+        if 'access_token' in response: self.token = response['access_token']
+        if 'refresh_token' in response: self.refresh = response['refresh_token']
+        control.addon('script.module.resolveurl').setSetting('RealDebridResolver_token', self.token)
+        control.addon('script.module.resolveurl').setSetting('RealDebridResolver_refresh', self.refresh)
+
+    def check_cache(self, hashes):
+        hash_string = '/'.join(hashes)
+        url = 'torrents/instantAvailability/%s' % hash_string
+        response = self._get(url)
+        return response
 
 class DebridCheck:
     def __init__(self):
@@ -94,7 +100,8 @@ class DebridCheck:
         self.starting_debrids_display = []
 
     def run(self, hash_list):
-        control.sleep(500)
+        control.sleep(1000)
+        #RDapi().refreshToken()
         self.hash_list = hash_list
         self._query_local_cache(self.hash_list)
         self.rd_cached_hashes = [str(i[0]) for i in self.cached_hashes if str(i[1]) == 'rd' and str(i[2]) == 'True']
@@ -152,7 +159,7 @@ class DebridCheck:
 
     def _rd_lookup(self, chunk):
         try:
-            rd_cache_get = check_cache(chunk)
+            rd_cache_get = RDapi().check_cache(chunk)
             for h in chunk:
                 cached = 'False'
                 if h in rd_cache_get:
@@ -214,7 +221,8 @@ class DebridCache:
         if not os.path.exists(control.dataPath):
             control.makeFile(control.dataPath)
         dbcon = database.connect(self.dbfile)
-        dbcon.execute("""CREATE TABLE IF NOT EXISTS debrid_data
+        dbcur = dbcon.cursor()
+        dbcur.execute("""CREATE TABLE IF NOT EXISTS debrid_data
                       (hash text not null, debrid text not null, cached text, expires integer, unique (hash, debrid))
                         """)
         dbcon.close()
