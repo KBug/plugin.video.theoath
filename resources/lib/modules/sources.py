@@ -830,12 +830,20 @@ class sources:
         captcha = control.setting('hosts.captcha')
         if captcha == '': captcha = 'true'
 
+        size_sort = control.setting('torr.sort.size')
+        if size_sort == '': size_sort = 'true'
+
         HEVC = control.setting('HEVC')
 
         random.shuffle(self.sources)
 
         if provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
+
+        if size_sort == 'true':
+            for i in self.sources:
+                if 'magnet:' in i['url']:
+                    self.sources = sorted(self.sources, key=lambda k: k.get('size', 0), reverse=True)
 
         if not HEVC == 'true':
             self.sources = [i for i in self.sources if not any(value in str(i['url']).lower() for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265'])]

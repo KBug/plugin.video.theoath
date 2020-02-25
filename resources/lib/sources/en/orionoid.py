@@ -180,14 +180,19 @@ class source:
                 return True
         return False
 
-    def _size(self, data):
+    def _size(self, data, fl=False):
         size = data['file']['size']
         size = float(size) / 1073741824
         if size:
-            return str('[B]%.2f GB[/B]' % size)
+            if fl:
+                return size
+            else:
+                return str('[B]%.2f GB[/B]' % size)
         else:
-            size = ''
-        return None
+            if fl:
+                return 0
+            else:
+                return ''
 
     def _name(self, data):
         name = str(data['file']['name'])
@@ -252,7 +257,7 @@ class source:
                     info = []
 
                     try:
-                        info.append(self._size(data))
+                        info.append(self._size(data, False))
                     except: pass
                     try:
                         info.append(self._source(data, False))
@@ -278,17 +283,31 @@ class source:
                     try: orion['item'] = data
                     except: pass
 
-                    sources.append({
-                        'orion' : orion,
-                        'provider' : self._source(data, False),
-                        'source' : 'Torrent' if data['stream']['type'] == OrionStream.TypeTorrent else self._source(data, True),
-                        'quality' : self._quality(data),
-                        'language' : self._language(data),
-                        'url' : self._link(data),
-                        'info' : info,
-                        'direct' : data['access']['direct'],
-                        'debridonly' : self._debrid(data)
-                    })
+                    if data['stream']['type'] == OrionStream.TypeTorrent:
+                        sources.append({
+                            'orion' : orion,
+                            'provider' : self._source(data, False),
+                            'source' : 'Torrent',
+                            'quality' : self._quality(data),
+                            'language' : self._language(data),
+                            'url' : self._link(data),
+                            'info' : info,
+                            'direct' : data['access']['direct'],
+                            'debridonly' : True,
+                            'size': self._size(data, True)
+                        })
+                    else:
+                        sources.append({
+                            'orion' : orion,
+                            'provider' : self._source(data, False),
+                            'source' : self._source(data, True),
+                            'quality' : self._quality(data),
+                            'language' : self._language(data),
+                            'url' : self._link(data),
+                            'info' : info,
+                            'direct' : data['access']['direct'],
+                            'debridonly' : self._debrid(data)
+                        })
                 except: self._error()
         except: self._error()
         self._cacheSave(sources)

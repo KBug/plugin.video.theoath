@@ -40,10 +40,12 @@
         <setting id="autoplay.sd" type="bool" label="32620" default="false" />
         <setting id="HEVC" type="bool" label="32363" default="true" />
         <setting id="hosts.captcha" type="bool" label="32341" default="true" />
-        <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
         <setting id="debrid.only" type="bool" label="32621" default="false" />
         <setting id="cf.disable" type="bool" label="32362" default="false" />
         <setting id="remove.dups" type="bool" label="32090" default="true" />
+        <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
+        <setting id="torr.sort.size" type="bool" label="Sort torrents by size" default="true" />
+        <setting type="text" label="Currently only works for Oathscrapers package and built-in Orion" enable="false" />
         <setting id="check.torr.cache" type="bool" label="Verify torrents cache" default="true" />
         <setting type="text" label="Experimental / WiP - currently only Real-Debrid is supported" enable="false" />
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />

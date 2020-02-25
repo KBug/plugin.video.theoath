@@ -1,3 +1,7 @@
+[B][COLOR gold]v2.6.0[/COLOR][/B]
+- Added option to sort torrents by file size. It will only work for the Oathscrapers pack
+    and the built-in Orion scraper for now
+
 [B][COLOR gold]v2.0.5[/COLOR][/B]
 - Trailers: for now user's youtube add-on's api key will be used (provided one was deleted)
     ie trailers will only work if user has an already working youtube add-on
