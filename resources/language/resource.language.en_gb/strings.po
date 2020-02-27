@@ -823,6 +823,10 @@ msgctxt "#32360"
 msgid "Providers Language"
 msgstr ""
 
+msgctxt "#32361"
+msgid "Show notification"
+msgstr ""
+
 msgctxt "#32362"
 msgid "Disable CloudFlare protected providers"
 msgstr ""

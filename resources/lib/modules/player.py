@@ -312,7 +312,7 @@ class player(xbmc.Player):
 
         if control.setting('trakt.scrobble') == 'true' and trakt.getTraktCredentialsInfo() == True:
             try:
-                percent = float((self.currentTime / self.totalTime) * 100)
+                percent = float((self.currentTime / self.totalTime)) * 100
                 if 1 < percent < 95:
                     trakt.scrobbleMovie(self.imdb, percent) if self.content == 'movie' else trakt.scrobbleEpisode(self.tvdb, self.season, self.episode, percent)
                     if control.setting('trakt.scrobble.notify') == 'true':
@@ -392,6 +392,8 @@ class subtitles:
             try: lang = xbmc.convertLanguage(filter[0]['SubLanguageID'], xbmc.ISO_639_1)
             except: lang = filter[0]['SubLanguageID']
 
+            subname = str(filter[0]['SubFileName'])
+
             content = [filter[0]['IDSubtitleFile'],]
             content = server.DownloadSubtitles(token, content)
             content = base64.b64decode(content['data'][0]['data'])
@@ -412,7 +414,10 @@ class subtitles:
             file.write(str(content))
             file.close()
 
-            xbmc.sleep(1000)
+            control.sleep(1000)
+            if control.setting('subtitles.notify') == 'true':
+                if xbmc.Player().isPlayingVideo():
+                    control.infoDialog(subname, heading='{} subtitles downloaded'.format(lang.upper()), time=6000)
             xbmc.Player().setSubtitles(subtitle)
         except:
             pass

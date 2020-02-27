@@ -125,11 +125,6 @@ class DebridCheck:
         for i in range(0, 200):
             try:
                 if xbmc.abortRequested == True: return sys.exit()
-                try:
-                    if progressDialog.iscanceled():
-                        break
-                except Exception:
-                    pass
                 alive_threads = [x.getName() for x in self.main_threads if x.is_alive() is True]
                 remaining_debrids = [x[1] for x in self.starting_debrids_display if x[0] in alive_threads]
                 current_time = time.time()
@@ -141,7 +136,7 @@ class DebridCheck:
                     progressDialog.update(percent, head, msg)
                 except: pass
                 time.sleep(0.2)
-                if len(alive_threads) == 0: break
+                if len(alive_threads) == 0 or progressDialog.isFinished(): break
             except Exception:
                 pass
         try:

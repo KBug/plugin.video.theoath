@@ -477,7 +477,7 @@ msgstr "Metadata στην λίστα πηγών"
 
 msgctxt "#32113"
 msgid "Sort torrents by size"
-msgstr "Ταξινόμηση torrent πηγών ανα μέγεθος"
+msgstr "Ταξινόμηση torrent πηγών κατά μέγεθος"
 
 msgctxt "#32114"
 msgid "Verify torrents cache"
@@ -746,7 +746,7 @@ msgstr "Ενεργοποίηση ροών με captcha"
 
 msgctxt "#32342"
 msgid "Sort by Provider"
-msgstr "Ταξινόμηση ανα πάροχο"
+msgstr "Ταξινόμηση κατά πάροχο"
 
 msgctxt "#32343"
 msgid "When playback starts..."
@@ -819,6 +819,10 @@ msgstr "Σε αυτήν την περίπτωση χρησιμοποιήστε �
 msgctxt "#32360"
 msgid "Providers Language"
 msgstr "Γλώσσα Παρόχων"
+
+msgctxt "#32361"
+msgid "Show notification"
+msgstr "Εμφάνιση ειδοποίησης"
 
 msgctxt "#32362"
 msgid "Disable CloudFlare protected providers"
