@@ -1,4 +1,7 @@
-[B][COLOR gold]v2.6.0[/COLOR][/B]
+[B][COLOR gold]v2.1.1[/COLOR][/B]
+- Label work
+
+[B][COLOR gold]v2.1.0[/COLOR][/B]
 - Added option to sort torrents by file size. It will only work for the Oathscrapers pack
     and the built-in Orion scraper for now
 

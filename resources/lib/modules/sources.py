@@ -777,7 +777,7 @@ class sources:
         if not (rd_enabled == True and len(torrentSources) > 0): return
         try:
             from resources.lib.modules import debridcheck
-            control.sleep(1000)
+            control.sleep(500)
             DBCheck = debridcheck.DebridCheck()
             hashList = []
             cachedTorrents = []
@@ -794,7 +794,7 @@ class sources:
             if len(torrentSources) == 0: return torrentSources
             torrentSources = [i for i in torrentSources if 'info_hash' in i]
             hashList = list(set(hashList))
-            control.sleep(1000)
+            control.sleep(500)
             cachedRDHashes = DBCheck.run(hashList)
             cachedRDSources = [i for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
             for i in cachedRDSources: i.update({'source': 'cached torrent'})

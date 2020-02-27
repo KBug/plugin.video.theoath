@@ -100,7 +100,7 @@ class DebridCheck:
         self.starting_debrids_display = []
 
     def run(self, hash_list):
-        control.sleep(1000)
+        control.sleep(500)
         #RDapi().refreshToken()
         self.hash_list = hash_list
         self._query_local_cache(self.hash_list)

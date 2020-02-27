@@ -475,6 +475,26 @@ msgctxt "#32111"
 msgid "No Obselete Settings to Remove"
 msgstr ""
 
+msgctxt "#32112"
+msgid "Enable metadata on source list"
+msgstr ""
+
+msgctxt "#32113"
+msgid "Sort torrents by size"
+msgstr ""
+
+msgctxt "#32114"
+msgid "Verify torrents cache"
+msgstr ""
+
+msgctxt "#32115"
+msgid "Experimental / WiP - currently only Real-Debrid is supported"
+msgstr ""
+
+msgctxt "#32116"
+msgid "[B]TheOath[/B] : Clear debrid checks..."
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""

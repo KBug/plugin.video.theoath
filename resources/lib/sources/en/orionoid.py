@@ -120,7 +120,7 @@ class source:
             return language[0]
         except: return 'en'
 
-    def _source(self, data, label = True):
+    def _source(self, data, label=True):
         if label:
             try: hoster = data['stream']['hoster']
             except: hoster = None
@@ -151,7 +151,7 @@ class source:
         if result: domain = result.group(1)
         return domain.lower()
 
-    def _provider(self, id, create = True):
+    def _provider(self, id, create=True):
         if len(self.providers) == 0:
             try:
                 path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
@@ -187,7 +187,7 @@ class source:
             if fl:
                 return size
             else:
-                return str('[B]%.2f GB[/B]' % size)
+                return str('%.2f GB' % size)
         else:
             if fl:
                 return 0
@@ -292,9 +292,9 @@ class source:
                             'language' : self._language(data),
                             'url' : self._link(data),
                             'info' : info,
-                            'direct' : data['access']['direct'],
+                            'direct' : False,
                             'debridonly' : True,
-                            'size': self._size(data, True)
+                            'size' : self._size(data, True)
                         })
                     else:
                         sources.append({
