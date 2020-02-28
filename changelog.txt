@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.1.[/COLOR][/B]
+- Playback: bookmark, resume, scrobble, subs notification improvements
+
 [B][COLOR gold]v2.1.2[/COLOR][/B]
 - Added notification upon subtitles download (optional)
 - Debrid cache check dialog fixes

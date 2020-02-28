@@ -243,7 +243,8 @@ class player(xbmc.Player):
             elif self.content == 'episode':
                 rpc = '{"jsonrpc": "2.0", "method": "VideoLibrary.SetEpisodeDetails", "params": {"episodeid" : %s, "playcount" : 1 }, "id": 1 }' % str(self.DBID)
 
-            control.jsonrpc(rpc) ; control.refresh()
+            control.jsonrpc(rpc)
+            control.refresh()
         except:
             pass
 
@@ -264,10 +265,12 @@ class player(xbmc.Player):
             if control.setting('bookmarks.auto') == 'true':
                 self.seekTime(float(self.offset))
             else:
+                self.pause()
                 if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
                     yes = control.yesnoDialog(control.lang2(12022).format('Trakt scrobble?').encode('utf-8'), None, None, heading=control.lang2(13404).encode('utf-8'))
                     if yes:
                         self.seekTime(float(self.offset))
+                    self.pause()
                 else:
                     minutes, seconds = divmod(float(self.offset), 60);
                     hours, minutes = divmod(minutes, 60)
@@ -276,6 +279,7 @@ class player(xbmc.Player):
                     yes = control.yesnoDialog(label, None, None, heading=control.lang2(13404).encode('utf-8'))
                     if yes:
                         self.seekTime(float(self.offset))
+                    self.pause()
 
         subtitles().get(self.name, self.imdb, self.season, self.episode)
         self.idleForPlayback()
@@ -307,25 +311,14 @@ class player(xbmc.Player):
             self.onAVStarted()
 
     def onPlayBackStopped(self):
-        control.sleep(2500)
-        bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
-
-        if control.setting('trakt.scrobble') == 'true' and trakt.getTraktCredentialsInfo() == True:
-            try:
-                percent = float((self.currentTime / self.totalTime)) * 100
-                if 1 < percent < 95:
-                    trakt.scrobbleMovie(self.imdb, percent) if self.content == 'movie' else trakt.scrobbleEpisode(self.tvdb, self.season, self.episode, percent)
-                    if control.setting('trakt.scrobble.notify') == 'true':
-                        control.infoDialog('Trakt: Scrobbled')
-            except:
-                import traceback
-                from resources.lib.modules import log_utils
-                failure = traceback.format_exc()
-                log_utils.log('Scrobble - Exception: ' + str(failure))
-                control.infoDialog('Scrobble Failed')
+        xbmc.sleep(3000)
+        if control.setting('bookmarks') == 'true':
+            bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
+        if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
+            bookmarks().set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tvdb, self.season, self.episode)
 
         try:
-            if (self.currentTime / self.totalTime) >= .90:
+            if float(self.currentTime / self.totalTime) >= 0.92:
                 self.libForPlayback()
         except:
             pass
@@ -335,7 +328,6 @@ class player(xbmc.Player):
 
     def onPlayBackEnded(self):
         self.libForPlayback()
-        self.onPlayBackStopped()
 
 
 class subtitles:
@@ -414,11 +406,11 @@ class subtitles:
             file.write(str(content))
             file.close()
 
-            control.sleep(1000)
+            xbmc.sleep(1000)
+            xbmc.Player().setSubtitles(subtitle)
             if control.setting('subtitles.notify') == 'true':
                 if xbmc.Player().isPlayingVideo():
-                    control.infoDialog(subname, heading='{} subtitles downloaded'.format(lang.upper()), time=6000)
-            xbmc.Player().setSubtitles(subtitle)
+                    control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
         except:
             pass
 
@@ -483,16 +475,14 @@ class bookmarks:
                 return offset
 
 
-    def reset(self, currentTime, totalTime, name, year='0'):
+    def reset(self, current_time, total_time, _name, _year='0'):
         try:
-            if not control.setting('bookmarks') == 'true': raise Exception()
-
-            timeInSeconds = str(currentTime)
-            ok = int(currentTime) > 120 and (currentTime / totalTime) <= .95
+            timeInSeconds = str(current_time)
+            ok = int(current_time) > 120 and (current_time / total_time) <= .95
 
             idFile = hashlib.md5()
-            for i in name: idFile.update(str(i))
-            for i in year: idFile.update(str(i))
+            for i in _name: idFile.update(str(i))
+            for i in _year: idFile.update(str(i))
             idFile = str(idFile.hexdigest())
             control.makeFile(control.dataPath)
             dbcon = database.connect(control.bookmarksFile)
@@ -503,3 +493,20 @@ class bookmarks:
             dbcon.commit()
         except:
             pass
+
+
+    def set_scrobble(self, current_time, total_time, _content, _imdb='', _tvdb='', _season='', _episode=''):
+        try:
+            percent = float((current_time / total_time)) * 100
+            if 1 < percent < 95:
+                trakt.scrobbleMovie(_imdb, percent) if _content == 'movie' else trakt.scrobbleEpisode(_tvdb, _season, _episode, percent)
+                if control.setting('trakt.scrobble.notify') == 'true':
+                    control.infoDialog('Trakt: Scrobbled')
+        except:
+            import traceback
+            from resources.lib.modules import log_utils
+            failure = traceback.format_exc()
+            log_utils.log('Scrobble - Exception: ' + str(failure))
+            control.infoDialog('Scrobble Failed')
+
+
