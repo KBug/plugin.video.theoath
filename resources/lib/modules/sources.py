@@ -867,15 +867,12 @@ class sources:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
                 dupes = int(stotal - len(self.sources))
-                control.infoDialog(control.lang(32089).encode('utf-8').format(dupes), sound=True, icon='INFO')
-            else:
-                self.sources
+                control.infoDialog(control.lang(32089).encode('utf-8').format(dupes), icon='INFO')
         except:
             import traceback
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
-            control.infoDialog('Dupes filter failed', sound=True, icon='INFO')
-            self.sources
+            control.infoDialog('Dupes filter failed', icon='INFO', sound=True)
         '''END'''
 
 

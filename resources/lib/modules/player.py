@@ -292,10 +292,12 @@ class player(xbmc.Player):
                 if control.setting('bookmarks.auto') == 'true':
                     self.seekTime(float(self.offset))
                 else:
+                    self.pause()
                     if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
                         yes = control.yesnoDialog(control.lang2(12022).format('Trakt scrobble?').encode('utf-8'), None, None, heading=control.lang2(13404).encode('utf-8'))
                         if yes:
                             self.seekTime(float(self.offset))
+                        self.pause()
                     else:
                         minutes, seconds = divmod(float(self.offset), 60);
                         hours, minutes = divmod(minutes, 60)
@@ -304,6 +306,7 @@ class player(xbmc.Player):
                         yes = control.yesnoDialog(label, None, None, heading=control.lang2(13404).encode('utf-8'))
                         if yes:
                             self.seekTime(float(self.offset))
+                        self.pause()
 
             subtitles().get(self.name, self.imdb, self.season, self.episode)
             self.idleForPlayback()
@@ -409,7 +412,7 @@ class subtitles:
             xbmc.sleep(1000)
             xbmc.Player().setSubtitles(subtitle)
             if control.setting('subtitles.notify') == 'true':
-                if xbmc.Player().isPlayingVideo():
+                if xbmc.Player().isPlaying():
                     control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
         except:
             pass
@@ -498,7 +501,7 @@ class bookmarks:
     def set_scrobble(self, current_time, total_time, _content, _imdb='', _tvdb='', _season='', _episode=''):
         try:
             percent = float((current_time / total_time)) * 100
-            if 1 < percent < 95:
+            if 2 < percent < 95:
                 trakt.scrobbleMovie(_imdb, percent) if _content == 'movie' else trakt.scrobbleEpisode(_tvdb, _season, _episode, percent)
                 if control.setting('trakt.scrobble.notify') == 'true':
                     control.infoDialog('Trakt: Scrobbled')

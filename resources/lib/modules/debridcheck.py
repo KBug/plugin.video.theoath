@@ -97,7 +97,7 @@ class DebridCheck:
         self.rd_query_threads = []
         self.rd_process_results = []
         self.starting_debrids = []
-        self.starting_debrids_display = []
+        #self.starting_debrids_display = []
 
     def run(self, hash_list):
         control.sleep(500)
@@ -110,7 +110,7 @@ class DebridCheck:
         if self.starting_debrids:
             for i in range(len(self.starting_debrids)):
                 self.main_threads.append(Thread(target=self.starting_debrids[i][1]))
-                self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
+                #self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
             [i.start() for i in self.main_threads]
             self.debrid_check_dialog()
             [i.join() for i in self.main_threads]
@@ -119,21 +119,22 @@ class DebridCheck:
 
     def debrid_check_dialog(self):
         timeout = 20
-        progressDialog.create(control.addonInfo('name'), 'Checking debrid-cache, please wait..')
+        progressDialog.create('TheOath', 'Checking R-D cache, please wait..')
         progressDialog.update(0)
         start_time = time.time()
         for i in range(0, 200):
             try:
                 if xbmc.abortRequested == True: return sys.exit()
                 alive_threads = [x.getName() for x in self.main_threads if x.is_alive() is True]
-                remaining_debrids = [x[1] for x in self.starting_debrids_display if x[0] in alive_threads]
+                #remaining_debrids = [x[1] for x in self.starting_debrids_display if x[0] in alive_threads]
                 current_time = time.time()
                 current_progress = current_time - start_time
                 try:
-                    head = 'Checking Debrid Providers'
-                    msg = 'Remaining Debrid Checks: %s' % ', '.join(remaining_debrids).upper()
                     percent = int((current_progress/float(timeout))*100)
-                    progressDialog.update(percent, head, msg)
+                    #head = 'Checking Debrid Providers'
+                    #msg = 'Remaining Debrid Checks: %s' % ', '.join(remaining_debrids).upper()
+                    #progressDialog.update(percent, head, msg)
+                    progressDialog.update(percent)
                 except: pass
                 time.sleep(0.2)
                 if len(alive_threads) == 0 or progressDialog.isFinished(): break
