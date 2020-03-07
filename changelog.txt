@@ -1,4 +1,7 @@
-[B][COLOR gold]v2.1.[/COLOR][/B]
+[B][COLOR gold]v2.1.5[/COLOR][/B]
+- Added AllDebrid torrents cache check support
+
+[B][COLOR gold]v2.1.4[/COLOR][/B]
 - Playback: bookmark, resume, scrobble, subs notification improvements
 
 [B][COLOR gold]v2.1.2[/COLOR][/B]

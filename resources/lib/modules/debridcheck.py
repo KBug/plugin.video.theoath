@@ -17,6 +17,7 @@ from threading import Thread
 from resources.lib.modules import control
 
 
+__r_url__ = control.addon('script.module.resolveurl')
 progressDialog = control.progressDialogBG
 
 def chunks(l, n):
@@ -43,10 +44,10 @@ def to_utf8(obj):
 
 class RDapi:
     def __init__(self):
-        self.token = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token')
-        self.client_id = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_id')
-        self.client_secret = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_client_secret')
-        self.refresh = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_refresh')
+        self.token = __r_url__.getSetting('RealDebridResolver_token')
+        self.client_id = __r_url__.getSetting('RealDebridResolver_client_id')
+        self.client_secret = __r_url__.getSetting('RealDebridResolver_client_secret')
+        self.refresh = __r_url__.getSetting('RealDebridResolver_refresh')
         self.rest_base_url = 'https://api.real-debrid.com/rest/1.0/'
         self.oauth_url = 'https://api.real-debrid.com/oauth/v2/'
 
@@ -77,14 +78,30 @@ class RDapi:
         response = json.loads(response.text)
         if 'access_token' in response: self.token = response['access_token']
         if 'refresh_token' in response: self.refresh = response['refresh_token']
-        control.addon('script.module.resolveurl').setSetting('RealDebridResolver_token', self.token)
-        control.addon('script.module.resolveurl').setSetting('RealDebridResolver_refresh', self.refresh)
+        __r_url__.setSetting('RealDebridResolver_token', self.token)
+        __r_url__.setSetting('RealDebridResolver_refresh', self.refresh)
 
     def check_cache(self, hashes):
         hash_string = '/'.join(hashes)
         url = 'torrents/instantAvailability/%s' % hash_string
         response = self._get(url)
         return response
+
+class ADapi:
+    def __init__(self):
+        self.base_url = 'https://api.alldebrid.com/'
+        self.token = __r_url__.getSetting('AllDebridResolver_token')
+        self.user_agent = 'ResolveURL for Kodi'
+
+    def check_cache(self, hashes):
+        data = {'magnets[]': hashes}
+        result = self._post('magnet/instant', data)
+        return result
+
+    def _post(self, url, data={}):
+        if self.token == '': return None
+        url = self.base_url + url + '?agent=%s&token=%s' % (self.user_agent, self.token)
+        return requests.post(url, data=data).json()
 
 class DebridCheck:
     def __init__(self):
@@ -96,45 +113,50 @@ class DebridCheck:
         self.rd_hashes_unchecked = []
         self.rd_query_threads = []
         self.rd_process_results = []
+        self.ad_cached_hashes = []
+        self.ad_hashes_unchecked = []
+        self.ad_process_results = []
         self.starting_debrids = []
-        #self.starting_debrids_display = []
+        self.starting_debrids_display = []
 
     def run(self, hash_list):
         control.sleep(500)
-        #RDapi().refreshToken()
+        rd_enabled = (__r_url__.getSetting('RealDebridResolver_enabled') == 'true' and __r_url__.getSetting('RealDebridResolver_token') != '')
+        ad_enabled = (__r_url__.getSetting('AllDebridResolver_enabled') == 'true' and __r_url__.getSetting('AllDebridResolver_token') != '')
         self.hash_list = hash_list
         self._query_local_cache(self.hash_list)
         self.rd_cached_hashes = [str(i[0]) for i in self.cached_hashes if str(i[1]) == 'rd' and str(i[2]) == 'True']
         self.rd_hashes_unchecked = [i for i in self.hash_list if not any([h for h in self.cached_hashes if str(h[0]) == i and str(h[1]) =='rd'])]
-        if self.rd_hashes_unchecked: self.starting_debrids.append(('Real-Debrid', self.RD_cache_checker))
+        if self.rd_hashes_unchecked and rd_enabled: self.starting_debrids.append(('Real-Debrid', self.RD_cache_checker))
+        self.ad_cached_hashes = [str(i[0]) for i in self.cached_hashes if str(i[1]) == 'ad' and str(i[2]) == 'True']
+        self.ad_hashes_unchecked = [i for i in self.hash_list if not any([h for h in self.cached_hashes if str(h[0]) == i and str(h[1]) =='ad'])]
+        if self.ad_hashes_unchecked and ad_enabled: self.starting_debrids.append(('AllDebrid', self.AD_cache_checker))
         if self.starting_debrids:
             for i in range(len(self.starting_debrids)):
                 self.main_threads.append(Thread(target=self.starting_debrids[i][1]))
-                #self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
+                self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
             [i.start() for i in self.main_threads]
-            self.debrid_check_dialog()
             [i.join() for i in self.main_threads]
+            self.debrid_check_dialog()
         control.sleep(500)
-        return self.rd_cached_hashes
+        return self.rd_cached_hashes, self.ad_cached_hashes
 
     def debrid_check_dialog(self):
         timeout = 20
-        progressDialog.create('TheOath', 'Checking R-D cache, please wait..')
+        progressDialog.create('Checking debrid cache, please wait..')
         progressDialog.update(0)
         start_time = time.time()
         for i in range(0, 200):
             try:
                 if xbmc.abortRequested == True: return sys.exit()
                 alive_threads = [x.getName() for x in self.main_threads if x.is_alive() is True]
-                #remaining_debrids = [x[1] for x in self.starting_debrids_display if x[0] in alive_threads]
+                remaining_debrids = [x[1] for x in self.starting_debrids_display if x[0] in alive_threads]
                 current_time = time.time()
                 current_progress = current_time - start_time
                 try:
                     percent = int((current_progress/float(timeout))*100)
-                    #head = 'Checking Debrid Providers'
-                    #msg = 'Remaining Debrid Checks: %s' % ', '.join(remaining_debrids).upper()
-                    #progressDialog.update(percent, head, msg)
-                    progressDialog.update(percent)
+                    msg = 'Remaining Debrid Checks: %s' % ', '.join(remaining_debrids).upper()
+                    progressDialog.update(percent, message=msg)
                 except: pass
                 time.sleep(0.2)
                 if len(alive_threads) == 0 or progressDialog.isFinished(): break
@@ -153,6 +175,10 @@ class DebridCheck:
         [i.join() for i in self.rd_query_threads]
         self._add_to_local_cache(self.rd_process_results, 'rd')
 
+    def AD_cache_checker(self):
+        self._ad_lookup(self.hash_list)
+        self._add_to_local_cache(self.ad_process_results, 'ad')
+
     def _rd_lookup(self, chunk):
         try:
             rd_cache_get = RDapi().check_cache(chunk)
@@ -164,6 +190,17 @@ class DebridCheck:
                         self.rd_cached_hashes.append(h)
                         cached = 'True'
                 self.rd_process_results.append((h, cached))
+        except: pass
+
+    def _ad_lookup(self, hash_list):
+        try:
+            ad_cache = ADapi().check_cache(hash_list)['data']
+            for i in ad_cache:
+                cached = 'False'
+                if i['instant'] == True:
+                    self.ad_cached_hashes.append(i['hash'])
+                    cached = 'True'
+                self.ad_process_results.append((i['hash'], cached))
         except: pass
 
     def _query_local_cache(self, _hash):

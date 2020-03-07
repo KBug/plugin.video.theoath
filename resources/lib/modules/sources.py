@@ -772,9 +772,14 @@ class sources:
                 yield source # Always yield non-string url sources.
 
 
-    def sourcesProcessTorrents(self, torrentSources):#adjusted Fen code
+    def sourcesProcessTorrents(self, torrent_sources):#adjusted Fen code
+        if len(torrent_sources) == 0: return
         rd_enabled = (control.addon('script.module.resolveurl').getSetting('RealDebridResolver_enabled') == 'true' and control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token') != '')
-        if not (rd_enabled == True and len(torrentSources) > 0): return
+        ad_enabled = (control.addon('script.module.resolveurl').getSetting('AllDebridResolver_enabled') == 'true' and control.addon('script.module.resolveurl').getSetting('AllDebridResolver_token') != '')
+        if (not rd_enabled and not ad_enabled): return
+        for i in torrent_sources:
+            if not i.get('debrid', '').lower() in ['real-debrid', 'alldebrid']:
+                return torrent_sources
         try:
             from resources.lib.modules import debridcheck
             control.sleep(500)
@@ -783,30 +788,31 @@ class sources:
             cachedTorrents = []
             uncachedTorrents = []
             #uncheckedTorrents = []
-            for i in torrentSources:
+            for i in torrent_sources:
                 try:
                     r = re.findall(r'btih:(\w{40})', str(i['url']))[0]
                     if r:
                         infoHash = r.lower()
                         i['info_hash'] = infoHash
                         hashList.append(infoHash)
-                except: torrentSources.remove(i)
-            if len(torrentSources) == 0: return torrentSources
-            torrentSources = [i for i in torrentSources if 'info_hash' in i]
+                except: torrent_sources.remove(i)
+            if len(torrent_sources) == 0: return torrent_sources
+            torrent_sources = [i for i in torrent_sources if 'info_hash' in i]
             hashList = list(set(hashList))
             control.sleep(500)
-            cachedRDHashes = DBCheck.run(hashList)
-            cachedRDSources = [i for i in torrentSources if any(v in i['info_hash'] for v in cachedRDHashes)]
-            for i in cachedRDSources: i.update({'source': 'cached torrent'})
-            for i in [('cached torrent', cachedRDSources)]:
-                cachedTorrents.extend(i[1])
-            #if self.uncachedTorrents == 'true':
-            cachedHashes = list(set(cachedRDHashes))
-            uncachedTorrents = [i for i in torrentSources if not i['info_hash'] in cachedHashes]
-            for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]un-cached torrent[/COLOR]'})
-            #if self.uncheckedTorrents == 'true':
-            #uncheckedTorrents = [dict(i.items() + [('cache_provider', 'Unchecked')]) for i in torrentSources]
-            #for i in uncheckedTorrents: i.update({'source': 'unchecked torrent'})
+            cachedRDHashes, cachedADHashes = DBCheck.run(hashList)
+            if rd_enabled:
+                cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash', '') for v in cachedRDHashes) and i.get('debrid', '').lower() == 'real-debrid')]
+                for i in cachedRDSources: i.update({'source': 'cached torrent'})
+                cachedTorrents += cachedRDSources
+            if ad_enabled:
+                cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash', '') for v in cachedADHashes) and i.get('debrid', '').lower() == 'alldebrid')]
+                for i in cachedADSources: i.update({'source': 'cached torrent'})
+                cachedTorrents += cachedADSources
+            cachedHashes = list(set(cachedRDHashes + cachedADHashes))
+            uncachedTorrents += [dict(i.items()) for i in torrent_sources if not i.get('info_hash', '') in cachedHashes]
+            for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
+            #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
             return cachedTorrents + uncachedTorrents# + uncheckedTorrents
         except:
             import traceback
@@ -887,16 +893,18 @@ class sources:
                     for i in self.sources:
                         if 'magnet:' in i['url']:
                             i.update({'debrid': d.name})
-                    torrentSources = self.sourcesProcessTorrents([i for i in self.sources if ('magnet:' in i['url'] and i.get('debrid', '').lower() == 'real-debrid')])
+                    torrentSources = self.sourcesProcessTorrents([i for i in self.sources if 'magnet:' in i['url']])
                     filter += [i for i in torrentSources if i.get('source') == 'cached torrent']
-                    filter += [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]un-cached torrent[/COLOR]']
+                    filter += [i for i in torrentSources if i.get('source').lower() == 'torrent']
+                    filter += [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]uncached torrent[/COLOR]']
+                    filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
                 except:
-                    import traceback
-                    failure = traceback.format_exc()
-                    log_utils.log('Torr_list - Exception: ' + str(failure))
+                    filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
+                    filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'].lower() == 'torrent']
-            filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+            else:
+                filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
+                filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
         if debrid_only == 'false' or debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
