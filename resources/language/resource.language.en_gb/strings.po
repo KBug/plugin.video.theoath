@@ -488,7 +488,7 @@ msgid "Verify torrents cache"
 msgstr ""
 
 msgctxt "#32115"
-msgid "Experimental / WiP - currently only Real-Debrid is supported"
+msgid "Experimental / WiP - supported services: Real-Debrid, AllDebrid"
 msgstr ""
 
 msgctxt "#32116"

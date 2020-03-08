@@ -774,9 +774,6 @@ class sources:
 
     def sourcesProcessTorrents(self, torrent_sources):#adjusted Fen code
         if len(torrent_sources) == 0: return
-        rd_enabled = (control.addon('script.module.resolveurl').getSetting('RealDebridResolver_enabled') == 'true' and control.addon('script.module.resolveurl').getSetting('RealDebridResolver_token') != '')
-        ad_enabled = (control.addon('script.module.resolveurl').getSetting('AllDebridResolver_enabled') == 'true' and control.addon('script.module.resolveurl').getSetting('AllDebridResolver_token') != '')
-        if (not rd_enabled and not ad_enabled): return
         for i in torrent_sources:
             if not i.get('debrid', '').lower() in ['real-debrid', 'alldebrid']:
                 return torrent_sources
@@ -801,16 +798,14 @@ class sources:
             hashList = list(set(hashList))
             control.sleep(500)
             cachedRDHashes, cachedADHashes = DBCheck.run(hashList)
-            if rd_enabled:
-                cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash', '') for v in cachedRDHashes) and i.get('debrid', '').lower() == 'real-debrid')]
-                for i in cachedRDSources: i.update({'source': 'cached torrent'})
-                cachedTorrents += cachedRDSources
-            if ad_enabled:
-                cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash', '') for v in cachedADHashes) and i.get('debrid', '').lower() == 'alldebrid')]
-                for i in cachedADSources: i.update({'source': 'cached torrent'})
-                cachedTorrents += cachedADSources
+            cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '').lower() == 'real-debrid')]
+            for i in cachedRDSources: i.update({'source': 'cached torrent'})
+            cachedTorrents += cachedRDSources
+            cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '').lower() == 'alldebrid')]
+            for i in cachedADSources: i.update({'source': 'cached torrent'})
+            cachedTorrents += cachedADSources
             cachedHashes = list(set(cachedRDHashes + cachedADHashes))
-            uncachedTorrents += [dict(i.items()) for i in torrent_sources if not i.get('info_hash', '') in cachedHashes]
+            uncachedTorrents += [dict(i.items()) for i in torrent_sources if not i.get('info_hash') in cachedHashes]
             for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
             #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
             return cachedTorrents + uncachedTorrents# + uncheckedTorrents

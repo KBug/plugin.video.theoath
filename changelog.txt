@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.1.6[/COLOR][/B]
+- Debrid-check code alterations
+
 [B][COLOR gold]v2.1.5[/COLOR][/B]
 - Added AllDebrid torrents cache check support
 

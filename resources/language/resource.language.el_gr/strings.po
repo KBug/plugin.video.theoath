@@ -484,8 +484,8 @@ msgid "Verify torrents cache"
 msgstr "Επαλήθευση debrid cache για πηγές torrent"
 
 msgctxt "#32115"
-msgid "Experimental / WiP - currently only Real-Debrid is supported"
-msgstr "Προς το παρόν μόνο για Real-Debrid πηγές"
+msgid "Experimental / WiP - supported services: Real-Debrid, AllDebrid"
+msgstr "Υποστηριζόμενες υπηρεσίες: Real-Debrid, AllDebrid"
 
 msgctxt "#32116"
 msgid "[B]TheOath[/B] : Clear debrid checks..."
