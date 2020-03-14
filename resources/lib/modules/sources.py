@@ -775,7 +775,7 @@ class sources:
     def sourcesProcessTorrents(self, torrent_sources):#adjusted Fen code
         if len(torrent_sources) == 0: return
         for i in torrent_sources:
-            if not i.get('debrid', '').lower() in ['real-debrid', 'alldebrid']:
+            if not i.get('debrid', '') in ['Real-Debrid', 'AllDebrid', 'Premiumize.me']:
                 return torrent_sources
         try:
             from resources.lib.modules import debridcheck
@@ -797,14 +797,17 @@ class sources:
             torrent_sources = [i for i in torrent_sources if 'info_hash' in i]
             hashList = list(set(hashList))
             control.sleep(500)
-            cachedRDHashes, cachedADHashes = DBCheck.run(hashList)
-            cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '').lower() == 'real-debrid')]
+            cachedRDHashes, cachedADHashes, cachedPMHashes = DBCheck.run(hashList)
+            cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
             for i in cachedRDSources: i.update({'source': 'cached torrent'})
             cachedTorrents += cachedRDSources
-            cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '').lower() == 'alldebrid')]
+            cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
             for i in cachedADSources: i.update({'source': 'cached torrent'})
             cachedTorrents += cachedADSources
-            cachedHashes = list(set(cachedRDHashes + cachedADHashes))
+            cachedPMSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
+            for i in cachedPMSources: i.update({'source': 'cached torrent'})
+            cachedTorrents += cachedPMSources
+            cachedHashes = list(set(cachedRDHashes + cachedADHashes + cachedPMHashes))
             uncachedTorrents += [dict(i.items()) for i in torrent_sources if not i.get('info_hash') in cachedHashes]
             for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
             #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']

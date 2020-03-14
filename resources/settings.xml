@@ -45,7 +45,6 @@
         <setting id="remove.dups" type="bool" label="32090" default="true" />
         <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
         <setting id="torr.sort.size" type="bool" label="32113" default="true" />
-        <setting type="text" label="Currently only works for Oathscrapers package and built-in Orion" enable="false" />
         <setting id="check.torr.cache" type="bool" label="32114" default="true" />
         <setting type="text" label="32115" enable="false" />
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />

@@ -20,6 +20,7 @@ from resources.lib.modules import control
 __r_url__ = control.addon('script.module.resolveurl')
 rd_enabled = (__r_url__.getSetting('RealDebridResolver_enabled') == 'true' and __r_url__.getSetting('RealDebridResolver_token') != '')
 ad_enabled = (__r_url__.getSetting('AllDebridResolver_enabled') == 'true' and __r_url__.getSetting('AllDebridResolver_token') != '')
+pm_enabled = (__r_url__.getSetting('PremiumizeMeResolver_enabled') == 'true' and __r_url__.getSetting('PremiumizeMeResolver_token') != '')
 progressDialog = control.progressDialogBG
 
 def chunks(l, n):
@@ -105,6 +106,25 @@ class ADapi:
         url = self.base_url + url + '?agent=%s&token=%s' % (self.user_agent, self.token)
         return requests.post(url, data=data).json()
 
+class PMapi:
+    def __init__(self):
+        self.base_url = 'https://www.premiumize.me/api/'
+        self.token = __r_url__.getSetting('PremiumizeMeResolver_token')
+
+    def check_cache(self, hashes):
+        url = "cache/check"
+        data = {'items[]': hashes}
+        response = self._post(url, data)
+        return response
+
+    def _post(self, url, data={}):
+        if self.token == '' and not 'token' in url: return None
+        headers = {'Authorization': 'Bearer %s' % self.token}
+        if not 'token' in url: url = self.base_url + url
+        response = requests.post(url, data=data, headers=headers).text
+        try: return to_utf8(json.loads(response))
+        except: return to_utf8(response)
+
 class DebridCheck:
     def __init__(self):
         self.db_cache = DebridCache()
@@ -118,6 +138,9 @@ class DebridCheck:
         self.ad_cached_hashes = []
         self.ad_hashes_unchecked = []
         self.ad_process_results = []
+        self.pm_cached_hashes = []
+        self.pm_hashes_unchecked = []
+        self.pm_process_results = []
         self.starting_debrids = []
         self.starting_debrids_display = []
 
@@ -133,6 +156,10 @@ class DebridCheck:
             self.ad_cached_hashes = [str(i[0]) for i in self.cached_hashes if str(i[1]) == 'ad' and str(i[2]) == 'True']
             self.ad_hashes_unchecked = [i for i in self.hash_list if not any([h for h in self.cached_hashes if str(h[0]) == i and str(h[1]) =='ad'])]
             if self.ad_hashes_unchecked: self.starting_debrids.append(('AllDebrid', self.AD_cache_checker))
+        if pm_enabled:
+            self.pm_cached_hashes = [str(i[0]) for i in self.cached_hashes if str(i[1]) == 'pm' and str(i[2]) == 'True']
+            self.pm_hashes_unchecked = [i for i in self.hash_list if not any([h for h in self.cached_hashes if str(h[0]) == i and str(h[1]) =='pm'])]
+            if self.pm_hashes_unchecked: self.starting_debrids.append(('Premiumize.me', self.PM_cache_checker))
         if self.starting_debrids:
             for i in range(len(self.starting_debrids)):
                 self.main_threads.append(Thread(target=self.starting_debrids[i][1]))
@@ -141,7 +168,7 @@ class DebridCheck:
             [i.join() for i in self.main_threads]
             self.debrid_check_dialog()
         control.sleep(500)
-        return self.rd_cached_hashes, self.ad_cached_hashes
+        return self.rd_cached_hashes, self.ad_cached_hashes, self.pm_cached_hashes
 
     def debrid_check_dialog(self):
         timeout = 20
@@ -181,6 +208,10 @@ class DebridCheck:
         self._ad_lookup(self.hash_list)
         self._add_to_local_cache(self.ad_process_results, 'ad')
 
+    def PM_cache_checker(self):
+        self._pm_lookup(self.pm_hashes_unchecked)
+        self._add_to_local_cache(self.pm_process_results, 'pm')
+
     def _rd_lookup(self, chunk):
         try:
             rd_cache_get = RDapi().check_cache(chunk)
@@ -203,6 +234,17 @@ class DebridCheck:
                     self.ad_cached_hashes.append(i['hash'])
                     cached = 'True'
                 self.ad_process_results.append((i['hash'], cached))
+        except: pass
+
+    def _pm_lookup(self, hash_list):
+        try:
+            pm_cache = PMapi().check_cache(hash_list)['response']
+            for c, h in enumerate(hash_list):
+                cached = 'False'
+                if pm_cache[c] is True:
+                    self.pm_cached_hashes.append(h)
+                    cached = 'True'
+                self.pm_process_results.append((h, cached))
         except: pass
 
     def _query_local_cache(self, _hash):
