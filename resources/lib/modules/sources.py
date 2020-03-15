@@ -798,17 +798,21 @@ class sources:
             hashList = list(set(hashList))
             control.sleep(500)
             cachedRDHashes, cachedADHashes, cachedPMHashes = DBCheck.run(hashList)
+            #cached
             cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
-            for i in cachedRDSources: i.update({'source': 'cached torrent'})
             cachedTorrents += cachedRDSources
             cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
-            for i in cachedADSources: i.update({'source': 'cached torrent'})
             cachedTorrents += cachedADSources
             cachedPMSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
-            for i in cachedPMSources: i.update({'source': 'cached torrent'})
             cachedTorrents += cachedPMSources
-            cachedHashes = list(set(cachedRDHashes + cachedADHashes + cachedPMHashes))
-            uncachedTorrents += [dict(i.items()) for i in torrent_sources if not i.get('info_hash') in cachedHashes]
+            for i in cachedTorrents: i.update({'source': 'cached torrent'})
+            #uncached
+            uncachedRDSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
+            uncachedTorrents += uncachedRDSources
+            uncachedADSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
+            uncachedTorrents += uncachedADSources
+            uncachedPMSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
+            uncachedTorrents += uncachedPMSources
             for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
             #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
             return cachedTorrents + uncachedTorrents# + uncheckedTorrents

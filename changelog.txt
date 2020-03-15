@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.1.8[/COLOR][/B]
+- Some more debrid cache check fixes
+
 [B][COLOR gold]v2.1.7[/COLOR][/B]
 - Added Premiumize to supported providers for debrid cache check
 
