@@ -1,3 +1,10 @@
+[B][COLOR gold]v2.1.9[/COLOR][/B]
+- Added fields for Opensubtitles.org log-in credentials on settings
+    [I]It seems that Opensubtitles stopped supporting anonymous downloads
+    through their API, so you now need to enter your log-in credentials
+    for the subtitles downloading function to work[/I]
+- Minor code update for source list directory
+
 [B][COLOR gold]v2.1.8[/COLOR][/B]
 - Some more debrid cache check fixes
 

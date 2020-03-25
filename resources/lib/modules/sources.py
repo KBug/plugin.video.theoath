@@ -95,7 +95,7 @@ class sources:
 
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
-            allowed = ['poster', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
+            allowed = ['poster', 'icon', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
             return {k: v for k, v in metadata.iteritems() if k in allowed}
 
         control.playlist.clear()
@@ -165,18 +165,17 @@ class sources:
                     cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' % (sysaddon, sysname, sysimage, syssource)))
 
                 item = control.item(label=label)
-
-                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster})
-
-                item.setProperty('Fanart_Image', fanart)
-
-                video_streaminfo = {'codec': 'h264'}
-                item.addStreamInfo('video', video_streaminfo)
-
                 item.addContextMenuItems(cm)
 
-                info_labels = control.metadataClean(meta) if listMeta == 'true' else None
-                item.setInfo(type='video', infoLabels=info_labels)
+                if listMeta == 'true':
+                    item.setArt({'thumb': thumb, 'icon': thumb, 'poster': poster, 'fanart': fanart})
+                    video_streaminfo = {'codec': 'h264'}
+                    item.addStreamInfo('video', video_streaminfo)
+                    item.setInfo(type='video', infoLabels=control.metadataClean(meta))
+
+                else:
+                    item.setArt({'thumb': thumb})
+                    item.setInfo(type='video', infoLabels=None)
 
                 control.addItem(handle=syshandle, url=sysurl, listitem=item, isFolder=False)
             except:
@@ -757,9 +756,8 @@ class sources:
     def uniqueSourcesGen(self, sources):
         uniqueURLs = set()
         for source in sources:
-            #url = json.dumps(source['url'])
             #url = source['url']
-            url = source.get('url')
+            url = source.get('url', '')
             if 'magnet:' in url:
                 url = url.lower()[:60]
             if isinstance(url, basestring):

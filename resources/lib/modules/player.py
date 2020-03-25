@@ -360,8 +360,11 @@ class subtitles:
             except: subLang = ''
             if subLang == langs[0]: raise Exception()
 
+            un = control.setting('os.user')
+            pw = control.setting('os.pass')
+
             server = xmlrpclib.Server('http://api.opensubtitles.org/xml-rpc', verbose=0)
-            token = server.LogIn('', '', 'en', 'XBMC_Subtitles_v1')['token']
+            token = server.LogIn(un, pw, 'en', 'XBMC_Subtitles_v1')['token']
 
             sublanguageid = ','.join(langs) ; imdbid = re.sub('[^0-9]', '', imdb)
 

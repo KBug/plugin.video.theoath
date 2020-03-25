@@ -491,6 +491,14 @@ msgctxt "#32116"
 msgid "[B]TheOath[/B] : Clear debrid checks..."
 msgstr "[B]TheOath[/B] : Καθαρισμός ελέγχων debrid cache..."
 
+msgctxt "#32117"
+msgid "Username"
+msgstr "Όνομα χρήστη"
+
+msgctxt "#32118"
+msgid "Enter your Opensubtitles.org log-in credentials on 'Accounts' tab"
+msgstr "Εισάγετε τα Opensubtitles.org στοιχεία σας στην καρτέλα 'Λογαριασμοί'"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"
