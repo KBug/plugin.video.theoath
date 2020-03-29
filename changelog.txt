@@ -1,3 +1,11 @@
+[B][COLOR gold]v2.1.10[/COLOR][/B]
+- Trailers:
+    - YouTube add-on now supports playback via external apps/add-ons even without
+       user API key, so we drop that requirement
+    - Added support for seasons/episodes specific trailers
+- Added uptobox/uptostream to captcha hosts, as they require a free account and pairing now
+- Exclude special episodes from Trakt progress list, regardless of setting
+
 [B][COLOR gold]v2.1.9[/COLOR][/B]
 - Added fields for Opensubtitles.org log-in credentials on settings
     [I]It seems that Opensubtitles stopped supporting anonymous downloads

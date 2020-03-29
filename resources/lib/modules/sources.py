@@ -1338,7 +1338,7 @@ class sources:
 
         self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
                             'vev.io', 'vidup.me', 'vidup.tv', 'vidup.io', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
-                            'hugefiles.net', 'hugefiles.cc', 'thevideo.me', 'streamin.to']
+                            'hugefiles.net', 'hugefiles.cc', 'thevideo.me', 'streamin.to', 'uptobox.com', 'uptostream.com']
 
         self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
                            'xvidstage.com', 'xstreamcdn.com', 'idtbox.com']

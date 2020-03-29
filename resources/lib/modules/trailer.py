@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    Covenant Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,9 +19,7 @@
 """
 
 import sys
-import base64
 import json
-import random
 import re
 import urllib
 
@@ -31,26 +30,38 @@ from resources.lib.modules import control
 class trailer:
     def __init__(self):
         self.base_link = 'https://www.youtube.com'
-        #self.key_link = random.choice(['QUl6YVN5RDd2aFpDLTYta2habTVuYlVyLTZ0Q0JRQnZWcnFkeHNz', 'QUl6YVN5Q2RiNEFNenZpVG0yaHJhSFY3MXo2Nl9HNXBhM2ZvVXd3'])
-        #self.key_link = '&key=%s' % base64.urlsafe_b64decode(self.key_link)
-        try: self.key_link = '&key=%s' % control.addon('plugin.video.youtube').getSetting('youtube.api.key')
+        self.key = control.addon('plugin.video.youtube').getSetting('youtube.api.key')
+        if self.key == '': self.key = 'Z2V0X3lvdXJz'.decode('base64')
+        try: self.key_link = '&key=%s' % self.key
         except: pass
         self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=5&q=%s' + self.key_link
         self.youtube_watch = 'https://www.youtube.com/watch?v=%s'
 
     def play(self, name='', url='', windowedtrailer=0):
         try:
+            name = control.infoLabel('ListItem.Title')
+            if not name:
+                name = control.infoLabel('ListItem.Label')
+            name += ' trailer'
+            if control.infoLabel('Container.Content') in ['seasons', 'episodes']:
+                season = control.infoLabel('ListItem.Season')
+                episode = control.infoLabel('ListItem.Episode')
+                if not season is '':
+                    name = control.infoLabel('ListItem.TVShowTitle')
+                    name += ' season %01d trailer' % int(season)
+                    if not episode is '':
+                        name = name.replace('season ', '').replace(' trailer', '')
+                        name += 'x%02d promo' % int(episode)
+
             url = self.worker(name, url)
             if not url:return
 
-            title = control.infoLabel('ListItem.Title')
-            if not title: title = control.infoLabel('ListItem.Label')
             icon = control.infoLabel('ListItem.Icon')
 
             item = control.item(label=name, iconImage=icon, thumbnailImage=icon, path=url)
-            item.setInfo(type="Video",infoLabels={ "Title":name})
+            item.setInfo(type="video", infoLabels={"title": name})
 
-            item.setProperty('IsPlayable','true')
+            item.setProperty('IsPlayable', 'true')
             control.resolve(handle=int(sys.argv[1]), succeeded=True, listitem=item)
             if windowedtrailer == 1:
                 # The call to the play() method is non-blocking. So we delay further script execution to keep the script alive at this spot.
@@ -62,7 +73,7 @@ class trailer:
                 # Same behaviour as the fullscreenvideo window when :
                 # the media plays to the end,
                 # or the user pressed one of X, ESC, or Backspace keys on the keyboard/remote to stop playback.
-                control.execute("Dialog.Close(%s, true)" % control.getCurrentDialogId)      
+                control.execute("Dialog.Close(%s, true)" % control.getCurrentDialogId)
         except:
             pass
 
@@ -80,8 +91,7 @@ class trailer:
             else:
                 raise Exception()
         except:
-            query = name + ' trailer'
-            query = self.search_link % urllib.quote_plus(query)
+            query = self.search_link % urllib.quote_plus(name)
             return self.search(query)
 
     def search(self, url):
@@ -116,7 +126,7 @@ class trailer:
             if len(alert) > 0: raise Exception()
             if re.search('[a-zA-Z]', message): raise Exception()
 
-            url = 'plugin://plugin.video.youtube/play/?video_id=%s' % id
+            url = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % id
             return url
         except:
             return

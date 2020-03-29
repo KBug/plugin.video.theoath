@@ -830,11 +830,11 @@ class episodes:
         sortorder = control.setting('prgr.sortorder')
         for item in result:
             try:
-                num_1 = 0
-                for i in range(0, len(item['seasons'])):
-                    if item['seasons'][i]['number'] > 0: num_1 += len(item['seasons'][i]['episodes'])
-                num_2 = int(item['show']['aired_episodes'])
-                if num_1 >= num_2: raise Exception()
+                # num_1 = 0
+                # for i in range(0, len(item['seasons'])):
+                    # if item['seasons'][i]['number'] > 0: num_1 += len(item['seasons'][i]['episodes'])
+                # num_2 = int(item['show']['aired_episodes'])
+                # if num_1 >= num_2: raise Exception()
 
                 season = str(item['seasons'][-1]['number'])
 
@@ -926,7 +926,7 @@ class episodes:
                 season = client.parseDOM(item, 'SeasonNumber')[0]
                 season = '%01d' % int(season)
                 season = season.encode('utf-8')
-                if int(season) == 0 and self.specials != 'true':
+                if int(season) == 0:# and self.specials != 'true':
                     raise Exception()
 
                 episode = client.parseDOM(item, 'EpisodeNumber')[0]
