@@ -756,18 +756,18 @@ class sources:
     def uniqueSourcesGen(self, sources):
         uniqueURLs = set()
         for source in sources:
-            #url = source['url']
-            url = source.get('url', '')
+            url = source.get('url')
             if 'magnet:' in url:
-                url = url.lower()[:60]
-            if isinstance(url, basestring):
+                #url = url[:60]
+                url = re.findall(r'btih:(\w{40})', url)[0]
+            try:
                 if url not in uniqueURLs:
                     uniqueURLs.add(url)
                     yield source # Yield the unique source.
                 else:
                     pass # Ignore duped sources.
-            else:
-                yield source # Always yield non-string url sources.
+            except:
+                yield source
 
 
     def sourcesProcessTorrents(self, torrent_sources):#adjusted Fen code

@@ -409,8 +409,11 @@ elif action == 'addItem':
     sources.sources().addItem(title)
 
 elif action == 'playItem':
+    from resources.lib.modules import control
+    control.busy()
     from resources.lib.modules import sources
     sources.sources().playItem(title, source)
+    control.idle()
 
 elif action == 'alterSources':
     from resources.lib.modules import sources

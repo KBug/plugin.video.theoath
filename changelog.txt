@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.1.11[/COLOR][/B]
+- Misc. code updates
+
 [B][COLOR gold]v2.1.10[/COLOR][/B]
 - Trailers:
     - YouTube add-on now supports playback via external apps/add-ons even without

@@ -364,7 +364,7 @@ class subtitles:
             pw = control.setting('os.pass')
 
             server = xmlrpclib.Server('http://api.opensubtitles.org/xml-rpc', verbose=0)
-            token = server.LogIn(un, pw, 'en', 'XBMC_Subtitles_v1')['token']
+            token = server.LogIn(un, pw, 'en', 'XBMC_Subtitles_Unofficial_v5.2.14')['token']
 
             sublanguageid = ','.join(langs) ; imdbid = re.sub('[^0-9]', '', imdb)
 
