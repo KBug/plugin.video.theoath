@@ -1,4 +1,4 @@
-[B][COLOR gold]v2.2.0[/COLOR][/B]
+[B][COLOR gold]v2.2.1[/COLOR][/B]
 - Added Trailer selection feature
 
 [B][COLOR gold]v2.1.12[/COLOR][/B]

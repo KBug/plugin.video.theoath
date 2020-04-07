@@ -111,6 +111,7 @@ class trailer:
             if control.setting('trailer.select') == '1':
                 select = control.selectDialog(labels, 'Trailers:')
                 if select == -1: return
+                items = [items[select]]
 
             for vid_id in items:
                 url = self.resolve(vid_id)
