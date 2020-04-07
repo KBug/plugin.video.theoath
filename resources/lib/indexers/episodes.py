@@ -830,11 +830,11 @@ class episodes:
         sortorder = control.setting('prgr.sortorder')
         for item in result:
             try:
-                # num_1 = 0
-                # for i in range(0, len(item['seasons'])):
-                    # if item['seasons'][i]['number'] > 0: num_1 += len(item['seasons'][i]['episodes'])
-                # num_2 = int(item['show']['aired_episodes'])
-                # if num_1 >= num_2: raise Exception()
+                num_1 = 0
+                for i in range(0, len(item['seasons'])):
+                    if item['seasons'][i]['number'] > 0: num_1 += len(item['seasons'][i]['episodes'])
+                num_2 = int(item['show']['aired_episodes'])
+                if num_1 >= num_2: raise Exception()
 
                 season = str(item['seasons'][-1]['number'])
 
@@ -890,11 +890,12 @@ class episodes:
                 zip.close()
 
                 result = result.split('<Episode>')
-                item = [x for x in result if '<EpisodeNumber>' in x]
+                item0 = [x for x in result if '<EpisodeNumber>' in x and not re.compile(r'<SeasonNumber>(.+?)</SeasonNumber>').findall(x)[0] == '0']
+                item1 = sorted(item0, key=lambda k:(int(re.compile(r'<SeasonNumber>(\d+)</SeasonNumber>').findall(k)[-1]), int(re.compile(r'<EpisodeNumber>(\d+)</EpisodeNumber>').findall(k)[-1])))
                 item2 = result[0]
 
-                num = [x for x,y in enumerate(item) if re.compile('<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile('<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
-                item = [y for x,y in enumerate(item) if x > num][0]
+                num = [x for x,y in enumerate(item1) if re.compile(r'<SeasonNumber>(.+?)</SeasonNumber>').findall(y)[0] == str(i['snum']) and re.compile(r'<EpisodeNumber>(.+?)</EpisodeNumber>').findall(y)[0] == str(i['enum'])][-1]
+                item = [y for x,y in enumerate(item1) if x > num][0]
 
                 #print lang
                 #print item
@@ -914,7 +915,7 @@ class episodes:
 
                 if status == 'Ended': pass
                 elif premiered == '0': raise Exception()
-                elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
+                elif int(re.sub(r'[^0-9]', '', str(premiered))) > int(re.sub(r'[^0-9]', '', str(self.today_date))):
                     unaired = 'true'
                     if self.showunaired != 'true': raise Exception()
 
@@ -926,11 +927,11 @@ class episodes:
                 season = client.parseDOM(item, 'SeasonNumber')[0]
                 season = '%01d' % int(season)
                 season = season.encode('utf-8')
-                if int(season) == 0:# and self.specials != 'true':
-                    raise Exception()
+                #if int(season) == 0:# and self.specials != 'true':
+                    #raise Exception()
 
                 episode = client.parseDOM(item, 'EpisodeNumber')[0]
-                episode = re.sub('[^0-9]', '', '%01d' % int(episode))
+                episode = re.sub(r'[^0-9]', '', '%01d' % int(episode))
                 episode = episode.encode('utf-8')
 
                 tvshowtitle = i['tvshowtitle']
@@ -1053,6 +1054,10 @@ class episodes:
                                   'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
                                   'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes', 'unaired': unaired, '_last_watched': i['_last_watched'], '_sort_key': max(i['_last_watched'],premiered)})
             except:
+                import traceback
+                from resources.lib.modules import log_utils
+                failure = traceback.format_exc()
+                log_utils.log('TProgress: ' + str(failure))
                 pass
 
 

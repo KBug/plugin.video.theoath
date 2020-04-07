@@ -1,3 +1,7 @@
+[B][COLOR gold]v2.1.12[/COLOR][/B]
+- Fixed bad link skipping
+- Fixed some issues with Trakt progress list
+
 [B][COLOR gold]v2.1.11[/COLOR][/B]
 - Misc. code updates
 
