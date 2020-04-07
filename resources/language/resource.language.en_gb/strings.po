@@ -503,6 +503,10 @@ msgctxt "#32118"
 msgid "Enter your Opensubtitles.org log-in credentials on 'Accounts' tab"
 msgstr ""
 
+msgctxt "#32119"
+msgid "Choose"
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""

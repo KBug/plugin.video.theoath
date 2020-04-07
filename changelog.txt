@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.2.0[/COLOR][/B]
+- Added Trailer selection feature
+
 [B][COLOR gold]v2.1.12[/COLOR][/B]
 - Fixed bad link skipping
 - Fixed some issues with Trakt progress list

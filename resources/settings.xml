@@ -12,6 +12,7 @@
         <setting id="providers.lang" type="select" label="32360" values="English|French|French+English|German|German+English|Greek|Greek+English|Korean|Korean+English|Polish|Polish+English|Russian|Russian+English|Spanish|Spanish+English" default="English" />
         <setting id="fanart" type="bool" label="32318" default="false" />
         <setting id="hidecinema" type="bool" label="32571" default="false" />
+        <setting id="trailer.select" type="enum" label="Trailers" lvalues="32334|32119" default="0" />
         <setting type="lsep" label="32319" />
         <setting id="movie.widget" type="enum" label="32320" lvalues="32302|32321|32322|32323|32324|32580" default="1" />
         <setting id="lists.widget" type="enum" label="32329" lvalues="32302|32301" default="1" />

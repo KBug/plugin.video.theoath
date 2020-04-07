@@ -499,6 +499,10 @@ msgctxt "#32118"
 msgid "Enter your Opensubtitles.org log-in credentials on 'Accounts' tab"
 msgstr "Εισάγετε τα Opensubtitles.org στοιχεία σας στην καρτέλα 'Λογαριασμοί'"
 
+msgctxt "#32119"
+msgid "Choose"
+msgstr "Επιλογή"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"

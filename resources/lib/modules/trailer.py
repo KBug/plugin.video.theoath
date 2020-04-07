@@ -34,7 +34,7 @@ class trailer:
         if self.key == '': self.key = 'Z2V0X3lvdXJz'.decode('base64')
         try: self.key_link = '&key=%s' % self.key
         except: pass
-        self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=5&q=%s' + self.key_link
+        self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=%s' + self.key_link
         self.youtube_watch = 'https://www.youtube.com/watch?v=%s'
 
     def play(self, name='', url='', windowedtrailer=0):
@@ -103,8 +103,14 @@ class trailer:
 
             result = client.request(url)
 
-            items = json.loads(result).get('items', [])
-            items = [i.get('id', {}).get('videoId') for i in items]
+            json_items = json.loads(result).get('items', [])
+            items = [i.get('id', {}).get('videoId') for i in json_items]
+            labels = [i.get('snippet', {}).get('title') for i in json_items]
+            labels = [client.replaceHTMLCodes(i) for i in labels]
+
+            if control.setting('trailer.select') == '1':
+                select = control.selectDialog(labels, 'Trailers:')
+                if select == -1: return
 
             for vid_id in items:
                 url = self.resolve(vid_id)
