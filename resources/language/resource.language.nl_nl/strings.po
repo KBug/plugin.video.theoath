@@ -652,7 +652,7 @@ msgid "Background"
 msgstr "Achtergrond"
 
 msgctxt "#32338"
-msgid "File Hosting Filters"
+msgid "Sources Filters and Sorting Options"
 msgstr "Bestand Bron Filters"
 
 msgctxt "#32339"
@@ -662,10 +662,6 @@ msgstr "Max. kwaliteit zonder verandering van bronnen"
 msgctxt "#32340"
 msgid "SD Hosters in Auto Play"
 msgstr "SD Bronnen Automatisch Afspelen"
-
-msgctxt "#32341"
-msgid "Enable Hosters with captchas"
-msgstr "Bronnen met captchas"
 
 msgctxt "#32342"
 msgid "Sort by Provider"
@@ -742,10 +738,6 @@ msgstr "In dat geval kies uw eigen ondertiteling."
 msgctxt "#32360"
 msgid "Providers Language"
 msgstr "Taal van bronnen"
-
-msgctxt "#32363"
-msgid "Enable HEVC streams"
-msgstr "HEVC"
 
 msgctxt "#32372"
 msgid "When playback ends..."

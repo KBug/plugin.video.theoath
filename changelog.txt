@@ -1,5 +1,10 @@
+[B][COLOR gold]v2.2.3[/COLOR][/B]
+- Added option to enable trailer selection only on season/episode level (default)
+- Added option to remove CAM/SCR results
+- Sources filters/sorting options tweaks - please re-set your preferences
+
 [B][COLOR gold]v2.2.1[/COLOR][/B]
-- Added Trailer selection feature
+- Added Trailer selection feature (enable in settings)
 
 [B][COLOR gold]v2.1.12[/COLOR][/B]
 - Fixed bad link skipping

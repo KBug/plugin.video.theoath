@@ -824,8 +824,8 @@ class sources:
 
     def sourcesFilter(self):
 
-        provider = control.setting('hosts.sort.provider')
-        if provider == '': provider = 'false'
+        sort_provider = control.setting('hosts.sort.provider')
+        if sort_provider == '': sort_provider = 'false'
 
         debrid_only = control.setting('debrid.only')
         if debrid_only == '': debrid_only = 'false'
@@ -833,17 +833,21 @@ class sources:
         quality = control.setting('hosts.quality')
         if quality == '': quality = '0'
 
-        captcha = control.setting('hosts.captcha')
-        if captcha == '': captcha = 'true'
+        remove_captcha = control.setting('remove.captcha')
+        if remove_captcha == '': remove_captcha = 'false'
 
         size_sort = control.setting('torr.sort.size')
         if size_sort == '': size_sort = 'true'
 
-        HEVC = control.setting('HEVC')
+        remove_cam = control.setting('remove.cam')
+        if remove_cam == '': remove_cam = 'false'
+
+        remove_hevc = control.setting('remove.hevc')
+        if remove_hevc == '': remove_hevc = 'false'
 
         random.shuffle(self.sources)
 
-        if provider == 'true':
+        if sort_provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
         if size_sort == 'true':
@@ -851,8 +855,8 @@ class sources:
                 if 'magnet:' in i['url']:
                     self.sources = sorted(self.sources, key=lambda k: k.get('size', 0), reverse=True)
 
-        if not HEVC == 'true':
-            self.sources = [i for i in self.sources if not any(value in str(i['url']).lower() for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265'])]
+        if remove_hevc == 'true':
+            self.sources = [i for i in self.sources if not any(value in i['url'] for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265', 'HEVC', 'H265', 'H.265', 'X265', 'X.265'])]
 
 #        for i in self.sources:
 #            if 'checkquality' in i and i['checkquality'] == True:
@@ -867,7 +871,6 @@ class sources:
 #        filter += [i for i in self.sources if i['direct'] == False]
 #        self.sources = filter
 
-        ''' Filter-out duplicate links'''
         try:
             if control.setting('remove.dups') == 'true' and len(self.sources) > 1:
                 stotal = len(self.sources)
@@ -879,8 +882,6 @@ class sources:
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
             control.infoDialog('Dupes filter failed', icon='INFO', sound=True)
-        '''END'''
-
 
         filter = []
 
@@ -912,31 +913,26 @@ class sources:
         self.sources = filter
 
         for i in range(len(self.sources)):
-            q = self.sources[i]['quality']
-            if q in ['hd', 'HD']: self.sources[i].update({'quality': '720p'})
+            if self.sources[i]['quality'] in ['hd', 'HD']: self.sources[i].update({'quality': '720p'})
 
         filter = []
         filter += local
 
-        if quality in ['0']:
+        if quality == '0':
             filter += [i for i in self.sources if i['quality'] in ['4K', '4k']]
-
         if quality in ['0', '1']:
             filter += [i for i in self.sources if i['quality'] in ['1080p', '1080P']]
-
         if quality in ['0', '1', '2']:
             filter += [i for i in self.sources if i['quality'] in ['720p', '720P']]
-
         filter += [i for i in self.sources if i['quality'] in ['sd', 'SD']]
-        filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
+        if remove_cam == 'false':
+            filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
         self.sources = filter
 
-        if not captcha == 'true':
-            filter = [i for i in self.sources if i['source'].lower() in self.hostcapDict and not 'debrid' in i]
-            self.sources = [i for i in self.sources if not i in filter]
+        if remove_captcha == 'true':
+            self.sources = [i for i in self.sources if not (i['source'].lower() in self.hostcapDict and not 'debrid' in i)]
 
-        filter = [i for i in self.sources if i['source'].lower() in self.hostblockDict]# and not 'debrid' in i]
-        self.sources = [i for i in self.sources if not i in filter]
+        self.sources = [i for i in self.sources if not i['source'].lower() in self.hostblockDict]
 
         multi = [i['language'] for i in self.sources]
         multi = [x for y,x in enumerate(multi) if x not in multi[:y]]
@@ -1338,7 +1334,7 @@ class sources:
 
         self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
                             'vev.io', 'vidup.me', 'vidup.tv', 'vidup.io', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
-                            'hugefiles.net', 'hugefiles.cc', 'thevideo.me', 'streamin.to', 'uptobox.com', 'uptostream.com']
+                            'hugefiles.net', 'hugefiles.cc', 'thevideo.me', 'streamin.to', 'uptobox.com', 'uptostream.com', 'jetload.net', 'jetload.tv', 'jetload.to']
 
         self.hosthqDict = ['gvideo', 'google.com', 'thevideo.me', 'raptu.com', 'filez.tv', 'uptobox.com', 'uptostream.com',
                            'xvidstage.com', 'xstreamcdn.com', 'idtbox.com']

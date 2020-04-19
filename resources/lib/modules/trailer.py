@@ -29,12 +29,22 @@ from resources.lib.modules import control
 
 class trailer:
     def __init__(self):
+        self.mode = control.setting('trailer.select')
+        self.content = control.infoLabel('Container.Content')
         self.base_link = 'https://www.youtube.com'
         self.key = control.addon('plugin.video.youtube').getSetting('youtube.api.key')
-        if self.key == '': self.key = 'Z2V0X3lvdXJz'.decode('base64')
+        if self.key == '': self.key = 'QUl6YVN5QlctWjNUbmVMWC1hRzlUQzVHMDYxQlRjOWJCZ2Z0bVBB'.decode('base64')
         try: self.key_link = '&key=%s' % self.key
         except: pass
-        self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&q=%s' + self.key_link
+        if self.mode == '1':
+            self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=9&q=%s' + self.key_link
+        elif self.mode == '2':
+            if self.content in ['seasons', 'episodes']:
+                self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=9&q=%s' + self.key_link
+            else:
+                self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=1&q=%s' + self.key_link
+        else:
+            self.search_link = 'https://www.googleapis.com/youtube/v3/search?part=id&type=video&maxResults=1&q=%s' + self.key_link
         self.youtube_watch = 'https://www.youtube.com/watch?v=%s'
 
     def play(self, name='', url='', windowedtrailer=0):
@@ -43,7 +53,7 @@ class trailer:
             if not name:
                 name = control.infoLabel('ListItem.Label')
             name += ' trailer'
-            if control.infoLabel('Container.Content') in ['seasons', 'episodes']:
+            if self.content in ['seasons', 'episodes']:
                 season = control.infoLabel('ListItem.Season')
                 episode = control.infoLabel('ListItem.Episode')
                 if not season is '':
@@ -51,7 +61,7 @@ class trailer:
                     name += ' season %01d trailer' % int(season)
                     if not episode is '':
                         name = name.replace('season ', '').replace(' trailer', '')
-                        name += 'x%02d promo' % int(episode)
+                        name += 'x%02d' % int(episode)
 
             url = self.worker(name, url)
             if not url:return
@@ -105,13 +115,21 @@ class trailer:
 
             json_items = json.loads(result).get('items', [])
             items = [i.get('id', {}).get('videoId') for i in json_items]
-            labels = [i.get('snippet', {}).get('title') for i in json_items]
-            labels = [client.replaceHTMLCodes(i) for i in labels]
 
-            if control.setting('trailer.select') == '1':
-                select = control.selectDialog(labels, 'Trailers:')
+            if self.mode == '1':
+                labels = [i.get('snippet', {}).get('title') for i in json_items]
+                labels = [client.replaceHTMLCodes(i) for i in labels]
+                select = control.selectDialog(labels, control.lang(32121).encode('utf-8'))
                 if select == -1: return
                 items = [items[select]]
+
+            elif self.mode == '2':
+                if self.content in ['seasons', 'episodes']:
+                    labels = [i.get('snippet', {}).get('title') for i in json_items]
+                    labels = [client.replaceHTMLCodes(i) for i in labels]
+                    select = control.selectDialog(labels, control.lang(32121).encode('utf-8'))
+                    if select == -1: return
+                    items = [items[select]]
 
             for vid_id in items:
                 url = self.resolve(vid_id)

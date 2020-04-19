@@ -500,8 +500,20 @@ msgid "Enter your Opensubtitles.org log-in credentials on 'Accounts' tab"
 msgstr "Εισάγετε τα Opensubtitles.org στοιχεία σας στην καρτέλα 'Λογαριασμοί'"
 
 msgctxt "#32119"
-msgid "Choose"
-msgstr "Επιλογή"
+msgid "Always choose"
+msgstr "Πάντα επιλογή"
+
+msgctxt "#32120"
+msgid "Choose on season/episode level"
+msgstr "Επιλογή μόνο σε επίπεδο σεζόν/επεισοδίου"
+
+msgctxt "#32121"
+msgid "Select Trailer:"
+msgstr "Επιλογή Trailer:"
+
+msgctxt "#32122"
+msgid "Remove CAM/SCR results"
+msgstr "Αφαίρεση CAM/SCR πηγών"
 
 msgctxt "#32200"
 msgid "No Color"
@@ -741,8 +753,8 @@ msgid "Background"
 msgstr "Παρασκήνιο"
 
 msgctxt "#32338"
-msgid "File Hosting Filters"
-msgstr "Φίλτρα Πηγών"
+msgid "Sources Filters and Sorting Options"
+msgstr "Φίλτρα/Ταξινόμηση Πηγών"
 
 msgctxt "#32339"
 msgid "Max Quality"
@@ -753,8 +765,8 @@ msgid "SD Hosters in Auto Play"
 msgstr "Ροές SD σε αυτόματη αναπαραγωγή"
 
 msgctxt "#32341"
-msgid "Enable Hosters with captchas"
-msgstr "Ενεργοποίηση ροών με captcha"
+msgid "Remove pair/captcha hosts"
+msgstr "Αφαίρεση πηγών με pair/captcha"
 
 msgctxt "#32342"
 msgid "Sort by Provider"
@@ -838,11 +850,11 @@ msgstr "Εμφάνιση ειδοποίησης"
 
 msgctxt "#32362"
 msgid "Disable CloudFlare protected providers"
-msgstr "Απενεργοποίηση πηγών προστατευμένων με CloudFlare"
+msgstr "Αφαίρεση πηγών προστατευμένων με CloudFlare"
 
 msgctxt "#32363"
-msgid "Enable HEVC streams"
-msgstr "Ενεργοποίηση HEVC ροών"
+msgid "Remove HEVC streams"
+msgstr "Αφαίρεση HEVC ροών"
 
 msgctxt "#32372"
 msgid "When playback ends..."

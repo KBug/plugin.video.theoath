@@ -504,7 +504,19 @@ msgid "Enter your Opensubtitles.org log-in credentials on 'Accounts' tab"
 msgstr ""
 
 msgctxt "#32119"
-msgid "Choose"
+msgid "Always choose"
+msgstr ""
+
+msgctxt "#32120"
+msgid "Choose on season/episode level"
+msgstr ""
+
+msgctxt "#32121"
+msgid "Select Trailer:"
+msgstr ""
+
+msgctxt "#32122"
+msgid "Remove CAM/SCR results"
 msgstr ""
 
 msgctxt "#32200"
@@ -744,7 +756,7 @@ msgid "Background"
 msgstr ""
 
 msgctxt "#32338"
-msgid "File Hosting Filters"
+msgid "Sources Filters and Sorting Options"
 msgstr ""
 
 msgctxt "#32339"
@@ -756,7 +768,7 @@ msgid "SD Hosters in Auto Play"
 msgstr ""
 
 msgctxt "#32341"
-msgid "Enable Hosters with captchas"
+msgid "Remove pair/captcha hosts"
 msgstr ""
 
 msgctxt "#32342"
@@ -844,7 +856,7 @@ msgid "Disable CloudFlare protected providers"
 msgstr ""
 
 msgctxt "#32363"
-msgid "Enable HEVC streams"
+msgid "Remove HEVC streams"
 msgstr ""
 
 msgctxt "#32372"
