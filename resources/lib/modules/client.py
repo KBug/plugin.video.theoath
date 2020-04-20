@@ -26,12 +26,6 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
         if not url:
             return
 
-        if not headers:
-            if not mobile:
-                headers = randomagent()
-            else:
-                headers = randommobileagent()
-
         handlers = []
 
         if proxy is not None:
@@ -75,7 +69,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             except:
                 pass
 
-        if url.startswith('//'): url = 'http:' + url
+        if url.startswith('//'): url = 'https:' + url
 
         _headers = {}
 
@@ -131,13 +125,23 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             except:
                 pass
 
-        if isinstance(post, dict):
-            post = utils.byteify(post)
-            post = urllib.urlencode(post)
-
         url = utils.byteify(url)
+        request = urllib2.Request(url)
 
-        request = urllib2.Request(url, data=post)
+        if post is not None:
+            if isinstance(post, dict):
+                post = utils.byteify(post)
+                post = urllib.urlencode(post)
+            if len(post) > 0:
+                request = urllib2.Request(url, data=post)
+            else:
+                request.get_method = lambda: 'POST'
+                request.has_header = lambda header_name: (header_name == 'Content-type' or
+                                                          urllib2.Request.has_header(request, header_name))
+
+        if limit == '0':
+            request.get_method = lambda: 'HEAD'
+
         _add_request_header(request, _headers)
 
         try:
@@ -153,12 +157,23 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
                     cf_result = gzip.GzipFile(fileobj=StringIO.StringIO(cf_result)).read()
 
                 if 'cf-browser-verification' in cf_result:
-                    while 'cf-browser-verification' in cf_result:
-                        netloc = '%s://%s/' % (urlparse.urlparse(url).scheme, urlparse.urlparse(url).netloc)
+                    from resources.lib.modules import cfscrape
+                    _cf_lim = 0
+                    while 'cf-browser-verification' in cf_result and _cf_lim <= 1:
+                        _cf_lim += 1
+                        netloc = '%s://%s/' % (urlparse.urlparse(url).scheme,
+                                               urlparse.urlparse(url).netloc)
                         ua = _headers['User-Agent']
-                        cf = cache.get(cfcookie().get, 1, netloc, ua, timeout)
 
-                        _headers['Cookie'] = cf
+                        try:
+                            cf = cache.get(cfscrape.get_cookie_string, 1, netloc, ua)[0]
+                        except BaseException:
+                            try:
+                                cf = cfscrape.get_cookie_string(url, ua)[0]
+                            except BaseException:
+                                cf = None
+                        finally:
+                            _headers['Cookie'] = cf
 
                         request = urllib2.Request(url, data=post)
                         _add_request_header(request, _headers)
@@ -167,7 +182,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
                             response = urllib2.urlopen(request, timeout=int(timeout))
                             cf_result = 'Success'
                         except urllib2.HTTPError as response:
-                            cache.remove(cfcookie().get, netloc, ua, timeout)
+                            cache.remove(cfscrape.get_cookie_string, netloc, ua)
                             cf_result = response.read()
                 else:
                     log_utils.log('Request-Error (%s): %s' % (str(response.code), url), log_utils.LOGDEBUG)
@@ -201,6 +216,12 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             if close is True: response.close()
             return result
 
+        elif output == 'location':
+            result = response.headers
+            if close:
+                response.close()
+            return result['Location']
+
         elif output == 'chunk':
             try:
                 content = int(response.headers['Content-Length'])
@@ -220,7 +241,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             return content
 
         if limit == '0':
-            result = response.read(224 * 1024)
+            result = response.read(1 * 1024)
         elif limit is not None:
             result = response.read(int(limit) * 1024)
         else:
@@ -279,7 +300,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             except:
                 pass
             if close is True: response.close()
-            return (result, response_code, response_headers, _headers, cookie)
+            return result, response_code, response_headers, _headers, cookie
         else:
             if close is True: response.close()
             return result
@@ -368,19 +389,28 @@ def replaceHTMLCodes(txt):
 
 
 def randomagent():
-
-    _agents = ['Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko',
-               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36',
-               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
-               'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:56.0) Gecko/20100101 Firefox/56.0',
-               'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36 OPR/43.0.2442.991',
-               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_2) AppleWebKit/604.4.7 (KHTML, like Gecko) Version/11.0.2 Safari/604.4.7',
-               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
-               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:54.0) Gecko/20100101 Firefox/54.0',
-               'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
-               'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0']
-
-    return random.choice(_agents)
+    BR_VERS = [
+        ['%s.0' % i for i in xrange(18, 50)],
+        ['37.0.2062.103', '37.0.2062.120', '37.0.2062.124', '38.0.2125.101', '38.0.2125.104', '38.0.2125.111',
+         '39.0.2171.71', '39.0.2171.95', '39.0.2171.99', '40.0.2214.93', '40.0.2214.111', '40.0.2214.115',
+         '42.0.2311.90', '42.0.2311.135', '42.0.2311.152', '43.0.2357.81', '43.0.2357.124', '44.0.2403.155',
+         '44.0.2403.157', '45.0.2454.101', '45.0.2454.85', '46.0.2490.71', '46.0.2490.80', '46.0.2490.86',
+         '47.0.2526.73', '47.0.2526.80', '48.0.2564.116', '49.0.2623.112', '50.0.2661.86', '51.0.2704.103',
+         '52.0.2743.116', '53.0.2785.143', '54.0.2840.71', '61.0.3163.100'],
+        ['11.0'],
+        ['8.0', '9.0', '10.0', '10.6']]
+    WIN_VERS = ['Windows NT 10.0', 'Windows NT 7.0', 'Windows NT 6.3', 'Windows NT 6.2',
+                'Windows NT 6.1', 'Windows NT 6.0', 'Windows NT 5.1', 'Windows NT 5.0']
+    FEATURES = ['; WOW64', '; Win64; IA64', '; Win64; x64', '']
+    RAND_UAS = ['Mozilla/5.0 ({win_ver}{feature}; rv:{br_ver}) Gecko/20100101 Firefox/{br_ver}',
+                'Mozilla/5.0 ({win_ver}{feature}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{br_ver} Safari/537.36',
+                'Mozilla/5.0 ({win_ver}{feature}; Trident/7.0; rv:{br_ver}) like Gecko',
+                'Mozilla/5.0 (compatible; MSIE {br_ver}; {win_ver}{feature}; Trident/6.0)']
+    index = random.randrange(len(RAND_UAS))
+    return RAND_UAS[index].format(
+        win_ver=random.choice(WIN_VERS),
+        feature=random.choice(FEATURES),
+        br_ver=random.choice(BR_VERS[index]))
 
 
 def randommobileagent(mobile):
@@ -388,7 +418,7 @@ def randommobileagent(mobile):
         'Mozilla/5.0 (Linux; Android 7.1; vivo 1716 Build/N2G47H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.98 Mobile Safari/537.36',
         'Mozilla/5.0 (Linux; U; Android 6.0.1; zh-CN; F5121 Build/34.0.A.1.247) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/40.0.2214.89 UCBrowser/11.5.1.944 Mobile Safari/537.36',
         'Mozilla/5.0 (Linux; Android 7.0; SAMSUNG SM-N920C Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/6.2 Chrome/56.0.2924.87 Mobile Safari/537.36',
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.0 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/80.0.3987.95 Mobile/15E148 Safari/605.1',
         'Mozilla/5.0 (iPad; CPU OS 10_2_1 like Mac OS X) AppleWebKit/602.4.6 (KHTML, like Gecko) Version/10.0 Mobile/14D27 Safari/602.1']
 
     if mobile == 'android':
@@ -398,7 +428,39 @@ def randommobileagent(mobile):
 
 
 def agent():
-    return 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
+    return random.choice(
+            ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36",
+            "Mozilla/5.0 (Linux; Android 8.0.0;) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/80.0.3987.95 Mobile/15E148 Safari/605.1",
+            "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/74.0",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:61.0) Gecko/20100101 Firefox/74.0",
+            "Mozilla/5.0 (X11; Linux i586; rv:31.0) Gecko/20100101 Firefox/74.0",
+            "Mozilla/5.0 (Android 8.0.0; Mobile; rv:61.0) Gecko/61.0 Firefox/68.0",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 12_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) FxiOS/24.0 Mobile/16B92 Safari/605.1.15",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15",
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1",
+            "Mozilla/5.0 (iPad; CPU OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1",
+            "Mozilla/5.0 (iPod Touch; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Mobile/15E148 Safari/604.1",
+            "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)",
+            "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; Trident/4.0;)",
+            "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)",
+            "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.0)",
+            "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1)",
+            "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)",
+            "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2)",
+            "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
+            "Mozilla/5.0 (Windows NT 6.2; Trident/7.0; rv:11.0) like Gecko",
+            "Windows 8.1	Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko",
+            "Windows 10	Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36 Edg/80.0.361.69",
+            "Mozilla/5.0 (Windows Mobile 10; Android 8.0.0; Microsoft; Lumia 950XL) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36 Edge/80.0.361.69",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; Xbox; Xbox One) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36 Edge/44.18363.8131",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36 OPR/67.0.3575.115",
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36 OPR/67.0.3575.115",
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36 OPR/67.0.3575.115",
+            "Mozilla/5.0 (Linux; Android 9; AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36 OPR/55.2.2719"])
 
 
 class cfcookie:

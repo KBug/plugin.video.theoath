@@ -824,26 +824,26 @@ class sources:
 
     def sourcesFilter(self):
 
-        sort_provider = control.setting('hosts.sort.provider')
-        if sort_provider == '': sort_provider = 'false'
+        quality = control.setting('hosts.quality')
+        if quality == '': quality = '0'
 
         debrid_only = control.setting('debrid.only')
         if debrid_only == '': debrid_only = 'false'
 
-        quality = control.setting('hosts.quality')
-        if quality == '': quality = '0'
+        remove_cam = control.setting('remove.cam')
+        if remove_cam == '': remove_cam = 'false'
 
         remove_captcha = control.setting('remove.captcha')
         if remove_captcha == '': remove_captcha = 'false'
 
-        size_sort = control.setting('torr.sort.size')
-        if size_sort == '': size_sort = 'true'
-
-        remove_cam = control.setting('remove.cam')
-        if remove_cam == '': remove_cam = 'false'
-
         remove_hevc = control.setting('remove.hevc')
         if remove_hevc == '': remove_hevc = 'false'
+
+        sort_provider = control.setting('hosts.sort.provider')
+        if sort_provider == '': sort_provider = 'true'
+
+        size_sort = control.setting('torr.sort.size')
+        if size_sort == '': size_sort = 'true'
 
         random.shuffle(self.sources)
 
@@ -1289,6 +1289,9 @@ class sources:
         else:
             scraperSetting = control.setting('module.provider.alt')
 
+        oas_module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):' \
+                          if control.addon('script.module.oathscrapers').getSetting('package.folder') != 'Oathscrapers' else 'OathScrapers:'
+
         import oathscrapers
         sourceDir1 = oathscrapers.sources()
         from resources.lib import sources
@@ -1302,7 +1305,7 @@ class sources:
         try:
             if scraperSetting == 'TheOath Scrapers':
                 self.sourceDict = sourceDir1
-                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):'
+                self.module_name = oas_module_name
             elif scraperSetting == 'Open Scrapers':
                 self.sourceDict = sourceDir3
                 self.module_name = 'OpenScrapers:'
@@ -1311,13 +1314,13 @@ class sources:
                 self.module_name = 'Built-in providers:'
             elif scraperSetting == 'TheOath + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Built-in + OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):'
+                self.module_name = 'Built-in + ' + oas_module_name
             elif scraperSetting == 'Open + Built-in':
                 self.sourceDict = sourceDir3 + sourceDir2
                 self.module_name = 'Built-in + OpenScrapers:'
             else:
                 self.sourceDict = sourceDir1
-                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):'
+                self.module_name = oas_module_name
                 control.setSetting('module.provider', 'TheOath Scrapers')
         except:
             return

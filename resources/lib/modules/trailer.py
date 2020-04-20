@@ -33,7 +33,7 @@ class trailer:
         self.content = control.infoLabel('Container.Content')
         self.base_link = 'https://www.youtube.com'
         self.key = control.addon('plugin.video.youtube').getSetting('youtube.api.key')
-        if self.key == '': self.key = 'QUl6YVN5QlctWjNUbmVMWC1hRzlUQzVHMDYxQlRjOWJCZ2Z0bVBB'.decode('base64')
+        if self.key == '': self.key = 'Z2V0X3lvdXJz'.decode('base64')
         try: self.key_link = '&key=%s' % self.key
         except: pass
         if self.mode == '1':

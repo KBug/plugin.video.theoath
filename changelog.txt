@@ -1,3 +1,6 @@
+[B][COLOR gold]v2.2.4[/COLOR][/B]
+- Various under the hood changes
+
 [B][COLOR gold]v2.2.3[/COLOR][/B]
 - Added option to enable trailer selection only on season/episode level (default)
 - Added option to remove CAM/SCR results
