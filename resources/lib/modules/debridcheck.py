@@ -67,8 +67,6 @@ class RDapi:
             response = self._get(original_url)
         try: resp = to_utf8(json.loads(response))
         except: resp = to_utf8(response)
-        #from resources.lib.modules import log_utils
-        #log_utils.log('RDapi-' + str(resp))
         return resp
 
     def refreshToken(self):
@@ -92,9 +90,9 @@ class RDapi:
 
 class ADapi:
     def __init__(self):
-        self.base_url = 'https://api.alldebrid.com/'
+        self.base_url = 'https://api.alldebrid.com/v4/'
         self.token = __r_url__.getSetting('AllDebridResolver_token')
-        self.user_agent = 'ResolveURL for Kodi'
+        self.user_agent = 'TheOath for Kodi'
 
     def check_cache(self, hashes):
         data = {'magnets[]': hashes}
@@ -103,7 +101,7 @@ class ADapi:
 
     def _post(self, url, data={}):
         if self.token == '': return None
-        url = self.base_url + url + '?agent=%s&token=%s' % (self.user_agent, self.token)
+        url = self.base_url + url + '?agent=%s&apikey=%s' % (self.user_agent, self.token)
         return requests.post(url, data=data).json()
 
 class PMapi:
@@ -227,7 +225,7 @@ class DebridCheck:
 
     def _ad_lookup(self, hash_list):
         try:
-            ad_cache = ADapi().check_cache(hash_list)['data']
+            ad_cache = ADapi().check_cache(hash_list)['data']['magnets']
             for i in ad_cache:
                 cached = 'False'
                 if i['instant'] == True:

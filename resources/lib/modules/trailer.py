@@ -52,6 +52,8 @@ class trailer:
             name = control.infoLabel('ListItem.Title')
             if not name:
                 name = control.infoLabel('ListItem.Label')
+            if self.content == 'movies':
+                name += ' ' + control.infoLabel('ListItem.Year')
             name += ' trailer'
             if self.content in ['seasons', 'episodes']:
                 season = control.infoLabel('ListItem.Season')
@@ -93,7 +95,7 @@ class trailer:
                 url = self.resolve(url)
                 if not url: raise Exception()
                 return url
-            elif not url.startswith('http:'):
+            elif not url.startswith('http'):
                 url = self.youtube_watch % url
                 url = self.resolve(url)
                 if not url: raise Exception()
