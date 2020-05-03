@@ -243,11 +243,11 @@ class seasons:
             duration = client.replaceHTMLCodes(duration)
             duration = duration.encode('utf-8')
 
-            try: rating = client.parseDOM(item, 'Rating')[0]
-            except: rating = ''
-            if rating == '': rating = '0'
-            rating = client.replaceHTMLCodes(rating)
-            rating = rating.encode('utf-8')
+            # try: rating = client.parseDOM(item, 'Rating')[0]
+            # except: rating = ''
+            # if rating == '': rating = '0'
+            # rating = client.replaceHTMLCodes(rating)
+            # rating = rating.encode('utf-8')
 
             try: votes = client.parseDOM(item, 'RatingCount')[0]
             except: votes = '0'
@@ -277,7 +277,7 @@ class seasons:
             if plot == '': plot = '0'
             plot = client.replaceHTMLCodes(plot)
             plot = plot.encode('utf-8')
-            
+
             unaired = ''
         except:
             pass
@@ -310,7 +310,7 @@ class seasons:
 
                 if thumb == '0': thumb = poster
 
-                self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
+                self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
                 pass
@@ -387,9 +387,12 @@ class seasons:
                 label = client.replaceHTMLCodes(label)
                 label = label.encode('utf-8')
 
-                try: episodeplot = client.parseDOM(local, 'Overview')[0]
-                except: episodeplot = ''
-                if episodeplot == '': episodeplot = '0'
+                try:
+                    episodeplot = client.parseDOM(local, 'Overview')[0]
+                    if episodeplot == '': episodeplot = client.parseDOM(item, 'Overview')[0]
+                    if episodeplot == '': episodeplot = '0'
+                except:
+                    episodeplot = '0'
                 if episodeplot == '0': episodeplot = plot
                 episodeplot = client.replaceHTMLCodes(episodeplot)
                 try: episodeplot = episodeplot.encode('utf-8')

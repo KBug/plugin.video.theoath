@@ -1,3 +1,9 @@
+[B][COLOR gold]v2.2.6[/COLOR][/B]
+- Metadata tweaks:
+    Ratings for movies/shows now come from each list's origination (imdb, trakt etc)
+    Added actor/character info for shows
+    Episodes: fallback to ENG plot if not local found
+
 [B][COLOR gold]v2.2.5[/COLOR][/B]
 - Migration to the new AllDebrid API
 - More accuracy for movie trailers

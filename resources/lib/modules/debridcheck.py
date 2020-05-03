@@ -100,9 +100,16 @@ class ADapi:
         return result
 
     def _post(self, url, data={}):
-        if self.token == '': return None
-        url = self.base_url + url + '?agent=%s&apikey=%s' % (self.user_agent, self.token)
-        return requests.post(url, data=data).json()
+        result = None
+        try:
+            if self.token == '': return None
+            url = self.base_url + url + '?agent=%s&apikey=%s' % (self.user_agent, self.token)
+            result = requests.post(url, data=data).json()
+            if result.get('status') == 'success':
+                if 'data' in result:
+                    result = result['data']
+        except: pass
+        return result
 
 class PMapi:
     def __init__(self):
@@ -225,13 +232,16 @@ class DebridCheck:
 
     def _ad_lookup(self, hash_list):
         try:
-            ad_cache = ADapi().check_cache(hash_list)['data']['magnets']
-            for i in ad_cache:
-                cached = 'False'
-                if i['instant'] == True:
-                    self.ad_cached_hashes.append(i['hash'])
-                    cached = 'True'
-                self.ad_process_results.append((i['hash'], cached))
+            ad_cache = ADapi().check_cache(hash_list)['magnets']
+            if isinstance(ad_cache, list):
+                for i in ad_cache:
+                    cached = 'False'
+                    if i['instant'] == True:
+                        self.ad_cached_hashes.append(i['hash'])
+                        cached = 'True'
+                    self.ad_process_results.append((i['hash'], cached))
+            else:
+                for i in hash_list: self.ad_process_results.append((i, 'False'))
         except: pass
 
     def _pm_lookup(self, hash_list):

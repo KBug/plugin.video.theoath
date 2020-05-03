@@ -721,7 +721,6 @@ class movies:
                 try: year = re.compile('(\d{4})').findall(year)[0]
                 except: year = '0'
                 year = year.encode('utf-8')
-
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = client.parseDOM(item, 'a', ret='href')[0]
@@ -747,21 +746,32 @@ class movies:
                 duration = duration.encode('utf-8')
 
                 rating = '0'
-                try: rating = client.parseDOM(item, 'span', attrs = {'class': 'rating-rating'})[0]
-                except: pass
-                try: rating = client.parseDOM(rating, 'span', attrs = {'class': 'value'})[0]
-                except: rating = '0'
-                try: rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
-                except: pass
-                if rating == '' or rating == '-': rating = '0'
+                try:
+                    rating = client.parseDOM(item, 'span', attrs = {'class': 'rating-rating'})[0]
+                    rating = client.parseDOM(rating, 'span', attrs = {'class': 'value'})[0]
+                except:
+                    try:
+                        rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
+                    except:
+                        try:
+                            rating = re.findall(r'''<span class=".*?_rating">(.+?)</span>''', item)[0]
+                        except:
+                            pass
+                if rating == '' or rating == '-':
+                    rating = '0'
                 rating = client.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
 
-                try: votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
-                except: votes = '0'
-                try: votes = re.findall('\((.+?) vote(?:s|)\)', votes)[0]
-                except: votes = '0'
-                if votes == '': votes = '0'
+                try:
+                    votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
+                    votes = re.findall('\((.+?) vote(?:s|)\)', votes)[0]
+                except:
+                    try:
+                        votes = client.parseDOM(item, 'span', ret='data-value')[0]
+                    except:
+                        votes = '0'
+                if votes == '':
+                    votes = '0'
                 votes = client.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
 
@@ -928,12 +938,12 @@ class movies:
 
             duration = str(item.get('Runtime', 0))
 
-            rating = item.get('rating', '0')
-            if not rating or rating == '0.0': rating = '0'
+            #rating = item.get('rating', '0')
+            #if not rating or rating == '0.0': rating = '0'
 
-            votes = item.get('votes', '0')
-            try: votes = str(format(int(votes), ',d'))
-            except: pass
+            #votes = item.get('votes', '0')
+            #try: votes = str(format(int(votes), ',d'))
+            #except: pass
 
             mpaa = item.get('certification', '0')
             if not mpaa: mpaa = '0'
@@ -1042,7 +1052,7 @@ class movies:
             except:
                 fanart2 = '0'
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 

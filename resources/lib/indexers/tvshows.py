@@ -657,15 +657,34 @@ class tvshows:
                 poster = poster.encode('utf-8')
 
                 rating = '0'
-                try: rating = client.parseDOM(item, 'span', attrs = {'class': 'rating-rating'})[0]
-                except: pass
-                try: rating = client.parseDOM(rating, 'span', attrs = {'class': 'value'})[0]
-                except: rating = '0'
-                try: rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
-                except: pass
-                if rating == '' or rating == '-': rating = '0'
+                try:
+                    rating = client.parseDOM(item, 'span', attrs = {'class': 'rating-rating'})[0]
+                    rating = client.parseDOM(rating, 'span', attrs = {'class': 'value'})[0]
+                except:
+                    try:
+                        rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
+                    except:
+                        try:
+                            rating = re.findall(r'''<span class=".*?_rating">(.+?)</span>''', item)[0]
+                        except:
+                            pass
+                if rating == '' or rating == '-':
+                    rating = '0'
                 rating = client.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
+
+                try:
+                    votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
+                    votes = re.findall('\((.+?) vote(?:s|)\)', votes)[0]
+                except:
+                    try:
+                        votes = client.parseDOM(item, 'span', ret='data-value')[0]
+                    except:
+                        votes = '0'
+                if votes == '':
+                    votes = '0'
+                votes = client.replaceHTMLCodes(votes)
+                votes = votes.encode('utf-8')
 
                 plot = '0'
                 try: plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
@@ -678,7 +697,7 @@ class tvshows:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'rating': rating, 'plot': plot, 'imdb': imdb, 'tvdb': '0', 'poster': poster, 'next': next})
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': imdb, 'tvdb': '0', 'poster': poster, 'next': next})
             except:
                 pass
 
@@ -991,21 +1010,21 @@ class tvshows:
             duration = client.replaceHTMLCodes(duration)
             duration = duration.encode('utf-8')
 
-            try: rating = client.parseDOM(item, 'Rating')[0]
-            except: rating = ''
-            if 'rating' in self.list[i] and not self.list[i]['rating'] == '0':
-                rating = self.list[i]['rating']
-            if rating == '': rating = '0'
-            rating = client.replaceHTMLCodes(rating)
-            rating = rating.encode('utf-8')
+            # try: rating = client.parseDOM(item, 'Rating')[0]
+            # except: rating = ''
+            # if 'rating' in self.list[i] and not self.list[i]['rating'] == '0':
+                # rating = self.list[i]['rating']
+            # if rating == '': rating = '0'
+            # rating = client.replaceHTMLCodes(rating)
+            # rating = rating.encode('utf-8')
 
-            try: votes = client.parseDOM(item, 'RatingCount')[0]
-            except: votes = ''
-            if 'votes' in self.list[i] and not self.list[i]['votes'] == '0':
-                votes = self.list[i]['votes']
-            if votes == '': votes = '0'
-            votes = client.replaceHTMLCodes(votes)
-            votes = votes.encode('utf-8')
+            # try: votes = client.parseDOM(item, 'RatingCount')[0]
+            # except: votes = ''
+            # if 'votes' in self.list[i] and not self.list[i]['votes'] == '0':
+                # votes = self.list[i]['votes']
+            # if votes == '': votes = '0'
+            # votes = client.replaceHTMLCodes(votes)
+            # votes = votes.encode('utf-8')
 
             try: mpaa = client.parseDOM(item, 'ContentRating')[0]
             except: mpaa = ''
@@ -1013,18 +1032,36 @@ class tvshows:
             mpaa = client.replaceHTMLCodes(mpaa)
             mpaa = mpaa.encode('utf-8')
 
-            try: cast = client.parseDOM(item, 'Actors')[0]
-            except: cast = ''
-            cast = [x for x in cast.split('|') if not x == '']
-            try: cast = [(x.encode('utf-8'), '') for x in cast]
-            except: cast = []
-            if cast == []: cast = '0'
+            # try: cast = client.parseDOM(item, 'Actors')[0]
+            # except: cast = ''
+            # cast = [x for x in cast.split('|') if not x == '']
+            # try: cast = [(x.encode('utf-8'), '') for x in cast]
+            # except: cast = []
+            # if cast == []: cast = '0'
+
+            try:
+                people = trakt.getPeople(imdb, 'shows')
+
+                cast = []
+                for person in people.get('cast', []):
+                    cast.append({'name': person['person']['name'], 'role': person['character']})
+                cast = [(person['name'], person['role']) for person in cast]
+            except:
+                pass
 
             try: plot = client.parseDOM(item, 'Overview')[0]
             except: plot = ''
             if plot == '': plot = '0'
             plot = client.replaceHTMLCodes(plot)
             plot = plot.encode('utf-8')
+
+            try:
+                if self.lang != 'en':
+                    trans_item = trakt.getTVShowTranslation(imdb, self.lang, full=True)
+                    title = trans_item.get('title') or title
+                    plot = trans_item.get('overview') or plot
+            except:
+                pass
 
             try: poster = client.parseDOM(item, 'poster')[0]
             except: poster = ''
@@ -1094,7 +1131,7 @@ class tvshows:
             except:
                 clearart = '0'
 
-            item = {'title': title, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'poster2': poster2, 'banner': banner, 'banner2': banner2, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot}
+            item = {'title': title, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'poster2': poster2, 'banner': banner, 'banner2': banner2, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'cast': cast, 'plot': plot}
             item = dict((k,v) for k, v in item.iteritems() if not v == '0')
             self.list[i].update(item)
 
