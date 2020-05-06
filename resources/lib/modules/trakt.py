@@ -506,3 +506,14 @@ def getGenre(content, type, type_id):
         return r
     except:
         return []
+
+def getEpisodeRating(imdb, season, episode):
+    try:
+        if not imdb.startswith('tt'): imdb = 'tt' + imdb
+        url = '/shows/%s/seasons/%s/episodes/%s/ratings' % (imdb, season, episode)
+        r = getTraktAsJson(url)
+        r1 = r.get('rating', '0')
+        r2 = r.get('votes', '0')
+        return str(r1), str(r2)
+    except:
+        return

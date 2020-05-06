@@ -28,6 +28,7 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
+from resources.lib.modules import log_utils
 
 import os,sys,re,json,zipfile,StringIO,urllib,urlparse,datetime#,urllib2
 
@@ -249,11 +250,11 @@ class seasons:
             # rating = client.replaceHTMLCodes(rating)
             # rating = rating.encode('utf-8')
 
-            try: votes = client.parseDOM(item, 'RatingCount')[0]
-            except: votes = '0'
-            if votes == '': votes = '0'
-            votes = client.replaceHTMLCodes(votes)
-            votes = votes.encode('utf-8')
+            # try: votes = client.parseDOM(item, 'RatingCount')[0]
+            # except: votes = '0'
+            # if votes == '': votes = '0'
+            # votes = client.replaceHTMLCodes(votes)
+            # votes = votes.encode('utf-8')
 
             try: mpaa = client.parseDOM(item, 'ContentRating')[0]
             except: mpaa = ''
@@ -310,7 +311,7 @@ class seasons:
 
                 if thumb == '0': thumb = poster
 
-                self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'votes': votes, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
+                self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
                 pass
@@ -354,11 +355,26 @@ class seasons:
                 elif not fanart == '0': thumb = fanart.replace(self.tvdb_image, self.tvdb_poster)
                 elif not poster == '0': thumb = poster
 
-                try: rating = client.parseDOM(item, 'Rating')[0]
-                except: rating = ''
-                if rating == '': rating = '0'
-                rating = client.replaceHTMLCodes(rating)
-                rating = rating.encode('utf-8')
+                try:
+                    rating, votes = trakt.getEpisodeRating(imdb, int(season), int(episode))
+                except:
+                    rating, votes = '0', '0'
+                if rating == None or rating == '0.0':
+                    rating = '0'
+                if votes == None:
+                    votes = '0'
+
+                # try: rating = client.parseDOM(item, 'Rating')[0]
+                # except: rating = ''
+                # if rating == '': rating = '0'
+                # rating = client.replaceHTMLCodes(rating)
+                # rating = rating.encode('utf-8')
+
+                # try: votes = client.parseDOM(item, 'RatingCount')[0]
+                # except: votes = '0'
+                # if votes == '': votes = '0'
+                # votes = client.replaceHTMLCodes(votes)
+                # votes = votes.encode('utf-8')
 
                 try: director = client.parseDOM(item, 'Director')[0]
                 except: director = ''
@@ -401,6 +417,9 @@ class seasons:
                 self.list.append({'title': title, 'label': label, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': episodeplot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 self.list = sorted(self.list, key=lambda k: (int(k['season']), int(k['episode'])))
             except:
+                import traceback
+                failure = traceback.format_exc()
+                log_utils.log('tvdb_list Exception: ' + str(failure))
                 pass
 
         return self.list
@@ -788,7 +807,7 @@ class episodes:
                 except: rating = '0'
                 if rating == None or rating == '0.0': rating = '0'
 
-                try: votes = str(item['show']['votes'])
+                try: votes = str(item['episode']['votes'])
                 except: votes = '0'
                 try: votes = str(format(int(votes),',d'))
                 except: pass
@@ -1004,17 +1023,26 @@ class episodes:
                 duration = client.replaceHTMLCodes(duration)
                 duration = duration.encode('utf-8')
 
-                try: rating = client.parseDOM(item, 'Rating')[0]
-                except: rating = ''
-                if rating == '': rating = '0'
-                rating = client.replaceHTMLCodes(rating)
-                rating = rating.encode('utf-8')
+                try:
+                    rating, votes = trakt.getEpisodeRating(imdb, int(season), int(episode))
+                except:
+                    rating, votes = '0', '0'
+                if rating == None or rating == '0.0':
+                    rating = '0'
+                if votes == None:
+                    votes = '0'
 
-                try: votes = client.parseDOM(item2, 'RatingCount')[0]
-                except: votes = '0'
-                if votes == '': votes = '0'
-                votes = client.replaceHTMLCodes(votes)
-                votes = votes.encode('utf-8')
+                # try: rating = client.parseDOM(item, 'Rating')[0]
+                # except: rating = ''
+                # if rating == '': rating = '0'
+                # rating = client.replaceHTMLCodes(rating)
+                # rating = rating.encode('utf-8')
+
+                # try: votes = client.parseDOM(item2, 'RatingCount')[0]
+                # except: votes = '0'
+                # if votes == '': votes = '0'
+                # votes = client.replaceHTMLCodes(votes)
+                # votes = votes.encode('utf-8')
 
                 try: mpaa = client.parseDOM(item2, 'ContentRating')[0]
                 except: mpaa = ''
@@ -1058,7 +1086,6 @@ class episodes:
                                   'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes', 'unaired': unaired, '_last_watched': i['_last_watched'], '_sort_key': max(i['_last_watched'],premiered)})
             except:
                 import traceback
-                from resources.lib.modules import log_utils
                 failure = traceback.format_exc()
                 log_utils.log('TProgress: ' + str(failure))
                 pass
@@ -1201,17 +1228,26 @@ class episodes:
                 duration = client.replaceHTMLCodes(duration)
                 duration = duration.encode('utf-8')
 
-                try: rating = client.parseDOM(item, 'Rating')[0]
-                except: rating = ''
-                if rating == '': rating = '0'
-                rating = client.replaceHTMLCodes(rating)
-                rating = rating.encode('utf-8')
+                try:
+                    rating, votes = trakt.getEpisodeRating(imdb, int(season), int(episode))
+                except:
+                    rating, votes = '0', '0'
+                if rating == None or rating == '0.0':
+                    rating = '0'
+                if votes == None:
+                    votes = '0'
 
-                try: votes = client.parseDOM(item2, 'RatingCount')[0]
-                except: votes = '0'
-                if votes == '': votes = '0'
-                votes = client.replaceHTMLCodes(votes)
-                votes = votes.encode('utf-8')
+                # try: rating = client.parseDOM(item, 'Rating')[0]
+                # except: rating = ''
+                # if rating == '': rating = '0'
+                # rating = client.replaceHTMLCodes(rating)
+                # rating = rating.encode('utf-8')
+
+                # try: votes = client.parseDOM(item2, 'RatingCount')[0]
+                # except: votes = '0'
+                # if votes == '': votes = '0'
+                # votes = client.replaceHTMLCodes(votes)
+                # votes = votes.encode('utf-8')
 
                 try: mpaa = client.parseDOM(item2, 'ContentRating')[0]
                 except: mpaa = ''
@@ -1377,11 +1413,20 @@ class episodes:
                 duration = str(duration)
                 duration = duration.encode('utf-8')
 
-                try: rating = item['show']['rating']['average']
-                except: rating = '0'
-                if rating == None or rating == '0.0': rating = '0'
-                rating = str(rating)
-                rating = rating.encode('utf-8')
+                try:
+                    rating, votes = trakt.getEpisodeRating(imdb, int(season), int(episode))
+                except:
+                    rating, votes = '0', '0'
+                if rating == None or rating == '0.0':
+                    rating = '0'
+                if votes == None:
+                    votes = '0'
+
+                # try: rating = item['show']['rating']['average']
+                # except: rating = '0'
+                # if rating == None or rating == '0.0': rating = '0'
+                # rating = str(rating)
+                # rating = rating.encode('utf-8')
 
                 try: plot = item['show']['summary']
                 except: plot = '0'
@@ -1390,7 +1435,7 @@ class episodes:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb})
+                itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'thumb': thumb})
             except:
                 pass
 

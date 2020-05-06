@@ -1,3 +1,7 @@
+[B][COLOR gold]v2.2.7[/COLOR][/B]
+- Re:meta tweaks:
+    Episode ratings now come from Trakt
+
 [B][COLOR gold]v2.2.6[/COLOR][/B]
 - Metadata tweaks:
     Ratings for movies/shows now come from each list's origination (imdb, trakt etc)

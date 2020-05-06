@@ -33,6 +33,9 @@ from resources.lib.indexers import navigator
 
 import os,sys,re,json,urllib,urlparse,datetime
 
+try: from sqlite3 import dbapi2 as database
+except: from pysqlite2 import dbapi2 as database
+
 params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
 action = params.get('action')
@@ -314,8 +317,6 @@ class movies:
     def search(self):
 
         navigator.navigator().addDirectoryItem(32603, 'movieSearchnew', 'search.png', 'DefaultMovies.png')
-        try: from sqlite3 import dbapi2 as database
-        except: from pysqlite2 import dbapi2 as database
 
         dbcon = database.connect(control.searchFile)
         dbcur = dbcon.cursor()
@@ -342,51 +343,44 @@ class movies:
         navigator.navigator().endDirectory(False)
 
     def search_new(self):
-            control.idle()
+        control.idle()
 
-            t = control.lang(32010).encode('utf-8')
-            k = control.keyboard('', t) ; k.doModal()
-            q = k.getText() if k.isConfirmed() else None
+        t = control.lang(32010).encode('utf-8')
+        k = control.keyboard('', t) ; k.doModal()
+        q = k.getText() if k.isConfirmed() else None
 
-            if (q == None or q == ''): return
-            q = q.lower()
-            try: from sqlite3 import dbapi2 as database
-            except: from pysqlite2 import dbapi2 as database
+        if (q == None or q == ''): return
+        q = q.lower()
 
-            dbcon = database.connect(control.searchFile)
-            dbcur = dbcon.cursor()
-            dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
-            dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q))
-            dbcon.commit()
-            dbcur.close()
-            url = self.search_link + urllib.quote_plus(q)
-            if int(control.getKodiVersion()) >= 18:
-                self.get(url)
-            else:
-                url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib.quote_plus(url))
-                control.execute('Container.Update(%s)' % url)
+        dbcon = database.connect(control.searchFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
+        dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q))
+        dbcon.commit()
+        dbcur.close()
+        url = self.search_link + urllib.quote_plus(q)
+        if int(control.getKodiVersion()) >= 18:
+            self.get(url)
+        else:
+            url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+            control.execute('Container.Update(%s)' % url)
 
     def search_term(self, q):
-            control.idle()
-            q = q.lower()
+        control.idle()
+        q = q.lower()
 
-            try:
-                from sqlite3 import dbapi2 as database
-            except:
-                from pysqlite2 import dbapi2 as database
-
-            dbcon = database.connect(control.searchFile)
-            dbcur = dbcon.cursor()
-            dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
-            dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
-            dbcon.commit()
-            dbcur.close()
-            url = self.search_link + urllib.quote_plus(q)
-            if int(control.getKodiVersion()) >= 18:
-                self.get(url)
-            else:
-                url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib.quote_plus(url))
-                control.execute('Container.Update(%s)' % url)
+        dbcon = database.connect(control.searchFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("DELETE FROM movies WHERE term = ?", (q,))
+        dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
+        dbcon.commit()
+        dbcur.close()
+        url = self.search_link + urllib.quote_plus(q)
+        if int(control.getKodiVersion()) >= 18:
+            self.get(url)
+        else:
+            url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+            control.execute('Container.Update(%s)' % url)
 
     def person(self):
         try:
