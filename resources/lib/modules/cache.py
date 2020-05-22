@@ -234,7 +234,7 @@ def cache_version_check():
     if _find_cache_version():
         cache_clear()
         cache_clear_providers()
-        control.execute('RunPlugin(plugin://%s)' % 'plugin.video.theoath/?action=cleanSettings')
+        #control.execute('RunPlugin(plugin://%s)' % 'plugin.video.theoath/?action=cleanSettings')
         control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
 
 

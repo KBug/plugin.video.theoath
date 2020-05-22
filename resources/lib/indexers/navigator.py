@@ -73,6 +73,7 @@ class navigator:
     def movies(self, lite=False):
         self.addDirectoryItem(32011, 'movieGenres', 'genres.png', 'DefaultMovies.png')
         self.addDirectoryItem(32012, 'movieYears', 'years.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32123, 'movieDecades', 'years.png', 'DefaultMovies.png')
         self.addDirectoryItem(32013, 'moviePersons', 'people.png', 'DefaultMovies.png')
         self.addDirectoryItem(32014, 'movieLanguages', 'languages.png', 'DefaultMovies.png')
         self.addDirectoryItem(32015, 'movieCertificates', 'certificates.png', 'DefaultMovies.png')
@@ -83,8 +84,8 @@ class navigator:
         self.addDirectoryItem(32021, 'movies&url=oscars', 'oscar-winners.png', 'DefaultMovies.png')
         self.addDirectoryItem(32022, 'movies&url=theaters', 'in-theaters.png', 'DefaultRecentlyAddedMovies.png')
         self.addDirectoryItem(32005, 'movieWidget', 'latest-movies.png', 'DefaultRecentlyAddedMovies.png')
-        self.addDirectoryItem('Poseidon Playlists 1', 'customNavigator', 'poseidon.png', 'DefaultMovies.png')
-        self.addDirectoryItem('Poseidon Playlists 2', 'imdbLists', 'poseidon.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32124, 'customNavigator', 'imdb.png', 'DefaultMovies.png')
+        self.addDirectoryItem(32125, 'imdbLists', 'imdb.png', 'DefaultMovies.png')
         self.addDirectoryItem('Movie Mosts', 'movieMosts', 'featured.png', 'playlist.jpg')
 
         if lite == False:
@@ -257,7 +258,6 @@ class navigator:
         self.addDirectoryItem('Schizophrenia', 'movies&url=schiz', 'schiz.jpg', 'playlist.jpg')
         self.addDirectoryItem('Serial Killers', 'movies&url=serial', 'serial.jpg', 'playlist.jpg')
         self.addDirectoryItem('Slasher', 'movies&url=slasher', 'slasher.png', 'playlist.jpg')
-        self.addDirectoryItem('Sleeper Hits', 'movies&url=sleeper', 'sleeper.jpg', 'playlist.jpg')
         self.addDirectoryItem('Spiritual', 'movies&url=spiritual', 'spiritual.png', 'playlist.jpg')
         self.addDirectoryItem('Spoofs', 'movies&url=spoof', 'spoof.jpg', 'playlist.jpg')
         self.addDirectoryItem('Star Wars', 'movies&url=star', 'starwars.png', 'playlist.jpg')

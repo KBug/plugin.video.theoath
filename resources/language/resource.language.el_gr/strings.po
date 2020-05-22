@@ -515,6 +515,18 @@ msgctxt "#32122"
 msgid "Remove CAM/SCR results"
 msgstr "Αφαίρεση CAM/SCR πηγών"
 
+msgctxt "#32123"
+msgid "Decade"
+msgstr "Δεκαετία"
+
+msgctxt "#32124"
+msgid "IMDb keyword searches"
+msgstr "Αναζητήσεις IMDb keywords"
+
+msgctxt "#32125"
+msgid "Popular IMDb user lists"
+msgstr "Δημοφιλείς IMDb λίστες χρηστών"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"
