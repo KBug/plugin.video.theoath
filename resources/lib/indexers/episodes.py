@@ -879,9 +879,12 @@ class episodes:
                 if tvdb == None or tvdb == '': raise Exception()
                 tvdb = re.sub('[^0-9]', '', str(tvdb))
 
+                studio = item.get('show').get('network', '0')
+                if studio == None or studio == '': studio = '0'
+
                 last_watched = item['last_watched_at']
                 if last_watched == None or last_watched == '': last_watched = '0'
-                items.append({'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'snum': season, 'enum': episode, '_last_watched': last_watched})
+                items.append({'imdb': imdb, 'tvdb': tvdb, 'tvshowtitle': tvshowtitle, 'year': year, 'studio': studio, 'snum': season, 'enum': episode, '_last_watched': last_watched})
             except:
                 pass
 
@@ -1003,11 +1006,11 @@ class episodes:
                 elif not fanart == '0': thumb = fanart.replace(self.tvdb_image, self.tvdb_poster)
                 elif not poster == '0': thumb = poster
 
-                try: studio = client.parseDOM(item2, 'Network')[0]
-                except: studio = ''
-                if studio == '': studio = '0'
-                studio = client.replaceHTMLCodes(studio)
-                studio = studio.encode('utf-8')
+                # try: studio = client.parseDOM(item2, 'Network')[0]
+                # except: studio = ''
+                # if studio == '': studio = '0'
+                # studio = client.replaceHTMLCodes(studio)
+                # studio = studio.encode('utf-8')
 
                 try: genre = client.parseDOM(item2, 'Genre')[0]
                 except: genre = ''
@@ -1081,7 +1084,7 @@ class episodes:
                 plot = client.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
+                self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': i['studio'], 'genre': genre, 'duration': duration,
                                   'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart,
                                   'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes', 'unaired': unaired, '_last_watched': i['_last_watched'], '_sort_key': max(i['_last_watched'],premiered)})
             except:

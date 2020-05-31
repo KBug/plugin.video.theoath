@@ -266,16 +266,16 @@ class player(xbmc.Player):
                 self.seekTime(float(self.offset))
             else:
                 self.pause()
+                minutes, seconds = divmod(float(self.offset), 60);
+                hours, minutes = divmod(minutes, 60)
+                label = '%02d:%02d:%02d' % (hours, minutes, seconds)
+                label = (control.lang2(12022).format(label).encode('utf-8'))
                 if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
-                    yes = control.yesnoDialog(control.lang2(12022).format('Trakt scrobble?').encode('utf-8'), None, None, heading=control.lang2(13404).encode('utf-8'))
+                    yes = control.yesnoDialog(label, '(Trakt scrobble)', None, heading=control.lang2(13404).encode('utf-8'))
                     if yes:
                         self.seekTime(float(self.offset))
                     self.pause()
                 else:
-                    minutes, seconds = divmod(float(self.offset), 60);
-                    hours, minutes = divmod(minutes, 60)
-                    label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-                    label = (control.lang2(12022).format(label).encode('utf-8'))
                     yes = control.yesnoDialog(label, None, None, heading=control.lang2(13404).encode('utf-8'))
                     if yes:
                         self.seekTime(float(self.offset))
@@ -293,16 +293,16 @@ class player(xbmc.Player):
                     self.seekTime(float(self.offset))
                 else:
                     self.pause()
+                    minutes, seconds = divmod(float(self.offset), 60);
+                    hours, minutes = divmod(minutes, 60)
+                    label = '%02d:%02d:%02d' % (hours, minutes, seconds)
+                    label = (control.lang2(12022).format(label).encode('utf-8'))
                     if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
-                        yes = control.yesnoDialog(control.lang2(12022).format('Trakt scrobble?').encode('utf-8'), None, None, heading=control.lang2(13404).encode('utf-8'))
+                        yes = control.yesnoDialog(label, '(Trakt scrobble)', None, heading=control.lang2(13404).encode('utf-8'))
                         if yes:
                             self.seekTime(float(self.offset))
                         self.pause()
                     else:
-                        minutes, seconds = divmod(float(self.offset), 60);
-                        hours, minutes = divmod(minutes, 60)
-                        label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-                        label = (control.lang2(12022).format(label).encode('utf-8'))
                         yes = control.yesnoDialog(label, None, None, heading=control.lang2(13404).encode('utf-8'))
                         if yes:
                             self.seekTime(float(self.offset))
@@ -314,11 +314,12 @@ class player(xbmc.Player):
             self.onAVStarted()
 
     def onPlayBackStopped(self):
-        xbmc.sleep(3000)
-        if control.setting('bookmarks') == 'true':
-            bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
-        if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
-            bookmarks().set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tvdb, self.season, self.episode)
+        control.sleep(2000)
+        if int(self.currentTime) > 120:
+            if control.setting('bookmarks') == 'true':
+                bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
+            if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
+                bookmarks().set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tvdb, self.season, self.episode)
 
         try:
             if float(self.currentTime / self.totalTime) >= 0.92:
@@ -413,10 +414,10 @@ class subtitles:
             file.close()
 
             xbmc.sleep(1000)
-            xbmc.Player().setSubtitles(subtitle)
             if control.setting('subtitles.notify') == 'true':
-                if xbmc.Player().isPlaying():
+                if xbmc.Player().isPlayingVideo():
                     control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
+            xbmc.Player().setSubtitles(subtitle)
         except:
             pass
 
@@ -504,7 +505,7 @@ class bookmarks:
     def set_scrobble(self, current_time, total_time, _content, _imdb='', _tvdb='', _season='', _episode=''):
         try:
             percent = float((current_time / total_time)) * 100
-            if 2 < percent < 95:
+            if percent < 95:
                 trakt.scrobbleMovie(_imdb, percent) if _content == 'movie' else trakt.scrobbleEpisode(_tvdb, _season, _episode, percent)
                 if control.setting('trakt.scrobble.notify') == 'true':
                     control.infoDialog('Trakt: Scrobbled')
