@@ -21,14 +21,20 @@
 
 import os
 import sys
-import urllib
-import urlparse
+import six
+from six.moves import urllib_parse
 
 import xbmc
 import xbmcaddon
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
+
+def six_encode(txt, char='utf-8'):
+    return txt if six.PY3 else txt.encode(char)
+
+def six_decode(txt, char='utf-8'):
+    return txt if six.PY3 else txt.decode(char)
 
 integer = 1000
 
@@ -78,9 +84,11 @@ getCurrentDialogId = xbmcgui.getCurrentWindowDialogId()
 
 keyboard = xbmc.Keyboard
 
+monitor = xbmc.Monitor()
+
 # Modified `sleep` command that honors a user exit request
 def sleep(time):
-    while time > 0 and not xbmc.abortRequested:
+    while time > 0 and not monitor.abortRequested():
         xbmc.sleep(min(100, time))
         time = time - 100
 
@@ -111,7 +119,7 @@ skinPath = xbmc.translatePath('special://skin/')
 
 addonPath = xbmc.translatePath(addonInfo('path'))
 
-dataPath = xbmc.translatePath(addonInfo('profile')).decode('utf-8')
+dataPath = xbmc.translatePath(addonInfo('profile'))
 
 settingsFile = os.path.join(dataPath, 'settings.xml')
 
@@ -135,9 +143,11 @@ key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 
 iv = "p2s5v8y/B?E(H+Mb"
 
+
 def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
-    from . import libtools
+    from resources.lib.modules import libtools
     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
+
 
 def addonIcon():
     theme = appearance() ; art = artPath()
@@ -186,12 +196,12 @@ def addonName():
 
 def get_plugin_url(queries):
     try:
-        query = urllib.urlencode(queries)
+        query = urllib_parse.urlencode(queries)
     except UnicodeEncodeError:
         for k in queries:
-            if isinstance(queries[k], unicode):
-                queries[k] = queries[k].encode('utf-8')
-        query = urllib.urlencode(queries)
+            if isinstance(queries[k], six.text_type):
+                queries[k] = six_encode(queries)
+        query = urllib_parse.urlencode(queries)
     addon_id = sys.argv[0]
     if not addon_id: addon_id = addonId()
     return addon_id + '?' + query
@@ -221,8 +231,9 @@ def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=Fal
     dialog.notification(heading, message, icon, time, sound=sound)
 
 
-def yesnoDialog(line1, line2, line3, heading=addonInfo('name'), nolabel='', yeslabel=''):
-    return dialog.yesno(heading, line1, line2, line3, nolabel, yeslabel)
+def yesnoDialog(message, heading=addonInfo('name'), nolabel='', yeslabel=''):
+    if int(getKodiVersion()) >= 19: return dialog.yesno(heading, message, nolabel, yeslabel)
+    else: return dialog.yesno(heading, message, '', '', nolabel, yeslabel)
 
 
 def selectDialog(list, heading=addonInfo('name')):
@@ -254,9 +265,9 @@ def apiLanguage(ret_name=None):
     lang['youtube'] = name if name in youtube else 'en'
 
     if ret_name:
-        lang['trakt'] = [i[0] for i in langDict.iteritems() if i[1] == lang['trakt']][0]
-        lang['tvdb'] = [i[0] for i in langDict.iteritems() if i[1] == lang['tvdb']][0]
-        lang['youtube'] = [i[0] for i in langDict.iteritems() if i[1] == lang['youtube']][0]
+        lang['trakt'] = [i[0] for i in six.iteritems(langDict)if i[1] == lang['trakt']][0]
+        lang['tvdb'] = [i[0] for i in six.iteritems(langDict) if i[1] == lang['tvdb']][0]
+        lang['youtube'] = [i[0] for i in six.iteritems(langDict) if i[1] == lang['youtube']][0]
 
     return lang
 
@@ -276,7 +287,7 @@ def cdnImport(uri, name):
     from resources.lib.modules import client
 
     path = os.path.join(dataPath, 'py' + name)
-    path = path.decode('utf-8')
+    path = six_decode(path)
 
     deleteDir(os.path.join(path, ''), force=True)
     makeFile(dataPath) ; makeFile(path)
@@ -332,7 +343,7 @@ def queueItem():
 def metadataClean(metadata): # Filter out non-existing/custom keys. Otherise there are tons of errors in Kodi 18 log.
     if metadata == None: return metadata
     allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink', 'top250', 'setid', 'tracknumber', 'rating', 'userrating', 'watched', 'playcount', 'overlay', 'cast', 'castandrole', 'director', 'mpaa', 'plot', 'plotoutline', 'title', 'originaltitle', 'sorttitle', 'duration', 'studio', 'tagline', 'writer', 'tvshowtitle', 'premiered', 'status', 'set', 'setoverview', 'tag', 'imdbnumber', 'code', 'aired', 'credits', 'lastplayed', 'album', 'artist', 'votes', 'path', 'trailer', 'dateadded', 'mediatype', 'dbid']
-    return {k: v for k, v in metadata.iteritems() if k in allowed}
+    return {k: v for k, v in six.iteritems(metadata) if k in allowed}
 
 
 def getKodiVersion():
@@ -400,7 +411,7 @@ def clean_settings():#Fen code
             nfo_file = xbmcvfs.File(settings_xml, 'w')
             nfo_file.write(new_content)
             nfo_file.close()
-            infoDialog(lang(32110).encode('utf-8').format(str(len(removed_settings))), heading=addon_name)
+            infoDialog(six_encode(lang(32110)).format(str(len(removed_settings))), heading=addon_name)
     except:
         infoDialog('Error Cleaning Settings.xml. Old settings.xml files Restored.', heading=addon_name)
     sleep(200)

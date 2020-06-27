@@ -18,7 +18,7 @@
 '''
 
 
-import os,sys,urlparse
+import os,sys#,urlparse
 
 from resources.lib.modules import control
 from resources.lib.modules import trakt
@@ -34,7 +34,7 @@ traktCredentials = trakt.getTraktCredentialsInfo()
 
 traktIndicators = trakt.getTraktIndicatorsInfo()
 
-queueMenu = control.lang(32065).encode('utf-8')
+queueMenu = control.six_encode(control.lang(32065))
 
 
 class navigator:
@@ -438,15 +438,15 @@ class navigator:
         try:
             control.idle()
 
-            items = [ (control.lang(32001).encode('utf-8'), 'movies'), (control.lang(32002).encode('utf-8'), 'tvshows'), (control.lang(32054).encode('utf-8'), 'seasons'), (control.lang(32038).encode('utf-8'), 'episodes') ]
+            items = [ (control.six_encode(control.lang(32001)), 'movies'), (control.six_encode(control.lang(32002)), 'tvshows'), (control.six_encode(control.lang(32054)), 'seasons'), (control.six_encode(control.lang(32038)), 'episodes') ]
 
-            select = control.selectDialog([i[0] for i in items], control.lang(32049).encode('utf-8'))
+            select = control.selectDialog([i[0] for i in items], control.six_encode(control.lang(32049)))
 
             if select == -1: return
 
             content = items[select][1]
 
-            title = control.lang(32059).encode('utf-8')
+            title = control.six_encode(control.lang(32059))
             url = '%s?action=addView&content=%s' % (sys.argv[0], content)
 
             poster, banner, fanart = control.addonPoster(), control.addonBanner(), control.addonFanart()
@@ -469,13 +469,13 @@ class navigator:
     def accountCheck(self):
         if traktCredentials == False and imdbCredentials == False:
             control.idle()
-            control.infoDialog(control.lang(32042).encode('utf-8'), sound=True, icon='WARNING')
+            control.infoDialog(control.six_encode(control.lang(32042)), sound=True, icon='WARNING')
             sys.exit()
 
 
     def infoCheck(self, version):
         try:
-            control.infoDialog('', control.lang(32074).encode('utf-8'), time=5000, sound=False)
+            control.infoDialog('', control.six_encode(control.lang(32074)), time=5000, sound=False)
             return '1'
         except:
             return '1'
@@ -483,59 +483,59 @@ class navigator:
 
     def clearCache(self):
         #control.idle()
-        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.lang(32056))
         if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear()
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearCacheMeta(self):
         #control.idle()
-        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.lang(32056))
         if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear_meta()
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearCacheProviders(self):
         #control.idle()
-#        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+#        yes = control.yesnoDialog(control.lang(32056))
 #        if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear_providers()
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearCacheSearch(self):
         #control.idle()
-        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.lang(32056))
         if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear_search()
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearDebridCheck(self):
-        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.lang(32056))
         if not yes: return
         from resources.lib.modules import debridcheck
         debridcheck.DebridCache().clear_database()
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearCacheAll(self):
         #control.idle()
-        yes = control.yesnoDialog(control.lang(32056).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.lang(32056))
         if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear_all()
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
-        try: name = control.lang(name).encode('utf-8')
+        try: name = control.six_encode(control.lang(name))
         except: pass
         url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
         thumb = os.path.join(artPath, thumb) if not artPath == None else icon
         cm = []
         if queue == True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
-        if not context == None: cm.append((control.lang(context[0]).encode('utf-8'), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
+        if not context == None: cm.append((control.six_encode(control.lang(context[0])), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
         item = control.item(label=name)
         item.addContextMenuItems(cm)
         item.setArt({'icon': thumb, 'thumb': thumb})

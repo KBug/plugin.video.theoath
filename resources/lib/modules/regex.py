@@ -22,15 +22,17 @@
 import re
 import os
 import sys
-import urllib
-import urllib2
+#import urllib
+#import urllib2
 import xbmc
 import xbmcaddon
 import traceback
-import cookielib
-import base64
+#import cookielib
 
-profile = functions_dir = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile').decode('utf-8'))
+import six
+from six.moves import urllib_parse, urllib_request, http_cookiejar
+
+profile = functions_dir = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
@@ -83,19 +85,19 @@ def resolve(regex):
         vanilla = re.compile('(<regex>.+)', re.MULTILINE|re.DOTALL).findall(regex)[0]
         cddata = re.compile('<\!\[CDATA\[(.+?)\]\]>', re.MULTILINE|re.DOTALL).findall(regex)
         for i in cddata:
-            regex = regex.replace('<![CDATA['+i+']]>', urllib.quote_plus(i))
+            regex = regex.replace('<![CDATA['+i+']]>', urllib_parse.quote_plus(i))
 
         regexs = re.compile('(<regex>.+)', re.MULTILINE|re.DOTALL).findall(regex)[0]
         regexs = re.compile('<regex>(.+?)</regex>', re.MULTILINE|re.DOTALL).findall(regexs)
         regexs = [re.compile('<(.+?)>(.*?)</.+?>', re.MULTILINE|re.DOTALL).findall(i) for i in regexs]
 
-        regexs = [dict([(client.replaceHTMLCodes(x[0]), client.replaceHTMLCodes(urllib.unquote_plus(x[1]))) for x in i]) for i in regexs]
+        regexs = [dict([(client.replaceHTMLCodes(x[0]), client.replaceHTMLCodes(urllib_parse.unquote_plus(x[1]))) for x in i]) for i in regexs]
         regexs = [(i['name'], i) for i in regexs]
         regexs = dict(regexs)
 
         url = regex.split('<regex>', 1)[0].strip()
         url = client.replaceHTMLCodes(url)
-        url = url.encode('utf-8')
+        url = control.six_encode(url)
 
         r = getRegexParsed(regexs, url)
 
@@ -108,11 +110,11 @@ def resolve(regex):
             for obj in ret:
                 try:
                     item = listrepeat
-                    for i in range(len(obj)+1):
+                    for i in list(range(len(obj)+1)):
                         item = item.replace('[%s.param%s]' % (regexname, str(i)), obj[i-1])
 
                     item2 = vanilla
-                    for i in range(len(obj)+1):
+                    for i in list(range(len(obj)+1)):
                         item2 = item2.replace('[%s.param%s]' % (regexname, str(i)), obj[i-1])
 
                     item2 = re.compile('(<regex>.+?</regex>)', re.MULTILINE|re.DOTALL).findall(item2)
@@ -133,7 +135,7 @@ def resolve(regex):
         return
 
 
-class NoRedirection(urllib2.HTTPErrorProcessor):
+class NoRedirection(urllib_request.HTTPErrorProcessor):
    def http_response(self, request, response):
        return response
    https_response = http_response
@@ -172,8 +174,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
 #                        print 'cookieJar from file',cookieJar
                         if cookie_jar_file:
                             saveCookieJar(cookieJar,cookie_jar_file)
-                        #import cookielib
-                        #cookieJar = cookielib.LWPCookieJar()
+                        #cookieJar = http_cookiejar.LWPCookieJar()
                         #print 'cookieJar new',cookieJar
                     elif 'save[' in m['cookiejar']:
                         cookie_jar_file=m['cookiejar'].split('save[')[1].split(']')[0]
@@ -227,31 +228,30 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             header_in_page=page_split[1]
 
 #                            if 
-#                            proxy = urllib2.ProxyHandler({ ('https' ? proxytouse[:5]=="https":"http") : proxytouse})
-#                            opener = urllib2.build_opener(proxy)
-#                            urllib2.install_opener(opener)
+#                            proxy = urllib_request.ProxyHandler({ ('https' ? proxytouse[:5]=="https":"http") : proxytouse})
+#                            opener = urllib_request.build_opener(proxy)
+#                            urllib_request.install_opener(opener)
 
                             
                         
-#                        import urllib2
-#                        print 'urllib2.getproxies',urllib2.getproxies()
-                        current_proxies=urllib2.ProxyHandler(urllib2.getproxies())
+#                        print 'urllib_request.getproxies',urllib_request.getproxies()
+                        current_proxies=urllib_request.ProxyHandler(urllib_request.getproxies())
         
         
                         #print 'getting pageUrl',pageUrl
-                        req = urllib2.Request(pageUrl)
+                        req = urllib_request.Request(pageUrl)
                         if 'proxy' in m:
                             proxytouse= m['proxy']
 #                            print 'proxytouse',proxytouse
-#                            urllib2.getproxies= lambda: {}
+#                            urllib_request.getproxies= lambda: {}
                             if pageUrl[:5]=="https":
-                                proxy = urllib2.ProxyHandler({ 'https' : proxytouse})
+                                proxy = urllib_request.ProxyHandler({ 'https' : proxytouse})
                                 #req.set_proxy(proxytouse, 'https')
                             else:
-                                proxy = urllib2.ProxyHandler({ 'http'  : proxytouse})
+                                proxy = urllib_request.ProxyHandler({ 'http'  : proxytouse})
                                 #req.set_proxy(proxytouse, 'http')
-                            opener = urllib2.build_opener(proxy)
-                            urllib2.install_opener(opener)
+                            opener = urllib_request.build_opener(proxy)
+                            urllib_request.install_opener(opener)
                             
                         
                         req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:14.0) Gecko/20100101 Firefox/14.0.1')
@@ -279,7 +279,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             for h in cookiestoApend:
                                 n,v=h.split('=')
                                 w,n= n.split(':')
-                                ck = cookielib.Cookie(version=0, name=n, value=v, port=None, port_specified=False, domain=w, domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest={'HttpOnly': None}, rfc2109=False)
+                                ck = http_cookiejar.Cookie(version=0, name=n, value=v, port=None, port_specified=False, domain=w, domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=None, discard=True, comment=None, comment_url=None, rest={'HttpOnly': None}, rfc2109=False)
                                 cookieJar.set_cookie(ck)
                         if 'origin' in m:
                             req.add_header('Origin', m['origin'])
@@ -291,25 +291,25 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         
                         if not cookieJar==None:
 #                            print 'cookieJarVal',cookieJar
-                            cookie_handler = urllib2.HTTPCookieProcessor(cookieJar)
-                            opener = urllib2.build_opener(cookie_handler, urllib2.HTTPBasicAuthHandler(), urllib2.HTTPHandler())
-                            opener = urllib2.install_opener(opener)
+                            cookie_handler = urllib_request.HTTPCookieProcessor(cookieJar)
+                            opener = urllib_request.build_opener(cookie_handler, urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler())
+                            opener = urllib_request.install_opener(opener)
 #                            print 'noredirect','noredirect' in m
                             
                             if 'noredirect' in m:
-                                opener = urllib2.build_opener(cookie_handler,NoRedirection, urllib2.HTTPBasicAuthHandler(), urllib2.HTTPHandler())
-                                opener = urllib2.install_opener(opener)
+                                opener = urllib_request.build_opener(cookie_handler,NoRedirection, urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler())
+                                opener = urllib_request.install_opener(opener)
                         elif 'noredirect' in m:
-                            opener = urllib2.build_opener(NoRedirection, urllib2.HTTPBasicAuthHandler(), urllib2.HTTPHandler())
-                            opener = urllib2.install_opener(opener)
+                            opener = urllib_request.build_opener(NoRedirection, urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler())
+                            opener = urllib_request.install_opener(opener)
                             
 
                         if 'connection' in m:
 #                            print '..........................connection//////.',m['connection']
                             from keepalive import HTTPHandler
                             keepalive_handler = HTTPHandler()
-                            opener = urllib2.build_opener(keepalive_handler)
-                            urllib2.install_opener(opener)
+                            opener = urllib_request.build_opener(keepalive_handler)
+                            urllib_request.install_opener(opener)
 
 
                         #print 'after cookie jar'
@@ -327,7 +327,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                                 n=p.split(':')[0];
                                 v=p.split(':')[1];
                                 post[n]=v
-                            post = urllib.urlencode(post)
+                            post = urllib_parse.urlencode(post)
 
                         if 'rawpost' in m:
                             post=m['rawpost']
@@ -339,13 +339,12 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         try:
                             
                             if post:
-                                response = urllib2.urlopen(req,post)
+                                response = urllib_request.urlopen(req,post)
                             else:
-                                response = urllib2.urlopen(req)
+                                response = urllib_request.urlopen(req)
                             if response.info().get('Content-Encoding') == 'gzip':
-                                from StringIO import StringIO
                                 import gzip
-                                buf = StringIO( response.read())
+                                buf = six.BytesIO( response.read())
                                 f = gzip.GzipFile(fileobj=buf)
                                 link = f.read()
                             else:
@@ -354,7 +353,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                         
                         
                             if 'proxy' in m and not current_proxies is None:
-                                urllib2.install_opener(urllib2.build_opener(current_proxies))
+                                urllib_request.install_opener(urllib_request.build_opener(current_proxies))
                             
                             link=javascriptUnEscape(link)
                             #print repr(link)
@@ -412,7 +411,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
 
                         try:
                             url = url.replace(u"$doregex[" + k + "]", val)
-                        except: url = url.replace("$doregex[" + k + "]", val.decode("utf-8"))
+                        except: url = url.replace("$doregex[" + k + "]", control.six_decode(val))
                     else:
                         if 'listrepeat' in m:
                             listrepeat=m['listrepeat']
@@ -431,14 +430,14 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             
                         if rawPost:
 #                            print 'rawpost'
-                            val=urllib.quote_plus(val)
+                            val=urllib_parse.quote_plus(val)
                         if 'htmlunescape' in m:
-                            #val=urllib.unquote_plus(val)
+                            #val=urllib_parse.unquote_plus(val)
                             import HTMLParser
                             val=HTMLParser.HTMLParser().unescape(val)
                         try:
                             url = url.replace("$doregex[" + k + "]", val)
-                        except: url = url.replace("$doregex[" + k + "]", val.decode("utf-8"))
+                        except: url = url.replace("$doregex[" + k + "]", control.six_decode(val))
                         #print 'ur',url
                         #return val
                 else:
@@ -466,7 +465,7 @@ def get_unwise( str_eval):
     page_value=""
     try:
         ss="w,i,s,e=("+str_eval+')'
-        exec (ss)
+        exec(ss)
         page_value=unwise_func(w,i,s,e)
     except: traceback.print_exc(file=sys.stdout)
     #print 'unpacked',page_value
@@ -502,7 +501,7 @@ def unwise_func( w, i, s, e):
     I1lI = ''.join(l1lI)#.join('');
     ll1I = 0;
     l1ll = [];
-    for lIll in range(0,len(ll1l),2):
+    for lIll in list(range(0,len(ll1l),2)):
         #print 'array i',lIll,len(ll1l)
         ll11 = -1;
         if ( ord(I1lI[ll1I]) % 2):
@@ -690,13 +689,13 @@ def getCookieJar(COOKIEFILE):
     if COOKIEFILE:
         try:
             complete_path=os.path.join(profile,COOKIEFILE)
-            cookieJar = cookielib.LWPCookieJar()
+            cookieJar = http_cookiejar.LWPCookieJar()
             cookieJar.load(complete_path,ignore_discard=True)
         except:
             cookieJar=None
 
     if not cookieJar:
-        cookieJar = cookielib.LWPCookieJar()
+        cookieJar = http_cookiejar.LWPCookieJar()
 
     return cookieJar
 
@@ -711,13 +710,13 @@ def doEval(fun_call,page_data,Cookie_Jar,m):
     try:
         py_file='import '+fun_call.split('.')[0]
 #        print py_file,sys.path
-        exec( py_file)
+        exec(py_file)
 #        print 'done'
     except:
         #print 'error in import'
         traceback.print_exc(file=sys.stdout)
 #    print 'ret_val='+fun_call
-    exec ('ret_val='+fun_call)
+    exec('ret_val='+fun_call)
 #    print ret_val
     #exec('ret_val=1+1')
     try:
@@ -742,14 +741,14 @@ def doEvalFunction(fun_call,page_data,Cookie_Jar,m):
 
 
 def getUrl(url, cookieJar=None,post=None, timeout=20, headers=None, noredir=False):
-    cookie_handler = urllib2.HTTPCookieProcessor(cookieJar)
+    cookie_handler = urllib_request.HTTPCookieProcessor(cookieJar)
 
     if noredir:
-        opener = urllib2.build_opener(NoRedirection,cookie_handler, urllib2.HTTPBasicAuthHandler(), urllib2.HTTPHandler())
+        opener = urllib_request.build_opener(NoRedirection,cookie_handler, urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler())
     else:
-        opener = urllib2.build_opener(cookie_handler, urllib2.HTTPBasicAuthHandler(), urllib2.HTTPHandler())
-    #opener = urllib2.install_opener(opener)
-    req = urllib2.Request(url)
+        opener = urllib_request.build_opener(cookie_handler, urllib_request.HTTPBasicAuthHandler(), urllib_request.HTTPHandler())
+    #opener = urllib_request.install_opener(opener)
+    req = urllib_request.Request(url)
     req.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.154 Safari/537.36')
     if headers:
         for h,hv in headers:
@@ -764,11 +763,11 @@ def getUrl(url, cookieJar=None,post=None, timeout=20, headers=None, noredir=Fals
 def get_decode(str,reg=None):
     if reg:
         str=re.findall(reg, str)[0]
-    s1 = urllib.unquote(str[0: len(str)-1]);
+    s1 = urllib_parse.unquote(str[0: len(str)-1]);
     t = '';
-    for i in range( len(s1)):
+    for i in list(range(len(s1))):
         t += chr(ord(s1[i]) - s1[len(s1)-1]);
-    t=urllib.unquote(t)
+    t=urllib_parse.unquote(t)
 #    print t
     return t
 
@@ -778,8 +777,8 @@ def javascriptUnEscape(str):
 #    print 'js',js
     if (not js==None) and len(js)>0:
         for j in js:
-            #print urllib.unquote(j)
-            str=str.replace(j ,urllib.unquote(j))
+            #print urllib_parse.unquote(j)
+            str=str.replace(j ,urllib_parse.unquote(j))
     return str
 
 

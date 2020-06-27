@@ -28,9 +28,12 @@ import json
 import os
 import re
 import sys
-import urllib
-import urlparse
+#import urllib
+#import urlparse
 import xbmc
+
+import six
+from six.moves import urllib_parse
 
 from resources.lib.modules import control
 from resources.lib.modules import cleantitle
@@ -61,7 +64,7 @@ class lib_tools:
     def write_file(path, content):
         try:
             path = xbmc.makeLegalFilename(path)
-            if not isinstance(content, basestring):
+            if not isinstance(content, six.string_types):
                 content = str(content)
 
             file = control.openFile(path, 'w')
@@ -129,7 +132,7 @@ class libmovies:
     def add(self, name, title, year, imdb, range=False):
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo')\
                 and self.silentDialog is False:
-            control.infoDialog(control.lang(32552).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32552)), time=10000000)
             self.infoDialog = True
 
         try:
@@ -137,9 +140,9 @@ class libmovies:
 
             id = imdb
             lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["imdbnumber", "title", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
-            lib = unicode(lib, 'utf-8', errors='ignore')
+            lib = unicode(lib, 'utf-8', errors='ignore') if six.PY2 else str(lib, 'utf-8')
             lib = json.loads(lib)['result']['movies']
-            lib = [i for i in lib if str(i['imdbnumber']) in id or (i['title'].encode('utf-8') == title and str(i['year']) == year)][0]
+            lib = [i for i in lib if str(i['imdbnumber']) in id or (control.six_encode(i['title']) == title and str(i['year']) == year)][0]
         except:
             lib = []
 
@@ -160,7 +163,7 @@ class libmovies:
         if range == True: return
 
         if self.infoDialog == True:
-            control.infoDialog(control.lang(32554).encode('utf-8'), time=1)
+            control.infoDialog(control.six_encode(control.lang(32554)), time=1)
 
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
             control.execute('UpdateLibrary(video)')
@@ -169,7 +172,7 @@ class libmovies:
         control.idle()
 
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-            control.infoDialog(control.lang(32552).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32552)), time=10000000)
             self.infoDialog = True
             self.silentDialog = True
 
@@ -179,7 +182,7 @@ class libmovies:
 
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
                 self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], range=True)
             except:
                 pass
@@ -191,11 +194,11 @@ class libmovies:
     def range(self, url):
         control.idle()
 
-        yes = control.yesnoDialog(control.lang(32555).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.six_encode(control.lang(32555)))
         if not yes: return
 
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-            control.infoDialog(control.lang(32552).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32552)), time=10000000)
             self.infoDialog = True
 
         from resources.lib.indexers import movies
@@ -204,13 +207,13 @@ class libmovies:
 
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
                 self.add('%s (%s)' % (i['title'], i['year']), i['title'], i['year'], i['imdb'], range=True)
             except:
                 pass
 
         if self.infoDialog == True:
-            control.infoDialog(control.lang(32554).encode('utf-8'), time=1)
+            control.infoDialog(control.six_encode(control.lang(32554)), time=1)
 
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo'):
             control.execute('UpdateLibrary(video)')
@@ -220,7 +223,7 @@ class libmovies:
         try:
             name, title, year, imdb = i['name'], i['title'], i['year'], i['imdb']
 
-            sysname, systitle = urllib.quote_plus(name), urllib.quote_plus(title)
+            sysname, systitle = urllib_parse.quote_plus(name), urllib_parse.quote_plus(title)
 
             transtitle = cleantitle.normalize(title.translate(None, '\/:*?"<>|'))
 
@@ -260,7 +263,7 @@ class libtvshows:
     def add(self, tvshowtitle, year, imdb, tvdb, range=False):
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo')\
                 and self.silentDialog is False:
-            control.infoDialog(control.lang(32552).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32552)), time=10000000)
             self.infoDialog = True
 
         from resources.lib.indexers import episodes
@@ -276,12 +279,12 @@ class libtvshows:
             id = [items[0]['imdb'], items[0]['tvdb']]
 
             lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"properties" : ["imdbnumber", "title", "year"]}, "id": 1}')
-            lib = unicode(lib, 'utf-8', errors='ignore')
+            lib = unicode(lib, 'utf-8', errors='ignore') if six.PY2 else str(lib, 'utf-8')
             lib = json.loads(lib)['result']['tvshows']
-            lib = [i['title'].encode('utf-8') for i in lib if str(i['imdbnumber']) in id or (i['title'].encode('utf-8') == items[0]['tvshowtitle'] and str(i['year']) == items[0]['year'])][0]
+            lib = [control.six_encode(i['title']) for i in lib if str(i['imdbnumber']) in id or (control.six_encode(i['title']) == items[0]['tvshowtitle'] and str(i['year']) == items[0]['year'])][0]
 
             lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "tvshow", "operator": "is", "value": "%s"}]}, "properties": ["season", "episode"]}, "id": 1}' % lib)
-            lib = unicode(lib, 'utf-8', errors='ignore')
+            lib = unicode(lib, 'utf-8', errors='ignore') if six.PY2 else str(lib, 'utf-8')
             lib = json.loads(lib)['result']['episodes']
             lib = ['S%02dE%02d' % (int(i['season']), int(i['episode'])) for i in lib]
 
@@ -296,7 +299,7 @@ class libtvshows:
 
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
 
                 if self.check_setting == 'true':
                     if i['episode'] == '1':
@@ -317,7 +320,7 @@ class libtvshows:
         if range == True: return
 
         if self.infoDialog is True:
-            control.infoDialog(control.lang(32554).encode('utf-8'), time=1)
+            control.infoDialog(control.six_encode(control.lang(32554)), time=1)
 
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
             control.execute('UpdateLibrary(video)')
@@ -326,7 +329,7 @@ class libtvshows:
         control.idle()
 
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-            control.infoDialog(control.lang(32608).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32608)), time=10000000)
             self.infoDialog = True
             self.silentDialog = True
 
@@ -336,7 +339,7 @@ class libtvshows:
 
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
                 self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range=True)
             except:
                 pass
@@ -349,11 +352,11 @@ class libtvshows:
     def range(self, url):
         control.idle()
 
-        yes = control.yesnoDialog(control.lang(32555).encode('utf-8'), '', '')
+        yes = control.yesnoDialog(control.six_encode(control.lang(32555)))
         if not yes: return
 
         if not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-            control.infoDialog(control.lang(32552).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32552)), time=10000000)
             self.infoDialog = True
 
         from resources.lib.indexers import tvshows
@@ -362,13 +365,13 @@ class libtvshows:
 
         for i in items:
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
                 self.add(i['title'], i['year'], i['imdb'], i['tvdb'], range=True)
             except:
                 pass
 
         if self.infoDialog == True:
-            control.infoDialog(control.lang(32554).encode('utf-8'), time=1)
+            control.infoDialog(control.six_encode(control.lang(32554)), time=1)
 
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo'):
             control.execute('UpdateLibrary(video)')
@@ -378,8 +381,8 @@ class libtvshows:
         try:
             title, year, imdb, tvdb, season, episode, tvshowtitle, premiered = i['title'], i['year'], i['imdb'], i['tvdb'], i['season'], i['episode'], i['tvshowtitle'], i['premiered']
 
-            episodetitle = urllib.quote_plus(title)
-            systitle, syspremiered = urllib.quote_plus(tvshowtitle), urllib.quote_plus(premiered)
+            episodetitle = urllib_parse.quote_plus(title)
+            systitle, syspremiered = urllib_parse.quote_plus(tvshowtitle), urllib_parse.quote_plus(premiered)
 
             transtitle = cleantitle.normalize(tvshowtitle.translate(None, '\/:*?"<>|'))
 
@@ -434,12 +437,12 @@ class libepisodes:
                 try:
                     file = control.openFile(file)
                     read = file.read()
-                    read = read.encode('utf-8')
+                    read = control.six_encode(read)
                     file.close()
 
                     if not read.startswith(sys.argv[0]): raise Exception()
 
-                    params = dict(urlparse.parse_qsl(read.replace('?','')))
+                    params = dict(urllib_parse.parse_qsl(read.replace('?','')))
 
                     try: tvshowtitle = params['tvshowtitle']
                     except: tvshowtitle = None
@@ -465,13 +468,13 @@ class libepisodes:
 
         try:
             lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"properties" : ["imdbnumber", "title", "year"]}, "id": 1}')
-            lib = unicode(lib, 'utf-8', errors='ignore')
+            lib = unicode(lib, 'utf-8', errors='ignore') if six.PY2 else str(lib, 'utf-8')
             lib = json.loads(lib)['result']['tvshows']
         except:
             return
 
         if info == 'true' and not control.condVisibility('Window.IsVisible(infodialog)') and not control.condVisibility('Player.HasVideo'):
-            control.infoDialog(control.lang(32553).encode('utf-8'), time=10000000)
+            control.infoDialog(control.six_encode(control.lang(32553)), time=10000000)
             self.infoDialog = True
 
         try:
@@ -499,12 +502,12 @@ class libepisodes:
         for item in items:
             it = None
 
-            if xbmc.abortRequested == True: return sys.exit()
+            if control.monitor.abortRequested(): return sys.exit()
 
             try:
                 dbcur.execute("SELECT * FROM tvshows WHERE id = '%s'" % item['tvdb'])
                 fetch = dbcur.fetchone()
-                it = eval(fetch[1].encode('utf-8'))
+                it = eval(control.six_encode(fetch[1]))
             except:
                 pass
 
@@ -527,9 +530,9 @@ class libepisodes:
                 id = [item['imdb'], item['tvdb']]
                 if not item['tmdb'] == '0': id += [item['tmdb']]
 
-                ep = [x['title'].encode('utf-8') for x in lib if str(x['imdbnumber']) in id or (x['title'].encode('utf-8') == item['tvshowtitle'] and str(x['year']) == item['year'])][0]
+                ep = [control.six_encode(x['title']) for x in lib if str(x['imdbnumber']) in id or (control.six_encode(x['title']) == item['tvshowtitle'] and str(x['year']) == item['year'])][0]
                 ep = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "tvshow", "operator": "is", "value": "%s"}]}, "properties": ["season", "episode"]}, "id": 1}' % ep)
-                ep = unicode(ep, 'utf-8', errors='ignore')
+                ep = unicode(ep, 'utf-8', errors='ignore') if six.PY2 else str(ep, 'utf-8')
                 ep = json.loads(ep).get('result', {}).get('episodes', {})
                 ep = [{'season': int(i['season']), 'episode': int(i['episode'])} for i in ep]
                 ep = sorted(ep, key=lambda x: (x['season'], x['episode']))[-1]
@@ -542,7 +545,7 @@ class libepisodes:
 
             for i in it:
                 try:
-                    if xbmc.abortRequested == True: return sys.exit()
+                    if control.monitor.abortRequested(): return sys.exit()
 
                     premiered = i.get('premiered', '0')
                     if (premiered != '0' and int(re.sub('[^0-9]', '', str(premiered))) > int(self.date)) or (premiered == '0' and not self.include_unknown):
@@ -557,7 +560,7 @@ class libepisodes:
                     pass
 
         if self.infoDialog == True:
-            control.infoDialog(control.lang(32554).encode('utf-8'), time=1)
+            control.infoDialog(control.six_encode(control.lang(32554)), time=1)
 
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
             control.execute('UpdateLibrary(video)')
@@ -591,7 +594,7 @@ class libepisodes:
         try: control.window.setProperty(self.property, serviceProperty)
         except: return
 
-        while not xbmc.abortRequested:
+        while not control.monitor.abortRequested():
             try:
                 serviceProperty = control.window.getProperty(self.property)
 

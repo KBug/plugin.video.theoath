@@ -11,6 +11,7 @@ import json
 import time
 import datetime
 import requests
+import six
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
 from threading import Thread
@@ -27,13 +28,13 @@ def chunks(l, n):
     """
     Yield successive n-sized chunks from l.
     """
-    for i in range(0, len(l), n):
+    for i in list(range(0, len(l), n)):
         yield l[i:i + n]
 
 def to_utf8(obj):
     try:
         import copy
-        if isinstance(obj, unicode):
+        if isinstance(obj, six.text_type) and six.PY2:
             obj = obj.encode('utf-8', 'ignore')
         elif isinstance(obj, dict):
             obj = copy.deepcopy(obj)
@@ -166,7 +167,7 @@ class DebridCheck:
             self.pm_hashes_unchecked = [i for i in self.hash_list if not any([h for h in self.cached_hashes if str(h[0]) == i and str(h[1]) =='pm'])]
             if self.pm_hashes_unchecked: self.starting_debrids.append(('Premiumize.me', self.PM_cache_checker))
         if self.starting_debrids:
-            for i in range(len(self.starting_debrids)):
+            for i in list(range(len(self.starting_debrids))):
                 self.main_threads.append(Thread(target=self.starting_debrids[i][1]))
                 self.starting_debrids_display.append((self.main_threads[i].getName(), self.starting_debrids[i][0]))
             [i.start() for i in self.main_threads]
@@ -178,11 +179,11 @@ class DebridCheck:
     def debrid_check_dialog(self):
         timeout = 20
         progressDialog.create('Checking debrid cache, please wait..')
-        progressDialog.update(0)
+        #progressDialog.update(0)
         start_time = time.time()
-        for i in range(0, 200):
+        for i in list(range(0, 200)):
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
                 alive_threads = [x.getName() for x in self.main_threads if x.is_alive() is True]
                 remaining_debrids = [x[1] for x in self.starting_debrids_display if x[0] in alive_threads]
                 current_time = time.time()

@@ -46,7 +46,7 @@ def get(function, duration, *args):
         cache_result = cache_get(key)
         if cache_result:
             if _is_cache_valid(cache_result['date'], duration):
-                return ast.literal_eval(cache_result['value'].encode('utf-8'))
+                return ast.literal_eval(control.six_encode(cache_result['value']))
 
         fresh_result = repr(function(*args))
         if not fresh_result:
@@ -56,7 +56,7 @@ def get(function, duration, *args):
             return None
 
         cache_insert(key, fresh_result)
-        return ast.literal_eval(fresh_result.encode('utf-8'))
+        return ast.literal_eval(control.six_encode(fresh_result))
     except Exception:
         return None
 
@@ -235,7 +235,7 @@ def cache_version_check():
         cache_clear()
         cache_clear_providers()
         #control.execute('RunPlugin(plugin://%s)' % 'plugin.video.theoath/?action=cleanSettings')
-        control.infoDialog(control.lang(32057).encode('utf-8'), sound=True, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
 
 def _find_cache_version():

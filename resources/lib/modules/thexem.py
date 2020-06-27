@@ -30,8 +30,8 @@ def get_scene_episode_number(tvdbid, season, episode):
         r = json.loads(r)
         if r['result'] == 'success':
             data = r['data']['scene']
-            return data['season'], data['episode']            
+            return data['season'], data['episode']
     except:
         pass
 
-    return season, episode    
+    return season, episode

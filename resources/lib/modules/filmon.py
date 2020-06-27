@@ -2,7 +2,7 @@
 
 
 
-import re,urlparse,json
+import re,json
 from resources.lib.modules import client
 
 def resolve(url):

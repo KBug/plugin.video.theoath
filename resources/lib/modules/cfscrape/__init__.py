@@ -11,8 +11,6 @@ from copy import deepcopy
 
 from requests.adapters import HTTPAdapter
 from requests.sessions import Session
-#from requests_toolbelt.utils import dump
-import dump
 
 from time import sleep
 
@@ -55,10 +53,11 @@ from .exceptions import (
 from .interpreters import JavaScriptInterpreter
 from .reCaptcha import reCaptcha
 from .user_agent import User_Agent
+from . import dump
 
 # ------------------------------------------------------------------------------- #
 
-__version__ = '1.2.40'
+__version__ = '1.2.41'
 
 # ------------------------------------------------------------------------------- #
 
@@ -71,12 +70,23 @@ class CipherSuiteAdapter(HTTPAdapter):
         'config',
         '_pool_connections',
         '_pool_maxsize',
-        '_pool_block'
+        '_pool_block',
+        'source_address'
     ]
 
     def __init__(self, *args, **kwargs):
         self.ssl_context = kwargs.pop('ssl_context', None)
         self.cipherSuite = kwargs.pop('cipherSuite', None)
+        self.source_address = kwargs.pop('source_address', None)
+
+        if self.source_address:
+            if isinstance(self.source_address, str):
+                self.source_address = (self.source_address, 0)
+
+            if not isinstance(self.source_address, tuple):
+                raise TypeError(
+                    "source_address must be IP address string or (ip, port) tuple"
+                )
 
         if not self.ssl_context:
             self.ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
@@ -90,12 +100,14 @@ class CipherSuiteAdapter(HTTPAdapter):
 
     def init_poolmanager(self, *args, **kwargs):
         kwargs['ssl_context'] = self.ssl_context
+        kwargs['source_address'] = self.source_address
         return super(CipherSuiteAdapter, self).init_poolmanager(*args, **kwargs)
 
     # ------------------------------------------------------------------------------- #
 
     def proxy_manager_for(self, *args, **kwargs):
         kwargs['ssl_context'] = self.ssl_context
+        kwargs['source_address'] = self.source_address
         return super(CipherSuiteAdapter, self).proxy_manager_for(*args, **kwargs)
 
 # ------------------------------------------------------------------------------- #
@@ -112,6 +124,7 @@ class CloudScraper(Session):
         self.recaptcha = kwargs.pop('recaptcha', {})
         self.requestPreHook = kwargs.pop('requestPreHook', None)
         self.requestPostHook = kwargs.pop('requestPostHook', None)
+        self.source_address = kwargs.pop('source_address', None)
 
         self.allow_brotli = kwargs.pop(
             'allow_brotli',
@@ -144,7 +157,8 @@ class CloudScraper(Session):
             'https://',
             CipherSuiteAdapter(
                 cipherSuite=self.cipherSuite,
-                ssl_context=self.ssl_context
+                ssl_context=self.ssl_context,
+                source_address=self.source_address
             )
         )
 
@@ -157,6 +171,13 @@ class CloudScraper(Session):
 
     def __getstate__(self):
         return self.__dict__
+
+    # ------------------------------------------------------------------------------- #
+    # Allow replacing actual web request call via subclassing
+    # ------------------------------------------------------------------------------- #
+
+    def perform_request(self, method, url, *args, **kwargs):
+        return super(CloudScraper, self).request(method, url, *args, **kwargs)
 
     # ------------------------------------------------------------------------------- #
     # Raise an Exception with no stacktrace and reset depth counter.
@@ -237,7 +258,7 @@ class CloudScraper(Session):
         # ------------------------------------------------------------------------------- #
 
         response = self.decodeBrotli(
-            super(CloudScraper, self).request(method, url, *args, **kwargs)
+            self.perform_request(method, url, *args, **kwargs)
         )
 
         # ------------------------------------------------------------------------------- #
@@ -518,7 +539,7 @@ class CloudScraper(Session):
             # ------------------------------------------------------------------------------- #
 
             resp = self.decodeBrotli(
-                super(CloudScraper, self).request(resp.request.method, resp.url, **kwargs)
+                self.perform_request(resp.request.method, resp.url, **kwargs)
             )
 
             if not self.is_reCaptcha_Challenge(resp):
@@ -687,7 +708,10 @@ class CloudScraper(Session):
                     'debug',
                     'delay',
                     'interpreter',
-                    'recaptcha'
+                    'recaptcha',
+                    'requestPreHook',
+                    'requestPostHook',
+                    'source_address'
                 ] if field in kwargs
             }
         )

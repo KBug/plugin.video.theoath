@@ -1,3 +1,9 @@
+[B][COLOR gold]v3.0.0[/COLOR][/B]
+- Initial work for Python 3 compatibility
+- Other adjustments for Kodi 19
+    (not quite there yet - will also have to ditch Metahandler if it
+     won't be updated for py3/Kodi 19)
+
 [B][COLOR gold]v2.3.0[/COLOR][/B]
 - Cloudflare scraper update
 - Player module updates

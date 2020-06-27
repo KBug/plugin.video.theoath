@@ -225,8 +225,8 @@ def tvshows(tvshowtitle, imdb, tvdb, season, watched):
         except: pass
         items = [{'label': '%s S%02dE%02d' % (tvshowtitle, int(i['season']), int(i['episode'])), 'season': int('%01d' % int(i['season'])), 'episode': int('%01d' % int(i['episode']))} for i in items]
 
-        for i in range(len(items)):
-            if xbmc.abortRequested == True: return sys.exit()
+        for i in list(range(len(items))):
+            if control.monitor.abortRequested(): return sys.exit()
 
             dialog.update(int((100 / float(len(items))) * i), str(name), str(items[i]['label']))
 

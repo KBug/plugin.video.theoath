@@ -18,10 +18,11 @@
 '''
 
 
-import urlparse,sys,urllib
+import sys
+from six.moves import urllib_parse
 import xbmcgui
 
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?','')))
+params = dict(urllib_parse.parse_qsl(sys.argv[2].replace('?','')))
 
 action = params.get('action')
 
@@ -449,23 +450,23 @@ elif action == 'random':
         rand = randint(1,len(rlist))-1
         for p in ['title','year','imdb','tvdb','season','episode','tvshowtitle','premiered','select']:
             if rtype == "show" and p == "tvshowtitle":
-                try: r += '&'+p+'='+urllib.quote_plus(rlist[rand]['title'])
+                try: r += '&'+p+'='+urllib_parse.quote_plus(rlist[rand]['title'])
                 except: pass
             else:
-                try: r += '&'+p+'='+urllib.quote_plus(rlist[rand][p])
+                try: r += '&'+p+'='+urllib_parse.quote_plus(rlist[rand][p])
                 except: pass
-        try: r += '&meta='+urllib.quote_plus(json.dumps(rlist[rand]))
-        except: r += '&meta='+urllib.quote_plus("{}")
+        try: r += '&meta='+urllib_parse.quote_plus(json.dumps(rlist[rand]))
+        except: r += '&meta='+urllib_parse.quote_plus("{}")
         if rtype == "movie":
-            try: control.infoDialog(rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
+            try: control.infoDialog(rlist[rand]['title'], control.lang(32536), time=30000)
             except: pass
         elif rtype == "episode":
-            try: control.infoDialog(rlist[rand]['tvshowtitle']+" - Season "+rlist[rand]['season']+" - "+rlist[rand]['title'], control.lang(32536).encode('utf-8'), time=30000)
+            try: control.infoDialog(rlist[rand]['tvshowtitle']+" - Season "+rlist[rand]['season']+" - "+rlist[rand]['title'], control.lang(32536), time=30000)
             except: pass
         control.execute('RunPlugin(%s)' % r)
     except:
         from resources.lib.modules import control
-        control.infoDialog(control.lang(32537).encode('utf-8'), time=8000)
+        control.infoDialog(control.lang(32537), time=8000)
 
 elif action == 'movieToLibrary':
     from resources.lib.modules import libtools

@@ -22,8 +22,11 @@
 import json
 import re
 import time
-import urllib
-import urlparse
+import base64
+#import urllib
+#import urlparse
+
+from six.moves import urllib_parse
 
 from resources.lib.modules import cache
 from resources.lib.modules import cleandate
@@ -38,12 +41,12 @@ CLIENT_SECRET = control.setting('trakt.client_secret')
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
 if V2_API_KEY == "" or CLIENT_SECRET == "":
-    V2_API_KEY = "Z2V0X3lvdXJz".decode('base64')
-    CLIENT_SECRET = "Z2V0X3lvdXJz".decode('base64')
+    V2_API_KEY = base64.b64decode("OGQ5Njg1M2Y0MGQ1MWJkMDY2MWI2Mzc4ZjUzYzM0ZTM2YzVjZTQzZjM0MmI0YTg0NWI3Nzk4N2Q0NjZjMjY0ZQ==")
+    CLIENT_SECRET = base64.b64decode("NTg2ZDAzNGJhNzM3OGU2ZDY4Y2NjODE5ZWE4M2M5ZmU5N2I5ODg1Yjk2YTQ1ZGQ2OTQ1OWI3OWNkZGU0MmU4OQ==")
 
 def __getTrakt(url, post=None):
     try:
-        url = urlparse.urljoin(BASE_URL, url)
+        url = urllib_parse.urljoin(BASE_URL, url)
         post = json.dumps(post) if post else None
         headers = {'Content-Type': 'application/json', 'trakt-api-key': V2_API_KEY, 'trakt-api-version': 2}
 
@@ -70,7 +73,7 @@ def __getTrakt(url, post=None):
         if resp_code not in ['401', '405']:
             return result, resp_header
 
-        oauth = urlparse.urljoin(BASE_URL, '/oauth/token')
+        oauth = urllib_parse.urljoin(BASE_URL, '/oauth/token')
         opost = {'client_id': V2_API_KEY, 'client_secret': CLIENT_SECRET, 'redirect_uri': REDIRECT_URI, 'grant_type': 'refresh_token', 'refresh_token': control.setting('trakt.refresh')}
 
         result = client.request(oauth, post=json.dumps(opost), headers=headers)
@@ -102,7 +105,7 @@ def getTraktAsJson(url, post=None):
 def authTrakt():
     try:
         if getTraktCredentialsInfo() == True:
-            if control.yesnoDialog(control.lang(32511).encode('utf-8'), control.lang(32512).encode('utf-8'), '', 'Trakt'):
+            if control.yesnoDialog(control.lang(32511) + '[CR]' + control.lang(32512), heading='Trakt'):
                 control.setSetting(id='trakt.user', value='')
                 control.setSetting(id='trakt.authed', value='')
                 control.setSetting(id='trakt.token', value='')
@@ -110,17 +113,19 @@ def authTrakt():
             raise Exception()
 
         result = getTraktAsJson('/oauth/device/code', {'client_id': V2_API_KEY})
-        verification_url = (control.lang(32513) % result['verification_url']).encode('utf-8')
-        user_code = (control.lang(32514) % result['user_code']).encode('utf-8')
+        verification_url = control.six_encode(control.lang(32513) % result['verification_url'])
+        user_code = control.six_encode(control.lang(32514) % result['user_code'])
         expires_in = int(result['expires_in'])
         device_code = result['device_code']
         interval = result['interval']
 
         progressDialog = control.progressDialog
-        progressDialog.create('Trakt', verification_url, user_code)
+        progressDialog.create('Trakt')
 
-        for i in range(0, expires_in):
+        for i in list(range(0, expires_in)):
             try:
+                percent = int(100 * float(i) / int(expires_in))
+                progressDialog.update(max(1, percent), verification_url + '[CR]' + user_code)
                 if progressDialog.iscanceled(): break
                 time.sleep(1)
                 if not float(i) % interval == 0: raise Exception()
@@ -137,7 +142,7 @@ def authTrakt():
         headers = {'Content-Type': 'application/json', 'trakt-api-key': V2_API_KEY, 'trakt-api-version': 2, 'Authorization': 'Bearer %s' % token}
 
 
-        result = client.request(urlparse.urljoin(BASE_URL, '/users/me'), headers=headers)
+        result = client.request(urllib_parse.urljoin(BASE_URL, '/users/me'), headers=headers)
         result = utils.json_loads_as_str(result)
 
         user = result['username']
@@ -193,41 +198,41 @@ def manager(name, imdb, tvdb, content):
     try:
         post = {"movies": [{"ids": {"imdb": imdb}}]} if content == 'movie' else {"shows": [{"ids": {"tvdb": tvdb}}]}
 
-        items = [(control.lang(32516).encode('utf-8'), '/sync/collection')]
-        items += [(control.lang(32517).encode('utf-8'), '/sync/collection/remove')]
-        items += [(control.lang(32518).encode('utf-8'), '/sync/watchlist')]
-        items += [(control.lang(32519).encode('utf-8'), '/sync/watchlist/remove')]
-        items += [(control.lang(32520).encode('utf-8'), '/users/me/lists/%s/items')]
+        items = [(control.six_encode(control.lang(32516)), '/sync/collection')]
+        items += [(control.six_encode(control.lang(32517)), '/sync/collection/remove')]
+        items += [(control.six_encode(control.lang(32518)), '/sync/watchlist')]
+        items += [(control.six_encode(control.lang(32519)), '/sync/watchlist/remove')]
+        items += [(control.six_encode(control.lang(32520)), '/users/me/lists/%s/items')]
 
         result = getTraktAsJson('/users/me/lists')
         lists = [(i['name'], i['ids']['slug']) for i in result]
-        lists = [lists[i//2] for i in range(len(lists)*2)]
-        for i in range(0, len(lists), 2):
-            lists[i] = ((control.lang(32521) % lists[i][0]).encode('utf-8'), '/users/me/lists/%s/items' % lists[i][1])
-        for i in range(1, len(lists), 2):
-            lists[i] = ((control.lang(32522) % lists[i][0]).encode('utf-8'), '/users/me/lists/%s/items/remove' % lists[i][1])
+        lists = [lists[i//2] for i in list(range(len(lists)*2))]
+        for i in list(range(0, len(lists), 2)):
+            lists[i] = ((control.six_encode(control.lang(32521) % lists[i][0])), '/users/me/lists/%s/items' % lists[i][1])
+        for i in list(range(1, len(lists), 2)):
+            lists[i] = ((control.six_encode(control.lang(32522) % lists[i][0])), '/users/me/lists/%s/items/remove' % lists[i][1])
         items += lists
 
-        select = control.selectDialog([i[0] for i in items], control.lang(32515).encode('utf-8'))
+        select = control.selectDialog([i[0] for i in items], control.six_encode(control.lang(32515)))
 
         if select == -1:
             return
         elif select == 4:
-            t = control.lang(32520).encode('utf-8')
+            t = control.six_encode(control.lang(32520))
             k = control.keyboard('', t) ; k.doModal()
             new = k.getText() if k.isConfirmed() else None
             if (new == None or new == ''): return
             result = __getTrakt('/users/me/lists', post={"name": new, "privacy": "private"})[0]
 
             try: slug = utils.json_loads_as_str(result)['ids']['slug']
-            except: return control.infoDialog(control.lang(32515).encode('utf-8'), heading=str(name), sound=True, icon='ERROR')
+            except: return control.infoDialog(control.six_encode(control.lang(32515)), heading=str(name), sound=True, icon='ERROR')
             result = __getTrakt(items[select][1] % slug, post=post)[0]
         else:
             result = __getTrakt(items[select][1], post=post)[0]
 
         icon = control.infoLabel('ListItem.Icon') if not result == None else 'ERROR'
 
-        control.infoDialog(control.lang(32515).encode('utf-8'), heading=str(name), sound=True, icon=icon)
+        control.infoDialog(control.six_encode(control.lang(32515)), heading=str(name), sound=True, icon=icon)
     except:
         return
 
@@ -363,7 +368,7 @@ def syncTraktStatus():
     try:
         cachesyncMovies()
         cachesyncTVShows()
-        control.infoDialog(control.lang(32092).encode('utf-8'))
+        control.infoDialog(control.six_encode(control.lang(32092)))
     except:
         control.infoDialog('Trakt sync failed')
         pass
@@ -473,7 +478,7 @@ def SearchAll(title, year, full=True):
 
 def SearchMovie(title, year, full=True):
     try:
-        url = '/search/movie?query=%s' % urllib.quote_plus(title)
+        url = '/search/movie?query=%s' % urllib_parse.quote_plus(title)
 
         if year: url += '&year=%s' % year
         if full: url += '&extended=full'
@@ -483,7 +488,7 @@ def SearchMovie(title, year, full=True):
 
 def SearchTVShow(title, year, full=True):
     try:
-        url = '/search/show?query=%s' % urllib.quote_plus(title)
+        url = '/search/show?query=%s' % urllib_parse.quote_plus(title)
 
         if year: url += '&year=%s' % year
         if full: url += '&extended=full'

@@ -25,9 +25,11 @@ from resources.lib.modules import metacache
 from resources.lib.modules import workers
 from resources.lib.modules import trakt
 
-import sys,re,json,urllib,urlparse,datetime
+import sys,re,json,datetime#,urllib,urlparse
 
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
+from six.moves import urllib_parse
+
+params = dict(urllib_parse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
 action = params.get('action')
 
@@ -70,7 +72,7 @@ class channels:
         [i.join() for i in threads]
 
         threads = []
-        for i in range(0, len(self.items)): threads.append(workers.Thread(self.items_list, self.items[i]))
+        for i in list(range(0, len(self.items))): threads.append(workers.Thread(self.items_list, self.items[i]))
         [i.start() for i in threads]
         [i.join() for i in threads]
 
@@ -92,14 +94,14 @@ class channels:
             try:
                 year = result['listings'][id][0]['d']
                 year = re.findall('[(](\d{4})[)]', year)[0].strip()
-                year = year.encode('utf-8')
+                year = control.six_encode(year)
             except:
                 year = ''
 
             title = result['listings'][id][0]['t']
             title = title.replace('(%s)' % year, '').strip()
             title = client.replaceHTMLCodes(title)
-            title = title.encode('utf-8')
+            title = control.six_encode(title)
 
             self.items.append((title, year, channel, num))
         except:
@@ -209,20 +211,20 @@ class channels:
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
-        playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
+        playbackMenu = control.six_encode(control.lang(32063)) if control.setting('hosts.mode') == '2' else control.six_encode(control.lang(32064))
 
-        queueMenu = control.lang(32065).encode('utf-8')
+        queueMenu = control.six_encode(control.lang(32065))
 
-        refreshMenu = control.lang(32072).encode('utf-8')
+        refreshMenu = control.six_encode(control.lang(32072))
 
-        infoMenu = control.lang(32101).encode('utf-8')
+        infoMenu = control.six_encode(control.lang(32101))
 
 
         for i in items:
             try:
                 label = '[B]%s[/B] : %s (%s)' % (i['channel'].upper(), i['title'], i['year'])
-                sysname = urllib.quote_plus('%s (%s)' % (i['title'], i['year']))
-                systitle = urllib.quote_plus(i['title'])
+                sysname = urllib_parse.quote_plus('%s (%s)' % (i['title'], i['year']))
+                systitle = urllib_parse.quote_plus(i['title'])
                 imdb, tmdb, year = i['imdb'], i['tmdb'], i['year']
 
                 meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
@@ -235,11 +237,11 @@ class channels:
                 try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
                 except: pass
 
-                sysmeta = urllib.quote_plus(json.dumps(meta))
+                sysmeta = urllib_parse.quote_plus(json.dumps(meta))
 
 
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
-                sysurl = urllib.quote_plus(url)
+                sysurl = urllib_parse.quote_plus(url)
 
 
                 cm = []

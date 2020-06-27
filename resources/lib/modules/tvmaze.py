@@ -18,7 +18,9 @@
 '''
 
 
-import urllib,json
+import json, base64#, urllib
+
+from six.moves import urllib_parse
 
 import requests
 
@@ -44,7 +46,7 @@ class tvMaze:
         try:
             # Encode the queries, if there is any...
             if (query != None):
-                query = '?' + urllib.urlencode(query)
+                query = '?' + urllib_parse.urlencode(query)
             else:
                 query = ''
 
@@ -132,8 +134,8 @@ class tvMaze:
 
     def episodeAbsoluteNumber(self, thetvdb, season, episode):
         try:
-            url = 'https://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % ('Z2V0X3lvdXJz'.decode('base64'), thetvdb, int(season), int(episode))
-            return int(client.parseDOM(requests.get(url).content, 'absolute_number')[0])
+            url = 'https://thetvdb.com/api/%s/series/%s/default/%01d/%01d' % (base64.b64decode('Sk1DTzhMUUhJWFg3NkNHTg=='), thetvdb, int(season), int(episode))
+            return int(client.parseDOM(requests.get(url, timeout=15, verify=True).content, 'absolute_number')[0])
         except:
             pass
 
@@ -142,11 +144,11 @@ class tvMaze:
 
     def getTVShowTranslation(self, thetvdb, lang):
         try:
-            url = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % ('Z2V0X3lvdXJz'.decode('base64'), thetvdb, lang)
-            r = requests.get(url).content
+            url = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (base64.b64decode('Sk1DTzhMUUhJWFg3NkNHTg=='), thetvdb, lang)
+            r = requests.get(url, timeout=15, verify=True).content
             title = client.parseDOM(r, 'SeriesName')[0]
             title = client.replaceHTMLCodes(title)
-            title = title.encode('utf-8')
+            title = control.six_encode(title)
 
             return title
         except:

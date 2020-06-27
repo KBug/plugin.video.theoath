@@ -20,9 +20,11 @@ import cProfile
 import json
 import os
 import pstats
-import StringIO
+#import StringIO
 import time
 from datetime import datetime
+
+import six
 
 import xbmc
 from resources.lib.modules import control
@@ -38,15 +40,15 @@ def log(msg, level=LOGNOTICE):
     debug_enabled = control.setting('addon_debug')
     debug_log = control.setting('debug.location')
 
-    print DEBUGPREFIX + ' Debug Enabled?: ' + str(debug_enabled)
-    print DEBUGPREFIX + ' Debug Log?: ' + str(debug_log)
+    print(DEBUGPREFIX + ' Debug Enabled?: ' + str(debug_enabled))
+    print(DEBUGPREFIX + ' Debug Log?: ' + str(debug_log))
 
     if not control.setting('addon_debug') == 'true':
         return
 
     try:
-        if isinstance(msg, unicode):
-            msg = '%s (ENCODED)' % (msg.encode('utf-8'))
+        if isinstance(msg, six.text_type):
+            msg = '%s (ENCODED)' % (control.six_encode(msg))
 
         if not control.setting('debug.location') == '0':
             log_file = os.path.join(LOGPATH, 'theoath.log')
@@ -95,8 +97,8 @@ class Profiler(object):
 
     def dump_stats(self):
         if self._profiler is not None:
-            s = StringIO.StringIO()
-            params = (self.sort_by,) if isinstance(self.sort_by, basestring) else self.sort_by
+            s = six.BytesIO
+            params = (self.sort_by,) if isinstance(self.sort_by, six.string_types) else self.sort_by
             ps = pstats.Stats(self._profiler, stream=s).sort_stats(*params)
             ps.print_stats()
             if self.file_path is not None:
@@ -134,7 +136,7 @@ def _is_debugging():
 
 
 def execute_jsonrpc(command):
-    if not isinstance(command, basestring):
+    if not isinstance(command, six.string_types):
         command = json.dumps(command)
     response = control.jsonrpc(command)
     return json.loads(response)

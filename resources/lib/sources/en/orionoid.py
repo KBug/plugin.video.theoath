@@ -10,8 +10,8 @@
 '''
 
 from orion import *
-import urllib
-import urlparse
+#import urllib
+#import urlparse
 import pkgutil
 import base64
 import json
@@ -22,6 +22,8 @@ import re
 import xbmc
 import xbmcvfs
 
+from six.moves import urllib_parse#,urllib_request
+
 from resources.lib.modules import control
 
 class source:
@@ -29,33 +31,33 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'nb', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'ny', 'zh', 'cv', 'kw', 'co', 'cr', 'hr', 'cs', 'da', 'dv', 'nl', 'dz', 'en', 'eo', 'et', 'ee', 'fo', 'fj', 'fi', 'fr', 'ff', 'gd', 'gl', 'lg', 'ka', 'de', 'el', 'gr', 'gn', 'gu', 'ht', 'ha', 'he', 'hz', 'hi', 'ho', 'hu', 'is', 'io', 'ig', 'id', 'ia', 'ie', 'iu', 'ik', 'ga', 'it', 'ja', 'jv', 'kl', 'kn', 'kr', 'ks', 'kk', 'km', 'ki', 'rw', 'rn', 'kv', 'kg', 'ko', 'ku', 'kj', 'ky', 'lo', 'la', 'lv', 'li', 'ln', 'lt', 'lu', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'gv', 'mi', 'mr', 'mh', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'ii', 'nn', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'ps', 'fa', 'pl', 'pt', 'pa', 'qu', 'ro', 'rm', 'ru', 'sm', 'sg', 'sa', 'sc', 'sr', 'sn', 'sd', 'si', 'cu', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'uk', 'ur', 'ug', 'uz', 've', 'vi', 'vo', 'wa', 'cy', 'fy', 'wo', 'xh', 'yi', 'yo', 'za', 'zu']
-        self.key = 'xxxxx'
+        self.key = 'VmxOQ1NVbEdaMmRUZVVKVVNVVjNaMDVUUWt4SlJYTm5UME5DUWtsRldXZFBVMEpKU1VSaloxUnBRa1JKUlZWblVXbENRMGxFVFdkVGFVSk5TVVZGWjFGcFFreEpSV05uVldsQ1JrbEZWV2RVUTBKSg=='
         self.domains = ['https://orionoid.com']
         self.providers = []
-        self.cachePath = os.path.join(xbmc.translatePath(control.addonInfo('profile').decode('utf-8')), 'orion.cache')
+        self.cachePath = os.path.join(xbmc.translatePath(control.six_decode(control.addonInfo('profile'))), 'orion.cache')
         self.cacheData = None
         self.resolvers = None
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
-        try: return urllib.urlencode({'imdb' : imdb, 'title' : title, 'year' : year})
+        try: return urllib_parse.urlencode({'imdb' : imdb, 'title' : title, 'year' : year})
         except: return None
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
-        try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'tvshowtitle' : tvshowtitle, 'year' : year})
+        try: return urllib_parse.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'tvshowtitle' : tvshowtitle, 'year' : year})
         except: return None
 
     # def episode(self, url, imdb, tvdb, title, premiered, season, episode):
-        # try: return urllib.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'season' : season, 'episode' : episode})
+        # try: return urllib_parse.urlencode({'imdb' : imdb, 'tvdb' : tvdb, 'season' : season, 'episode' : episode})
         # except: return None
 
     def episode(self, url, imdb, tvdb, title, premiered, season, episode):
         try:
             if url == None: return
-            url = urlparse.parse_qs(url)
+            url = urllib_parse.parse_qs(url)
             url = dict([(i, url[i][0]) if url[i] else (i, '') for i in url])
             url['imdb'], url['title'], url['premiered'], url['season'], url['episode'] = imdb, title, premiered, season, episode
-            url = urllib.urlencode(url)
+            url = urllib_parse.urlencode(url)
             return url
         except: return None
 
@@ -144,7 +146,7 @@ class source:
         return '+' + str(int(popularity)) + '%'
 
     def _domain(self, data):
-        elements = urlparse.urlparse(self._link(data))
+        elements = urllib_parse.urlparse(self._link(data))
         domain = elements.netloc or elements.path
         domain = domain.split('@')[-1].split(':')[0]
         result = re.search('(?:www\.)?([\w\-]*\.[\w\-]{2,3}(?:\.[\w\-]{2,3})?)$', domain)
@@ -206,7 +208,7 @@ class source:
             orion = Orion(base64.b64decode(base64.b64decode(base64.b64decode(self.key))).replace(' ', ''))
             if not orion.userEnabled() or not orion.userValid(): raise Exception()
 
-            data = urlparse.parse_qs(url)
+            data = urllib_parse.parse_qs(url)
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
 
             imdb = data['imdb'] if 'imdb' in data else None

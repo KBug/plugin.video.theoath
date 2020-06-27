@@ -31,12 +31,15 @@ from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,json,urllib,urlparse,datetime
+import os,sys,re,json,datetime,base64#,urllib,urlparse
+
+import six
+from six.moves import urllib_parse
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
 
-params = dict(urlparse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
+params = dict(urllib_parse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
 action = params.get('action')
 
@@ -53,7 +56,7 @@ class movies:
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tm_user = control.setting('tm.user')
-        if self.tm_user == '' or self.tm_user == 'e49ced95ceb262abfc10d8acf46f8bc4': self.tm_user = 'Z2V0X3lvdXJz'.decode('base64')
+        if self.tm_user == '' or self.tm_user == 'e49ced95ceb262abfc10d8acf46f8bc4': self.tm_user = base64.b64decode('MWZiOGU4YmZkNGM5YjMyMzRmZGU4Y2NmMWE2NzVmN2M=')
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = str(control.setting('fanart.tv.user')) + str(control.setting('tm.user'))
         self.lang = control.apiLanguage()['trakt']
@@ -100,7 +103,7 @@ class movies:
         self.traktwatchlist_link = 'https://api.trakt.tv/users/me/watchlist/movies'
         self.traktfeatured_link = 'https://api.trakt.tv/recommendations/movies?limit=40'
         self.trakthistory_link = 'https://api.trakt.tv/users/me/history/movies?limit=40&page=1'
-        self.onDeck_link = 'https://api.trakt.tv/sync/playback/movies?extended=full&limit=20'
+        self.onDeck_link = 'https://api.trakt.tv/sync/playback/movies?limit=20'
         self.imdblists_link = 'https://www.imdb.com/user/ur%s/lists?tab=all&sort=modified&order=desc&filter=titles' % self.imdb_user
         self.imdblist_link = 'https://www.imdb.com/list/%s/?view=detail&sort=date_added,desc&title_type=movie,short,tvMovie,video&start=1'
         self.imdblist2_link = 'https://www.imdb.com/list/%s/?view=detail&sort=alpha,asc&title_type=movie,short,tvMovie,video&start=1'
@@ -254,7 +257,7 @@ class movies:
             try: url = getattr(self, url + '_link')
             except: pass
 
-            try: u = urlparse.urlparse(url).netloc.lower()
+            try: u = urllib_parse.urlparse(url).netloc.lower()
             except: pass
 
 
@@ -345,7 +348,7 @@ class movies:
     def search_new(self):
         control.idle()
 
-        t = control.lang(32010).encode('utf-8')
+        t = control.six_encode(control.lang(32010))
         k = control.keyboard('', t) ; k.doModal()
         q = k.getText() if k.isConfirmed() else None
 
@@ -358,11 +361,11 @@ class movies:
         dbcur.execute("INSERT INTO movies VALUES (?,?)", (None,q))
         dbcon.commit()
         dbcur.close()
-        url = self.search_link + urllib.quote_plus(q)
+        url = self.search_link + urllib_parse.quote_plus(q)
         if int(control.getKodiVersion()) >= 18:
             self.get(url)
         else:
-            url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+            url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
             control.execute('Container.Update(%s)' % url)
 
     def search_term(self, q):
@@ -375,29 +378,29 @@ class movies:
         dbcur.execute("INSERT INTO movies VALUES (?,?)", (None, q))
         dbcon.commit()
         dbcur.close()
-        url = self.search_link + urllib.quote_plus(q)
+        url = self.search_link + urllib_parse.quote_plus(q)
         if int(control.getKodiVersion()) >= 18:
             self.get(url)
         else:
-            url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+            url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
             control.execute('Container.Update(%s)' % url)
 
     def person(self):
         try:
             control.idle()
 
-            t = control.lang(32010).encode('utf-8')
+            t = control.six_encode(control.lang(32010))
             k = control.keyboard('', t);
             k.doModal()
             q = k.getText() if k.isConfirmed() else None
 
             if (q == None or q == ''): return
 
-            url = self.persons_link + urllib.quote_plus(q)
+            url = self.persons_link + urllib_parse.quote_plus(q)
             if int(control.getKodiVersion()) >= 18:
                 self.persons(url)
             else:
-                url = '%s?action=moviePersons&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+                url = '%s?action=moviePersons&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
                 control.execute('Container.Update(%s)' % url)
         except:
             return
@@ -493,7 +496,7 @@ class movies:
     def years(self):
         year = (self.datetime.strftime('%Y'))
 
-        for i in range(int(year)-0, 1900, -1): self.list.append({'name': str(i), 'url': self.year_link % (str(i), str(i)), 'image': 'years.png', 'action': 'movies'})
+        for i in list(range(int(year)-0, 1900, -1)): self.list.append({'name': str(i), 'url': self.year_link % (str(i), str(i)), 'image': 'years.png', 'action': 'movies'})
         self.addDirectory(self.list)
         return self.list
 
@@ -503,7 +506,7 @@ class movies:
         yea = int(year[:3])
         dec = yea * 10
 
-        for i in range(dec, 1890, -10): self.list.append({'name': str(i) + 's', 'url': self.decade_link % (str(i), str(i+9)), 'image': 'years.png', 'action': 'movies'})
+        for i in list(range(dec, 1890, -10)): self.list.append({'name': str(i) + 's', 'url': self.decade_link % (str(i), str(i+9)), 'image': 'years.png', 'action': 'movies'})
         self.addDirectory(self.list)
         return self.list
 
@@ -514,7 +517,7 @@ class movies:
         else:
             self.list = cache.get(self.imdb_person_list, 1, url)
 
-        for i in range(0, len(self.list)): self.list[i].update({'action': 'movies'})
+        for i in list(range(0, len(self.list))): self.list[i].update({'action': 'movies'})
         self.addDirectory(self.list)
         return self.list
 
@@ -554,7 +557,7 @@ class movies:
             pass
 
         self.list = userlists
-        for i in range(0, len(self.list)):
+        for i in list(range(0, len(self.list))):
             self.list[i].update({'action': 'movies'})
         self.list = sorted(self.list, key=lambda k: (k['image'], k['name'].lower()))
         self.addDirectory(self.list, queue=True)
@@ -563,10 +566,10 @@ class movies:
 
     def trakt_list(self, url, user):
         try:
-            q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
+            q = dict(urllib_parse.parse_qsl(urllib_parse.urlsplit(url).query))
             q.update({'extended': 'full'})
-            q = (urllib.urlencode(q)).replace('%2C', ',')
-            u = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
+            q = (urllib_parse.urlencode(q)).replace('%2C', ',')
+            u = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
 
             result = trakt.getTraktAsJson(u)
 
@@ -580,12 +583,12 @@ class movies:
             return
 
         try:
-            q = dict(urlparse.parse_qsl(urlparse.urlsplit(url).query))
+            q = dict(urllib_parse.parse_qsl(urllib_parse.urlsplit(url).query))
             if not int(q['limit']) == len(items): raise Exception()
             q.update({'page': str(int(q['page']) + 1)})
-            q = (urllib.urlencode(q)).replace('%2C', ',')
-            next = url.replace('?' + urlparse.urlparse(url).query, '') + '?' + q
-            next = next.encode('utf-8')
+            q = (urllib_parse.urlencode(q)).replace('%2C', ',')
+            next = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
+            next = control.six_encode(next)
         except:
             next = ''
 
@@ -666,7 +669,7 @@ class movies:
                 try: url = (trakt.slug(item['list']['user']['username']), item['list']['ids']['slug'])
                 except: url = ('me', item['ids']['slug'])
                 url = self.traktlist_link % url
-                url = url.encode('utf-8')
+                url = control.six_encode(url)
 
                 self.list.append({'name': name, 'url': url, 'context': url, 'image': 'trakt.png'})
             except:
@@ -708,9 +711,9 @@ class movies:
                 next = zip(client.parseDOM(next, 'a', ret='href'), client.parseDOM(next, 'a'))
                 next = [i[0] for i in next if 'Next' in i[1]]
 
-            next = url.replace(urlparse.urlparse(url).query, urlparse.urlparse(next[0]).query)
+            next = url.replace(urllib_parse.urlparse(url).query, urllib_parse.urlparse(next[0]).query)
             next = client.replaceHTMLCodes(next)
-            next = next.encode('utf-8')
+            next = control.six_encode(next)
         except:
             next = ''
 
@@ -718,36 +721,36 @@ class movies:
             try:
                 title = client.parseDOM(item, 'a')[1]
                 title = client.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
+                title = control.six_encode(title)
 
                 year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
                 year += client.parseDOM(item, 'span', attrs = {'class': 'year_type'})
                 try: year = re.compile('(\d{4})').findall(year)[0]
                 except: year = '0'
-                year = year.encode('utf-8')
+                year = control.six_encode(year)
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = client.parseDOM(item, 'a', ret='href')[0]
                 imdb = re.findall('(tt\d*)', imdb)[0]
-                imdb = imdb.encode('utf-8')
+                imdb = control.six_encode(imdb)
 
                 try: poster = client.parseDOM(item, 'img', ret='loadlate')[0]
                 except: poster = '0'
                 if '/nopicture/' in poster: poster = '0'
                 poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
-                poster = poster.encode('utf-8')
+                poster = control.six_encode(poster)
 
                 try: genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
                 except: genre = '0'
                 genre = ' / '.join([i.strip() for i in genre.split(',')])
                 if genre == '': genre = '0'
                 genre = client.replaceHTMLCodes(genre)
-                genre = genre.encode('utf-8')
+                genre = control.six_encode(genre)
 
                 try: duration = re.findall('(\d+?) min(?:s|)', item)[-1]
                 except: duration = '0'
-                duration = duration.encode('utf-8')
+                duration = control.six_encode(duration)
 
                 rating = '0'
                 try:
@@ -758,13 +761,13 @@ class movies:
                         rating = client.parseDOM(item, 'div', ret='data-value', attrs = {'class': '.*?imdb-rating'})[0]
                     except:
                         try:
-                            rating = re.findall(r'''<span class=".*?_rating">(.+?)</span>''', item)[0]
+                            rating = client.parseDOM(item, 'span', attrs = {'class': '.*?_rating'})[0]
                         except:
                             pass
                 if rating == '' or rating == '-':
                     rating = '0'
                 rating = client.replaceHTMLCodes(rating)
-                rating = rating.encode('utf-8')
+                rating = control.six_encode(rating)
 
                 try:
                     votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
@@ -777,14 +780,14 @@ class movies:
                 if votes == '':
                     votes = '0'
                 votes = client.replaceHTMLCodes(votes)
-                votes = votes.encode('utf-8')
+                votes = control.six_encode(votes)
 
                 try: mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
                 except: mpaa = '0'
                 if mpaa == '' or mpaa == 'NOT_RATED': mpaa = '0'
                 mpaa = mpaa.replace('_', '-')
                 mpaa = client.replaceHTMLCodes(mpaa)
-                mpaa = mpaa.encode('utf-8')
+                mpaa = control.six_encode(mpaa)
 
                 try: director = re.findall('Director(?:s|):(.+?)(?:\||</div>)', item)[0]
                 except: director = '0'
@@ -792,12 +795,12 @@ class movies:
                 director = ' / '.join(director)
                 if director == '': director = '0'
                 director = client.replaceHTMLCodes(director)
-                director = director.encode('utf-8')
+                director = control.six_encode(director)
 
                 try: cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
                 except: cast = '0'
                 cast = client.replaceHTMLCodes(cast)
-                cast = cast.encode('utf-8')
+                cast = control.six_encode(cast)
                 cast = client.parseDOM(cast, 'a')
                 if cast == []: cast = '0'
 
@@ -810,7 +813,7 @@ class movies:
                 plot = re.sub('<.+?>|</.+?>', '', plot)
                 if plot == '': plot = '0'
                 plot = client.replaceHTMLCodes(plot)
-                plot = plot.encode('utf-8')
+                plot = control.six_encode(plot)
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
             except:
@@ -829,19 +832,19 @@ class movies:
         for item in items:
             try:
                 name = client.parseDOM(item, 'img', ret='alt')[0]
-                name = name.encode('utf-8')
+                name = control.six_encode(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = re.findall('(nm\d*)', url, re.I)[0]
                 url = self.person_link % url
                 url = client.replaceHTMLCodes(url)
-                url = url.encode('utf-8')
+                url = control.six_encode(url)
 
                 image = client.parseDOM(item, 'img', ret='src')[0]
                 # if not ('._SX' in image or '._SY' in image): raise Exception()
                 image = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', image)
                 image = client.replaceHTMLCodes(image)
-                image = image.encode('utf-8')
+                image = control.six_encode(image)
 
                 self.list.append({'name': name, 'url': url, 'image': image})
             except:
@@ -866,13 +869,13 @@ class movies:
             try:
                 name = client.parseDOM(item, 'a')[0]
                 name = client.replaceHTMLCodes(name)
-                name = name.encode('utf-8')
+                name = control.six_encode(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = url.split('/list/', 1)[-1].strip('/')
                 url = list % url
                 url = client.replaceHTMLCodes(url)
-                url = url.encode('utf-8')
+                url = control.six_encode(url)
 
                 self.list.append({'name': name, 'url': url, 'context': url, 'image': 'imdb.png'})
             except:
@@ -885,17 +888,17 @@ class movies:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': 'Z2V0X3lvdXJz'.decode('base64')}
+        self.fanart_tv_headers = {'api-key': base64.b64decode('NWMwNmE2YzZmNTQzMTQ3YjQyMGM4MTNmZDFkMmM4NjY=')}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
-        for i in range(0, total): self.list[i].update({'metacache': False})
+        for i in list(range(0, total)): self.list[i].update({'metacache': False})
 
         self.list = metacache.fetch(self.list, self.lang, self.user)
 
-        for r in range(0, total, 40):
+        for r in list(range(0, total, 40)):
             threads = []
-            for i in range(r, r+40):
+            for i in list(range(r, r+40)):
                 if i <= total: threads.append(workers.Thread(self.super_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
@@ -992,7 +995,7 @@ class movies:
             try:
                 poster2 = art['movieposter']
                 poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = poster2[0]['url'].encode('utf-8')
+                poster2 = control.six_encode(poster2[0]['url'])
             except:
                 poster2 = '0'
 
@@ -1000,14 +1003,14 @@ class movies:
                 if 'moviebackground' in art: fanart = art['moviebackground']
                 else: fanart = art['moviethumb']
                 fanart = [x for x in fanart if x.get('lang') == self.lang][::-1] + [x for x in fanart if x.get('lang') == 'en'][::-1] + [x for x in fanart if x.get('lang') in ['00', '']][::-1]
-                fanart = fanart[0]['url'].encode('utf-8')
+                fanart = control.six_encode(fanart[0]['url'])
             except:
                 fanart = '0'
 
             try:
                 banner = art['moviebanner']
                 banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                banner = banner[0]['url'].encode('utf-8')
+                banner = control.six_encode(banner[0]['url'])
             except:
                 banner = '0'
 
@@ -1015,7 +1018,7 @@ class movies:
                 if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
                 else: clearlogo = art['clearlogo']
                 clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = clearlogo[0]['url'].encode('utf-8')
+                clearlogo = control.six_encode(clearlogo[0]['url'])
             except:
                 clearlogo = '0'
 
@@ -1023,7 +1026,7 @@ class movies:
                 if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
                 else: clearart = art['clearart']
                 clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = clearart[0]['url'].encode('utf-8')
+                clearart = control.six_encode(clearart[0]['url'])
             except:
                 clearart = '0'
 
@@ -1041,7 +1044,7 @@ class movies:
                 poster3 = [(x['width'], x['file_path']) for x in poster3]
                 poster3 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster3]
                 poster3 = self.tm_img_link % poster3[0]
-                poster3 = poster3.encode('utf-8')
+                poster3 = control.six_encode(poster3)
             except:
                 poster3 = '0'
 
@@ -1052,12 +1055,12 @@ class movies:
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
                 fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
                 fanart2 = self.tm_img_link % fanart2[0]
-                fanart2 = fanart2.encode('utf-8')
+                fanart2 = control.six_encode(fanart2)
             except:
                 fanart2 = '0'
 
             item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': '0', 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
-            item = dict((k,v) for k, v in item.iteritems() if not v == '0')
+            item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             self.list[i].update(item)
 
             if artmeta == False: raise Exception()
@@ -1088,38 +1091,38 @@ class movies:
 
         indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators()
 
-        playbackMenu = control.lang(32063).encode('utf-8') if control.setting('hosts.mode') == '2' else control.lang(32064).encode('utf-8')
+        playbackMenu = control.six_encode(control.lang(32063)) if control.setting('hosts.mode') == '2' else control.six_encode(control.lang(32064))
 
-        watchedMenu = control.lang(32068).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32066).encode('utf-8')
+        watchedMenu = control.six_encode(control.lang(32068)) if trakt.getTraktIndicatorsInfo() == True else control.six_encode(control.lang(32066))
 
-        unwatchedMenu = control.lang(32069).encode('utf-8') if trakt.getTraktIndicatorsInfo() == True else control.lang(32067).encode('utf-8')
+        unwatchedMenu = control.six_encode(control.lang(32069)) if trakt.getTraktIndicatorsInfo() == True else control.six_encode(control.lang(32067))
 
-        queueMenu = control.lang(32065).encode('utf-8')
+        queueMenu = control.six_encode(control.lang(32065))
 
-        traktManagerMenu = control.lang(32070).encode('utf-8')
+        traktManagerMenu = control.six_encode(control.lang(32070))
 
-        nextMenu = control.lang(32053).encode('utf-8')
+        nextMenu = control.six_encode(control.lang(32053))
 
-        addToLibrary = control.lang(32551).encode('utf-8')
+        addToLibrary = control.six_encode(control.lang(32551))
 
-        clearProviders = control.lang(32081).encode('utf-8')
+        clearProviders = control.six_encode(control.lang(32081))
 
-        findSimilar = control.lang(32100).encode('utf-8')
+        findSimilar = control.six_encode(control.lang(32100))
 
-        infoMenu = control.lang(32101).encode('utf-8')
+        infoMenu = control.six_encode(control.lang(32101))
 
         for i in items:
             try:
                 label = '%s (%s)' % (i['title'], i['year'])
                 imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['originaltitle'], i['year']
-                sysname = urllib.quote_plus('%s (%s)' % (title, year))
-                systitle = urllib.quote_plus(title)
+                sysname = urllib_parse.quote_plus('%s (%s)' % (title, year))
+                systitle = urllib_parse.quote_plus(title)
 
-                meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
+                meta = dict((k,v) for k, v in six.iteritems(i) if not v == '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
-                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib.quote_plus(label))})
+                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib_parse.quote_plus(label))})
                 #meta.update({'trailer': 'plugin://script.extendedinfo/?info=playtrailer&&id=%s' % imdb})
                 if not 'duration' in i: meta.update({'duration': '120'})
                 elif i['duration'] == '0': meta.update({'duration': '120'})
@@ -1132,10 +1135,10 @@ class movies:
                 poster = poster[0] if poster else addonPoster
                 meta.update({'poster': poster})
 
-                sysmeta = urllib.quote_plus(json.dumps(meta))
+                sysmeta = urllib_parse.quote_plus(json.dumps(meta))
 
                 url = '%s?action=play&title=%s&year=%s&imdb=%s&meta=%s&t=%s' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)
-                sysurl = urllib.quote_plus(url)
+                sysurl = urllib_parse.quote_plus(url)
 
                 path = '%s?action=play&title=%s&year=%s&imdb=%s' % (sysaddon, systitle, year, imdb)
 
@@ -1143,7 +1146,7 @@ class movies:
                 cm = []
 
                 cm.append((findSimilar,
-                           'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related,return)' % (
+                           'ActivateWindow(10025,%s?action=movies&url=https://api.trakt.tv/movies/%s/related)' % (
                            sysaddon, imdb)))
 
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
@@ -1212,7 +1215,7 @@ class movies:
             if url == '': raise Exception()
 
             icon = control.addonNext()
-            url = '%s?action=moviePage&url=%s' % (sysaddon, urllib.quote_plus(url))
+            url = '%s?action=moviePage&url=%s' % (sysaddon, urllib_parse.quote_plus(url))
 
             item = control.item(label=nextMenu)
 
@@ -1238,11 +1241,11 @@ class movies:
 
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
 
-        queueMenu = control.lang(32065).encode('utf-8')
+        queueMenu = control.six_encode(control.lang(32065))
 
-        playRandom = control.lang(32535).encode('utf-8')
+        playRandom = control.six_encode(control.lang(32535))
 
-        addToLibrary = control.lang(32551).encode('utf-8')
+        addToLibrary = control.six_encode(control.lang(32551))
 
         for i in items:
             try:
@@ -1253,17 +1256,17 @@ class movies:
                 else: thumb = addonThumb
 
                 url = '%s?action=%s' % (sysaddon, i['action'])
-                try: url += '&url=%s' % urllib.quote_plus(i['url'])
+                try: url += '&url=%s' % urllib_parse.quote_plus(i['url'])
                 except: pass
 
                 cm = []
 
-                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=movie&url=%s)' % (sysaddon, urllib.quote_plus(i['url']))))
+                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=movie&url=%s)' % (sysaddon, urllib_parse.quote_plus(i['url']))))
 
                 if queue == True:
                     cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 
-                try: cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib.quote_plus(i['context']))))
+                try: cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib_parse.quote_plus(i['context']))))
                 except: pass
 
                 item = control.item(label=name)

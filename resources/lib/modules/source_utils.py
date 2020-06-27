@@ -19,11 +19,14 @@
 """
 
 import base64
-import urlparse
-import urllib
+#import urlparse
+#import urllib
 import hashlib
 import re
 
+from six.moves import urllib_parse
+
+from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import directstream
 from resources.lib.modules import trakt
@@ -41,7 +44,7 @@ def get_qual(term):
         return '4k'
     elif any(i in term for i in RES_1080):
         return '1080p'
-    elif any(i in term for i in RES_720):
+    elif (any(i in term for i in RES_720) and not any(i in term for i in CAM)):
         return '720p'
     elif any(i in term for i in RES_SD):
         return 'sd'
@@ -61,7 +64,7 @@ def get_release_quality(release_name, release_link=None):
 
     if release_name is None: return
 
-    try: release_name = release_name.encode('utf-8')
+    try: release_name = control.six_encode(release_name)
     except: pass
 
     try:
@@ -69,7 +72,7 @@ def get_release_quality(release_name, release_link=None):
 
         fmt = re.sub('[^A-Za-z0-9]+', ' ', release_name)
         fmt = fmt.lower()
-        try: fmt = fmt.encode('utf-8')
+        try: fmt = control.six_encode(fmt)
         except: pass
 
         quality = get_qual(fmt)
@@ -79,7 +82,7 @@ def get_release_quality(release_name, release_link=None):
                 release_link = client.replaceHTMLCodes(release_link)
                 release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
                 release_link = release_link.lower()
-                try: release_link = release_link.encode('utf-8')
+                try: release_link = control.six_encode(release_link)
                 except: pass
 
                 quality = get_qual(release_link)
@@ -99,7 +102,7 @@ def getFileType(url):
     try:
         url = client.replaceHTMLCodes(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = url.encode('utf-8')
+        url = control.six_encode(url)
         url = url.lower()
     except:
         url = str(url)
@@ -196,7 +199,7 @@ def check_sd_url(release_link):
     try:
         release_link = re.sub('[^A-Za-z0-9]+', ' ', release_link)
         release_link = release_link.lower()
-        try: release_link = release_link.encode('utf-8')
+        try: release_link = control.six_encode(release_link)
         except: pass
         quality = get_qual(release_link)
         if not quality:
@@ -209,7 +212,7 @@ def check_sd_url(release_link):
 def check_direct_url(url):
     try:
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = url.encode('utf-8')
+        url = control.six_encode(url)
         url = url.lower()
         quality = get_qual(url)
         if not quality:
@@ -222,7 +225,7 @@ def check_url(url):
     try:
         url = client.replaceHTMLCodes(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = url.encode('utf-8')
+        url = control.six_encode(url)
         url = url.lower()
     except:
         url = str(url)
@@ -256,7 +259,7 @@ def strip_domain(url):
         if url.lower().startswith('http') or url.startswith('/'):
             url = re.findall('(?://.+?|)(/.+)', url)[0]
         url = client.replaceHTMLCodes(url)
-        url = url.encode('utf-8')
+        url = control.six_encode(url)
         return url
     except:
         return
@@ -284,7 +287,7 @@ def is_host_valid(url, domains):
 
 
 def __top_domain(url):
-    elements = urlparse.urlparse(url)
+    elements = urllib_parse.urlparse(url)
     domain = elements.netloc or elements.path
     domain = domain.split('@')[-1].split(':')[0]
     regex = "(?:www\.)?([\w\-]*\.[\w\-]{2,3}(?:\.[\w\-]{2,3})?)$"
@@ -306,7 +309,7 @@ def aliases_to_array(aliases, filter=None):
 
 
 def append_headers(headers):
-    return '|%s' % '&'.join(['%s=%s' % (key, urllib.quote_plus(headers[key])) for key in headers])
+    return '|%s' % '&'.join(['%s=%s' % (key, urllib_parse.quote_plus(headers[key])) for key in headers])
 
 def get_size(url):
     try:
@@ -384,7 +387,7 @@ def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md
         block = hasher.digest()
         hasher = hashlib.new(hash_algorithm)
 
-        for _i in range(1, iterations):
+        for _i in list(range(1, iterations)):
             hasher.update(block)
             block = hasher.digest()
             hasher = hashlib.new(hash_algorithm)

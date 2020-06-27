@@ -19,7 +19,10 @@
 '''
 
 
-import sys,re,json,urllib,urlparse,random,datetime,time
+import sys,re,json,random,datetime,time#,urllib,urlparse
+
+import six
+from six.moves import urllib_parse
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -69,7 +72,7 @@ class sources:
 
                     control.sleep(200)
 
-                    return control.execute('Container.Update(%s?action=addItem&title=%s)' % (sys.argv[0], urllib.quote_plus(title)))
+                    return control.execute('Container.Update(%s?action=addItem&title=%s)' % (sys.argv[0], urllib_parse.quote_plus(title)))
 
                 elif select == '0' or select == '1':
                     url = self.sourcesDialog(items)
@@ -96,7 +99,7 @@ class sources:
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
             allowed = ['poster', 'icon', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
-            return {k: v for k, v in metadata.iteritems() if k in allowed}
+            return {k: v for k, v in six.iteritems(metadata) if k in allowed}
 
         control.playlist.clear()
         items = control.window.getProperty(self.itemProperty)
@@ -119,12 +122,12 @@ class sources:
 
         listMeta = control.setting('source.list.meta')
 
-        systitle = sysname = urllib.quote_plus(title)
+        systitle = sysname = urllib_parse.quote_plus(title)
 
         if 'tvshowtitle' in meta and 'season' in meta and 'episode' in meta:
-            sysname += urllib.quote_plus(' S%02dE%02d' % (int(meta['season']), int(meta['episode'])))
+            sysname += urllib_parse.quote_plus(' S%02dE%02d' % (int(meta['season']), int(meta['episode'])))
         elif 'year' in meta:
-            sysname += urllib.quote_plus(' (%s)' % meta['year'])
+            sysname += urllib_parse.quote_plus(' (%s)' % meta['year'])
 
 
         poster = meta['poster3'] if 'poster3' in meta else '0'
@@ -146,16 +149,16 @@ class sources:
         if fanart == '0': fanart = control.addonFanart()
         if thumb == '0': thumb = control.addonFanart()
 
-        sysimage = urllib.quote_plus(poster.encode('utf-8'))
+        sysimage = urllib_parse.quote_plus(control.six_encode(poster))
 
-        downloadMenu = control.lang(32403).encode('utf-8')
+        downloadMenu = control.six_encode(control.lang(32403))
 
 
-        for i in range(len(items)):
+        for i in list(range(len(items))):
             try:
                 label = str(items[i]['label'])
 
-                syssource = urllib.quote_plus(json.dumps([items[i]]))
+                syssource = urllib_parse.quote_plus(json.dumps([items[i]]))
 
                 sysurl = '%s?action=playItem&title=%s&source=%s' % (sysaddon, systitle, syssource)
 
@@ -199,12 +202,12 @@ class sources:
 
             next = [] ; prev = [] ; total = []
 
-            for i in range(1,1000):
+            for i in list(range(1,1000)):
                 try:
                     u = control.infoLabel('ListItem(%s).FolderPath' % str(i))
                     if u in total: raise Exception()
                     total.append(u)
-                    u = dict(urlparse.parse_qsl(u.replace('?','')))
+                    u = dict(urllib_parse.parse_qsl(u.replace('?','')))
                     u = json.loads(u['source'])[0]
                     next.append(u)
                 except:
@@ -214,7 +217,7 @@ class sources:
                     u = control.infoLabel('ListItem(%s).FolderPath' % str(i))
                     if u in total: raise Exception()
                     total.append(u)
-                    u = dict(urlparse.parse_qsl(u.replace('?','')))
+                    u = dict(urllib_parse.parse_qsl(u.replace('?','')))
                     u = json.loads(u['source'])[0]
                     prev.append(u)
                 except:
@@ -228,17 +231,17 @@ class sources:
 
             progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
             progressDialog.create(header, '')
-            progressDialog.update(0)
+            #progressDialog.update(0)
 
             block = None
 
-            for i in range(len(items)):
+            for i in list(range(len(items))):
                 try:
                     try:
                         if progressDialog.iscanceled(): break
                         progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
                     except:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
 
                     if items[i]['source'] == block: raise Exception()
 
@@ -267,9 +270,9 @@ class sources:
 
                     m = ''
 
-                    for x in range(3600):
+                    for x in list(range(3600)):
                         try:
-                            if xbmc.abortRequested == True: return sys.exit()
+                            if control.monitor.abortRequested(): return sys.exit()
                             if progressDialog.iscanceled(): return progressDialog.close()
                         except:
                             pass
@@ -283,9 +286,9 @@ class sources:
                         time.sleep(0.5)
 
 
-                    for x in range(30):
+                    for x in list(range(30)):
                         try:
-                            if xbmc.abortRequested == True: return sys.exit()
+                            if control.monitor.abortRequested(): return sys.exit()
                             if progressDialog.iscanceled(): return progressDialog.close()
                         except:
                             pass
@@ -323,13 +326,13 @@ class sources:
     def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
         progressDialog.create(self.module_name)
-        progressDialog.update(0)
+        #progressDialog.update(0)
 
         self.prepareSources()
 
         sourceDict = self.sourceDict
 
-        progressDialog.update(0, control.lang(32600).encode('utf-8'))
+        progressDialog.update(0, control.six_encode(control.lang(32600)))
         content = 'movie' if tvshowtitle == None else 'episode'
         if content == 'movie':
             sourceDict = [(i[0], i[1], getattr(i[1], 'movie', None)) for i in sourceDict]
@@ -380,13 +383,13 @@ class sources:
 
         [i.start() for i in threads]
 
-        string1 = control.lang(32404).encode('utf-8')
-        string2 = control.lang(32405).encode('utf-8')
-        string3 = control.lang(32406).encode('utf-8')
-        string4 = control.lang(32601).encode('utf-8')
-        string5 = control.lang(32602).encode('utf-8')
-        string6 = control.lang(32606).encode('utf-8')
-        string7 = control.lang(32607).encode('utf-8')
+        string1 = control.six_encode(control.lang(32404))
+        string2 = control.six_encode(control.lang(32405))
+        string3 = control.six_encode(control.lang(32406))
+        string4 = control.six_encode(control.lang(32601))
+        string5 = control.six_encode(control.lang(32602))
+        string6 = control.six_encode(control.lang(32606))
+        string7 = control.six_encode(control.lang(32607))
 
         try: timeout = int(control.setting('scrapers.timeout.1'))
         except: pass
@@ -413,7 +416,7 @@ class sources:
         pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
         pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
 
-        for i in range(0, 4 * timeout):
+        for i in list(range(0, 4 * timeout)):
 
             if str(pre_emp) == 'true':
                 if quality in ['0', '1']:
@@ -428,7 +431,7 @@ class sources:
                     if (source_sd + d_source_sd) >= int(pre_emp_limit): break
 
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
 
                 try:
                     if progressDialog.iscanceled(): break
@@ -496,7 +499,7 @@ class sources:
                                 if not progressDialog == control.progressDialogBG:
                                     line1 = ('%s:' + '|'.join(pdiag_format)) % (string6, d_4k_label, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
                                     line2 = ('%s:' + '|'.join(pdiag_format)) % (string7, source_4k_label, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                                    #print line1, line2
+                                    #print(line1, line2)
                                 else:
                                     control.idle()
                                     line1 = '|'.join(pdiag_bg_format[:-1]) % (source_4k_label, d_4k_label, source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label)
@@ -536,14 +539,14 @@ class sources:
                             elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
                             else: break
                             percent = int(100 * float(i) / (2 * timeout) + 0.5)
-                            if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1, line2, line3)
+                            if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line2 + '[CR]' + line3)
                             else: progressDialog.update(max(1, percent), line1, line3)
                         else:
                             if len(info) > 6: line2 = string3 % (str(len(info)))
                             elif len(info) > 0: line2 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
                             else: break
                             percent = int(100 * float(i) / (2 * timeout) + 0.5)
-                            progressDialog.update(max(1, percent), line1, line2)
+                            progressDialog.update(max(1, percent), line1 + '[CR]' + line2)
                     except Exception as e:
                         log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                 else:
@@ -555,14 +558,14 @@ class sources:
                             elif len(info) > 0: line3 = 'Waiting for: %s' % (', '.join(info))
                             else: break
                             percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
-                            if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1, line2, line3)
-                            else: progressDialog.update(max(1, percent), line1, line3)
+                            if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line2 + '[CR]' + line3)
+                            else: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
                         else:
                             if len(info) > 6: line2 = 'Waiting for: %s' % (str(len(info)))
                             elif len(info) > 0: line2 = 'Waiting for: %s' % (', '.join(info))
                             else: break
                             percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
-                            progressDialog.update(max(1, percent), line1, line2)
+                            progressDialog.update(max(1, percent), line1 + '[CR]' + line2)
                     except Exception as e:
                         log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                         break
@@ -618,7 +621,7 @@ class sources:
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) > 60
             if update == False:
-                sources = eval(match[4].encode('utf-8'))
+                sources = eval(control.six_encode(match[4]))
                 return self.sources.extend(sources)
         except:
             pass
@@ -627,7 +630,7 @@ class sources:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(url[4].encode('utf-8'))
+            url = eval(control.six_encode(url[4]))
         except:
             pass
 
@@ -669,7 +672,7 @@ class sources:
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) > 60
             if update == False:
-                sources = eval(match[4].encode('utf-8'))
+                sources = eval(control.six_encode(match[4]))
                 return self.sources.extend(sources)
         except:
             pass
@@ -678,7 +681,7 @@ class sources:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(url[4].encode('utf-8'))
+            url = eval(control.six_encode(url[4]))
         except:
             pass
 
@@ -695,7 +698,7 @@ class sources:
             ep_url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             ep_url = dbcur.fetchone()
-            ep_url = eval(ep_url[4].encode('utf-8'))
+            ep_url = eval(control.six_encode(ep_url[4]))
         except:
             pass
 
@@ -737,7 +740,7 @@ class sources:
         try:
             control.idle()
 
-            yes = control.yesnoDialog(control.lang(32407).encode('utf-8'), '', '')
+            yes = control.yesnoDialog(control.six_encode(control.lang(32407)))
             if not yes: return
 
             control.makeFile(control.dataPath)
@@ -748,7 +751,7 @@ class sources:
             dbcur.execute("VACUUM")
             dbcon.commit()
 
-            control.infoDialog(control.lang(32408).encode('utf-8'), sound=True, icon='INFO')
+            control.infoDialog(control.six_encode(control.lang(32408)), sound=True, icon='INFO')
         except:
             pass
 
@@ -876,7 +879,7 @@ class sources:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
                 dupes = int(stotal - len(self.sources))
-                control.infoDialog(control.lang(32089).encode('utf-8').format(dupes), icon='INFO')
+                control.infoDialog(control.six_encode(control.lang(32089)).format(dupes), icon='INFO')
         except:
             import traceback
             failure = traceback.format_exc()
@@ -912,7 +915,7 @@ class sources:
 
         self.sources = filter
 
-        for i in range(len(self.sources)):
+        for i in list(range(len(self.sources))):
             if self.sources[i]['quality'] in ['hd', 'HD']: self.sources[i].update({'quality': '720p'})
 
         filter = []
@@ -955,7 +958,7 @@ class sources:
         simple = control.setting('linesplit') == '2'
         single_line = control.setting('linesplit') == '0'
 
-        for i in range(len(self.sources)):
+        for i in list(range(len(self.sources))):
 
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
@@ -1061,8 +1064,8 @@ class sources:
 
             try: headers = url.rsplit('|', 1)[1]
             except: headers = ''
-            headers = urllib.quote_plus(headers).replace('%3D', '=') if ' ' in headers else headers
-            headers = dict(urlparse.parse_qsl(headers))
+            headers = urllib_parse.quote_plus(headers).replace('%3D', '=') if ' ' in headers else headers
+            headers = dict(urllib_parse.parse_qsl(headers))
 
 
             if url.startswith('http') and '.m3u8' in url:
@@ -1100,11 +1103,11 @@ class sources:
 
             progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
             progressDialog.create(header, '')
-            progressDialog.update(0)
+            #progressDialog.update(0)
 
             block = None
 
-            for i in range(len(items)):
+            for i in list(range(len(items))):
                 try:
                     if items[i]['source'] == block: raise Exception()
 
@@ -1115,7 +1118,7 @@ class sources:
                         if progressDialog.iscanceled(): break
                         progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
                     except:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
 
                     '''
                     if items[i].get('debrid').lower() == 'real-debrid':
@@ -1137,9 +1140,9 @@ class sources:
 
                     m = ''
 
-                    for x in range(3600):
+                    for x in list(range(3600)):
                         try:
-                            if xbmc.abortRequested == True: return sys.exit()
+                            if control.monitor.abortRequested(): return sys.exit()
                             if progressDialog.iscanceled(): return progressDialog.close()
                         except:
                             pass
@@ -1153,9 +1156,9 @@ class sources:
                         time.sleep(0.5)
 
 
-                    for x in range(30):
+                    for x in list(range(30)):
                         try:
-                            if xbmc.abortRequested == True: return sys.exit()
+                            if control.monitor.abortRequested(): return sys.exit()
                             if progressDialog.iscanceled(): return progressDialog.close()
                         except:
                             pass
@@ -1211,19 +1214,19 @@ class sources:
 
             progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
             progressDialog.create(header, '')
-            progressDialog.update(0)
+            #progressDialog.update(0)
         except:
             pass
 
-        for i in range(len(items)):
+        for i in list(range(len(items))):
             try:
                 if progressDialog.iscanceled(): break
                 progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
             except:
-                progressDialog.update(int((100 / float(len(items))) * i), str(header2), str(items[i]['label']))
+                progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
 
             try:
-                if xbmc.abortRequested == True: return sys.exit()
+                if control.monitor.abortRequested(): return sys.exit()
 
                 url = self.sourcesResolve(items[i])
                 if u == None: u = url
@@ -1237,7 +1240,7 @@ class sources:
         return u
 
     def errorForSources(self):
-        control.infoDialog(control.lang(32401).encode('utf-8'), sound=False, icon='INFO')
+        control.infoDialog(control.six_encode(control.lang(32401)), sound=False, icon='INFO')
 
 
     def getLanguage(self):
