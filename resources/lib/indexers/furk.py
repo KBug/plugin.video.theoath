@@ -16,7 +16,8 @@
 '''
 
 from resources.lib.modules import control
-import sys, requests, json, os#, urllib, urlparse
+import sys, requests, os#, urllib, urlparse
+import simplejson as json
 
 from six.moves import urllib_parse
 

@@ -19,7 +19,8 @@
 '''
 
 
-import sys,re,json,random,datetime,time#,urllib,urlparse
+import sys,re,random,datetime,time#,urllib,urlparse
+import simplejson as json
 
 import six
 from six.moves import urllib_parse

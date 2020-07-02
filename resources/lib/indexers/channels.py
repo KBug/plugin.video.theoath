@@ -25,8 +25,10 @@ from resources.lib.modules import metacache
 from resources.lib.modules import workers
 from resources.lib.modules import trakt
 
-import sys,re,json,datetime#,urllib,urlparse
+import sys,re,datetime#,urllib,urlparse
+import simplejson as json
 
+import six
 from six.moves import urllib_parse
 
 params = dict(urllib_parse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
@@ -227,7 +229,7 @@ class channels:
                 systitle = urllib_parse.quote_plus(i['title'])
                 imdb, tmdb, year = i['imdb'], i['tmdb'], i['year']
 
-                meta = dict((k,v) for k, v in i.iteritems() if not v == '0')
+                meta = dict((k,v) for k, v in six.iteritems(i) if not v == '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})

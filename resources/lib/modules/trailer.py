@@ -19,7 +19,7 @@
 
 import sys
 import base64
-import json
+import simplejson as json
 import random
 import re
 import urllib

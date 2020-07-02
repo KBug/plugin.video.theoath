@@ -18,7 +18,7 @@
 
 
 import re
-import json
+import simplejson as json
 #import urllib
 #import urllib2
 #import urlparse

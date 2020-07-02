@@ -31,10 +31,17 @@ import xbmcplugin
 import xbmcvfs
 
 def six_encode(txt, char='utf-8'):
-    return txt if six.PY3 else txt.encode(char)
+    if six.PY2 and isinstance(txt, six.text_type):
+        txt = txt.encode(char)
+    return txt
 
 def six_decode(txt, char='utf-8'):
-    return txt if six.PY3 else txt.decode(char)
+    if six.PY3 and isinstance(txt, six.binary_type):
+        txt = txt.decode(char)
+    return txt
+
+def getKodiVersion():
+    return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
 
 integer = 1000
 
@@ -86,13 +93,6 @@ keyboard = xbmc.Keyboard
 
 monitor = xbmc.Monitor()
 
-# Modified `sleep` command that honors a user exit request
-def sleep(time):
-    while time > 0 and not monitor.abortRequested():
-        xbmc.sleep(min(100, time))
-        time = time - 100
-
-
 execute = xbmc.executebuiltin
 
 skin = xbmc.getSkinDir()
@@ -102,6 +102,8 @@ player = xbmc.Player()
 playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
 
 resolve = xbmcplugin.setResolvedUrl
+
+legalFilename = xbmc.makeLegalFilename if int(getKodiVersion()) < 19 else xbmcvfs.makeLegalFilename
 
 openFile = xbmcvfs.File
 
@@ -142,6 +144,13 @@ dbFile = os.path.join(dataPath, 'debridcache.db')
 key = "RgUkXp2s5v8x/A?D(G+KbPeShVmYq3t6"
 
 iv = "p2s5v8y/B?E(H+Mb"
+
+
+# Modified `sleep` command that honors a user exit request
+def sleep(time):
+    while time > 0 and not monitor.abortRequested():
+        xbmc.sleep(min(100, time))
+        time = time - 100
 
 
 def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
@@ -200,7 +209,7 @@ def get_plugin_url(queries):
     except UnicodeEncodeError:
         for k in queries:
             if isinstance(queries[k], six.text_type):
-                queries[k] = six_encode(queries)
+                queries[k] = six_encode(queries[k])
         query = urllib_parse.urlencode(queries)
     addon_id = sys.argv[0]
     if not addon_id: addon_id = addonId()
@@ -232,8 +241,8 @@ def infoDialog(message, heading=addonInfo('name'), icon='', time=3000, sound=Fal
 
 
 def yesnoDialog(message, heading=addonInfo('name'), nolabel='', yeslabel=''):
-    if int(getKodiVersion()) >= 19: return dialog.yesno(heading, message, nolabel, yeslabel)
-    else: return dialog.yesno(heading, message, '', '', nolabel, yeslabel)
+    if int(getKodiVersion()) < 19: return dialog.yesno(heading, message, '', '', nolabel, yeslabel)
+    else: return dialog.yesno(heading, message, nolabel, yeslabel)
 
 
 def selectDialog(list, heading=addonInfo('name')):
@@ -344,10 +353,6 @@ def metadataClean(metadata): # Filter out non-existing/custom keys. Otherise the
     if metadata == None: return metadata
     allowed = ['genre', 'country', 'year', 'episode', 'season', 'sortepisode', 'sortseason', 'episodeguide', 'showlink', 'top250', 'setid', 'tracknumber', 'rating', 'userrating', 'watched', 'playcount', 'overlay', 'cast', 'castandrole', 'director', 'mpaa', 'plot', 'plotoutline', 'title', 'originaltitle', 'sorttitle', 'duration', 'studio', 'tagline', 'writer', 'tvshowtitle', 'premiered', 'status', 'set', 'setoverview', 'tag', 'imdbnumber', 'code', 'aired', 'credits', 'lastplayed', 'album', 'artist', 'votes', 'path', 'trailer', 'dateadded', 'mediatype', 'dbid']
     return {k: v for k, v in six.iteritems(metadata) if k in allowed}
-
-
-def getKodiVersion():
-    return xbmc.getInfoLabel("System.BuildVersion").split(".")[0]
 
 
 def installAddon(addon_id):

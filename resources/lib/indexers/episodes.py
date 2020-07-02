@@ -31,9 +31,13 @@ from resources.lib.modules import utils
 from resources.lib.modules import log_utils
 
 import six
-from six.moves import urllib_parse
+from six.moves import urllib_parse, urllib_request
 
-import os,sys,re,json,zipfile,datetime,base64#,urllib2,urllib,urlparse,StringIO
+import os,sys,re,zipfile,datetime,base64#,urllib2,urllib,urlparse,StringIO
+import simplejson as json
+
+try: from cStringIO import StringIO
+except: from io import BytesIO as StringIO
 
 import requests
 
@@ -50,9 +54,10 @@ class seasons:
         self.specials = control.setting('tv.specials') or 'true'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.today_date = self.datetime.strftime('%Y-%m-%d')
-        self.tvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        self.tvdb_key = 'JMCO8LQHIXX76CGN'#base64.b64decode(self.etvdb_key)#
 
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (base64.b64decode(self.tvdb_key), '%s', '%s')
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key, '%s', '%s')
         self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
         self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
         self.tvdb_image = 'https://thetvdb.com/banners/'
@@ -90,6 +95,7 @@ class seasons:
 
                 #result = client.request(url, timeout='10')
                 result = requests.get(url, timeout=10, verify=True).content
+                result = control.six_decode(result)
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
@@ -120,6 +126,9 @@ class seasons:
 
                 if tvdb == '': tvdb = '0'
         except:
+            import traceback
+            failure = traceback.format_exc()
+            log_utils.log('tvdb-list0 Exception: ' + str(failure))
             return
 
 
@@ -129,11 +138,13 @@ class seasons:
             url = self.tvdb_info_link % (tvdb, 'en')
             #data = urllib_request.urlopen(url, timeout=30).read()
             data = requests.get(url, timeout=30, verify=True).content
-            zip = zipfile.ZipFile(six.BytesIO(data))
+            zip = zipfile.ZipFile(StringIO(data))
             result = zip.read('en.xml')
             artwork = zip.read('banners.xml')
             zip.close()
 
+            result = control.six_decode(result)
+            artwork = control.six_decode(artwork)
             dupe = client.parseDOM(result, 'SeriesName')[0]
             dupe = re.compile('[***]Duplicate (\d*)[***]').findall(dupe)
 
@@ -143,7 +154,7 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, 'en')
                 #data = urllib_request.urlopen(url, timeout=30).read()
                 data = requests.get(url, timeout=30, verify=True).content
-                zip = zipfile.ZipFile(six.BytesIO(data))
+                zip = zipfile.ZipFile(StringIO(data))
                 result = zip.read('en.xml')
                 artwork = zip.read('banners.xml')
                 zip.close()
@@ -152,7 +163,7 @@ class seasons:
                 url = self.tvdb_info_link % (tvdb, lang)
                 #data = urllib_request.urlopen(url, timeout=30).read()
                 data = requests.get(url, timeout=30, verify=True).content
-                zip = zipfile.ZipFile(six.BytesIO(data))
+                zip = zipfile.ZipFile(StringIO(data))
                 result2 = zip.read('%s.xml' % lang)
                 zip.close()
             else:
@@ -165,6 +176,7 @@ class seasons:
 
 
             result = result.split('<Episode>')
+            result2 = control.six_decode(result2)
             result2 = result2.split('<Episode>')
 
             item = result[0] ; item2 = result2[0]
@@ -284,6 +296,9 @@ class seasons:
 
             unaired = ''
         except:
+            import traceback
+            failure = traceback.format_exc()
+            log_utils.log('tvdb-list1 Exception: ' + str(failure))
             pass
 
 
@@ -317,6 +332,9 @@ class seasons:
                 self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
+                import traceback
+                failure = traceback.format_exc()
+                log_utils.log('tvdb-list2 Exception: ' + str(failure))
                 pass
 
 
@@ -422,7 +440,7 @@ class seasons:
             except:
                 import traceback
                 failure = traceback.format_exc()
-                log_utils.log('tvdb_list Exception: ' + str(failure))
+                log_utils.log('tvdb_list3 Exception: ' + str(failure))
                 pass
 
         return self.list
@@ -557,6 +575,9 @@ class seasons:
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
+                import traceback
+                failure = traceback.format_exc()
+                log_utils.log('season-dir Exception: ' + str(failure))
                 pass
 
         try: control.property(syshandle, 'showplot', items[0]['plot'])
@@ -573,7 +594,8 @@ class episodes:
 
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'https://api.tvmaze.com'
-        self.tvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        self.tvdb_key = 'JMCO8LQHIXX76CGN'#base64.b64decode(self.etvdb_key)#
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.systime = self.datetime.strftime('%Y%m%d%H%M%S%f')
         self.today_date = self.datetime.strftime('%Y-%m-%d')
@@ -582,7 +604,7 @@ class episodes:
         self.showunaired = control.setting('showunaired') or 'true'
         self.specials = control.setting('tv.specials') or 'true'
 
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (base64.b64decode(self.tvdb_key), '%s', '%s')
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key, '%s', '%s')
         self.tvdb_image = 'https://thetvdb.com/banners/'
         self.tvdb_poster = 'https://thetvdb.com/banners/_cache/'
 
@@ -912,11 +934,12 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib_request.urlopen(url, timeout=10).read()
                 data = requests.get(url, timeout=10, verify=True).content
-                zip = zipfile.ZipFile(six.BytesIO(data))
+                zip = zipfile.ZipFile(StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
 
+                result = control.six_decode(result)
                 result = result.split('<Episode>')
                 item0 = [x for x in result if '<EpisodeNumber>' in x and not re.compile(r'<SeasonNumber>(.+?)</SeasonNumber>').findall(x)[0] == '0']
                 item1 = sorted(item0, key=lambda k:(int(re.compile(r'<SeasonNumber>(\d+)</SeasonNumber>').findall(k)[-1]), int(re.compile(r'<EpisodeNumber>(\d+)</EpisodeNumber>').findall(k)[-1])))
@@ -1131,11 +1154,12 @@ class episodes:
                 url = self.tvdb_info_link % (i['tvdb'], lang)
                 #data = urllib_request.urlopen(url, timeout=10).read()
                 data = requests.get(url, timeout=10, verify=True).content
-                zip = zipfile.ZipFile(six.BytesIO(data))
+                zip = zipfile.ZipFile(StringIO(data))
                 result = zip.read('%s.xml' % lang)
                 artwork = zip.read('banners.xml')
                 zip.close()
 
+                result = control.six_decode(result)
                 result = result.split('<Episode>')
                 item = [(re.findall('<SeasonNumber>%01d</SeasonNumber>' % int(i['season']), x), re.findall('<EpisodeNumber>%01d</EpisodeNumber>' % int(i['episode']), x), x) for x in result]
                 item = [x[2] for x in item if len(x[0]) > 0 and len(x[1]) > 0][0]

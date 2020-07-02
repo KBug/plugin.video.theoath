@@ -17,7 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import re, os, json, binascii#, httplib, urllib, urlparse
+import re, os, binascii#, httplib, urllib, urlparse
+import simplejson as json
 from six.moves import urllib_parse
 from resources.lib.modules import client
 

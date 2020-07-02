@@ -18,14 +18,16 @@
 '''
 
 
-import json, base64#, urllib
+import base64#, urllib
+import simplejson as json
 
 from six.moves import urllib_parse
 
 import requests
 
 from resources.lib.modules import cache
-from resources.lib.modules import client, control
+from resources.lib.modules import client
+from resources.lib.modules import control
 
 
 class tvMaze:

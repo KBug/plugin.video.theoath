@@ -29,15 +29,18 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
+from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,json,datetime,base64#,urllib,urlparse
+import os,sys,re,datetime,base64,traceback#,urllib,urlparse,json
+import simplejson as json
 
 import six
-from six.moves import urllib_parse
+from six.moves import urllib_parse, zip, range
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
+
 
 params = dict(urllib_parse.parse_qsl(sys.argv[2].replace('?',''))) if len(sys.argv) > 1 else dict()
 
@@ -56,7 +59,7 @@ class movies:
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tm_user = control.setting('tm.user')
-        if self.tm_user == '' or self.tm_user == 'e49ced95ceb262abfc10d8acf46f8bc4': self.tm_user = base64.b64decode('MWZiOGU4YmZkNGM5YjMyMzRmZGU4Y2NmMWE2NzVmN2M=')
+        if self.tm_user == '' or self.tm_user == 'e49ced95ceb262abfc10d8acf46f8bc4': self.tm_user = '1fb8e8bfd4c9b3234fde8ccf1a675f7c'
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = str(control.setting('fanart.tv.user')) + str(control.setting('tm.user'))
         self.lang = control.apiLanguage()['trakt']
@@ -572,6 +575,7 @@ class movies:
             u = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
 
             result = trakt.getTraktAsJson(u)
+            result = control.six_decode(result)
 
             items = []
             for i in result:
@@ -598,19 +602,19 @@ class movies:
                 title = client.replaceHTMLCodes(title)
 
                 year = item['year']
-                year = re.sub('[^0-9]', '', str(year))
+                year = re.sub(r'[^0-9]', '', str(year))
 
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = item['ids']['imdb']
                 if imdb == None or imdb == '': raise Exception()
-                imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+                imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))
 
                 tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
                 try: premiered = item['released']
                 except: premiered = '0'
-                try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+                try: premiered = re.compile(r'(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
                 except: premiered = '0'
 
                 try: genre = item['genres']
@@ -680,7 +684,7 @@ class movies:
 
     def imdb_list(self, url):
         try:
-            for i in re.findall('date\[(\d+)\]', url):
+            for i in re.findall(r'date\[(\d+)\]', url):
                 url = url.replace('date[%s]' % i, (self.datetime - datetime.timedelta(days = int(i))).strftime('%Y-%m-%d'))
 
             def imdb_watchlist_id(url):
@@ -695,19 +699,21 @@ class movies:
                 url = self.imdblist2_link % url
 
             result = client.request(url)
+            result = control.six_decode(result)
 
             result = result.replace('\n', ' ')
 
-            items = client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
-            items += client.parseDOM(result, 'div', attrs = {'class': 'list_item.+?'})
+            items = client.parseDOM(result, 'div', attrs = {'class': r'lister-item .*?'})
+            items += client.parseDOM(result, 'div', attrs = {'class': r'list_item.*?'})
         except:
             return
 
         try:
-            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.+?ister-page-nex.+?'})
+            result = result.replace(r'"class=".*?ister-page-nex', '" class="lister-page-nex')
+            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': r'.*?ister-page-nex.*?'})
 
             if len(next) == 0:
-                next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
+                next = client.parseDOM(result, 'div', attrs = {'class': u'pagination'})[0]
                 next = zip(client.parseDOM(next, 'a', ret='href'), client.parseDOM(next, 'a'))
                 next = [i[0] for i in next if 'Next' in i[1]]
 
@@ -723,21 +729,21 @@ class movies:
                 title = client.replaceHTMLCodes(title)
                 title = control.six_encode(title)
 
-                year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
+                year = client.parseDOM(item, 'span', attrs = {'class': r'lister-item-year.*?'})
                 year += client.parseDOM(item, 'span', attrs = {'class': 'year_type'})
-                try: year = re.compile('(\d{4})').findall(year)[0]
+                try: year = re.compile(r'(\d{4})').findall(year)[0] if six.PY2 else re.compile(r'(\d{4})').findall(str(year))[0]
                 except: year = '0'
                 year = control.six_encode(year)
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = client.parseDOM(item, 'a', ret='href')[0]
-                imdb = re.findall('(tt\d*)', imdb)[0]
+                imdb = re.findall(r'(tt\d*)', imdb)[0]
                 imdb = control.six_encode(imdb)
 
                 try: poster = client.parseDOM(item, 'img', ret='loadlate')[0]
                 except: poster = '0'
                 if '/nopicture/' in poster: poster = '0'
-                poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
+                poster = re.sub(r'(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
                 poster = control.six_encode(poster)
 
@@ -748,7 +754,7 @@ class movies:
                 genre = client.replaceHTMLCodes(genre)
                 genre = control.six_encode(genre)
 
-                try: duration = re.findall('(\d+?) min(?:s|)', item)[-1]
+                try: duration = re.findall(r'(\d+?) min(?:s|)', item)[-1]
                 except: duration = '0'
                 duration = control.six_encode(duration)
 
@@ -771,7 +777,7 @@ class movies:
 
                 try:
                     votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
-                    votes = re.findall('\((.+?) vote(?:s|)\)', votes)[0]
+                    votes = re.findall(r'\((.+?) vote(?:s|)\)', votes)[0]
                 except:
                     try:
                         votes = client.parseDOM(item, 'span', ret='data-value')[0]
@@ -789,7 +795,7 @@ class movies:
                 mpaa = client.replaceHTMLCodes(mpaa)
                 mpaa = control.six_encode(mpaa)
 
-                try: director = re.findall('Director(?:s|):(.+?)(?:\||</div>)', item)[0]
+                try: director = re.findall(r'Director(?:s|):(.+?)(?:\||</div>)', item)[0]
                 except: director = '0'
                 director = client.parseDOM(director, 'a')
                 director = ' / '.join(director)
@@ -810,7 +816,7 @@ class movies:
                 try: plot = client.parseDOM(item, 'div', attrs = {'class': 'item_description'})[0]
                 except: pass
                 plot = plot.rsplit('<span>', 1)[0].strip()
-                plot = re.sub('<.+?>|</.+?>', '', plot)
+                plot = re.sub(r'<.+?>|</.+?>', '', plot)
                 if plot == '': plot = '0'
                 plot = client.replaceHTMLCodes(plot)
                 plot = control.six_encode(plot)
@@ -835,14 +841,14 @@ class movies:
                 name = control.six_encode(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
-                url = re.findall('(nm\d*)', url, re.I)[0]
+                url = re.findall(r'(nm\d*)', url, re.I)[0]
                 url = self.person_link % url
                 url = client.replaceHTMLCodes(url)
                 url = control.six_encode(url)
 
                 image = client.parseDOM(item, 'img', ret='src')[0]
                 # if not ('._SX' in image or '._SY' in image): raise Exception()
-                image = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', image)
+                image = re.sub(r'(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', image)
                 image = client.replaceHTMLCodes(image)
                 image = control.six_encode(image)
 
@@ -856,6 +862,7 @@ class movies:
     def imdb_user_list(self, url):
         try:
             result = client.request(url)
+            result = control.six_decode(result)
             items = client.parseDOM(result, 'li', attrs = {'class': 'ipl-zebra-list__item user-list'})
         except:
             pass
@@ -888,7 +895,7 @@ class movies:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': base64.b64decode('NWMwNmE2YzZmNTQzMTQ3YjQyMGM4MTNmZDFkMmM4NjY=')}
+        self.fanart_tv_headers = {'api-key': '5c06a6c6f543147b420c813fd1d2c866'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
@@ -920,6 +927,7 @@ class movies:
             imdb = self.list[i]['imdb']
 
             item = trakt.getMovieSummary(imdb)
+            item = control.six_decode(item)
 
             title = item.get('title')
             title = client.replaceHTMLCodes(title)
@@ -927,15 +935,15 @@ class movies:
             originaltitle = title
 
             year = item.get('year', 0)
-            year = re.sub('[^0-9]', '', str(year))
+            year = re.sub(r'[^0-9]', '', str(year))
 
-            imdb = item.get('ids', {}).get('imdb', '0')
-            imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
+            #imdb = item.get('ids', {}).get('imdb', '0')
+            #imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))
 
             tmdb = str(item.get('ids', {}).get('tmdb', 0))
 
             premiered = item.get('released', '0')
-            try: premiered = re.compile('(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+            try: premiered = re.compile(r'(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
             except: premiered = '0'
 
             genre = item.get('genres', [])
@@ -981,12 +989,15 @@ class movies:
                 tagline = trans_item.get('tagline') or tagline
                 plot = trans_item.get('overview') or plot
             except:
+                failure = traceback.format_exc()
+                log_utils.log('superinfo0: ' + str(failure))
                 pass
 
             try:
                 artmeta = True
                 #if self.fanart_tv_user == '': raise Exception()
                 art = client.request(self.fanart_tv_art_link % imdb, headers=self.fanart_tv_headers, timeout='10', error=True)
+                art = control.six_decode(art)
                 try: art = json.loads(art)
                 except: artmeta = False
             except:
@@ -1089,7 +1100,8 @@ class movies:
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
-        indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators()
+        #indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators() #fixme
+        indicators = playcount.getMovieIndicators()
 
         playbackMenu = control.six_encode(control.lang(32063)) if control.setting('hosts.mode') == '2' else control.six_encode(control.lang(32064))
 

@@ -19,7 +19,8 @@
 '''
 
 
-import re,sys,json,time,xbmc
+import re,sys,time,xbmc
+import simplejson as json
 import hashlib,os,base64,codecs,gzip#,urllib,xmlrpclib, StringIO
 
 import six

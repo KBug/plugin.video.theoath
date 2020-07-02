@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.theoath" name="TheOath" provider-name="host505" version="3.0.0">
+<addon id="plugin.video.theoath" name="TheOath" provider-name="host505" version="3.0.1">
     <requires>
         <!--<import addon="xbmc.python" version="2.20.0" />-->
         <import addon="script.theoath.artwork" />
         <import addon="script.theoath.metadata" />
         <import addon="script.module.resolveurl" />
         <import addon="script.module.requests" />
-        <import addon="script.module.metahandler" optional="true" />
         <import addon="script.module.beautifulsoup4" />
         <import addon="script.module.oathscrapers" />
         <import addon="script.module.six" />
+        <import addon="script.module.simplejson" />
+        <import addon="script.module.metahandler" optional="true" />
         <import addon="script.module.openscrapers" optional="true" />
         <import addon="script.module.orion" optional="true" />
+        <import addon="plugin.video.youtube" optional="true" />
     </requires>
     <extension library="theoath.py" point="xbmc.python.pluginsource">
         <provides>video</provides>

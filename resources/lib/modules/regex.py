@@ -553,8 +553,12 @@ def unpack(sJavascript,iteration=1, totaliterations=2  ):
         c1=int(aSplit[1].split(",62,")[1].split(',')[0])
         p1=myarray[0]
         k1=myarray[3]
-        with open('temp file'+str(iteration)+'.js', "wb") as filewriter:
-            filewriter.write(str(k1))
+        if six.PY3:
+            with open('temp file'+str(iteration)+'.js', "wb") as filewriter:
+                filewriter.write(str(k1))
+        elif six.PY2:
+            with open('temp file'+str(iteration)+'.js', "w") as filewriter:
+                filewriter.write(str(k1))
         #aa=1/0
     else:
 

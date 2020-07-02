@@ -14,7 +14,7 @@ from orion import *
 #import urlparse
 import pkgutil
 import base64
-import json
+import simplejson as json
 import time
 import sys
 import os
@@ -34,7 +34,7 @@ class source:
         self.key = 'VmxOQ1NVbEdaMmRUZVVKVVNVVjNaMDVUUWt4SlJYTm5UME5DUWtsRldXZFBVMEpKU1VSaloxUnBRa1JKUlZWblVXbENRMGxFVFdkVGFVSk5TVVZGWjFGcFFreEpSV05uVldsQ1JrbEZWV2RVUTBKSg=='
         self.domains = ['https://orionoid.com']
         self.providers = []
-        self.cachePath = os.path.join(xbmc.translatePath(control.six_decode(control.addonInfo('profile'))), 'orion.cache')
+        self.cachePath = os.path.join(xbmc.translatePath(control.addonInfo('profile')), 'orion.cache')
         self.cacheData = None
         self.resolvers = None
 
@@ -162,7 +162,7 @@ class source:
                     for loader, name, pkg in pkgutil.walk_packages([os.path.join(path, i)]):
                         if pkg: continue
                         try:
-                            name = re.sub(ur'[^\w\d\s]+', '', name.lower())
+                            name = re.sub(r'[^\w\d\s]+', '', name.lower())
                             module = loader.find_module(name)
                             if module: self.providers.append((name, module.load_module(name)))
                         except: self._error()

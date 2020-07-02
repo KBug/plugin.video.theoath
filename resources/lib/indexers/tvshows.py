@@ -31,10 +31,11 @@ from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,json,datetime,base64#,urllib,urlparse
+import os,sys,re,datetime,base64#,urllib,urlparse
+import simplejson as json
 
 import six
-from six.moves import urllib_parse
+from six.moves import urllib_parse, zip
 
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
@@ -53,7 +54,7 @@ class tvshows:
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'https://www.tvmaze.com'
         self.logo_link = 'https://i.imgur.com/'
-        self.tvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        self.tvdb_key = 'JMCO8LQHIXX76CGN'
         self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
@@ -63,7 +64,7 @@ class tvshows:
 
         self.search_link = 'https://api.trakt.tv/search/show?limit=20&page=1&query='
         self.tvmaze_info_link = 'https://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (base64.b64decode(self.tvdb_key), '%s', self.lang)
+        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key, '%s', self.lang)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
         self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -605,19 +606,21 @@ class tvshows:
                 url = self.imdblist2_link % url
 
             result = client.request(url)
+            result = control.six_decode(result)
 
             result = result.replace('\n', ' ')
 
-            items = client.parseDOM(result, 'div', attrs = {'class': 'lister-item .+?'})
-            items += client.parseDOM(result, 'div', attrs = {'class': 'list_item.+?'})
+            items = client.parseDOM(result, 'div', attrs = {'class': 'lister-item .*?'})
+            items += client.parseDOM(result, 'div', attrs = {'class': 'list_item.*?'})
         except:
             return
 
         try:
-            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': '.+?ister-page-nex.+?'})
+            result = result.replace(r'"class=".*?ister-page-nex', '" class="lister-page-nex')
+            next = client.parseDOM(result, 'a', ret='href', attrs = {'class': r'.*?ister-page-nex.*?'})
 
             if len(next) == 0:
-                next = client.parseDOM(result, 'div', attrs = {'class': 'pagination'})[0]
+                next = client.parseDOM(result, 'div', attrs = {'class': u'pagination'})[0]
                 next = zip(client.parseDOM(next, 'a', ret='href'), client.parseDOM(next, 'a'))
                 next = [i[0] for i in next if 'Next' in i[1]]
 
@@ -633,9 +636,10 @@ class tvshows:
                 title = client.replaceHTMLCodes(title)
                 title = control.six_encode(title)
 
-                year = client.parseDOM(item, 'span', attrs = {'class': 'lister-item-year.+?'})
-                year += client.parseDOM(item, 'span', attrs = {'class': 'year_type'})
-                year = re.findall('(\d{4})', year[0])[0]
+                year = client.parseDOM(item, 'span', attrs = {'class': r'lister-item-year.*?'})
+                year += client.parseDOM(item, 'span', attrs = {'class': r'year_type'})
+                try: year = re.findall(r'(\d{4})', year[0])[0] if six.PY2 else re.findall(r'(\d{4})', str(year[0]))[0]
+                except: year = '0'
                 year = control.six_encode(year)
 
                 if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
@@ -877,7 +881,7 @@ class tvshows:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': base64.b64decode('NWMwNmE2YzZmNTQzMTQ3YjQyMGM4MTNmZDFkMmM4NjY=')}
+        self.fanart_tv_headers = {'api-key': '5c06a6c6f543147b420c813fd1d2c866'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
@@ -923,6 +927,7 @@ class tvshows:
 
                 #result = client.request(url, timeout='10')
                 result = requests.get(url, timeout=10, verify=True).content
+                result = control.six_decode(result)
 
                 try: tvdb = client.parseDOM(result, 'seriesid')[0]
                 except: tvdb = '0'
@@ -945,6 +950,7 @@ class tvshows:
 
                 #tvdb = client.request(url, timeout='10')
                 tvdb = requests.get(url, timeout=10, verify=True).content
+                tvdb = control.six_decode(tvdb)
                 tvdb = re.sub(r'[^\x00-\x7F]+', '', tvdb)
                 tvdb = client.replaceHTMLCodes(tvdb)
                 tvdb = client.parseDOM(tvdb, 'Series')
@@ -960,6 +966,7 @@ class tvshows:
             url = self.tvdb_info_link % tvdb
             #item = client.request(url, timeout='10')
             item = requests.get(url, timeout=10, verify=True).content
+            item = control.six_decode(item)
             if item == None: raise Exception()
 
             if imdb == '0':
@@ -1157,7 +1164,8 @@ class tvshows:
         try: isOld = False ; control.item().getArt('type')
         except: isOld = True
 
-        indicators = playcount.getTVShowIndicators(refresh=True) if action == 'tvshows' else playcount.getTVShowIndicators()
+        #indicators = playcount.getTVShowIndicators(refresh=True) if action == 'tvshows' else playcount.getTVShowIndicators() #fixme
+        indicators = playcount.getTVShowIndicators()
 
         flatten = True if control.setting('flatten.tvshows') == 'true' else False
 

@@ -19,7 +19,8 @@
 '''
 
 
-import re,json
+import re
+import simplejson as json
 
 from resources.lib.modules import client
 from resources.lib.modules import control

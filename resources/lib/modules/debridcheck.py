@@ -7,7 +7,7 @@
 
 import xbmc, xbmcgui
 import os
-import json
+import simplejson as json
 import time
 import datetime
 import requests

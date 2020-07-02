@@ -17,8 +17,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import json, re
+import re
+import simplejson as json
 import six
+
+
+if six.PY2:
+    unicode = unicode
+elif six.PY3:
+    str = unicode = basestring = str
 
 
 def json_load_as_str(file_handle):
@@ -30,11 +37,11 @@ def json_loads_as_str(json_text):
 
 
 def byteify(data, ignore_dicts=False):
-    if isinstance(data, six.text_type):
-            if six.PY2:
-                return data.encode('utf-8')
-            else:
-                return data
+    if isinstance(data, unicode):
+        if six.PY2:
+            return data.encode('utf-8')
+        else:
+            return data
     if isinstance(data, list):
         return [byteify(item, ignore_dicts=True) for item in data]
     if isinstance(data, dict) and not ignore_dicts:

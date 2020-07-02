@@ -15,60 +15,111 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-import ast
+
+from __future__ import absolute_import
+
 import hashlib
 import re
 import time
-from resources.lib.modules import control
+import os
+from ast import literal_eval as evaluate
+import six
 
 try:
     from sqlite3 import dbapi2 as db, OperationalError
 except ImportError:
     from pysqlite2 import dbapi2 as db, OperationalError
 
-"""
-This module is used to get/set cache for every action done in the system
-"""
+from resources.lib.modules import control
+
+if six.PY2:
+    str = unicode
+elif six.PY3:
+    str = unicode = basestring = str
 
 cache_table = 'cache'
 
-def get(function, duration, *args):
-    # type: (function, int, object) -> object or None
-    """
-    Gets cached value for provided function with optional arguments, or executes and stores the result
-    :param function: Function to be executed
-    :param duration: Duration of validity of cache in hours
-    :param args: Optional arguments for the provided function
-    """
+def get(function_, duration, *args, **table):
 
     try:
-        key = _hash_function(function, args)
-        cache_result = cache_get(key)
-        if cache_result:
-            if _is_cache_valid(cache_result['date'], duration):
-                return ast.literal_eval(control.six_encode(cache_result['value']))
 
-        fresh_result = repr(function(*args))
-        if not fresh_result:
-            # If the cache is old, but we didn't get fresh result, return the old cache
-            if cache_result:
-                return cache_result
-            return None
+        response = None
 
-        cache_insert(key, fresh_result)
-        return ast.literal_eval(control.six_encode(fresh_result))
+        f = repr(function_)
+        f = re.sub(r'.+\smethod\s|.+function\s|\sat\s.+|\sof\s.+', '', f)
+
+        a = hashlib.md5()
+        for i in args:
+            a.update(str(i))
+        a = str(a.hexdigest())
+
     except Exception:
-        return None
 
+        pass
 
-def timeout(function, *args):
     try:
-        key = _hash_function(function, args)
+        table = table['table']
+    except Exception:
+        table = 'rel_list'
+
+    try:
+
+        control.makeFile(control.dataPath)
+        dbcon = db.connect(control.cacheFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("SELECT * FROM {tn} WHERE func = '{f}' AND args = '{a}'".format(tn=table, f=f, a=a))
+        match = dbcur.fetchone()
+
+        try:
+            response = evaluate(match[2].encode('utf-8'))
+        except AttributeError:
+            response = evaluate(match[2])
+
+        t1 = int(match[3])
+        t2 = int(time.time())
+        update = (abs(t2 - t1) / 3600) >= int(duration)
+        if not update:
+            return response
+
+    except Exception:
+
+        pass
+
+    try:
+
+        r = function_(*args)
+        if (r is None or r == []) and response is not None:
+            return response
+        elif r is None or r == []:
+            return r
+
+    except Exception:
+        return
+
+    try:
+
+        r = repr(r)
+        t = int(time.time())
+        dbcur.execute("CREATE TABLE IF NOT EXISTS {} (""func TEXT, ""args TEXT, ""response TEXT, ""added TEXT, ""UNIQUE(func, args)"");".format(table))
+        dbcur.execute("DELETE FROM {0} WHERE func = '{1}' AND args = '{2}'".format(table, f, a))
+        dbcur.execute("INSERT INTO {} Values (?, ?, ?, ?)".format(table), (f, a, r, t))
+        dbcon.commit()
+
+    except Exception:
+        pass
+
+    try:
+        return evaluate(r.encode('utf-8'))
+    except Exception:
+        return evaluate(r)
+
+def timeout(function_, *args):
+    try:
+        key = _hash_function(function_, args)
         result = cache_get(key)
         return int(result['date'])
     except Exception:
         return None
-
 
 def cache_get(key):
     # type: (str, str) -> dict or None
@@ -98,7 +149,6 @@ def cache_insert(key, value):
         )
 
     cursor.connection.commit()
-
 
 def cache_clear():
     try:
@@ -239,16 +289,20 @@ def cache_version_check():
 
 
 def _find_cache_version():
-
-    import os
     versionFile = os.path.join(control.dataPath, 'cache.v')
-    try: 
-        with open(versionFile, 'rb') as fh: oldVersion = fh.read()
+    try:
+        if six.PY2:
+            with open(versionFile, 'rb') as fh: oldVersion = fh.read()
+        elif six.PY3:
+            with open(versionFile, 'r') as fh: oldVersion = fh.read()
     except: oldVersion = '0'
     try:
         curVersion = control.addon('plugin.video.theoath').getAddonInfo('version')
-        if oldVersion != curVersion: 
-            with open(versionFile, 'wb') as fh: fh.write(curVersion)
+        if oldVersion != curVersion:
+            if six.PY2:
+                with open(versionFile, 'wb') as fh: fh.write(curVersion)
+            elif six.PY3:
+                with open(versionFile, 'w') as fh: fh.write(curVersion)
             return True
         else: return False
     except: return False

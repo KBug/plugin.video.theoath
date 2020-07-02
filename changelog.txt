@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.0.1[/COLOR][/B]
+- Some more adjustments towards PY3/K19 compatibility
+
 [B][COLOR gold]v3.0.0[/COLOR][/B]
 - Initial work for Python 3 compatibility
 - Other adjustments for Kodi 19

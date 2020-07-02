@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 import cProfile
-import json
+import simplejson as json
 import os
 import pstats
 #import StringIO

@@ -2,7 +2,8 @@
 
 
 
-import re,json
+import re
+import simplejson as json
 from resources.lib.modules import client
 
 def resolve(url):

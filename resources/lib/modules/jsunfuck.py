@@ -20,7 +20,7 @@ import re
 import sys
 #import urllib
 import string
-import json
+import simplejson as json
 from six.moves import urllib_parse
 from six.moves import range as x_range
 

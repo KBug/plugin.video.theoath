@@ -19,14 +19,15 @@
 """
 
 
-import json
 import re
 import time
 import base64
 #import urllib
 #import urlparse
 
+import six
 from six.moves import urllib_parse
+import simplejson as json
 
 from resources.lib.modules import cache
 from resources.lib.modules import cleandate
@@ -34,6 +35,11 @@ from resources.lib.modules import client
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
 from resources.lib.modules import utils
+
+if six.PY2:
+    str = unicode
+elif six.PY3:
+    str = unicode = basestring = str
 
 BASE_URL = 'https://api.trakt.tv'
 V2_API_KEY = control.setting('trakt.client_id')
@@ -113,7 +119,7 @@ def authTrakt():
             raise Exception()
 
         result = getTraktAsJson('/oauth/device/code', {'client_id': V2_API_KEY})
-        verification_url = control.six_encode(control.lang(32513) % result['verification_url'])
+        verification_url = control.lang(32513) % result['verification_url']
         user_code = control.six_encode(control.lang(32514) % result['user_code'])
         expires_in = int(result['expires_in'])
         device_code = result['device_code']

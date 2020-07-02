@@ -24,7 +24,7 @@ except:
     from pysqlite2 import dbapi2 as database
 
 import datetime
-import json
+import simplejson as json
 import os
 import re
 import sys
@@ -42,7 +42,7 @@ class lib_tools:
     @staticmethod
     def create_folder(folder):
         try:
-            folder = xbmc.makeLegalFilename(folder)
+            folder = control.legalFilename(folder)
             control.makeFile(folder)
 
             try:
@@ -63,7 +63,7 @@ class lib_tools:
     @staticmethod
     def write_file(path, content):
         try:
-            path = xbmc.makeLegalFilename(path)
+            path = control.legalFilename(path)
             if not isinstance(content, six.string_types):
                 content = str(content)
 
@@ -104,7 +104,7 @@ class lib_tools:
             filename = re.sub(r'(?!%s)[^\w\-_\.]', '.', filename)
             filename = re.sub('\.+', '.', filename)
             filename = re.sub(re.compile('(CON|PRN|AUX|NUL|COM\d|LPT\d)\.', re.I), '\\1_', filename)
-            xbmc.makeLegalFilename(filename)
+            control.legalFilename(filename)
             return filename
         except:
             return filename
