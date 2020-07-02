@@ -22,7 +22,6 @@ import sys
 import simplejson as json
 import re
 import base64
-import requests
 from six.moves import urllib_parse
 
 from resources.lib.modules import client
