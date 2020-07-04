@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-'''
-    TheOath Add-on
+"""
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 
 import os,sys#,urlparse
@@ -514,10 +515,11 @@ class navigator:
         control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearDebridCheck(self):
+        #control.idle()
         yes = control.yesnoDialog(control.lang(32056))
         if not yes: return
-        from resources.lib.modules import debridcheck
-        debridcheck.DebridCache().clear_database()
+        from resources.lib.modules import cache
+        cache.cache_clear_debrid()
         control.infoDialog(control.six_encode(control.lang(32057)), sound=True, icon='INFO')
 
     def clearCacheAll(self):

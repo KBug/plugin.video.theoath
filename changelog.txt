@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.1.0[/COLOR][/B]
+- Finalised compatibility with PY3/K19, while retaining PY2 compat using 'six' module
+    - Both TheOath and the Oathscrapers package now work under Kodi 19
+    - Only a couple scrapers have been converted till now
+    - Local indicators don't work due to their dependency on Metahandler
+- Fixed AllDebrid torrents cache check
+
 [B][COLOR gold]v3.0.1[/COLOR][/B]
 - Some more adjustments towards PY3/K19 compatibility
 

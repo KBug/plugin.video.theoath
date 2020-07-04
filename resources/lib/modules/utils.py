@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-    Covenant Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,6 +49,7 @@ def byteify(data, ignore_dicts=False):
         return dict([(byteify(key, ignore_dicts=True), byteify(value, ignore_dicts=True)) for key, value in six.iteritems(data)])
     return data
 
+
 def title_key(title):
     try:
         if title is None: title = ''
@@ -64,3 +66,20 @@ def title_key(title):
         return title[offset:]
     except:
         return title
+
+
+def chunks(l, n):
+    """
+    Yield successive n-sized chunks from l.
+    """
+    for i in list(range(0, len(l), n)):
+        yield l[i:i + n]
+
+
+def _size(siz):
+    if siz in ['0', 0, '', None]: return 0, ''
+    div = 1 if siz.lower().endswith(('gb', 'gib')) else 1024
+    float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))) / div
+    str_size = str('%.2f GB' % float_size)
+    return float_size, str_size
+

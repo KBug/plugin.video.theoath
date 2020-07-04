@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
     Exodus Add-on
     ///Updated for TheOath///
 
@@ -16,14 +16,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 
-import sys,re,random,datetime,time#,urllib,urlparse
+import sys,re,random,datetime,time,traceback#,urllib,urlparse
 import simplejson as json
 
 import six
-from six.moves import urllib_parse
+from six.moves import urllib_parse, zip
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -55,7 +55,7 @@ class sources:
 
         try:
             url = None
-            
+
             items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
 
             select = control.setting('hosts.mode') if select == None else select
@@ -240,7 +240,7 @@ class sources:
                 try:
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('[CR]    ', ' | '))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
 
@@ -573,6 +573,8 @@ class sources:
 
                 time.sleep(0.5)
             except:
+                failure = traceback.format_exc()
+                log_utils.log('sourcefail: ' + str(failure))
                 pass
 
         try: progressDialog.close()
@@ -613,7 +615,7 @@ class sources:
             except:
                 pass
         ''' END '''
-        
+
         try:
             sources = []
             dbcur.execute("SELECT * FROM rel_src WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
@@ -902,14 +904,14 @@ class sources:
                     filter += [i for i in torrentSources if i.get('source') == 'cached torrent']
                     filter += [i for i in torrentSources if i.get('source').lower() == 'torrent']
                     filter += [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]uncached torrent[/COLOR]']
-                    filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+                    filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
                 except:
-                    filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
-                    filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+                    filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
+                    filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
             else:
-                filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
-                filter += [dict(i.items() + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
+                filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
+                filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
         if debrid_only == 'false' or debrid.status() == False:
             filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
@@ -995,12 +997,12 @@ class sources:
                 if not d == '':
                     label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR]\n    [COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
+                    label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][CR]    [COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
 
                 else:
                     label = '%02d' % int(i+1)
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
-                    label += ' | [B]%s[/B] | %s | [B]%s[/B]\n    [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
+                    label += ' | [B]%s[/B] | %s | [B]%s[/B][CR]    [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
 
             elif simple:
                 label = '%02d' % int(i+1)
@@ -1070,12 +1072,14 @@ class sources:
 
 
             if url.startswith('http') and '.m3u8' in url:
-                result = client.request(url.split('|')[0], headers=headers, output='geturl', timeout='20')
-                if result == None: raise Exception()
+                try: result = client.request(url.split('|')[0], headers=headers, output='geturl', timeout='20')
+                except: pass
+                #if result == None: raise Exception()
 
             elif url.startswith('http'):
-                result = client.request(url.split('|')[0], headers=headers, output='chunk', timeout='20')
-                if result == None: raise Exception()
+                try: result = client.request(url.split('|')[0], headers=headers, output='chunk', timeout='20')
+                except: pass
+                #if result == None: raise Exception()
 
 
             self.url = url
@@ -1117,7 +1121,7 @@ class sources:
 
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('[CR]    ', ' | '))
                     except:
                         progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
 
@@ -1222,7 +1226,7 @@ class sources:
         for i in list(range(len(items))):
             try:
                 if progressDialog.iscanceled(): break
-                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('\n    ', ' | '))
+                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('[CR]    ', ' | '))
             except:
                 progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
 

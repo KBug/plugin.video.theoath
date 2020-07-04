@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
     Exodus Add-on
     ///Updated for TheOath///
 
@@ -16,7 +16,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 
 import re,sys,time,xbmc
@@ -394,6 +394,7 @@ class subtitles:
             content = server.DownloadSubtitles(token, content)
             content = base64.b64decode(content['data'][0]['data'])
             content = gzip.GzipFile(fileobj=six.BytesIO(content)).read()
+            if six.PY3: content = six.ensure_text(content)
 
             subtitle = xbmc.translatePath('special://temp/')
             subtitle = os.path.join(subtitle, 'TemporarySubs.%s.srt' % lang)

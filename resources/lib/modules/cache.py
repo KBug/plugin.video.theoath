@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    theoath Add-on
+    Exodus Add-on
+    ///Updated for TheOath///
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -192,6 +193,20 @@ def cache_clear_providers():
     except:
         pass
 
+def cache_clear_debrid():
+    try:
+        cursor = _get_connection_cursor_debrid()
+
+        for t in ['debrid_data']:
+            try:
+                cursor.execute("DROP TABLE IF EXISTS %s" % t)
+                cursor.execute("VACUUM")
+                cursor.commit()
+            except:
+                pass
+    except:
+        pass
+
 def cache_clear_search():
     try:
         cursor = _get_connection_cursor_search()
@@ -210,8 +225,7 @@ def cache_clear_all():
     cache_clear()
     cache_clear_meta()
     cache_clear_providers()
-    from resources.lib.modules import debridcheck
-    debridcheck.DebridCache().clear_database()
+    cache_clear_debrid()
 
 def _get_connection_cursor():
     conn = _get_connection()
@@ -240,6 +254,16 @@ def _get_connection_cursor_providers():
 def _get_connection_providers():
     control.makeFile(control.dataPath)
     conn = db.connect(control.providercacheFile)
+    conn.row_factory = _dict_factory
+    return conn
+
+def _get_connection_cursor_debrid():
+    conn = _get_connection_debrid()
+    return conn.cursor()
+
+def _get_connection_debrid():
+    control.makeFile(control.dataPath)
+    conn = db.connect(control.dbFile)
     conn.row_factory = _dict_factory
     return conn
 

@@ -22,7 +22,7 @@ import re
 import xbmc
 import xbmcvfs
 
-from six.moves import urllib_parse#,urllib_request
+from six.moves import urllib_parse
 
 from resources.lib.modules import control
 
@@ -31,13 +31,12 @@ class source:
     def __init__(self):
         self.priority = 1
         self.language = ['ab', 'aa', 'af', 'ak', 'sq', 'am', 'ar', 'an', 'hy', 'as', 'av', 'ae', 'ay', 'az', 'bm', 'ba', 'eu', 'be', 'bn', 'bh', 'bi', 'nb', 'bs', 'br', 'bg', 'my', 'ca', 'ch', 'ce', 'ny', 'zh', 'cv', 'kw', 'co', 'cr', 'hr', 'cs', 'da', 'dv', 'nl', 'dz', 'en', 'eo', 'et', 'ee', 'fo', 'fj', 'fi', 'fr', 'ff', 'gd', 'gl', 'lg', 'ka', 'de', 'el', 'gr', 'gn', 'gu', 'ht', 'ha', 'he', 'hz', 'hi', 'ho', 'hu', 'is', 'io', 'ig', 'id', 'ia', 'ie', 'iu', 'ik', 'ga', 'it', 'ja', 'jv', 'kl', 'kn', 'kr', 'ks', 'kk', 'km', 'ki', 'rw', 'rn', 'kv', 'kg', 'ko', 'ku', 'kj', 'ky', 'lo', 'la', 'lv', 'li', 'ln', 'lt', 'lu', 'lb', 'mk', 'mg', 'ms', 'ml', 'mt', 'gv', 'mi', 'mr', 'mh', 'mn', 'na', 'nv', 'ng', 'ne', 'nd', 'se', 'no', 'ii', 'nn', 'oc', 'oj', 'or', 'om', 'os', 'pi', 'ps', 'fa', 'pl', 'pt', 'pa', 'qu', 'ro', 'rm', 'ru', 'sm', 'sg', 'sa', 'sc', 'sr', 'sn', 'sd', 'si', 'cu', 'sk', 'sl', 'so', 'nr', 'st', 'es', 'su', 'sw', 'ss', 'sv', 'tl', 'ty', 'tg', 'ta', 'tt', 'te', 'th', 'bo', 'ti', 'to', 'ts', 'tn', 'tr', 'tk', 'tw', 'uk', 'ur', 'ug', 'uz', 've', 'vi', 'vo', 'wa', 'cy', 'fy', 'wo', 'xh', 'yi', 'yo', 'za', 'zu']
-        self.key = 'VmxOQ1NVbEdaMmRUZVVKVVNVVjNaMDVUUWt4SlJYTm5UME5DUWtsRldXZFBVMEpKU1VSaloxUnBRa1JKUlZWblVXbENRMGxFVFdkVGFVSk5TVVZGWjFGcFFreEpSV05uVldsQ1JrbEZWV2RVUTBKSg=='
+        self.key = 'VUhYS1NMNUtLOEFGOUg3TkNFQkIzSkxBQktHUkVFTEg='
         self.domains = ['https://orionoid.com']
         self.providers = []
         self.cachePath = os.path.join(xbmc.translatePath(control.addonInfo('profile')), 'orion.cache')
         self.cacheData = None
         self.resolvers = None
-
 
     def movie(self, imdb, title, localtitle, aliases, year):
         try: return urllib_parse.urlencode({'imdb' : imdb, 'title' : title, 'year' : year})
@@ -67,7 +66,7 @@ class source:
         linenumber = traceback.tb_lineno
         name = traceback.tb_frame.f_code.co_name
         errortype = type.__name__
-        errormessage = str(errortype) + ' -> ' + str(value.message)
+        errormessage = str(errortype) + ' -> ' + str(value.msg)
         parameters = [filename, linenumber, name, errormessage]
         parameters = ' | '.join([str(parameter) for parameter in parameters])
         xbmc.log('control.addonInfo(name) ORION [ERROR]: ' + parameters, xbmc.LOGERROR)
@@ -162,7 +161,7 @@ class source:
                     for loader, name, pkg in pkgutil.walk_packages([os.path.join(path, i)]):
                         if pkg: continue
                         try:
-                            name = re.sub(r'[^\w\d\s]+', '', name.lower())
+                            name = re.sub(u'[^\w\d\s]+', '', name.lower())
                             module = loader.find_module(name)
                             if module: self.providers.append((name, module.load_module(name)))
                         except: self._error()
@@ -205,7 +204,8 @@ class source:
         sources = []
         try:
             if url == None: raise Exception()
-            orion = Orion(base64.b64decode(base64.b64decode(base64.b64decode(self.key))).replace(' ', ''))
+            key_ = base64.b64decode(self.key)
+            orion = Orion(key_)
             if not orion.userEnabled() or not orion.userValid(): raise Exception()
 
             data = urllib_parse.parse_qs(url)
