@@ -5,7 +5,8 @@ import re
 import operator as op
 
 from ..exceptions import CloudflareSolveError
-from . import JavaScriptInterpreter, pyparsing
+from . import JavaScriptInterpreter
+from . import pyparsing
 
 # ------------------------------------------------------------------------------- #
 

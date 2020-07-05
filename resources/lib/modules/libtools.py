@@ -141,7 +141,7 @@ class libmovies:
 
             id = imdb
             lib = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["imdbnumber", "title", "year"]}, "id": 1}' % (year, str(int(year)+1), str(int(year)-1)))
-            lib = unicode(lib, 'utf-8', errors='ignore') if six.PY2 else str(lib, 'utf-8')
+            lib = six.ensure_str(lib)  #unicode(lib, 'utf-8', errors='ignore') if six.PY2 else str(lib, 'utf-8')
             lib = json.loads(lib)['result']['movies']
             lib = [i for i in lib if str(i['imdbnumber']) in id or (control.six_encode(i['title']) == title and str(i['year']) == year)][0]
         except:
@@ -226,7 +226,8 @@ class libmovies:
 
             sysname, systitle = urllib_parse.quote_plus(name), urllib_parse.quote_plus(title)
 
-            transtitle = cleantitle.normalize(title.translate(None, '\/:*?"<>|'))
+            try: transtitle = cleantitle.normalize(title.translate(None, '\/:*?"<>|'))
+            except: transtitle = cleantitle.normalize(title.translate(str.maketrans('', '', '\/:*?"<>|')))
 
             content = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s' % (sys.argv[0], sysname, systitle, year, imdb)
 
@@ -385,7 +386,8 @@ class libtvshows:
             episodetitle = urllib_parse.quote_plus(title)
             systitle, syspremiered = urllib_parse.quote_plus(tvshowtitle), urllib_parse.quote_plus(premiered)
 
-            transtitle = cleantitle.normalize(tvshowtitle.translate(None, '\/:*?"<>|'))
+            try: transtitle = cleantitle.normalize(tvshowtitle.translate(None, '\/:*?"<>|'))
+            except: transtitle = cleantitle.normalize(tvshowtitle.translate(str.maketrans('', '', '\/:*?"<>|')))
 
             content = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&date=%s' % (sys.argv[0], episodetitle, year, imdb, tvdb, season, episode, systitle, syspremiered)
 

@@ -1,4 +1,6 @@
-'''
+# -*- coding: utf-8 -*-
+
+"""
     Simple XBMC Download Script
     Copyright (C) 2013 Sean Poyser (seanpoyser@gmail.com)
 
@@ -14,14 +16,11 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-'''
+"""
 
 
 import re
 import simplejson as json
-#import urllib
-#import urllib2
-#import urlparse
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -29,8 +28,10 @@ import xbmcvfs
 import os
 import inspect
 import sys
+from io import open
 
 from six.moves import urllib_parse, urllib_request
+
 
 def download(name, image, url):
 
@@ -44,7 +45,8 @@ def download(name, image, url):
     url = url.split('|')[0]
 
     content = re.compile('(.+?)\sS(\d*)E\d*$').findall(name)
-    transname = name.translate(None, '\/:*?"<>|').strip('.')
+    try: transname = name.translate(None, '\/:*?"<>|').strip('.')
+    except: transname = name.translate(str.maketrans('', '', '\/:*?"<>|')).strip('.')
     levels =['../../../..', '../../..', '../..', '..']
 
     if len(content) == 0:
@@ -63,7 +65,8 @@ def download(name, image, url):
             try: control.makeFile(os.path.abspath(os.path.join(dest, level)))
             except: pass
         control.makeFile(dest)
-        transtvshowtitle = content[0][0].translate(None, '\/:*?"<>|').strip('.')
+        try: transtvshowtitle = content[0][0].translate(None, '\/:*?"<>|').strip('.')
+        except: transtvshowtitle = content[0][0].translate(str.maketrans('', '', '\/:*?"<>|')).strip('.')
         dest = os.path.join(dest, transtvshowtitle)
         control.makeFile(dest)
         dest = os.path.join(dest, 'Season %01d' % int(content[0][1]))
@@ -140,7 +143,7 @@ def doDownload(url, dest, title, image, headers):
     resp = getResponse(url, headers, 0)
 
     if not resp:
-        xbmcgui.Dialog().ok(title, dest, 'Download failed', 'No response from server')
+        xbmcgui.Dialog().ok(title, dest + '[CR]' + 'Download failed' + '[CR]' + 'No response from server')
         return
 
     try:    content = int(resp.headers['Content-Length'])
@@ -155,7 +158,7 @@ def doDownload(url, dest, title, image, headers):
         print("Download is resumable")
 
     if content < 1:
-        xbmcgui.Dialog().ok(title, file, 'Unknown filesize', 'Unable to download')
+        xbmcgui.Dialog().ok(title, file + '[CR]' + 'Unknown filesize' + '[CR]' + 'Unable to download')
         return
 
     size = 1024 * 1024
@@ -171,13 +174,13 @@ def doDownload(url, dest, title, image, headers):
     resume  = 0
     sleep   = 0
 
-    if xbmcgui.Dialog().yesno(title + ' - Confirm Download', file, 'Complete file is %dMB' % mb, 'Continue with download?', 'Confirm',  'Cancel') == 1:
+    if not xbmcgui.Dialog().yesno(title + ' - Confirm Download', file + '[CR]' + 'Complete file is %dMB' % mb + '[CR]' + 'Continue with download?'):
         return
 
     print('Download File Size : %dMB %s ' % (mb, dest))
 
-    #f = open(dest, mode='wb')
-    f = xbmcvfs.File(dest, 'w')
+    f = open(dest, mode='wb')
+    #f = xbmcvfs.File(dest, 'w')
 
     chunk  = None
     chunks = []
@@ -188,7 +191,7 @@ def doDownload(url, dest, title, image, headers):
             downloaded += len(c)
         percent = min(100 * downloaded / content, 100)
         if percent >= notify:
-            xbmc.executebuiltin( "XBMC.Notification(%s,%s,%i,%s)" % ('Download Progress: ' + str(percent) + '% - ' + title, dest, 10000, image))
+            xbmcgui.Dialog().notification('Download Progress: ' + str(int(percent)) + '% - ' + title, dest, image, 5000, False)
 
             print('Download percent : %s %s %dMB downloaded : %sMB File Size : %sMB' % (str(percent)+'%', dest, mb, downloaded / 1000000, content / 1000000))
 
@@ -197,7 +200,7 @@ def doDownload(url, dest, title, image, headers):
         chunk = None
         error = False
 
-        try:        
+        try:
             chunk  = resp.read(size)
             if not chunk:
                 if percent < 99:
@@ -212,7 +215,7 @@ def doDownload(url, dest, title, image, headers):
                     print('%s download complete' % (dest))
                     return done(title, dest, True)
 
-        except Exception, e:
+        except Exception as e:
             print(str(e))
             error = True
             sleep = 10

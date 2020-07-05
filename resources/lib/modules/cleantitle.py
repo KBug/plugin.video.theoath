@@ -55,7 +55,8 @@ def geturl(title):
     if title is None: return
     title = title.lower()
     title = title.rstrip()
-    title = title.translate(str.maketrans('', '', ':*?"\'\.<>|&!,'))
+    try: title = title.translate(None, ':*?"\'\.<>|&!,')
+    except: title = title.translate(str.maketrans('', '', ':*?"\'\.<>|&!,'))
     title = title.replace('/', '-')
     title = title.replace(' ', '-')
     title = title.replace('--', '-')

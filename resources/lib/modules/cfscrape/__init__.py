@@ -45,6 +45,7 @@ from .exceptions import (
     CloudflareLoopProtection,
     CloudflareCode1020,
     CloudflareIUAMError,
+    CloudflareSolveError,
     CloudflareChallengeError,
     CloudflareReCaptchaError,
     CloudflareReCaptchaProvider
@@ -57,7 +58,7 @@ from . import dump
 
 # ------------------------------------------------------------------------------- #
 
-__version__ = '1.2.41'
+__version__ = '1.2.42'
 
 # ------------------------------------------------------------------------------- #
 
@@ -336,6 +337,7 @@ class CloudScraper(Session):
                     resp.text,
                     re.M | re.S
                 )
+                and re.search(r'window._cf_chl_enter\(', resp.text, re.M | re.S)
             )
         except AttributeError:
             pass
@@ -353,7 +355,7 @@ class CloudScraper(Session):
                 resp.headers.get('Server', '').startswith('cloudflare')
                 and resp.status_code == 403
                 and re.search(
-                    r'action="/.*?__cf_chl_captcha_tk__=\S+".*?data\-sitekey=.*?',
+                    r'action="/\S+__cf_chl_captcha_tk__=\S+',
                     resp.text,
                     re.M | re.DOTALL
                 )
@@ -639,6 +641,12 @@ class CloudScraper(Session):
                 submit_url['url'],
                 **cloudflare_kwargs
             )
+
+            if challengeSubmitResponse.status_code == 400:
+                self.simpleException(
+                    CloudflareSolveError,
+                    'Invalid challenge answer detected, Cloudflare broken?'
+                )
 
             # ------------------------------------------------------------------------------- #
             # Return response if Cloudflare is doing content pass through instead of 3xx

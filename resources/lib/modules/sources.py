@@ -763,17 +763,17 @@ class sources:
         uniqueURLs = set()
         for source in sources:
             url = source.get('url')
-            if 'magnet:' in url:
-                #url = url[:60]
-                url = re.findall(r'btih:(\w{40})', url)[0]
-            try:
+            if isinstance(url, six.string_types):
+                if 'magnet:' in url:
+                    url = url[:60]
+                    #url = re.findall(u'btih:(\w{40})', url)[0]
                 if url not in uniqueURLs:
                     uniqueURLs.add(url)
                     yield source # Yield the unique source.
                 else:
                     pass # Ignore duped sources.
-            except:
-                yield source
+            else:
+                yield source # Always yield non-string url sources.
 
 
     def sourcesProcessTorrents(self, torrent_sources):#adjusted Fen code
@@ -821,7 +821,6 @@ class sources:
             #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
             return cachedTorrents + uncachedTorrents# + uncheckedTorrents
         except:
-            import traceback
             failure = traceback.format_exc()
             log_utils.log('Torrent check - Exception: ' + str(failure))
             control.infoDialog('Error Processing Torrents')
@@ -881,10 +880,9 @@ class sources:
             if control.setting('remove.dups') == 'true' and len(self.sources) > 1:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
-                dupes = int(stotal - len(self.sources))
+                dupes = str(stotal - len(self.sources))
                 control.infoDialog(control.six_encode(control.lang(32089)).format(dupes), icon='INFO')
         except:
-            import traceback
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
             control.infoDialog('Dupes filter failed', icon='INFO', sound=True)
