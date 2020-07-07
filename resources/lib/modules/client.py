@@ -68,8 +68,8 @@ elif six.PY3:
 
 
 
-def request(url, close=True, redirect=True, error=False, proxy=None, post=None, headers=None, mobile=False, limit=None,
-            referer=None, cookie=None, output='', timeout='30', username=None, password=None, verify=True, as_bytes=False):
+def request(url, close=True, redirect=True, error=False, verify=True, proxy=None, post=None, headers=None, mobile=False, XHR=False,
+            limit=None, referer=None,cookie=None, compression=False, output='', timeout='30', username=None, password=None, as_bytes=False):
 
     """
     Re-adapted from Twilight0's tulip module => https://github.com/Twilight0/script.module.tulip
@@ -182,10 +182,20 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
         if not 'Accept-Language' in headers:
             headers['Accept-Language'] = 'en-US'
 
+        if 'X-Requested-With' in headers:
+            pass
+        elif XHR is True:
+            headers['X-Requested-With'] = 'XMLHttpRequest'
+
         if 'Cookie' in headers:
             pass
         elif cookie is not None:
             headers['Cookie'] = cookie
+
+        if 'Accept-Encoding' in headers:
+            pass
+        elif compression and limit is None:
+            headers['Accept-Encoding'] = 'gzip'
 
         if redirect is False:
 
@@ -511,7 +521,7 @@ def agent():
             "Mozilla/5.0 (Linux; Android 9; AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36 OPR/55.2.2719"])
 
 
-class cfcookie:
+class Cfcookie:
     def __init__(self):
         self.cookie = None
 
@@ -683,7 +693,7 @@ def _get_keyboard(default="", heading="", hidden=False):
     keyboard = control.keyboard(default, heading, hidden)
     keyboard.doModal()
     if keyboard.isConfirmed():
-        return unicode(keyboard.getText(), "utf-8")
+        return six.ensure_text(keyboard.getText())
     return default
 
 

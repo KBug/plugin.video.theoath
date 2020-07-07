@@ -98,7 +98,7 @@ class player(xbmc.Player):
             if not self.content == 'movie': raise Exception()
 
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "originaltitle", "year", "genre", "studio", "country", "runtime", "rating", "votes", "mpaa", "director", "writer", "plot", "plotoutline", "tagline", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year)+1), str(int(self.year)-1)))
-            meta = unicode(meta, 'utf-8', errors='ignore') if six.PY2 else str(meta, 'utf-8')
+            meta = six.ensure_text(meta, errors='ignore')
             meta = json.loads(meta)['result']['movies']
 
             t = cleantitle.get(self.title)
@@ -106,10 +106,10 @@ class player(xbmc.Player):
 
             for k, v in six.iteritems(meta):
                 if type(v) == list:
-                    try: meta[k] = str(' / '.join([control.six_encode(i) for i in v]))
+                    try: meta[k] = str(' / '.join([six.ensure_str(i) for i in v]))
                     except: meta[k] = ''
                 else:
-                    try: meta[k] = str(control.six_encode(v))
+                    try: meta[k] = str(six.ensure_str(v))
                     except: meta[k] = str(v)
 
             if not 'plugin' in control.infoLabel('Container.PluginName'):
@@ -125,7 +125,7 @@ class player(xbmc.Player):
             if not self.content == 'episode': raise Exception()
 
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetTVShows", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["title", "year", "thumbnail", "file"]}, "id": 1}' % (self.year, str(int(self.year)+1), str(int(self.year)-1)))
-            meta = unicode(meta, 'utf-8', errors='ignore') if six.PY2 else str(meta, 'utf-8')
+            meta = six.ensure_text(meta, errors='ignore')
             meta = json.loads(meta)['result']['tvshows']
 
             t = cleantitle.get(self.title)
@@ -134,15 +134,15 @@ class player(xbmc.Player):
             tvshowid = meta['tvshowid'] ; poster = meta['thumbnail']
 
             meta = control.jsonrpc('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params":{ "tvshowid": %d, "filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["title", "season", "episode", "showtitle", "firstaired", "runtime", "rating", "director", "writer", "plot", "thumbnail", "file"]}, "id": 1}' % (tvshowid, self.season, self.episode))
-            meta = unicode(meta, 'utf-8', errors='ignore') if six.PY2 else str(meta, 'utf-8')
+            meta = six.ensure_text(meta, errors='ignore')
             meta = json.loads(meta)['result']['episodes'][0]
 
             for k, v in six.iteritems(meta):
                 if type(v) == list:
-                    try: meta[k] = str(' / '.join([control.six_encode(i) for i in v]))
+                    try: meta[k] = str(' / '.join([six.ensure_str(i) for i in v]))
                     except: meta[k] = ''
                 else:
-                    try: meta[k] = str(control.six_encode(v))
+                    try: meta[k] = str(six.ensure_str(v))
                     except: meta[k] = str(v)
 
             if not 'plugin' in control.infoLabel('Container.PluginName'):
@@ -296,11 +296,11 @@ class player(xbmc.Player):
                     minutes, seconds = divmod(float(self.offset), 60);
                     hours, minutes = divmod(minutes, 60)
                     label = '%02d:%02d:%02d' % (hours, minutes, seconds)
-                    label = (control.six_encode(control.lang2(12022).format(label)))
+                    label = (six.ensure_str(control.lang2(12022).format(label)))
                     if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
                         yes = control.yesnoDialog(label + '[CR]  (Trakt scrobble)', heading=control.lang2(13404))
                     else:
-                        yes = control.yesnoDialog(label, heading=control.six_encode(control.lang2(13404)))
+                        yes = control.yesnoDialog(label, heading=six.ensure_str(control.lang2(13404)))
                     if yes:
                         self.seekTime(float(self.offset))
                     self.pause()

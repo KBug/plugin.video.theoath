@@ -18,16 +18,16 @@
 '''
 
 
-import base64#, urllib
+import base64
 import simplejson as json
 
+import six
 from six.moves import urllib_parse
 
 import requests
 
 from resources.lib.modules import cache
 from resources.lib.modules import client
-from resources.lib.modules import control
 
 
 class tvMaze:
@@ -150,7 +150,7 @@ class tvMaze:
             r = requests.get(url, timeout=15, verify=True).content
             title = client.parseDOM(r, 'SeriesName')[0]
             title = client.replaceHTMLCodes(title)
-            title = control.six_encode(title)
+            title = six.ensure_str(title)
 
             return title
         except:

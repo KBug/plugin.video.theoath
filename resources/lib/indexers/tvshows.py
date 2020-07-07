@@ -32,7 +32,7 @@ from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,base64#,urllib,urlparse
+import os,sys,re,datetime,base64
 import simplejson as json
 
 import six
@@ -198,7 +198,7 @@ class tvshows:
     def search_new(self):
         control.idle()
 
-        t = control.six_encode(control.lang(32010))
+        t = six.ensure_str(control.lang(32010))
         k = control.keyboard('', t) ; k.doModal()
         q = k.getText() if k.isConfirmed() else None
 
@@ -239,7 +239,7 @@ class tvshows:
         try:
             control.idle()
 
-            t = control.six_encode(control.lang(32010))
+            t = six.ensure_str(control.lang(32010))
             k = control.keyboard('', t) ; k.doModal()
             q = k.getText() if k.isConfirmed() else None
 
@@ -494,7 +494,7 @@ class tvshows:
             q.update({'page': str(int(q['page']) + 1)})
             q = (urllib_parse.urlencode(q)).replace('%2C', ',')
             next = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
-            next = control.six_encode(next)
+            next = six.ensure_str(next)
         except:
             next = ''
 
@@ -579,7 +579,7 @@ class tvshows:
                 try: url = (trakt.slug(item['list']['user']['username']), item['list']['ids']['slug'])
                 except: url = ('me', item['ids']['slug'])
                 url = self.traktlist_link % url
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 self.list.append({'name': name, 'url': url, 'context': url, 'image': 'trakt.png'})
             except:
@@ -627,7 +627,7 @@ class tvshows:
 
             next = url.replace(urllib_parse.urlparse(url).query, urllib_parse.urlparse(next[0]).query)
             next = client.replaceHTMLCodes(next)
-            next = control.six_encode(next)
+            next = six.ensure_str(next)
         except:
             next = ''
 
@@ -635,19 +635,19 @@ class tvshows:
             try:
                 title = client.parseDOM(item, 'a')[1]
                 title = client.replaceHTMLCodes(title)
-                title = control.six_encode(title)
+                title = six.ensure_str(title)
 
                 year = client.parseDOM(item, 'span', attrs = {'class': r'lister-item-year.*?'})
                 year += client.parseDOM(item, 'span', attrs = {'class': r'year_type'})
                 try: year = re.findall(r'(\d{4})', year[0])[0] if six.PY2 else re.findall(r'(\d{4})', str(year[0]))[0]
                 except: year = '0'
-                year = control.six_encode(year)
+                year = six.ensure_str(year)
 
                 if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
 
                 imdb = client.parseDOM(item, 'a', ret='href')[0]
                 imdb = re.findall('(tt\d*)', imdb)[0]
-                imdb = control.six_encode(imdb)
+                imdb = six.ensure_str(imdb)
 
                 if imdb in dupes: raise Exception()
                 dupes.append(imdb)
@@ -657,7 +657,7 @@ class tvshows:
                 if '/nopicture/' in poster: poster = '0'
                 poster = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
-                poster = control.six_encode(poster)
+                poster = six.ensure_str(poster)
 
                 rating = '0'
                 try:
@@ -674,7 +674,7 @@ class tvshows:
                 if rating == '' or rating == '-':
                     rating = '0'
                 rating = client.replaceHTMLCodes(rating)
-                rating = control.six_encode(rating)
+                rating = six.ensure_str(rating)
 
                 try:
                     votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
@@ -687,7 +687,7 @@ class tvshows:
                 if votes == '':
                     votes = '0'
                 votes = client.replaceHTMLCodes(votes)
-                votes = control.six_encode(votes)
+                votes = six.ensure_str(votes)
 
                 plot = '0'
                 try: plot = client.parseDOM(item, 'p', attrs = {'class': 'text-muted'})[0]
@@ -698,7 +698,7 @@ class tvshows:
                 plot = re.sub('<.+?>|</.+?>', '', plot)
                 if plot == '': plot = '0'
                 plot = client.replaceHTMLCodes(plot)
-                plot = control.six_encode(plot)
+                plot = six.ensure_str(plot)
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': imdb, 'tvdb': '0', 'poster': poster, 'next': next})
             except:
@@ -718,19 +718,19 @@ class tvshows:
             try:
                 name = client.parseDOM(item, 'img', ret='alt')[0]
                 name = client.replaceHTMLCodes(name)
-                name = control.six_encode(name)
+                name = six.ensure_str(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = re.findall('(nm\d*)', url, re.I)[0]
                 url = self.person_link % url
                 url = client.replaceHTMLCodes(url)
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 image = client.parseDOM(item, 'img', ret='src')[0]
                 # if not ('._SX' in image or '._SY' in image): raise Exception()
                 image = re.sub('(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', image)
                 image = client.replaceHTMLCodes(image)
-                image = control.six_encode(image)
+                image = six.ensure_str(image)
 
                 self.list.append({'name': name, 'url': url, 'image': image})
             except:
@@ -755,13 +755,13 @@ class tvshows:
             try:
                 name = client.parseDOM(item, 'a')[0]
                 name = client.replaceHTMLCodes(name)
-                name = control.six_encode(name)
+                name = six.ensure_str(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = url = url.split('/list/', 1)[-1].strip('/')
                 url = list % url
                 url = client.replaceHTMLCodes(url)
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 self.list.append({'name': name, 'url': url, 'context': url, 'image': 'imdb.png'})
             except:
@@ -794,70 +794,70 @@ class tvshows:
                 title = item['name']
                 title = re.sub('\s(|[(])(UK|US|AU|\d{4})(|[)])$', '', title)
                 title = client.replaceHTMLCodes(title)
-                title = control.six_encode(title)
+                title = six.ensure_str(title)
 
                 year = item['premiered']
                 year = re.findall('(\d{4})', year)[0]
-                year = control.six_encode(year)
+                year = six.ensure_str(year)
 
                 if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
 
                 imdb = item['externals']['imdb']
                 if imdb == None or imdb == '': imdb = '0'
                 else: imdb = 'tt' + re.sub('[^0-9]', '', str(imdb))
-                imdb = control.six_encode(imdb)
+                imdb = six.ensure_str(imdb)
 
                 tvdb = item['externals']['thetvdb']
                 tvdb = re.sub('[^0-9]', '', str(tvdb))
-                tvdb = control.six_encode(tvdb)
+                tvdb = six.ensure_str(tvdb)
 
                 if tvdb == None or tvdb == '': raise Exception()
 
                 try: poster = item['image']['original']
                 except: poster = '0'
                 if poster == None or poster == '': poster = '0'
-                poster = control.six_encode(poster)
+                poster = six.ensure_str(poster)
 
                 premiered = item['premiered']
                 try: premiered = re.findall('(\d{4}-\d{2}-\d{2})', premiered)[0]
                 except: premiered = '0'
-                premiered = control.six_encode(premiered)
+                premiered = six.ensure_str(premiered)
 
                 try: studio = item['network']['name']
                 except: studio = '0'
                 if studio == None: studio = '0'
-                studio = control.six_encode(studio)
+                studio = six.ensure_str(studio)
 
                 try: genre = item['genres']
                 except: genre = '0'
                 genre = [i.title() for i in genre]
                 if genre == []: genre = '0'
                 genre = ' / '.join(genre)
-                genre = control.six_encode(genre)
+                genre = six.ensure_str(genre)
 
                 try: duration = item['runtime']
                 except: duration = '0'
                 if duration == None: duration = '0'
                 duration = str(duration)
-                duration = control.six_encode(duration)
+                duration = six.ensure_str(duration)
 
                 try: rating = item['rating']['average']
                 except: rating = '0'
                 if rating == None or rating == '0.0': rating = '0'
                 rating = str(rating)
-                rating = control.six_encode(rating)
+                rating = six.ensure_str(rating)
 
                 try: plot = item['summary']
                 except: plot = '0'
                 if plot == None: plot = '0'
                 plot = re.sub('<.+?>|</.+?>|\n', '', plot)
                 plot = client.replaceHTMLCodes(plot)
-                plot = control.six_encode(plot)
+                plot = six.ensure_str(plot)
 
                 try: content = item['type'].lower()
                 except: content = '0'
                 if content == None or content == '': content = '0'
-                content = control.six_encode(content)
+                content = six.ensure_str(content)
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'content': content})
             except:
@@ -974,33 +974,33 @@ class tvshows:
                 try: imdb = client.parseDOM(item, 'IMDB_ID')[0]
                 except: pass
                 if imdb == '': imdb = '0'
-                imdb = control.six_encode(imdb)
+                imdb = six.ensure_str(imdb)
 
 
             try: title = client.parseDOM(item, 'SeriesName')[0]
             except: title = ''
             if title == '': title = '0'
             title = client.replaceHTMLCodes(title)
-            title = control.six_encode(title)
+            title = six.ensure_str(title)
 
             try: year = client.parseDOM(item, 'FirstAired')[0]
             except: year = ''
             try: year = re.compile('(\d{4})').findall(year)[0]
             except: year = ''
             if year == '': year = '0'
-            year = control.six_encode(year)
+            year = six.ensure_str(year)
 
             try: premiered = client.parseDOM(item, 'FirstAired')[0]
             except: premiered = '0'
             if premiered == '': premiered = '0'
             premiered = client.replaceHTMLCodes(premiered)
-            premiered = control.six_encode(premiered)
+            premiered = six.ensure_str(premiered)
 
             try: studio = client.parseDOM(item, 'Network')[0]
             except: studio = ''
             if studio == '': studio = '0'
             studio = client.replaceHTMLCodes(studio)
-            studio = control.six_encode(studio)
+            studio = six.ensure_str(studio)
 
             try: genre = client.parseDOM(item, 'Genre')[0]
             except: genre = ''
@@ -1008,13 +1008,13 @@ class tvshows:
             genre = ' / '.join(genre)
             if genre == '': genre = '0'
             genre = client.replaceHTMLCodes(genre)
-            genre = control.six_encode(genre)
+            genre = six.ensure_str(genre)
 
             try: duration = client.parseDOM(item, 'Runtime')[0]
             except: duration = ''
             if duration == '': duration = '0'
             duration = client.replaceHTMLCodes(duration)
-            duration = control.six_encode(duration)
+            duration = six.ensure_str(duration)
 
             # try: rating = client.parseDOM(item, 'Rating')[0]
             # except: rating = ''
@@ -1022,7 +1022,7 @@ class tvshows:
                 # rating = self.list[i]['rating']
             # if rating == '': rating = '0'
             # rating = client.replaceHTMLCodes(rating)
-            # rating = control.six_encode(rating)
+            # rating = six.ensure_str(rating)
 
             # try: votes = client.parseDOM(item, 'RatingCount')[0]
             # except: votes = ''
@@ -1030,18 +1030,18 @@ class tvshows:
                 # votes = self.list[i]['votes']
             # if votes == '': votes = '0'
             # votes = client.replaceHTMLCodes(votes)
-            # votes = control.six_encode(votes)
+            # votes = six.ensure_str(votes)
 
             try: mpaa = client.parseDOM(item, 'ContentRating')[0]
             except: mpaa = ''
             if mpaa == '': mpaa = '0'
             mpaa = client.replaceHTMLCodes(mpaa)
-            mpaa = control.six_encode(mpaa)
+            mpaa = six.ensure_str(mpaa)
 
             # try: cast = client.parseDOM(item, 'Actors')[0]
             # except: cast = ''
             # cast = [x for x in cast.split('|') if not x == '']
-            # try: cast = [(control.six_encode(x), '') for x in cast]
+            # try: cast = [(six.ensure_str(x), '') for x in cast]
             # except: cast = []
             # if cast == []: cast = '0'
 
@@ -1059,7 +1059,7 @@ class tvshows:
             except: plot = ''
             if plot == '': plot = '0'
             plot = client.replaceHTMLCodes(plot)
-            plot = control.six_encode(plot)
+            plot = six.ensure_str(plot)
 
             try:
                 if self.lang != 'en':
@@ -1075,21 +1075,21 @@ class tvshows:
             else: poster = '0'
             if 'poster' in self.list[i] and poster == '0': poster = self.list[i]['poster']
             poster = client.replaceHTMLCodes(poster)
-            poster = control.six_encode(poster)
+            poster = six.ensure_str(poster)
 
             try: banner = client.parseDOM(item, 'banner')[0]
             except: banner = ''
             if not banner == '': banner = self.tvdb_image + banner
             else: banner = '0'
             banner = client.replaceHTMLCodes(banner)
-            banner = control.six_encode(banner)
+            banner = six.ensure_str(banner)
 
             try: fanart = client.parseDOM(item, 'fanart')[0]
             except: fanart = ''
             if not fanart == '': fanart = self.tvdb_image + fanart
             else: fanart = '0'
             fanart = client.replaceHTMLCodes(fanart)
-            fanart = control.six_encode(fanart)
+            fanart = six.ensure_str(fanart)
 
             try:
                 artmeta = True
@@ -1103,21 +1103,21 @@ class tvshows:
             try:
                 poster2 = art['tvposter']
                 poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = control.six_encode(poster2[0]['url'])
+                poster2 = six.ensure_str(poster2[0]['url'])
             except:
                 poster2 = '0'
 
             try:
                 fanart2 = art['showbackground']
                 fanart2 = [x for x in fanart2 if x.get('lang') == self.lang][::-1] + [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') in ['00', '']][::-1]
-                fanart2 = control.six_encode(fanart2[0]['url'])
+                fanart2 = six.ensure_str(fanart2[0]['url'])
             except:
                 fanart2 = '0'
 
             try:
                 banner2 = art['tvbanner']
                 banner2 = [x for x in banner2 if x.get('lang') == self.lang][::-1] + [x for x in banner2 if x.get('lang') == 'en'][::-1] + [x for x in banner2 if x.get('lang') in ['00', '']][::-1]
-                banner2 = control.six_encode(banner2[0]['url'])
+                banner2 = six.ensure_str(banner2[0]['url'])
             except:
                 banner2 = '0'
 
@@ -1125,7 +1125,7 @@ class tvshows:
                 if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']
                 else: clearlogo = art['clearlogo']
                 clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = control.six_encode(clearlogo[0]['url'])
+                clearlogo = six.ensure_str(clearlogo[0]['url'])
             except:
                 clearlogo = '0'
 
@@ -1133,7 +1133,7 @@ class tvshows:
                 if 'hdclearart' in art: clearart = art['hdclearart']
                 else: clearart = art['clearart']
                 clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = control.six_encode(clearart[0]['url'])
+                clearart = six.ensure_str(clearart[0]['url'])
             except:
                 clearart = '0'
 
@@ -1170,23 +1170,23 @@ class tvshows:
 
         flatten = True if control.setting('flatten.tvshows') == 'true' else False
 
-        watchedMenu = control.six_encode(control.lang(32068)) if trakt.getTraktIndicatorsInfo() == True else control.six_encode(control.lang(32066))
+        watchedMenu = six.ensure_str(control.lang(32068)) if trakt.getTraktIndicatorsInfo() == True else six.ensure_str(control.lang(32066))
 
-        unwatchedMenu = control.six_encode(control.lang(32069)) if trakt.getTraktIndicatorsInfo() == True else control.six_encode(control.lang(32067))
+        unwatchedMenu = six.ensure_str(control.lang(32069)) if trakt.getTraktIndicatorsInfo() == True else six.ensure_str(control.lang(32067))
 
-        queueMenu = control.six_encode(control.lang(32065))
+        queueMenu = six.ensure_str(control.lang(32065))
 
-        traktManagerMenu = control.six_encode(control.lang(32070))
+        traktManagerMenu = six.ensure_str(control.lang(32070))
 
-        nextMenu = control.six_encode(control.lang(32053))
+        nextMenu = six.ensure_str(control.lang(32053))
 
-        playRandom = control.six_encode(control.lang(32535))
+        playRandom = six.ensure_str(control.lang(32535))
 
-        addToLibrary = control.six_encode(control.lang(32551))
+        addToLibrary = six.ensure_str(control.lang(32551))
 
-        findSimilar = control.six_encode(control.lang(32100))
+        findSimilar = six.ensure_str(control.lang(32100))
 
-        infoMenu = control.six_encode(control.lang(32101))
+        infoMenu = six.ensure_str(control.lang(32101))
 
         for i in items:
             try:
@@ -1318,11 +1318,11 @@ class tvshows:
 
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
 
-        queueMenu = control.six_encode(control.lang(32065))
+        queueMenu = six.ensure_str(control.lang(32065))
 
-        playRandom = control.six_encode(control.lang(32535))
+        playRandom = six.ensure_str(control.lang(32535))
 
-        addToLibrary = control.six_encode(control.lang(32551))
+        addToLibrary = six.ensure_str(control.lang(32551))
 
         for i in items:
             try:

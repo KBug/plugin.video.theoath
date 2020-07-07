@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.1.2[/COLOR][/B]
+- Code cleanup
+
 [B][COLOR gold]v3.1.1[/COLOR][/B]
 - Fixed Library integration and Downloads for Kodi 19
 

@@ -45,7 +45,7 @@ def fetch(items, lang='en', user=''):
             update = (abs(t2 - t1) / 3600) >= 720
             if update == True: raise Exception()
 
-            item = eval(control.six_encode(match[4]))
+            item = eval(six.ensure_str(match[4]))
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
 
             items[i].update(item)

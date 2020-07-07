@@ -120,7 +120,7 @@ def authTrakt():
 
         result = getTraktAsJson('/oauth/device/code', {'client_id': V2_API_KEY})
         verification_url = control.lang(32513) % result['verification_url']
-        user_code = control.six_encode(control.lang(32514) % result['user_code'])
+        user_code = six.ensure_str(control.lang(32514) % result['user_code'])
         expires_in = int(result['expires_in'])
         device_code = result['device_code']
         interval = result['interval']
@@ -204,41 +204,41 @@ def manager(name, imdb, tvdb, content):
     try:
         post = {"movies": [{"ids": {"imdb": imdb}}]} if content == 'movie' else {"shows": [{"ids": {"tvdb": tvdb}}]}
 
-        items = [(control.six_encode(control.lang(32516)), '/sync/collection')]
-        items += [(control.six_encode(control.lang(32517)), '/sync/collection/remove')]
-        items += [(control.six_encode(control.lang(32518)), '/sync/watchlist')]
-        items += [(control.six_encode(control.lang(32519)), '/sync/watchlist/remove')]
-        items += [(control.six_encode(control.lang(32520)), '/users/me/lists/%s/items')]
+        items = [(six.ensure_str(control.lang(32516)), '/sync/collection')]
+        items += [(six.ensure_str(control.lang(32517)), '/sync/collection/remove')]
+        items += [(six.ensure_str(control.lang(32518)), '/sync/watchlist')]
+        items += [(six.ensure_str(control.lang(32519)), '/sync/watchlist/remove')]
+        items += [(six.ensure_str(control.lang(32520)), '/users/me/lists/%s/items')]
 
         result = getTraktAsJson('/users/me/lists')
         lists = [(i['name'], i['ids']['slug']) for i in result]
         lists = [lists[i//2] for i in list(range(len(lists)*2))]
         for i in list(range(0, len(lists), 2)):
-            lists[i] = ((control.six_encode(control.lang(32521) % lists[i][0])), '/users/me/lists/%s/items' % lists[i][1])
+            lists[i] = ((six.ensure_str(control.lang(32521) % lists[i][0])), '/users/me/lists/%s/items' % lists[i][1])
         for i in list(range(1, len(lists), 2)):
-            lists[i] = ((control.six_encode(control.lang(32522) % lists[i][0])), '/users/me/lists/%s/items/remove' % lists[i][1])
+            lists[i] = ((six.ensure_str(control.lang(32522) % lists[i][0])), '/users/me/lists/%s/items/remove' % lists[i][1])
         items += lists
 
-        select = control.selectDialog([i[0] for i in items], control.six_encode(control.lang(32515)))
+        select = control.selectDialog([i[0] for i in items], six.ensure_str(control.lang(32515)))
 
         if select == -1:
             return
         elif select == 4:
-            t = control.six_encode(control.lang(32520))
+            t = six.ensure_str(control.lang(32520))
             k = control.keyboard('', t) ; k.doModal()
             new = k.getText() if k.isConfirmed() else None
             if (new == None or new == ''): return
             result = __getTrakt('/users/me/lists', post={"name": new, "privacy": "private"})[0]
 
             try: slug = utils.json_loads_as_str(result)['ids']['slug']
-            except: return control.infoDialog(control.six_encode(control.lang(32515)), heading=str(name), sound=True, icon='ERROR')
+            except: return control.infoDialog(six.ensure_str(control.lang(32515)), heading=str(name), sound=True, icon='ERROR')
             result = __getTrakt(items[select][1] % slug, post=post)[0]
         else:
             result = __getTrakt(items[select][1], post=post)[0]
 
         icon = control.infoLabel('ListItem.Icon') if not result == None else 'ERROR'
 
-        control.infoDialog(control.six_encode(control.lang(32515)), heading=str(name), sound=True, icon=icon)
+        control.infoDialog(six.ensure_str(control.lang(32515)), heading=str(name), sound=True, icon=icon)
     except:
         return
 
@@ -374,7 +374,7 @@ def syncTraktStatus():
     try:
         cachesyncMovies()
         cachesyncTVShows()
-        control.infoDialog(control.six_encode(control.lang(32092)))
+        control.infoDialog(six.ensure_str(control.lang(32092)))
     except:
         control.infoDialog('Trakt sync failed')
         pass

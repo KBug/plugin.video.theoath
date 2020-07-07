@@ -26,7 +26,7 @@ from resources.lib.modules import metacache
 from resources.lib.modules import workers
 from resources.lib.modules import trakt
 
-import sys,re,datetime#,urllib,urlparse
+import sys,re,datetime
 import simplejson as json
 
 import six
@@ -97,14 +97,14 @@ class channels:
             try:
                 year = result['listings'][id][0]['d']
                 year = re.findall('[(](\d{4})[)]', year)[0].strip()
-                year = control.six_encode(year)
+                year = six.ensure_str(year)
             except:
                 year = ''
 
             title = result['listings'][id][0]['t']
             title = title.replace('(%s)' % year, '').strip()
             title = client.replaceHTMLCodes(title)
-            title = control.six_encode(title)
+            title = six.ensure_str(title)
 
             self.items.append((title, year, channel, num))
         except:
@@ -214,13 +214,13 @@ class channels:
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
-        playbackMenu = control.six_encode(control.lang(32063)) if control.setting('hosts.mode') == '2' else control.six_encode(control.lang(32064))
+        playbackMenu = six.ensure_str(control.lang(32063)) if control.setting('hosts.mode') == '2' else six.ensure_str(control.lang(32064))
 
-        queueMenu = control.six_encode(control.lang(32065))
+        queueMenu = six.ensure_str(control.lang(32065))
 
-        refreshMenu = control.six_encode(control.lang(32072))
+        refreshMenu = six.ensure_str(control.lang(32072))
 
-        infoMenu = control.six_encode(control.lang(32101))
+        infoMenu = six.ensure_str(control.lang(32101))
 
 
         for i in items:

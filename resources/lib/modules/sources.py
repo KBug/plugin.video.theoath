@@ -23,7 +23,7 @@ import sys,re,random,datetime,time,traceback#,urllib,urlparse
 import simplejson as json
 
 import six
-from six.moves import urllib_parse, zip
+from six.moves import urllib_parse, zip, reduce
 
 from resources.lib.modules import trakt
 from resources.lib.modules import tvmaze
@@ -150,9 +150,9 @@ class sources:
         if fanart == '0': fanart = control.addonFanart()
         if thumb == '0': thumb = control.addonFanart()
 
-        sysimage = urllib_parse.quote_plus(control.six_encode(poster))
+        sysimage = urllib_parse.quote_plus(six.ensure_str(poster))
 
-        downloadMenu = control.six_encode(control.lang(32403))
+        downloadMenu = six.ensure_str(control.lang(32403))
 
 
         for i in list(range(len(items))):
@@ -333,7 +333,7 @@ class sources:
 
         sourceDict = self.sourceDict
 
-        progressDialog.update(0, control.six_encode(control.lang(32600)))
+        progressDialog.update(0, six.ensure_str(control.lang(32600)))
         content = 'movie' if tvshowtitle == None else 'episode'
         if content == 'movie':
             sourceDict = [(i[0], i[1], getattr(i[1], 'movie', None)) for i in sourceDict]
@@ -384,13 +384,13 @@ class sources:
 
         [i.start() for i in threads]
 
-        string1 = control.six_encode(control.lang(32404))
-        string2 = control.six_encode(control.lang(32405))
-        string3 = control.six_encode(control.lang(32406))
-        string4 = control.six_encode(control.lang(32601))
-        string5 = control.six_encode(control.lang(32602))
-        string6 = control.six_encode(control.lang(32606))
-        string7 = control.six_encode(control.lang(32607))
+        string1 = six.ensure_str(control.lang(32404))
+        string2 = six.ensure_str(control.lang(32405))
+        string3 = six.ensure_str(control.lang(32406))
+        string4 = six.ensure_str(control.lang(32601))
+        string5 = six.ensure_str(control.lang(32602))
+        string6 = six.ensure_str(control.lang(32606))
+        string7 = six.ensure_str(control.lang(32607))
 
         try: timeout = int(control.setting('scrapers.timeout.1'))
         except: pass
@@ -624,7 +624,7 @@ class sources:
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) > 60
             if update == False:
-                sources = eval(control.six_encode(match[4]))
+                sources = eval(six.ensure_str(match[4]))
                 return self.sources.extend(sources)
         except:
             pass
@@ -633,7 +633,7 @@ class sources:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(control.six_encode(url[4]))
+            url = eval(six.ensure_str(url[4]))
         except:
             pass
 
@@ -675,7 +675,7 @@ class sources:
             t2 = int(datetime.datetime.now().strftime("%Y%m%d%H%M"))
             update = abs(t2 - t1) > 60
             if update == False:
-                sources = eval(control.six_encode(match[4]))
+                sources = eval(six.ensure_str(match[4]))
                 return self.sources.extend(sources)
         except:
             pass
@@ -684,7 +684,7 @@ class sources:
             url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             url = dbcur.fetchone()
-            url = eval(control.six_encode(url[4]))
+            url = eval(six.ensure_str(url[4]))
         except:
             pass
 
@@ -701,7 +701,7 @@ class sources:
             ep_url = None
             dbcur.execute("SELECT * FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             ep_url = dbcur.fetchone()
-            ep_url = eval(control.six_encode(ep_url[4]))
+            ep_url = eval(six.ensure_str(ep_url[4]))
         except:
             pass
 
@@ -743,7 +743,7 @@ class sources:
         try:
             control.idle()
 
-            yes = control.yesnoDialog(control.six_encode(control.lang(32407)))
+            yes = control.yesnoDialog(six.ensure_str(control.lang(32407)))
             if not yes: return
 
             control.makeFile(control.dataPath)
@@ -754,7 +754,7 @@ class sources:
             dbcur.execute("VACUUM")
             dbcon.commit()
 
-            control.infoDialog(control.six_encode(control.lang(32408)), sound=True, icon='INFO')
+            control.infoDialog(six.ensure_str(control.lang(32408)), sound=True, icon='INFO')
         except:
             pass
 
@@ -881,7 +881,7 @@ class sources:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
                 dupes = str(stotal - len(self.sources))
-                control.infoDialog(control.six_encode(control.lang(32089)).format(dupes), icon='INFO')
+                control.infoDialog(six.ensure_str(control.lang(32089)).format(dupes), icon='INFO')
         except:
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
@@ -1243,7 +1243,7 @@ class sources:
         return u
 
     def errorForSources(self):
-        control.infoDialog(control.six_encode(control.lang(32401)), sound=False, icon='INFO')
+        control.infoDialog(six.ensure_str(control.lang(32401)), sound=False, icon='INFO')
 
 
     def getLanguage(self):

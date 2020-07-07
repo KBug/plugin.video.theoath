@@ -21,9 +21,9 @@
 
 import re
 import simplejson as json
+import six
 
 from resources.lib.modules import client
-from resources.lib.modules import control
 from resources.lib.modules import workers
 
 
@@ -77,14 +77,14 @@ class youtube(object):
         for item in items:
             try:
                 title = item['snippet']['title']
-                title = control.six_encode(title)
+                title = six.ensure_str(title)
 
                 url = item['id']
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 image = item['snippet']['thumbnails']['high']['url']
                 if '/default.jpg' in image: raise Exception()
-                image = control.six_encode(image)
+                image = six.ensure_str(image)
 
                 self.list.append({'title': title, 'url': url, 'image': image})
             except:
@@ -121,15 +121,15 @@ class youtube(object):
         for item in items: 
             try:
                 title = item['snippet']['title']
-                title = control.six_encode(title)
+                title = six.ensure_str(title)
 
                 try: url = item['snippet']['resourceId']['videoId']
                 except: url = item['id']['videoId']
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 image = item['snippet']['thumbnails']['high']['url']
                 if '/default.jpg' in image: raise Exception()
-                image = control.six_encode(image)
+                image = six.ensure_str(image)
 
                 append = {'title': title, 'url': url, 'image': image}
                 if not next == '': append['next'] = next

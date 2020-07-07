@@ -24,9 +24,9 @@ import base64
 import hashlib
 import re
 
+import six
 from six.moves import urllib_parse
 
-from resources.lib.modules import control
 from resources.lib.modules import client
 from resources.lib.modules import directstream
 from resources.lib.modules import trakt
@@ -64,7 +64,7 @@ def get_release_quality(release_name, release_link=None):
 
     if release_name is None: return
 
-    try: release_name = control.six_encode(release_name)
+    try: release_name = six.ensure_str(release_name)
     except: pass
 
     try:
@@ -72,7 +72,7 @@ def get_release_quality(release_name, release_link=None):
 
         fmt = re.sub('[^A-Za-z0-9]+', ' ', release_name)
         fmt = fmt.lower()
-        try: fmt = control.six_encode(fmt)
+        try: fmt = six.ensure_str(fmt)
         except: pass
 
         quality = get_qual(fmt)
@@ -82,7 +82,7 @@ def get_release_quality(release_name, release_link=None):
                 release_link = client.replaceHTMLCodes(release_link)
                 release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
                 release_link = release_link.lower()
-                try: release_link = control.six_encode(release_link)
+                try: release_link = six.ensure_str(release_link)
                 except: pass
 
                 quality = get_qual(release_link)
@@ -102,7 +102,7 @@ def getFileType(url):
     try:
         url = client.replaceHTMLCodes(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = control.six_encode(url)
+        url = six.ensure_str(url)
         url = url.lower()
     except:
         url = str(url)
@@ -199,7 +199,7 @@ def check_sd_url(release_link):
     try:
         release_link = re.sub('[^A-Za-z0-9]+', ' ', release_link)
         release_link = release_link.lower()
-        try: release_link = control.six_encode(release_link)
+        try: release_link = six.ensure_str(release_link)
         except: pass
         quality = get_qual(release_link)
         if not quality:
@@ -212,7 +212,7 @@ def check_sd_url(release_link):
 def check_direct_url(url):
     try:
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = control.six_encode(url)
+        url = six.ensure_str(url)
         url = url.lower()
         quality = get_qual(url)
         if not quality:
@@ -225,7 +225,7 @@ def check_url(url):
     try:
         url = client.replaceHTMLCodes(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = control.six_encode(url)
+        url = six.ensure_str(url)
         url = url.lower()
     except:
         url = str(url)
@@ -259,7 +259,7 @@ def strip_domain(url):
         if url.lower().startswith('http') or url.startswith('/'):
             url = re.findall('(?://.+?|)(/.+)', url)[0]
         url = client.replaceHTMLCodes(url)
-        url = control.six_encode(url)
+        url = six.ensure_str(url)
         return url
     except:
         return
@@ -287,6 +287,8 @@ def is_host_valid(url, domains):
 
 
 def __top_domain(url):
+    if not (url.startswith('//') or url.startswith('http://') or url.startswith('https://')):
+        url = '//' + url
     elements = urllib_parse.urlparse(url)
     domain = elements.netloc or elements.path
     domain = domain.split('@')[-1].split(':')[0]
@@ -300,7 +302,7 @@ def aliases_to_array(aliases, filter=None):
     try:
         if not filter:
             filter = []
-        if isinstance(filter, str):
+        if isinstance(filter, six.string_types):
             filter = [filter]
 
         return [x.get('title') for x in aliases if not filter or x.get('country') in filter]
@@ -311,6 +313,7 @@ def aliases_to_array(aliases, filter=None):
 def append_headers(headers):
     return '|%s' % '&'.join(['%s=%s' % (key, urllib_parse.quote_plus(headers[key])) for key in headers])
 
+
 def get_size(url):
     try:
         size = client.request(url, output='file_size')
@@ -318,6 +321,7 @@ def get_size(url):
         size = convert_size(size)
         return size
     except: return False
+
 
 def convert_size(size_bytes):
     import math

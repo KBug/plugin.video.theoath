@@ -20,7 +20,7 @@
 
 import re
 import unicodedata
-from six import ensure_str
+from six import ensure_str, ensure_text
 
 from resources.lib.modules import control
 
@@ -71,6 +71,16 @@ def get_url(title):
     return title
 
 
+def get_gan_url(title):
+    if title is None:
+        return
+    title = title.lower()
+    title = title.replace('-','+')
+    title = title.replace(' + ', '+-+')
+    title = title.replace(' ', '%20')
+    return title
+
+
 def get_query_(title):
     if title is None: return
     title = title.replace(' ', '_').replace(':', '').replace('.-.', '.').replace('\'', '').replace(",", '').replace("'", '').replace('–', '-').replace('!', '')
@@ -112,9 +122,9 @@ def get_query(title):
 
 def normalize(title):
     try:
-        try: return ensure_str(control.six_decode(title, char='ascii'))
+        try: return ensure_text(control.six_decode(title, char='ascii'))
         except: pass
-        return str(''.join(c for c in unicodedata.normalize('NFKD', unicode(control.six_decode(title))) if unicodedata.category(c) != 'Mn'))
+        return str(''.join(c for c in unicodedata.normalize('NFKD', ensure_text(control.six_decode(title))) if unicodedata.category(c) != 'Mn'))
     except:
         return title
 

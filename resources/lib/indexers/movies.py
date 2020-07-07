@@ -33,7 +33,7 @@ from resources.lib.modules import utils
 from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,base64,traceback#,urllib,urlparse,json
+import os,sys,re,datetime,base64,traceback
 import simplejson as json
 
 import six
@@ -352,7 +352,7 @@ class movies:
     def search_new(self):
         control.idle()
 
-        t = control.six_encode(control.lang(32010))
+        t = six.ensure_str(control.lang(32010))
         k = control.keyboard('', t) ; k.doModal()
         q = k.getText() if k.isConfirmed() else None
 
@@ -393,7 +393,7 @@ class movies:
         try:
             control.idle()
 
-            t = control.six_encode(control.lang(32010))
+            t = six.ensure_str(control.lang(32010))
             k = control.keyboard('', t);
             k.doModal()
             q = k.getText() if k.isConfirmed() else None
@@ -593,7 +593,7 @@ class movies:
             q.update({'page': str(int(q['page']) + 1)})
             q = (urllib_parse.urlencode(q)).replace('%2C', ',')
             next = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
-            next = control.six_encode(next)
+            next = six.ensure_str(next)
         except:
             next = ''
 
@@ -674,7 +674,7 @@ class movies:
                 try: url = (trakt.slug(item['list']['user']['username']), item['list']['ids']['slug'])
                 except: url = ('me', item['ids']['slug'])
                 url = self.traktlist_link % url
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 self.list.append({'name': name, 'url': url, 'context': url, 'image': 'trakt.png'})
             except:
@@ -720,7 +720,7 @@ class movies:
 
             next = url.replace(urllib_parse.urlparse(url).query, urllib_parse.urlparse(next[0]).query)
             next = client.replaceHTMLCodes(next)
-            next = control.six_encode(next)
+            next = six.ensure_str(next)
         except:
             next = ''
 
@@ -728,36 +728,36 @@ class movies:
             try:
                 title = client.parseDOM(item, 'a')[1]
                 title = client.replaceHTMLCodes(title)
-                title = control.six_encode(title)
+                title = six.ensure_str(title)
 
                 year = client.parseDOM(item, 'span', attrs = {'class': r'lister-item-year.*?'})
                 year += client.parseDOM(item, 'span', attrs = {'class': 'year_type'})
                 try: year = re.compile(r'(\d{4})').findall(year)[0] if six.PY2 else re.compile(r'(\d{4})').findall(str(year))[0]
                 except: year = '0'
-                year = control.six_encode(year)
+                year = six.ensure_str(year)
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
                 imdb = client.parseDOM(item, 'a', ret='href')[0]
                 imdb = re.findall(r'(tt\d*)', imdb)[0]
-                imdb = control.six_encode(imdb)
+                imdb = six.ensure_str(imdb)
 
                 try: poster = client.parseDOM(item, 'img', ret='loadlate')[0]
                 except: poster = '0'
                 if '/nopicture/' in poster: poster = '0'
                 poster = re.sub(r'(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
-                poster = control.six_encode(poster)
+                poster = six.ensure_str(poster)
 
                 try: genre = client.parseDOM(item, 'span', attrs = {'class': 'genre'})[0]
                 except: genre = '0'
                 genre = ' / '.join([i.strip() for i in genre.split(',')])
                 if genre == '': genre = '0'
                 genre = client.replaceHTMLCodes(genre)
-                genre = control.six_encode(genre)
+                genre = six.ensure_str(genre)
 
                 try: duration = re.findall(r'(\d+?) min(?:s|)', item)[-1]
                 except: duration = '0'
-                duration = control.six_encode(duration)
+                duration = six.ensure_str(duration)
 
                 rating = '0'
                 try:
@@ -774,7 +774,7 @@ class movies:
                 if rating == '' or rating == '-':
                     rating = '0'
                 rating = client.replaceHTMLCodes(rating)
-                rating = control.six_encode(rating)
+                rating = six.ensure_str(rating)
 
                 try:
                     votes = client.parseDOM(item, 'div', ret='title', attrs = {'class': '.*?rating-list'})[0]
@@ -787,14 +787,14 @@ class movies:
                 if votes == '':
                     votes = '0'
                 votes = client.replaceHTMLCodes(votes)
-                votes = control.six_encode(votes)
+                votes = six.ensure_str(votes)
 
                 try: mpaa = client.parseDOM(item, 'span', attrs = {'class': 'certificate'})[0]
                 except: mpaa = '0'
                 if mpaa == '' or mpaa == 'NOT_RATED': mpaa = '0'
                 mpaa = mpaa.replace('_', '-')
                 mpaa = client.replaceHTMLCodes(mpaa)
-                mpaa = control.six_encode(mpaa)
+                mpaa = six.ensure_str(mpaa)
 
                 try: director = re.findall(r'Director(?:s|):(.+?)(?:\||</div>)', item)[0]
                 except: director = '0'
@@ -802,12 +802,12 @@ class movies:
                 director = ' / '.join(director)
                 if director == '': director = '0'
                 director = client.replaceHTMLCodes(director)
-                director = control.six_encode(director)
+                director = six.ensure_str(director)
 
                 try: cast = re.findall('Stars(?:s|):(.+?)(?:\||</div>)', item)[0]
                 except: cast = '0'
                 cast = client.replaceHTMLCodes(cast)
-                cast = control.six_encode(cast)
+                cast = six.ensure_str(cast)
                 cast = client.parseDOM(cast, 'a')
                 if cast == []: cast = '0'
 
@@ -820,7 +820,7 @@ class movies:
                 plot = re.sub(r'<.+?>|</.+?>', '', plot)
                 if plot == '': plot = '0'
                 plot = client.replaceHTMLCodes(plot)
-                plot = control.six_encode(plot)
+                plot = six.ensure_str(plot)
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'cast': cast, 'plot': plot, 'tagline': '0', 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
             except:
@@ -839,19 +839,19 @@ class movies:
         for item in items:
             try:
                 name = client.parseDOM(item, 'img', ret='alt')[0]
-                name = control.six_encode(name)
+                name = six.ensure_str(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = re.findall(r'(nm\d*)', url, re.I)[0]
                 url = self.person_link % url
                 url = client.replaceHTMLCodes(url)
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 image = client.parseDOM(item, 'img', ret='src')[0]
                 # if not ('._SX' in image or '._SY' in image): raise Exception()
                 image = re.sub(r'(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', image)
                 image = client.replaceHTMLCodes(image)
-                image = control.six_encode(image)
+                image = six.ensure_str(image)
 
                 self.list.append({'name': name, 'url': url, 'image': image})
             except:
@@ -877,13 +877,13 @@ class movies:
             try:
                 name = client.parseDOM(item, 'a')[0]
                 name = client.replaceHTMLCodes(name)
-                name = control.six_encode(name)
+                name = six.ensure_str(name)
 
                 url = client.parseDOM(item, 'a', ret='href')[0]
                 url = url.split('/list/', 1)[-1].strip('/')
                 url = list % url
                 url = client.replaceHTMLCodes(url)
-                url = control.six_encode(url)
+                url = six.ensure_str(url)
 
                 self.list.append({'name': name, 'url': url, 'context': url, 'image': 'imdb.png'})
             except:
@@ -1007,7 +1007,7 @@ class movies:
             try:
                 poster2 = art['movieposter']
                 poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = control.six_encode(poster2[0]['url'])
+                poster2 = six.ensure_str(poster2[0]['url'])
             except:
                 poster2 = '0'
 
@@ -1015,14 +1015,14 @@ class movies:
                 if 'moviebackground' in art: fanart = art['moviebackground']
                 else: fanart = art['moviethumb']
                 fanart = [x for x in fanart if x.get('lang') == self.lang][::-1] + [x for x in fanart if x.get('lang') == 'en'][::-1] + [x for x in fanart if x.get('lang') in ['00', '']][::-1]
-                fanart = control.six_encode(fanart[0]['url'])
+                fanart = six.ensure_str(fanart[0]['url'])
             except:
                 fanart = '0'
 
             try:
                 banner = art['moviebanner']
                 banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                banner = control.six_encode(banner[0]['url'])
+                banner = six.ensure_str(banner[0]['url'])
             except:
                 banner = '0'
 
@@ -1030,7 +1030,7 @@ class movies:
                 if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
                 else: clearlogo = art['clearlogo']
                 clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = control.six_encode(clearlogo[0]['url'])
+                clearlogo = six.ensure_str(clearlogo[0]['url'])
             except:
                 clearlogo = '0'
 
@@ -1038,7 +1038,7 @@ class movies:
                 if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
                 else: clearart = art['clearart']
                 clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = control.six_encode(clearart[0]['url'])
+                clearart = six.ensure_str(clearart[0]['url'])
             except:
                 clearart = '0'
 
@@ -1056,7 +1056,7 @@ class movies:
                 poster3 = [(x['width'], x['file_path']) for x in poster3]
                 poster3 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster3]
                 poster3 = self.tm_img_link % poster3[0]
-                poster3 = control.six_encode(poster3)
+                poster3 = six.ensure_str(poster3)
             except:
                 poster3 = '0'
 
@@ -1067,7 +1067,7 @@ class movies:
                 fanart2 = [(x['width'], x['file_path']) for x in fanart2]
                 fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
                 fanart2 = self.tm_img_link % fanart2[0]
-                fanart2 = control.six_encode(fanart2)
+                fanart2 = six.ensure_str(fanart2)
             except:
                 fanart2 = '0'
 
@@ -1104,25 +1104,25 @@ class movies:
         #indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators() #fixme
         indicators = playcount.getMovieIndicators()
 
-        playbackMenu = control.six_encode(control.lang(32063)) if control.setting('hosts.mode') == '2' else control.six_encode(control.lang(32064))
+        playbackMenu = six.ensure_str(control.lang(32063)) if control.setting('hosts.mode') == '2' else six.ensure_str(control.lang(32064))
 
-        watchedMenu = control.six_encode(control.lang(32068)) if trakt.getTraktIndicatorsInfo() == True else control.six_encode(control.lang(32066))
+        watchedMenu = six.ensure_str(control.lang(32068)) if trakt.getTraktIndicatorsInfo() == True else six.ensure_str(control.lang(32066))
 
-        unwatchedMenu = control.six_encode(control.lang(32069)) if trakt.getTraktIndicatorsInfo() == True else control.six_encode(control.lang(32067))
+        unwatchedMenu = six.ensure_str(control.lang(32069)) if trakt.getTraktIndicatorsInfo() == True else six.ensure_str(control.lang(32067))
 
-        queueMenu = control.six_encode(control.lang(32065))
+        queueMenu = six.ensure_str(control.lang(32065))
 
-        traktManagerMenu = control.six_encode(control.lang(32070))
+        traktManagerMenu = six.ensure_str(control.lang(32070))
 
-        nextMenu = control.six_encode(control.lang(32053))
+        nextMenu = six.ensure_str(control.lang(32053))
 
-        addToLibrary = control.six_encode(control.lang(32551))
+        addToLibrary = six.ensure_str(control.lang(32551))
 
-        clearProviders = control.six_encode(control.lang(32081))
+        clearProviders = six.ensure_str(control.lang(32081))
 
-        findSimilar = control.six_encode(control.lang(32100))
+        findSimilar = six.ensure_str(control.lang(32100))
 
-        infoMenu = control.six_encode(control.lang(32101))
+        infoMenu = six.ensure_str(control.lang(32101))
 
         for i in items:
             try:
@@ -1254,11 +1254,11 @@ class movies:
 
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
 
-        queueMenu = control.six_encode(control.lang(32065))
+        queueMenu = six.ensure_str(control.lang(32065))
 
-        playRandom = control.six_encode(control.lang(32535))
+        playRandom = six.ensure_str(control.lang(32535))
 
-        addToLibrary = control.six_encode(control.lang(32551))
+        addToLibrary = six.ensure_str(control.lang(32551))
 
         for i in items:
             try:

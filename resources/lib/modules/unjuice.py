@@ -60,7 +60,7 @@ def run(e):
 
     try:
         t = jsunpack.unpack(t)
-        t = unicode(t, 'utf-8') if six.PY2 else str(t, 'utf-8')
+        t = six.ensure_str(t)
     except:
         t = None
     

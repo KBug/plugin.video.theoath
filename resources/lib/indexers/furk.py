@@ -16,9 +16,10 @@
 '''
 
 from resources.lib.modules import control
-import sys, requests, os#, urllib, urlparse
+import sys, requests, os
 import simplejson as json
 
+import six
 from six.moves import urllib_parse
 
 sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
@@ -105,7 +106,7 @@ class furk:
     def search_new(self):
             control.idle()
 
-            t = control.six_encode(control.lang(32010))
+            t = six.ensure_str(control.lang(32010))
             k = control.keyboard('', t) ; k.doModal()
             q = k.getText() if k.isConfirmed() else None
 
@@ -156,7 +157,7 @@ class furk:
 
                 else:
                     # print(i['name'])
-                    # self.addDirectoryItem(control.six_encode(i['name']), i['url_dl'], '', '')
+                    # self.addDirectoryItem(six.ensure_str(i['name']), i['url_dl'], '', '')
                     continue
             self.endDirectory()
             return ''
@@ -165,7 +166,7 @@ class furk:
 
     def addDirectoryItem(self, name, query, thumb, icon, isAction=True):
         try:
-            name = control.six_encode(name)
+            name = six.ensure_str(name)
             url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
             item = control.item(label=name)
             item.setArt({'icon': thumb, 'thumb': thumb})

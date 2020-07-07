@@ -23,10 +23,10 @@ import simplejson as json
 import six
 
 
-if six.PY2:
-    unicode = unicode
-elif six.PY3:
-    str = unicode = basestring = str
+# if six.PY2:
+    # unicode = unicode
+# elif six.PY3:
+    # str = unicode = basestring = str
 
 
 def json_load_as_str(file_handle):
@@ -38,7 +38,7 @@ def json_loads_as_str(json_text):
 
 
 def byteify(data, ignore_dicts=False):
-    if isinstance(data, unicode):
+    if isinstance(data, six.string_types):
         if six.PY2:
             return data.encode('utf-8')
         else:

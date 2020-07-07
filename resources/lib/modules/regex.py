@@ -97,7 +97,7 @@ def resolve(regex):
 
         url = regex.split('<regex>', 1)[0].strip()
         url = client.replaceHTMLCodes(url)
-        url = control.six_encode(url)
+        url = six.ensure_str(url)
 
         r = getRegexParsed(regexs, url)
 

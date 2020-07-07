@@ -48,7 +48,7 @@ def log(msg, level=LOGNOTICE):
 
     try:
         if isinstance(msg, six.text_type):
-            msg = '%s (ENCODED)' % (control.six_encode(msg))
+            msg = '%s (ENCODED)' % (six.ensure_str(msg))
 
         if not control.setting('debug.location') == '0':
             log_file = os.path.join(LOGPATH, 'theoath.log')
