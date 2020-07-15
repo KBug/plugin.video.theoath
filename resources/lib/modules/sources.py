@@ -19,7 +19,7 @@
 """
 
 
-import sys,re,random,datetime,time,traceback#,urllib,urlparse
+import sys,re,random,datetime,time,traceback
 import simplejson as json
 
 import six
@@ -467,19 +467,19 @@ class sources:
                     if len(self.sources) > 0:
                         for d in debrid_list:
                             if quality in ['0']:
-                                d_source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
                             elif quality in ['1']:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
                             elif quality in ['2']:
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and d.valid_url(str(e['url']), e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
                             else:
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and d.valid_url(str(e['url']), e['source'])])
+                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
 
                             d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
 
@@ -1339,7 +1339,8 @@ class sources:
         except:
             self.hostDict = []
 
-        self.hostprDict = ['1fichier.com', 'oboom.com', 'rapidgator.net', 'rg.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'ul.to', 'filefactory.com', 'nitroflare.com', 'turbobit.net', 'uploadrocket.net', 'multiup.org', 'mega.nz']
+        self.hostprDict = ['1fichier.com', 'dailyuploads.net', 'ddl.to', 'ddownload.com', 'dropapk.to', 'earn4files.com', 'filefactory.com', 'hexupload.net', 'mega.nz', 'multiup.org', 'nitroflare.com', 'oboom.com',
+                           'rapidgator.net', 'rg.to', 'rockfile.co', 'rockfile.eu', 'speed-down.org', 'turbobit.net', 'ul.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'uploadrocket.net', 'usersdrive.com']
 
         self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
                             'vev.io', 'vidup.me', 'vidup.tv', 'vidup.io', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',

@@ -60,7 +60,7 @@ def run(e):
 
     try:
         t = jsunpack.unpack(t)
-        t = six.ensure_str(t)
+        t = six.ensure_text(t)
     except:
         t = None
     
