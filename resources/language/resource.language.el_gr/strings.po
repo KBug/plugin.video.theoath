@@ -527,6 +527,14 @@ msgctxt "#32125"
 msgid "Popular IMDb user lists"
 msgstr "Δημοφιλείς IMDb λίστες χρηστών"
 
+msgctxt "#32126"
+msgid "Remove uncached torrents if cached exist"
+msgstr "Αφαίρεση uncached torrents αν υπάρχουν cached"
+
+msgctxt "#32127"
+msgid "Min Quality"
+msgstr "Ελάχιστη ποιότητα"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"

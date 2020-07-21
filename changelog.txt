@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.2.0[/COLOR][/B]
+- Added min quality setting
+- Added option to remove uncached torrents from the source list
+    They will still be listed if none cached found
+- Simplified the sources fetching dialog
+    The old implementation was sometimes freezing the dialog and/or the scraping process
+
 [B][COLOR gold]v3.1.3[/COLOR][/B]
 - Added support for some more debrid hosts
 - Minor fixes

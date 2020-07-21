@@ -38,7 +38,8 @@
         <setting id="source.list.meta" type="bool" label="32112" default="false" enable="eq(-8,1)" />
         <setting type="lsep" label="32338" />
         <setting id="hosts.quality" type="enum" label="32339" values="4K|1080p|720p|SD" default="0" />
-        <setting id="remove.cam" type="bool" label="32122" default="false" />
+        <setting id="min.quality" type="enum" label="32127" values="4K|1080p|720p|SD" default="3" />
+        <setting id="remove.cam" type="bool" label="32122" default="false" subsetting="true" visible="eq(-1,3)" />
         <setting id="debrid.only" type="bool" label="32621" default="false" />
         <setting id="autoplay.sd" type="bool" label="32620" default="false" />
         <setting id="remove.hevc" type="bool" label="32363" default="false" />
@@ -48,7 +49,8 @@
         <setting id="hosts.sort.provider" type="bool" label="32342" default="true" />
         <setting id="torr.sort.size" type="bool" label="32113" default="true" />
         <setting id="check.torr.cache" type="bool" label="32114" default="true" />
-        <setting type="text" label="32115" enable="false" />
+        <setting id="remove.uncached" type="bool" label="32126" default="false" enable="eq(-1,true)" subsetting="true" />
+        <setting type="text" label="32115" enable="false" subsetting="true" />
         <setting id="torrent.min.seeders" type="slider" label="Minimum Seeders" visible="false" default="1" range="1,100" option="int" />
         <setting type="lsep" label="32343" />
         <setting id="bookmarks" type="bool" label="32344" default="true" />

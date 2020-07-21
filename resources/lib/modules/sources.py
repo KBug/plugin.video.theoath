@@ -395,41 +395,27 @@ class sources:
         try: timeout = int(control.setting('scrapers.timeout.1'))
         except: pass
 
-        quality = control.setting('hosts.quality')
-        if quality == '': quality = '0'
+        max_quality = control.setting('hosts.quality')
+        if max_quality == '': max_quality = '0'
+        max_quality = int(max_quality)
 
-        line1 = line2 = line3 = ""
+        min_quality = control.setting('min.quality')
+        if min_quality == '': min_quality = '0'
+        min_quality = int(min_quality)
+
+        line1 = line3 = ""
         debrid_only = control.setting('debrid.only')
 
         pre_emp = control.setting('preemptive.termination')
         pre_emp_limit = control.setting('preemptive.limit')
 
-        source_4k = d_source_4k = 0
-        source_1080 = d_source_1080 = 0
-        source_720 = d_source_720 = 0
-        source_sd = d_source_sd = 0
-        total = d_total = 0
-
-        debrid_list = debrid.debrid_resolvers
-        debrid_status = debrid.status()
+        source_4k = source_1080 = source_720 = source_sd = total = 0
 
         total_format = '[COLOR %s][B]%s[/B][/COLOR]'
-        pdiag_format = ' 4K: %s | 1080p: %s | 720p: %s | SD: %s | %s: %s'.split('|')
-        pdiag_bg_format = '4K:%s(%s)|1080p:%s(%s)|720p:%s(%s)|SD:%s(%s)|T:%s(%s)'.split('|')
+        pdiag_format = '4K: %s  |  1080P: %s  |  720P: %s  |  SD: %s %s: %s' % ('%s','%s','%s','%s','[CR]TOTAL','%s') if not progressDialog == control.progressDialogBG else \
+                       '4K: %s | 1080P: %s | 720P: %s | SD: %s %s: %s' % ('%s','%s','%s','%s','| T','%s')
 
         for i in list(range(0, 4 * timeout)):
-
-            if str(pre_emp) == 'true':
-                if quality in ['0', '1']:
-                    if (source_4k + d_source_4k) >= int(pre_emp_limit): break
-                elif quality in ['1']:
-                    if (source_1080 + d_source_1080) >= int(pre_emp_limit): break
-                elif quality in ['2']:
-                    if (source_720 + d_source_720) >= int(pre_emp_limit): break
-                elif quality in ['3']:
-                    if (source_sd + d_source_sd) >= int(pre_emp_limit): break
-                else:
-                    if (source_sd + d_source_sd) >= int(pre_emp_limit): break
 
             try:
                 if control.monitor.abortRequested(): return sys.exit()
@@ -440,20 +426,30 @@ class sources:
                     pass
 
                 if len(self.sources) > 0:
-                    if quality in ['0']:
-                        source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K'] and e['debridonly'] == False])
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and e['debridonly'] == False])
-                    elif quality in ['1']:
-                        source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and e['debridonly'] == False])
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and e['debridonly'] == False])
-                    elif quality in ['2']:
-                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and e['debridonly'] == False])
-                        source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and e['debridonly'] == False])
-                    else:
-                        source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and e['debridonly'] == False])
+                    if min_quality == 0:
+                        source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K']])
+                    elif min_quality == 1:
+                        source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P']])
+                        if max_quality == 0:
+                            source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K']])
+                    elif min_quality == 2:
+                        source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD']])
+                        if max_quality == 0:
+                            source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K']])
+                            source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P']])
+                        elif max_quality == 1:
+                            source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P']])
+                    elif min_quality == 3:
+                        source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM']])
+                        if max_quality == 0:
+                            source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K']])
+                            source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P']])
+                            source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD']])
+                        elif max_quality == 1:
+                            source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P']])
+                            source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD']])
+                        elif max_quality == 2:
+                            source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD']])
 
                     total = source_4k + source_1080 + source_720 + source_sd
 
@@ -463,113 +459,45 @@ class sources:
                 source_sd_label = total_format % ('red', source_sd) if source_sd == 0 else total_format % ('lime', source_sd)
                 source_total_label = total_format % ('red', total) if total == 0 else total_format % ('lime', total)
 
-                if debrid_status:
-                    if len(self.sources) > 0:
-                        for d in debrid_list:
-                            if quality in ['0']:
-                                d_source_4k = len([e for e in self.sources if e['quality'] in ['4k', '4K'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                            elif quality in ['1']:
-                                d_source_1080 = len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                            elif quality in ['2']:
-                                d_source_720 = len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-                            else:
-                                d_source_sd = len([e for e in self.sources if e['quality'] in ['sd', 'scr', 'cam', 'SD', 'SCR', 'CAM'] and isinstance(e['url'], six.string_types) and d.valid_url(e['url'], e['source'])])
-
-                            d_total = d_source_4k + d_source_1080 + d_source_720 + d_source_sd
-
-                    d_4k_label = total_format % ('red', d_source_4k) if d_source_4k == 0 else total_format % ('lime', d_source_4k)
-                    d_1080_label = total_format % ('red', d_source_1080) if d_source_1080 == 0 else total_format % ('lime', d_source_1080)
-                    d_720_label = total_format % ('red', d_source_720) if d_source_720 == 0 else total_format % ('lime', d_source_720)
-                    d_sd_label = total_format % ('red', d_source_sd) if d_source_sd == 0 else total_format % ('lime', d_source_sd)
-                    d_total_label = total_format % ('red', d_total) if d_total == 0 else total_format % ('lime', d_total)
-
-
                 if (i / 2) < timeout:
                     try:
                         mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True and x.getName() in mainsourceDict]
                         info = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True]
                         if i >= timeout and len(mainleft) == 0 and len(self.sources) >= 100 * len(info): break # improve responsiveness
-                        if debrid_status:
-                            if quality in ['0']:
-                                if not progressDialog == control.progressDialogBG:
-                                    line1 = ('%s:' + '|'.join(pdiag_format)) % (string6, d_4k_label, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
-                                    line2 = ('%s:' + '|'.join(pdiag_format)) % (string7, source_4k_label, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                                    #print(line1, line2)
-                                else:
-                                    control.idle()
-                                    line1 = '|'.join(pdiag_bg_format[:-1]) % (source_4k_label, d_4k_label, source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label)
-                            elif quality in ['1']:
-                                if not progressDialog == control.progressDialogBG:
-                                    line1 = ('%s:' + '|'.join(pdiag_format[1:])) % (string6, d_1080_label, d_720_label, d_sd_label, str(string4), d_total_label)
-                                    line2 = ('%s:' + '|'.join(pdiag_format[1:])) % (string7, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                                else:
-                                    control.idle()
-                                    line1 = '|'.join(pdiag_bg_format[1:]) % (source_1080_label, d_1080_label, source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
-                            elif quality in ['2']:
-                                if not progressDialog == control.progressDialogBG:
-                                    line1 = ('%s:' + '|'.join(pdiag_format[2:])) % (string6, d_720_label, d_sd_label, str(string4), d_total_label)
-                                    line2 = ('%s:' + '|'.join(pdiag_format[2:])) % (string7, source_720_label, source_sd_label, str(string4), source_total_label)
-                                else:
-                                    control.idle()
-                                    line1 = '|'.join(pdiag_bg_format[2:]) % (source_720_label, d_720_label, source_sd_label, d_sd_label, source_total_label, d_total_label)
-                            else:
-                                if not progressDialog == control.progressDialogBG:
-                                    line1 = ('%s:' + '|'.join(pdiag_format[3:])) % (string6, d_sd_label, str(string4), d_total_label)
-                                    line2 = ('%s:' + '|'.join(pdiag_format[3:])) % (string7, source_sd_label, str(string4), source_total_label)
-                                else:
-                                    control.idle()
-                                    line1 = '|'.join(pdiag_bg_format[3:]) % (source_sd_label, d_sd_label, source_total_label, d_total_label)
-                        else:
-                            if quality in ['0']:
-                                line1 = '|'.join(pdiag_format) % (source_4k_label, source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                            elif quality in ['1']:
-                                line1 = '|'.join(pdiag_format[1:]) % (source_1080_label, source_720_label, source_sd_label, str(string4), source_total_label)
-                            elif quality in ['2']:
-                                line1 = '|'.join(pdiag_format[2:]) % (source_720_label, source_sd_label, str(string4), source_total_label)
-                            else:
-                                line1 = '|'.join(pdiag_format[3:]) % (source_sd_label, str(string4), source_total_label)
-
-                        if debrid_status:
-                            if len(info) > 6: line3 = string3 % (str(len(info)))
-                            elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
-                            else: break
-                            percent = int(100 * float(i) / (2 * timeout) + 0.5)
-                            if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line2 + '[CR]' + line3)
-                            else: progressDialog.update(max(1, percent), line1, line3)
-                        else:
-                            if len(info) > 6: line2 = string3 % (str(len(info)))
-                            elif len(info) > 0: line2 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
-                            else: break
-                            percent = int(100 * float(i) / (2 * timeout) + 0.5)
-                            progressDialog.update(max(1, percent), line1 + '[CR]' + line2)
+                        line1 = pdiag_format % (source_4k_label, source_1080_label, source_720_label, source_sd_label, source_total_label)
+                        if len(info) > 6: line3 = string3 % (str(len(info)))
+                        elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
+                        else: break
+                        percent = int(100 * float(i) / (2 * timeout) + 0.5)
+                        if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
+                        else: progressDialog.update(max(1, percent), line1, line3)
                     except Exception as e:
                         log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                 else:
                     try:
                         mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True and x.getName() in mainsourceDict]
                         info = mainleft
-                        if debrid_status:
-                            if len(info) > 6: line3 = 'Waiting for: %s' % (str(len(info)))
-                            elif len(info) > 0: line3 = 'Waiting for: %s' % (', '.join(info))
-                            else: break
-                            percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
-                            if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line2 + '[CR]' + line3)
-                            else: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
-                        else:
-                            if len(info) > 6: line2 = 'Waiting for: %s' % (str(len(info)))
-                            elif len(info) > 0: line2 = 'Waiting for: %s' % (', '.join(info))
-                            else: break
-                            percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
-                            progressDialog.update(max(1, percent), line1 + '[CR]' + line2)
+                        if len(info) > 6: line3 = 'Waiting for: %s' % (str(len(info)))
+                        elif len(info) > 0: line3 = 'Waiting for: %s' % (', '.join(info))
+                        else: break
+                        percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
+                        if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
+                        else: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
                     except Exception as e:
                         log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                         break
+
+                if str(pre_emp) == 'true':
+                    if max_quality == 0:
+                        if source_4k >= int(pre_emp_limit): break
+                    elif max_quality == 1:
+                        if source_1080 >= int(pre_emp_limit): break
+                    elif max_quality == 2:
+                        if source_720 >= int(pre_emp_limit): break
+                    elif max_quality == 3:
+                        if source_sd >= int(pre_emp_limit): break
+                    else:
+                        if source_sd >= int(pre_emp_limit): break
 
                 time.sleep(0.5)
             except:
@@ -829,8 +757,13 @@ class sources:
 
     def sourcesFilter(self):
 
-        quality = control.setting('hosts.quality')
-        if quality == '': quality = '0'
+        min_quality = control.setting('min.quality')
+        if min_quality == '': min_quality = '3'
+        min_quality = int(min_quality)
+
+        max_quality = control.setting('hosts.quality')
+        if max_quality == '': max_quality = '0'
+        max_quality = int(max_quality)
 
         debrid_only = control.setting('debrid.only')
         if debrid_only == '': debrid_only = 'false'
@@ -856,9 +789,9 @@ class sources:
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
         if size_sort == 'true':
-            for i in self.sources:
-                if 'magnet:' in i['url']:
-                    self.sources = sorted(self.sources, key=lambda k: k.get('size', 0), reverse=True)
+            #for i in self.sources:
+                #if 'magnet:' in i['url']:
+            self.sources = sorted(self.sources, key=lambda k: k.get('size', 0), reverse=True)
 
         if remove_hevc == 'true':
             self.sources = [i for i in self.sources if not any(value in i['url'] for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265', 'HEVC', 'H265', 'H.265', 'X265', 'X.265'])]
@@ -899,9 +832,13 @@ class sources:
                         if 'magnet:' in i['url']:
                             i.update({'debrid': d.name})
                     torrentSources = self.sourcesProcessTorrents([i for i in self.sources if 'magnet:' in i['url']])
-                    filter += [i for i in torrentSources if i.get('source') == 'cached torrent']
-                    filter += [i for i in torrentSources if i.get('source').lower() == 'torrent']
-                    filter += [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]uncached torrent[/COLOR]']
+                    cached = [i for i in torrentSources if i.get('source') == 'cached torrent']
+                    filter += cached
+                    unchecked = [i for i in torrentSources if i.get('source').lower() == 'torrent']
+                    filter += unchecked
+                    if control.setting('remove.uncached') == 'false' or len(cached) == 0:
+                        uncached = [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]uncached torrent[/COLOR]']
+                        filter += uncached
                     filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
                 except:
                     filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
@@ -922,15 +859,16 @@ class sources:
         filter = []
         filter += local
 
-        if quality == '0':
+        if max_quality == 0:
             filter += [i for i in self.sources if i['quality'] in ['4K', '4k']]
-        if quality in ['0', '1']:
+        if max_quality <= 1 and min_quality >= 1:
             filter += [i for i in self.sources if i['quality'] in ['1080p', '1080P']]
-        if quality in ['0', '1', '2']:
+        if max_quality <= 2 and min_quality >= 2:
             filter += [i for i in self.sources if i['quality'] in ['720p', '720P']]
-        filter += [i for i in self.sources if i['quality'] in ['sd', 'SD']]
-        if remove_cam == 'false':
-            filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
+        if max_quality <= 3 and min_quality >= 3:
+            filter += [i for i in self.sources if i['quality'] in ['sd', 'SD']]
+            if remove_cam == 'false':
+                filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
         self.sources = filter
 
         if remove_captcha == 'true':

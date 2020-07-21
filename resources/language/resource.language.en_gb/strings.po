@@ -531,6 +531,14 @@ msgctxt "#32125"
 msgid "Popular IMDb user lists"
 msgstr ""
 
+msgctxt "#32126"
+msgid "Remove uncached torrents if cached exist"
+msgstr ""
+
+msgctxt "#32127"
+msgid "Min Quality"
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""
