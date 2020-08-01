@@ -120,7 +120,7 @@ def authTrakt():
 
         result = getTraktAsJson('/oauth/device/code', {'client_id': V2_API_KEY})
         verification_url = control.lang(32513) % result['verification_url']
-        user_code = six.ensure_str(control.lang(32514) % result['user_code'])
+        user_code = six.ensure_text(control.lang(32514) % result['user_code'])
         expires_in = int(result['expires_in'])
         device_code = result['device_code']
         interval = result['interval']

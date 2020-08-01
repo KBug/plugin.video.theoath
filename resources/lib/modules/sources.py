@@ -395,19 +395,19 @@ class sources:
         try: timeout = int(control.setting('scrapers.timeout.1'))
         except: pass
 
+        min_quality = control.setting('min.quality')
+        if min_quality == '': min_quality = '3'
+        min_quality = int(min_quality)
+
         max_quality = control.setting('hosts.quality')
         if max_quality == '': max_quality = '0'
         max_quality = int(max_quality)
-
-        min_quality = control.setting('min.quality')
-        if min_quality == '': min_quality = '0'
-        min_quality = int(min_quality)
 
         line1 = line3 = ""
         debrid_only = control.setting('debrid.only')
 
         pre_emp = control.setting('preemptive.termination')
-        pre_emp_limit = control.setting('preemptive.limit')
+        pre_emp_limit = int(control.setting('preemptive.limit'))
 
         source_4k = source_1080 = source_720 = source_sd = total = 0
 
@@ -487,17 +487,15 @@ class sources:
                         log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                         break
 
-                if str(pre_emp) == 'true':
+                if pre_emp == 'true':
                     if max_quality == 0:
-                        if source_4k >= int(pre_emp_limit): break
+                        if source_4k >= pre_emp_limit: break
                     elif max_quality == 1:
-                        if source_1080 >= int(pre_emp_limit): break
+                        if source_1080 >= pre_emp_limit: break
                     elif max_quality == 2:
-                        if source_720 >= int(pre_emp_limit): break
+                        if source_720 >= pre_emp_limit: break
                     elif max_quality == 3:
-                        if source_sd >= int(pre_emp_limit): break
-                    else:
-                        if source_sd >= int(pre_emp_limit): break
+                        if source_sd >= pre_emp_limit: break
 
                 time.sleep(0.5)
             except:
@@ -515,8 +513,6 @@ class sources:
     def prepareSources(self):
         try:
             control.makeFile(control.dataPath)
-
-            self.sourceFile = control.providercacheFile
 
             dbcon = database.connect(self.sourceFile)
             dbcur = dbcon.cursor()
@@ -785,6 +781,18 @@ class sources:
 
         random.shuffle(self.sources)
 
+        local = [i for i in self.sources if 'local' in i and i['local'] == True]
+        for i in local: i.update({'language': self._getPrimaryLang() or 'en'})
+        self.sources = [i for i in self.sources if not i in local]
+
+        multi = [i['language'] for i in self.sources]
+        multi = [x for y,x in enumerate(multi) if x not in multi[:y]]
+        multi = True if len(multi) > 1 else False
+
+        for i in list(range(len(self.sources))):
+            if self.sources[i]['quality'] in ['hd', 'HD']:
+                self.sources[i].update({'quality': '720p'})
+
         if sort_provider == 'true':
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
@@ -796,18 +804,14 @@ class sources:
         if remove_hevc == 'true':
             self.sources = [i for i in self.sources if not any(value in i['url'] for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265', 'HEVC', 'H265', 'H.265', 'X265', 'X.265'])]
 
+        if remove_captcha == 'true':
+            self.sources = [i for i in self.sources if not (i['source'].lower() in self.hostcapDict and not 'debrid' in i)]
+
+        self.sources = [i for i in self.sources if not i['source'].lower() in self.hostblockDict]
+
 #        for i in self.sources:
 #            if 'checkquality' in i and i['checkquality'] == True:
 #                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
-
-        local = [i for i in self.sources if 'local' in i and i['local'] == True]
-        for i in local: i.update({'language': self._getPrimaryLang() or 'en'})
-        self.sources = [i for i in self.sources if not i in local]
-
-#        filter = []
-#        filter += [i for i in self.sources if i['direct'] == True]
-#        filter += [i for i in self.sources if i['direct'] == False]
-#        self.sources = filter
 
         try:
             if control.setting('remove.dups') == 'true' and len(self.sources) > 1:
@@ -853,9 +857,6 @@ class sources:
 
         self.sources = filter
 
-        for i in list(range(len(self.sources))):
-            if self.sources[i]['quality'] in ['hd', 'HD']: self.sources[i].update({'quality': '720p'})
-
         filter = []
         filter += local
 
@@ -870,15 +871,6 @@ class sources:
             if remove_cam == 'false':
                 filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
         self.sources = filter
-
-        if remove_captcha == 'true':
-            self.sources = [i for i in self.sources if not (i['source'].lower() in self.hostcapDict and not 'debrid' in i)]
-
-        self.sources = [i for i in self.sources if not i['source'].lower() in self.hostblockDict]
-
-        multi = [i['language'] for i in self.sources]
-        multi = [x for y,x in enumerate(multi) if x not in multi[:y]]
-        multi = True if len(multi) > 1 else False
 
         if multi == True:
             self.sources = [i for i in self.sources if not i['language'] == 'en'] + [i for i in self.sources if i['language'] == 'en']
@@ -1227,6 +1219,8 @@ class sources:
         self.itemProperty = 'plugin.video.theoath.container.items'
 
         self.metaProperty = 'plugin.video.theoath.container.meta'
+
+        self.sourceFile = control.providercacheFile
 
         if control.condVisibility('System.HasAddon(script.module.openscrapers)'):
             scraperSetting = control.setting('module.provider')

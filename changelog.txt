@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.2.1[/COLOR][/B]
+- Fixed Trakt (re)auth when Kodi's ui language is other than English
+- Other minor code tweaks
+
 [B][COLOR gold]v3.2.0[/COLOR][/B]
 - Added min quality setting
 - Added option to remove uncached torrents from the source list
