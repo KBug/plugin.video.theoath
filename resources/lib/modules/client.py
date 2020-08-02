@@ -20,14 +20,13 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re, sys, gzip, time, random, base64, traceback#, StringIO, urllib, urllib2, urlparse, HTMLParser, cookielib
+import re, sys, gzip, time, random, base64, traceback
 
 import simplejson as json
 
-from resources.lib.modules import cache, dom_parser, log_utils, control#, utils
+from resources.lib.modules import cache, dom_parser, log_utils, control
 
 import six
-#from six.moves import urllib_parse, urllib_request, urllib_error, html_parser, http_cookiejar
 from six.moves import range as x_range
 
 # Py2
@@ -101,6 +100,14 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             if username is not None and password is not None:
                 passmgr = urllib2.ProxyBasicAuthHandler()
                 passmgr.add_password(None, uri=url, user=username, passwd=password)
+
+                if six.PY2:
+                    passmgr = urllib2.ProxyBasicAuthHandler()
+                else:
+                    passmgr = urllib2.HTTPPasswordMgr()
+
+                passmgr.add_password(None, uri=url, user=username, passwd=password)
+
                 handlers += [
                     urllib2.ProxyHandler({'http': '{0}'.format(proxy)}), urllib2.HTTPHandler,
                     urllib2.ProxyBasicAuthHandler(passmgr)
@@ -233,12 +240,22 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             if response.code == 503:
 
                 if 'cf-browser-verification' in response.read(5242880):
+                    from resources.lib.modules import cfscrape
 
                     netloc = '{0}://{1}'.format(urlparse(url).scheme, urlparse(url).netloc)
 
-                    cf = cache.get(Cfcookie.get, 168, netloc, headers['User-Agent'], timeout)
+                    ua = headers['User-Agent']
 
-                    headers['Cookie'] = cf
+                    #cf = cache.get(Cfcookie.get, 168, netloc, ua, timeout)
+                    try:
+                        cf = cache.get(cfscrape.get_cookie_string, 1, netloc, ua)[0]
+                    except BaseException:
+                        try:
+                            cf = cfscrape.get_cookie_string(url, ua)[0]
+                        except BaseException:
+                            cf = None
+                    finally:
+                        headers['Cookie'] = cf
 
                     req = urllib2.Request(url, data=post, headers=headers)
 

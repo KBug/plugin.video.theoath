@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.2.2[/COLOR][/B]
+- Various under the hood changes
+
 [B][COLOR gold]v3.2.1[/COLOR][/B]
 - Fixed Trakt (re)auth when Kodi's ui language is other than English
 - Other minor code tweaks

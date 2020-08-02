@@ -20,16 +20,21 @@ import cProfile
 import simplejson as json
 import os
 import pstats
-#import StringIO
 import time
 from datetime import datetime
+import xbmc
 
 import six
 
-import xbmc
 from resources.lib.modules import control
-from xbmc import (LOGDEBUG, LOGERROR, LOGFATAL, LOGINFO,  # @UnusedImport
-                  LOGNONE, LOGNOTICE, LOGSEVERE, LOGWARNING)
+
+LOGDEBUG = xbmc.LOGDEBUG
+LOGERROR = xbmc.LOGERROR
+LOGFATAL = xbmc.LOGFATAL
+LOGINFO = xbmc.LOGINFO
+LOGNONE = xbmc.LOGNONE
+LOGNOTICE = xbmc.LOGNOTICE if int(control.getKodiVersion()) < 19 else xbmc.LOGINFO
+LOGWARNING = xbmc.LOGWARNING
 
 name = control.addonInfo('name')
 DEBUGPREFIX = '[ TheOath DEBUG ]'

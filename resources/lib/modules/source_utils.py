@@ -80,6 +80,7 @@ def get_release_quality(release_name, release_link=None):
         if not quality:
             if release_link:
                 release_link = client.replaceHTMLCodes(release_link)
+                release_link = urllib_parse.unquote(release_link)
                 release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
                 release_link = release_link.lower()
                 try: release_link = six.ensure_str(release_link)
@@ -101,6 +102,7 @@ def getFileType(url):
 
     try:
         url = client.replaceHTMLCodes(url)
+        url = urllib_parse.unquote(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = six.ensure_str(url)
         url = url.lower()
@@ -224,6 +226,7 @@ def check_direct_url(url):
 def check_url(url):
     try:
         url = client.replaceHTMLCodes(url)
+        url = urllib_parse.unquote(url)
         url = re.sub('[^A-Za-z0-9]+', ' ', url)
         url = six.ensure_str(url)
         url = url.lower()
