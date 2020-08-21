@@ -62,7 +62,7 @@ def is_anime(content, type, type_id):
 
 def get_release_quality(release_name, release_link=None):
 
-    if release_name is None: return
+    #if release_name is None: return
 
     try: release_name = six.ensure_str(release_name)
     except: pass
@@ -72,19 +72,17 @@ def get_release_quality(release_name, release_link=None):
 
         fmt = re.sub('[^A-Za-z0-9]+', ' ', release_name)
         fmt = fmt.lower()
-        try: fmt = six.ensure_str(fmt)
-        except: pass
 
         quality = get_qual(fmt)
 
         if not quality:
             if release_link:
+                try: release_link = six.ensure_str(release_link)
+                except: pass
                 release_link = client.replaceHTMLCodes(release_link)
                 release_link = urllib_parse.unquote(release_link)
                 release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
                 release_link = release_link.lower()
-                try: release_link = six.ensure_str(release_link)
-                except: pass
 
                 quality = get_qual(release_link)
 

@@ -319,6 +319,7 @@ class sources:
 
             try: progressDialog.close()
             except: pass
+            del progressDialog
 
             self.errorForSources()
         except:
@@ -505,6 +506,7 @@ class sources:
 
         try: progressDialog.close()
         except: pass
+        del progressDialog
 
         self.sourcesFilter()
 
@@ -705,45 +707,51 @@ class sources:
         for i in torrent_sources:
             if not i.get('debrid', '') in ['Real-Debrid', 'AllDebrid', 'Premiumize.me']:
                 return torrent_sources
+        start_time = time.time()
+        timeout = 20
         try:
-            from resources.lib.modules import debridcheck
-            control.sleep(500)
-            DBCheck = debridcheck.DebridCheck()
-            hashList = []
-            cachedTorrents = []
-            uncachedTorrents = []
-            #uncheckedTorrents = []
-            for i in torrent_sources:
-                try:
-                    r = re.findall(r'btih:(\w{40})', str(i['url']))[0]
-                    if r:
-                        infoHash = r.lower()
-                        i['info_hash'] = infoHash
-                        hashList.append(infoHash)
-                except: torrent_sources.remove(i)
-            if len(torrent_sources) == 0: return torrent_sources
-            torrent_sources = [i for i in torrent_sources if 'info_hash' in i]
-            hashList = list(set(hashList))
-            control.sleep(500)
-            cachedRDHashes, cachedADHashes, cachedPMHashes = DBCheck.run(hashList)
-            #cached
-            cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
-            cachedTorrents += cachedRDSources
-            cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
-            cachedTorrents += cachedADSources
-            cachedPMSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
-            cachedTorrents += cachedPMSources
-            for i in cachedTorrents: i.update({'source': 'cached torrent'})
-            #uncached
-            uncachedRDSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
-            uncachedTorrents += uncachedRDSources
-            uncachedADSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
-            uncachedTorrents += uncachedADSources
-            uncachedPMSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
-            uncachedTorrents += uncachedPMSources
-            for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
-            #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
-            return cachedTorrents + uncachedTorrents# + uncheckedTorrents
+            while time.time() < start_time + timeout:
+                from resources.lib.modules import debridcheck
+                control.sleep(500)
+                DBCheck = debridcheck.DebridCheck()
+                hashList = []
+                cachedTorrents = []
+                uncachedTorrents = []
+                #uncheckedTorrents = []
+                for i in torrent_sources:
+                    try:
+                        r = re.findall(r'btih:(\w{40})', str(i['url']))[0]
+                        if r:
+                            infoHash = r.lower()
+                            i['info_hash'] = infoHash
+                            hashList.append(infoHash)
+                    except: torrent_sources.remove(i)
+                if len(torrent_sources) == 0: return torrent_sources
+                torrent_sources = [i for i in torrent_sources if 'info_hash' in i]
+                hashList = list(set(hashList))
+                control.sleep(500)
+                cachedRDHashes, cachedADHashes, cachedPMHashes = DBCheck.run(hashList)
+                #cached
+                cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
+                cachedTorrents += cachedRDSources
+                cachedADSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
+                cachedTorrents += cachedADSources
+                cachedPMSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
+                cachedTorrents += cachedPMSources
+                for i in cachedTorrents: i.update({'source': 'cached torrent'})
+                #uncached
+                uncachedRDSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
+                uncachedTorrents += uncachedRDSources
+                uncachedADSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedADHashes) and i.get('debrid', '') == 'AllDebrid')]
+                uncachedTorrents += uncachedADSources
+                uncachedPMSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
+                uncachedTorrents += uncachedPMSources
+                for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
+                #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
+                time.sleep(0.1)
+                return cachedTorrents + uncachedTorrents# + uncheckedTorrents
+            else:
+                return
         except:
             failure = traceback.format_exc()
             log_utils.log('Torrent check - Exception: ' + str(failure))
@@ -1118,10 +1126,12 @@ class sources:
 
             try: progressDialog.close()
             except: pass
+            del progressDialog
 
         except Exception as e:
             try: progressDialog.close()
             except: pass
+            del progressDialog
             log_utils.log('Error %s' % str(e), log_utils.LOGNOTICE)
 
 
@@ -1169,6 +1179,7 @@ class sources:
 
         try: progressDialog.close()
         except: pass
+        del progressDialog
 
         return u
 

@@ -98,8 +98,6 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
         if proxy is not None:
 
             if username is not None and password is not None:
-                passmgr = urllib2.ProxyBasicAuthHandler()
-                passmgr.add_password(None, uri=url, user=username, passwd=password)
 
                 if six.PY2:
                     passmgr = urllib2.ProxyBasicAuthHandler()

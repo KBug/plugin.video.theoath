@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.2.3[/COLOR][/B]
+- Fix torrent cache check not terminating if a debrid service is down
+- Minor settings bug fix
+
 [B][COLOR gold]v3.2.2[/COLOR][/B]
 - Various under the hood changes
 
