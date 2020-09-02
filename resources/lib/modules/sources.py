@@ -227,8 +227,7 @@ class sources:
             items = json.loads(source)
             items = [i for i in items+next+prev][:40]
 
-            header = control.addonInfo('name')
-            header2 = header.upper()
+            header = control.addonInfo('name') + ': Resolving...'
 
             progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
             progressDialog.create(header, '')
@@ -240,9 +239,9 @@ class sources:
                 try:
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('[CR]    ', ' | '))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
                     except:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
 
                     if items[i]['source'] == block: raise Exception()
 
@@ -251,20 +250,9 @@ class sources:
 
                     #offset = 60 * 2 if items[i].get('source') in self.hostcapDict else 0
 
-                    '''
-                    if items[i].get('debrid').lower() == 'real-debrid':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
-                    if items[i].get('debrid').lower() == 'alldebrid':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
-                    if items[i].get('debrid').lower() == 'premiumize.me':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
-                    if items[i].get('debrid').lower() == 'linksnappy':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
-                    '''
-
                     if items[i].get('source').lower() in self.hostcapDict:
                         offset = 60 * 2
-                    elif 'torrent' in items[i].get('source').lower():# and no_skip:
+                    elif 'torrent' in items[i].get('source').lower():
                         offset = float('inf')
                     else:
                         offset = 0
@@ -327,6 +315,9 @@ class sources:
 
     def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='HD', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
+        if progressDialog == control.progressDialogBG:
+            control.idle()
+
         progressDialog.create(self.module_name)
         #progressDialog.update(0)
 
@@ -380,7 +371,7 @@ class sources:
         s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
         s = [(i[3].getName(), i[0], i[2]) for i in s]
 
-        mainsourceDict = [i[0] for i in s if i[2] == 0]
+        # mainsourceDict = [i[0] for i in s if i[2] == 0]
         sourcelabelDict = dict([(i[0], i[1].upper()) for i in s])
 
         [i.start() for i in threads]
@@ -395,6 +386,9 @@ class sources:
 
         try: timeout = int(control.setting('scrapers.timeout.1'))
         except: pass
+
+        start_time = time.time()
+        end_time = start_time + timeout
 
         min_quality = control.setting('min.quality')
         if min_quality == '': min_quality = '3'
@@ -416,7 +410,8 @@ class sources:
         pdiag_format = '4K: %s  |  1080P: %s  |  720P: %s  |  SD: %s %s: %s' % ('%s','%s','%s','%s','[CR]TOTAL','%s') if not progressDialog == control.progressDialogBG else \
                        '4K: %s | 1080P: %s | 720P: %s | SD: %s %s: %s' % ('%s','%s','%s','%s','| T','%s')
 
-        for i in list(range(0, 4 * timeout)):
+        # for i in list(range(0, 4 * timeout)):
+        for i in list(range(0, 2 * timeout)):
 
             try:
                 if control.monitor.abortRequested(): return sys.exit()
@@ -460,33 +455,39 @@ class sources:
                 source_sd_label = total_format % ('red', source_sd) if source_sd == 0 else total_format % ('lime', source_sd)
                 source_total_label = total_format % ('red', total) if total == 0 else total_format % ('lime', total)
 
-                if (i / 2) < timeout:
-                    try:
-                        mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True and x.getName() in mainsourceDict]
-                        info = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True]
-                        if i >= timeout and len(mainleft) == 0 and len(self.sources) >= 100 * len(info): break # improve responsiveness
-                        line1 = pdiag_format % (source_4k_label, source_1080_label, source_720_label, source_sd_label, source_total_label)
-                        if len(info) > 6: line3 = string3 % (str(len(info)))
-                        elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
-                        else: break
-                        percent = int(100 * float(i) / (2 * timeout) + 0.5)
-                        if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
-                        else: progressDialog.update(max(1, percent), line1, line3)
-                    except Exception as e:
-                        log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
-                else:
-                    try:
-                        mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True and x.getName() in mainsourceDict]
-                        info = mainleft
-                        if len(info) > 6: line3 = 'Waiting for: %s' % (str(len(info)))
-                        elif len(info) > 0: line3 = 'Waiting for: %s' % (', '.join(info))
-                        else: break
-                        percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
-                        if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
-                        else: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
-                    except Exception as e:
-                        log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
-                        break
+                # if (i / 2) < timeout:
+                try:
+                    # mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True and x.getName() in mainsourceDict]
+                    info = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True]
+                    # if i >= timeout and len(mainleft) == 0 and len(self.sources) >= 100 * len(info): break # improve responsiveness
+                    line1 = pdiag_format % (source_4k_label, source_1080_label, source_720_label, source_sd_label, source_total_label)
+                    if len(info) > 6: line3 = string3 % (str(len(info)))
+                    elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
+                    else: break
+                    # percent = int(100 * float(i) / (2 * timeout) + 0.5)
+                    current_time = time.time()
+                    current_progress = current_time - start_time
+                    percent = int((current_progress / float(timeout)) * 100)
+                    if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
+                    else: progressDialog.update(max(1, percent), self.module_name, line1 + '[CR]' + line3)
+                    # if len(mainleft) == 0: break
+                    if end_time < current_time: break
+                except Exception as e:
+                    log_utils.log('Source fetching dialog exception : %s' % str(e), log_utils.LOGERROR)
+                    break
+                # else: # old implementation that makes "priority: 0" scrapers to ignore the timeout setting
+                    # try:
+                        # mainleft = [sourcelabelDict[x.getName()] for x in threads if x.is_alive() == True and x.getName() in mainsourceDict]
+                        # info = mainleft
+                        # if len(info) > 6: line3 = 'Waiting for: %s' % (str(len(info)))
+                        # elif len(info) > 0: line3 = 'Waiting for: %s' % (', '.join(info))
+                        # else: break
+                        # percent = int(100 * float(i) / (2 * timeout) + 0.5) % 100
+                        # if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
+                        # else: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
+                    # except Exception as e:
+                        # log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
+                        # break
 
                 if pre_emp == 'true':
                     if max_quality == 0:
@@ -705,7 +706,7 @@ class sources:
     def sourcesProcessTorrents(self, torrent_sources):#adjusted Fen code
         if len(torrent_sources) == 0: return
         for i in torrent_sources:
-            if not i.get('debrid', '') in ['Real-Debrid', 'AllDebrid', 'Premiumize.me']:
+            if not i.get('debrid', '') in ['Real-Debrid', 'AllDebrid', 'Premiumize.me', 'Debrid-Link.fr']:
                 return torrent_sources
         start_time = time.time()
         timeout = 20
@@ -730,7 +731,7 @@ class sources:
                 torrent_sources = [i for i in torrent_sources if 'info_hash' in i]
                 hashList = list(set(hashList))
                 control.sleep(500)
-                cachedRDHashes, cachedADHashes, cachedPMHashes = DBCheck.run(hashList)
+                cachedRDHashes, cachedADHashes, cachedPMHashes, cachedDLHashes = DBCheck.run(hashList)
                 #cached
                 cachedRDSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
                 cachedTorrents += cachedRDSources
@@ -738,6 +739,8 @@ class sources:
                 cachedTorrents += cachedADSources
                 cachedPMSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
                 cachedTorrents += cachedPMSources
+                cachedDLSources = [dict(i.items()) for i in torrent_sources if (any(v in i.get('info_hash') for v in cachedDLHashes) and i.get('debrid', '') == 'Debrid-Link.fr')]
+                cachedTorrents += cachedDLSources
                 for i in cachedTorrents: i.update({'source': 'cached torrent'})
                 #uncached
                 uncachedRDSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedRDHashes) and i.get('debrid', '') == 'Real-Debrid')]
@@ -746,6 +749,8 @@ class sources:
                 uncachedTorrents += uncachedADSources
                 uncachedPMSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedPMHashes) and i.get('debrid', '') == 'Premiumize.me')]
                 uncachedTorrents += uncachedPMSources
+                uncachedDLSources = [dict(i.items()) for i in torrent_sources if (not any(v in i.get('info_hash') for v in cachedDLHashes) and i.get('debrid', '') == 'Debrid-Link.fr')]
+                uncachedTorrents += uncachedDLSources
                 for i in uncachedTorrents: i.update({'source': '[COLOR dimgrey]uncached torrent[/COLOR]'})
                 #uncheckedTorrents += [dict(i.items()) for i in torrent_sources if i.get('source').lower() == 'torrent']
                 time.sleep(0.1)
@@ -817,16 +822,16 @@ class sources:
 
         self.sources = [i for i in self.sources if not i['source'].lower() in self.hostblockDict]
 
-#        for i in self.sources:
-#            if 'checkquality' in i and i['checkquality'] == True:
-#                if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
+        # for i in self.sources:
+            # if 'checkquality' in i and i['checkquality'] == True:
+                # if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
         try:
             if control.setting('remove.dups') == 'true' and len(self.sources) > 1:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
                 dupes = str(stotal - len(self.sources))
-                control.infoDialog(six.ensure_str(control.lang(32089)).format(dupes), icon='INFO')
+                control.infoDialog(six.ensure_str(control.lang(32089)).format(dupes), icon='INFO', time=2000)
         except:
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
@@ -884,6 +889,8 @@ class sources:
             self.sources = [i for i in self.sources if not i['language'] == 'en'] + [i for i in self.sources if i['language'] == 'en']
 
         self.sources = self.sources[:4000]
+
+        control.idle()
 
         prem_color = control.setting('prem.identify')
         prem_identify = self.getPremColor(prem_color)
@@ -1039,8 +1046,7 @@ class sources:
             items = [items[select]]
             items = [i for i in items+next+prev][:40]
 
-            header = control.addonInfo('name')
-            header2 = header.upper()
+            header = control.addonInfo('name') + ': Resolving...'
 
             progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
             progressDialog.create(header, '')
@@ -1057,24 +1063,13 @@ class sources:
 
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('[CR]    ', ' | '))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
                     except:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
-
-                    '''
-                    if items[i].get('debrid').lower() == 'real-debrid':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('RealDebridResolver_cached_only') == ''
-                    if items[i].get('debrid').lower() == 'alldebrid':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('AllDebridResolver_cached_only') == ''
-                    if items[i].get('debrid').lower() == 'premiumize.me':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == 'false' or control.addon('script.module.resolveurl').getSetting('PremiumizeMeResolver_cached_only') == ''
-                    if items[i].get('debrid').lower() == 'linksnappy':
-                        no_skip = control.addon('script.module.resolveurl').getSetting('LinksnappyResolver_cached_only') == 'false'
-                    '''
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
 
                     if items[i].get('source').lower() in self.hostcapDict:
                         offset = 60 * 2
-                    elif 'torrent' in items[i].get('source').lower():# and no_skip:
+                    elif 'torrent' in items[i].get('source').lower():
                         offset = float('inf')
                     else:
                         offset = 0
@@ -1149,8 +1144,7 @@ class sources:
 
         u = None
 
-        header = control.addonInfo('name')
-        header2 = header.upper()
+        header = control.addonInfo('name') + ': Resolving...'
 
         try:
             control.sleep(1000)
@@ -1164,9 +1158,9 @@ class sources:
         for i in list(range(len(items))):
             try:
                 if progressDialog.iscanceled(): break
-                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']).replace('[CR]    ', ' | '))
+                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
             except:
-                progressDialog.update(int((100 / float(len(items))) * i), str(header2) + '[CR]' + str(items[i]['label']))
+                progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
 
             try:
                 if control.monitor.abortRequested(): return sys.exit()

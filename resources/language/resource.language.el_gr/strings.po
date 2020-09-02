@@ -484,8 +484,8 @@ msgid "Verify torrents cache"
 msgstr "Επαλήθευση debrid cache για πηγές torrent"
 
 msgctxt "#32115"
-msgid "WiP - Supported services: Real-Debrid, AllDebrid, Premiumize"
-msgstr "Υποστηριζόμενες υπηρεσίες: Real-Debrid, AllDebrid, Premiumize"
+msgid "Supported services: Real-Debrid, AllDebrid, Premiumize, Debrid-Link"
+msgstr "Υποστηριζόμενες υπηρεσίες: Real-Debrid, AllDebrid, Premiumize, Debrid-Link"
 
 msgctxt "#32116"
 msgid "[B]TheOath[/B] : Clear debrid checks..."

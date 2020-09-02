@@ -1,3 +1,8 @@
+[B][COLOR gold]v3.2.4[/COLOR][/B]
+- Added Debrid-Link.fr to the supported torrents cache check services
+- Further simplification of the sources fetching proccess/dialog
+- Fixed busy dialog issue when backgroung progress dialog is selected
+
 [B][COLOR gold]v3.2.3[/COLOR][/B]
 - Fix torrent cache check not terminating if a debrid service is down
 - Minor settings bug fix

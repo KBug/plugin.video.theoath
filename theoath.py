@@ -407,7 +407,6 @@ elif action == 'play':
     control.busy()
     from resources.lib.modules import sources
     sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
-    control.idle()
 
 elif action == 'addItem':
     from resources.lib.modules import sources
