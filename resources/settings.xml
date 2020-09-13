@@ -109,9 +109,6 @@
         <setting id="os.pass" type="text" option="hidden" label="32307" default="" />
         <setting type="lsep" label="32539" />
         <setting id="open_smu_settings" type="action" label="32540" enable="true" option="close" action="RunPlugin(plugin://plugin.video.theoath/?action=smuSettings)" />
-        <setting type="lsep" label="Ororo.tv" />
-        <setting id="ororo.user" type="text" label="32304" default="" />
-        <setting id="ororo.pass" type="text" option="hidden" label="32307" default="" />
         <setting type="lsep" label="Furk.net" />
         <setting id="furk.user_name" type="text" label="Furk Username" default="" />
         <setting id="furk.user_pass" type="text" label="Furk Password" option="hidden" default="" />

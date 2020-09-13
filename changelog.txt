@@ -1,4 +1,8 @@
 [B][COLOR gold]v3.2.4[/COLOR][/B]
+- Moved scraper accounts settings (ororo, filepursuit) into Oathscrapers's settings
+- Quality identification fixes
+
+[B][COLOR gold]v3.2.4[/COLOR][/B]
 - Added Debrid-Link.fr to the supported torrents cache check services
 - Further simplification of the sources fetching proccess/dialog
 - Fixed busy dialog issue when backgroung progress dialog is selected

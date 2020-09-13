@@ -19,8 +19,6 @@
 """
 
 import base64
-#import urlparse
-#import urllib
 import hashlib
 import re
 
@@ -32,12 +30,12 @@ from resources.lib.modules import directstream
 from resources.lib.modules import trakt
 from resources.lib.modules import pyaes
 
-RES_4K = [' 4k ', ' hd4k ', ' 4khd ', ' uhd ', ' ultrahd ', ' ultra hd ', ' 2160 ', ' 2160p ', ' hd2160 ', ' 2160hd ']
-RES_1080 = [' 1080 ', ' 1080p ', ' 1080i ', ' hd1080 ', ' 1080hd ', ' m1080p ', ' fullhd ', ' full hd ']
-RES_720 = [' 720 ', ' 720p ', ' 720i ', ' hd720 ', ' 720hd ', ' hd ']
-RES_SD = [' 576 ', ' 576p ', ' 576i ', ' sd576 ', ' 576sd ', ' 480 ', ' 480p ', ' 480i ', ' sd480 ', ' 480sd ', ' 360 ', ' 360p ', ' 360i ', ' sd360 ', ' 360sd ', ' 240 ', ' 240p ', ' 240i ', ' sd240 ', ' 240sd ']
-SCR = [' scr ', ' screener ', ' dvdscr ', ' dvd scr ', ' r5 ', ' r6 ']
-CAM = [' camrip ', ' tsrip ', ' hdcam ', ' hd cam ', ' cam rip ', ' hdts ', ' dvdcam ', ' dvdts ', ' cam ', ' telesync ', ' ts ']
+RES_4K = [' 4k', ' hd4k', ' 4khd', ' uhd', ' ultrahd', ' ultra hd', ' 2160', ' 2160p', ' hd2160', ' 2160hd']
+RES_1080 = [' 1080', ' 1080p', ' 1080i', ' hd1080', ' 1080hd', ' m1080p', ' fullhd', ' full hd', ' 1o8o', ' 1o8op']
+RES_720 = [' 720', ' 720p', ' 720i', ' hd720', ' 720hd', ' hd', ' 72o', ' 72op']
+RES_SD = [' 576', ' 576p', ' 576i', ' sd576', ' 576sd', ' 480', ' 480p', ' 480i', ' sd480', ' 480sd', ' 360', ' 360p', ' 360i', ' sd360', ' 360sd', ' 240', ' 240p', ' 240i', ' sd240', ' 240sd']
+SCR = [' scr', ' screener', ' dvdscr', ' dvd scr', ' r5', ' r6']
+CAM = [' camrip', ' tsrip', ' hdcam', ' hd cam', ' cam rip', ' hdts', ' dvdcam', ' dvdts', ' cam', ' telesync', ' ts']
 
 def get_qual(term):
     if any(i in term for i in RES_4K):
@@ -62,16 +60,15 @@ def is_anime(content, type, type_id):
 
 def get_release_quality(release_name, release_link=None):
 
-    #if release_name is None: return
-
-    try: release_name = six.ensure_str(release_name)
-    except: pass
+    if release_name is None: return
 
     try:
         quality = None
 
-        fmt = re.sub('[^A-Za-z0-9]+', ' ', release_name)
-        fmt = fmt.lower()
+        try: release_name = six.ensure_str(release_name)
+        except: pass
+        fmt = release_name.lower()
+        fmt = re.sub('[^a-z0-9]+', ' ', fmt)
 
         quality = get_qual(fmt)
 
@@ -81,12 +78,15 @@ def get_release_quality(release_name, release_link=None):
                 except: pass
                 release_link = client.replaceHTMLCodes(release_link)
                 release_link = urllib_parse.unquote(release_link)
-                release_link = re.sub('[^A-Za-z0-9 ]+', ' ', release_link)
                 release_link = release_link.lower()
+                release_link = re.sub('[^a-z0-9]+', ' ', release_link)
 
                 quality = get_qual(release_link)
+                if not quality:
+                    quality = 'sd'
 
-            else: quality = 'sd'
+            else:
+                quality = 'sd'
         info = []
         #if '3d' in fmt or '.3D.' in release_name: info.append('3D')
         #if any(i in ['hevc', 'h265', 'h.265', 'x265'] for i in fmt): info.append('HEVC')
@@ -99,11 +99,11 @@ def get_release_quality(release_name, release_link=None):
 def getFileType(url):
 
     try:
+        url = six.ensure_str(url)
         url = client.replaceHTMLCodes(url)
         url = urllib_parse.unquote(url)
-        url = re.sub('[^A-Za-z0-9]+', ' ', url)
-        url = six.ensure_str(url)
         url = url.lower()
+        url = re.sub('[^a-z0-9]+', ' ', url)
     except:
         url = str(url)
     type = ''
@@ -313,6 +313,14 @@ def aliases_to_array(aliases, filter=None):
 
 def append_headers(headers):
     return '|%s' % '&'.join(['%s=%s' % (key, urllib_parse.quote_plus(headers[key])) for key in headers])
+
+
+def _size(siz):
+    if siz in ['0', 0, '', None]: return 0, ''
+    div = 1 if siz.lower().endswith(('gb', 'gib')) else 1024
+    float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))) / div
+    str_size = str('%.2f GB' % float_size)
+    return float_size, str_size
 
 
 def get_size(url):
