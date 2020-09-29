@@ -34,7 +34,7 @@ class source:
         self.key = 'VUhYS1NMNUtLOEFGOUg3TkNFQkIzSkxBQktHUkVFTEg='
         self.domains = ['https://orionoid.com']
         self.providers = []
-        self.cachePath = os.path.join(xbmc.translatePath(control.addonInfo('profile')), 'orion.cache')
+        self.cachePath = os.path.join(control.transPath(control.addonInfo('profile')), 'orion.cache')
         self.cacheData = None
         self.resolvers = None
 

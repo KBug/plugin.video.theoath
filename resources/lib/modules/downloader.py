@@ -24,7 +24,7 @@ import simplejson as json
 import xbmc
 import xbmcgui
 import xbmcplugin
-import xbmcvfs
+#import xbmcvfs
 import os
 import inspect
 import sys

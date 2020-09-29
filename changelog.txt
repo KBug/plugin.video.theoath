@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.2.6[/COLOR][/B]
+- Added a couple web channels on Networks
+- Minor kodi 19 adjustments
+
 [B][COLOR gold]v3.2.4[/COLOR][/B]
 - Moved scraper accounts settings (ororo, filepursuit) into Oathscrapers's settings
 - Quality identification fixes

@@ -56,7 +56,7 @@ class tvshows:
         self.tvmaze_link = 'https://www.tvmaze.com'
         self.logo_link = 'https://i.imgur.com/'
         self.tvdb_key = 'JMCO8LQHIXX76CGN'
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.fanart_tv_user = control.setting('fanart.tv.user')
@@ -334,6 +334,7 @@ class tvshows:
         ('FX', '/networks/13/fx', 'https://i.imgur.com/aQc1AIZ.png'),
         ('Freeform', '/networks/26/freeform', 'https://i.imgur.com/f9AqoHE.png'),
         ('HBO', '/networks/8/hbo', 'https://i.imgur.com/Hyu8ZGq.png'),
+        ('HBO Max', '/webchannels/329/hbo-max', 'https://i.imgur.com/9Rota5f.jpg'),
         ('HGTV', '/networks/192/hgtv', 'https://i.imgur.com/INnmgLT.png'),
         ('Hallmark', '/networks/50/hallmark-channel', 'https://i.imgur.com/zXS64I8.png'),
         ('History Channel', '/networks/53/history', 'https://i.imgur.com/LEMgy6n.png'),
@@ -348,6 +349,7 @@ class tvshows:
         ('PBS', '/networks/85/pbs', 'https://i.imgur.com/r9qeDJY.png'),
         ('Showtime', '/networks/9/showtime', 'https://i.imgur.com/SawAYkO.png'),
         ('Sky1', '/networks/63/sky-1', 'https://i.imgur.com/xbgzhPU.png'),
+        ('Sky Go', '/webchannels/117/sky-go', 'https://i.imgur.com/8cP3Qwy.jpg'),
         ('Starz', '/networks/17/starz', 'https://i.imgur.com/Z0ep2Ru.png'),
         ('Sundance', '/networks/33/sundance-tv', 'https://i.imgur.com/qldG5p2.png'),
         ('Syfy', '/networks/16/syfy', 'https://i.imgur.com/9yCq37i.png'),
@@ -357,7 +359,7 @@ class tvshows:
         ('TV Land', '/networks/57/tvland', 'https://i.imgur.com/1nIeDA5.png'),
         ('Travel Channel', '/networks/82/travel-channel', 'https://i.imgur.com/mWXv7SF.png'),
         ('TruTV', '/networks/84/trutv', 'https://i.imgur.com/HnB3zfc.png'),
-        ('YouTube Red', '/webchannels/43/youtube-premium', 'https://i.imgur.com/ZfewP1Y.png'),
+        ('YouTube Premium', '/webchannels/43/youtube-premium', 'https://i.imgur.com/ZfewP1Y.png'),
         ('USA', '/networks/30/usa-network', 'https://i.imgur.com/Doccw9E.png'),
         ('VH1', '/networks/55/vh1', 'https://i.imgur.com/IUtHYzA.png'),
         ('WGN', '/networks/28/wgn-america', 'https://i.imgur.com/TL6MzgO.png')

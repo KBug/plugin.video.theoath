@@ -396,7 +396,7 @@ class subtitles:
             content = gzip.GzipFile(fileobj=six.BytesIO(content)).read()
             if six.PY3: content = six.ensure_text(content)
 
-            subtitle = xbmc.translatePath('special://temp/')
+            subtitle = control.transPath('special://temp/')
             subtitle = os.path.join(subtitle, 'TemporarySubs.%s.srt' % lang)
 
             codepage = codePageDict.get(lang, '')

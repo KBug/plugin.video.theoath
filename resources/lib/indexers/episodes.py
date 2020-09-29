@@ -53,9 +53,9 @@ class seasons:
         self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
         self.specials = control.setting('tv.specials') or 'true'
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
-        self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        #self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
         self.tvdb_key = 'JMCO8LQHIXX76CGN'#base64.b64decode(self.etvdb_key)#
 
         self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key, '%s', '%s')
@@ -595,9 +595,9 @@ class episodes:
 
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'https://api.tvmaze.com'
-        self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
+        #self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
         self.tvdb_key = 'JMCO8LQHIXX76CGN'#base64.b64decode(self.etvdb_key)#
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.systime = self.datetime.strftime('%Y%m%d%H%M%S%f')
         self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.trakt_user = control.setting('trakt.user').strip()

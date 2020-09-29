@@ -115,13 +115,13 @@ deleteDir = xbmcvfs.rmdir
 
 listDir = xbmcvfs.listdir
 
-transPath = xbmc.translatePath
+transPath = xbmc.translatePath if int(getKodiVersion()) < 19 else xbmcvfs.translatePath
 
-skinPath = xbmc.translatePath('special://skin/')
+skinPath = transPath('special://skin/')
 
-addonPath = xbmc.translatePath(addonInfo('path'))
+addonPath = transPath(addonInfo('path'))
 
-dataPath = xbmc.translatePath(addonInfo('profile'))
+dataPath = transPath(addonInfo('profile'))
 
 settingsFile = os.path.join(dataPath, 'settings.xml')
 
@@ -356,7 +356,7 @@ def metadataClean(metadata): # Filter out non-existing/custom keys. Otherise the
 
 
 def installAddon(addon_id):
-    addon_path = os.path.join(xbmc.translatePath('special://home/addons'), addon_id)
+    addon_path = os.path.join(transPath('special://home/addons'), addon_id)
     if not os.path.exists(addon_path) == True:
         xbmc.executebuiltin('InstallAddon(%s)' % (addon_id))
     else:
@@ -391,8 +391,8 @@ def clean_settings():#Fen code
             active_settings = []
             current_user_settings = []
             addon = xbmcaddon.Addon(id=addon_id)
-            addon_dir = xbmc.translatePath(addon.getAddonInfo('path'))
-            profile_dir = xbmc.translatePath(addon.getAddonInfo('profile'))
+            addon_dir = transPath(addon.getAddonInfo('path'))
+            profile_dir = transPath(addon.getAddonInfo('profile'))
             addon_name = addon.getAddonInfo('name')
             active_settings_xml = os.path.join(addon_dir, 'resources', 'settings.xml')
             root = ET.parse(active_settings_xml).getroot()

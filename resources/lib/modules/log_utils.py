@@ -38,7 +38,7 @@ LOGWARNING = xbmc.LOGWARNING
 
 name = control.addonInfo('name')
 DEBUGPREFIX = '[ TheOath DEBUG ]'
-LOGPATH = xbmc.translatePath('special://logpath/')
+LOGPATH = control.transPath('special://logpath/')
 
 
 def log(msg, level=LOGNOTICE):

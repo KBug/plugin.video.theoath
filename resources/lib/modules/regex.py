@@ -32,14 +32,14 @@ import traceback
 import six
 from six.moves import urllib_parse, urllib_request, http_cookiejar
 
-profile = functions_dir = xbmc.translatePath(xbmcaddon.Addon().getAddonInfo('profile'))
-
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
 
 from resources.lib.modules import client
 from resources.lib.modules import control
 
+
+profile = functions_dir = control.transPath(xbmcaddon.Addon().getAddonInfo('profile'))
 
 def fetch(regex):
     try:

@@ -53,7 +53,7 @@ class movies:
 
         self.imdb_link = 'https://www.imdb.com'
         self.trakt_link = 'https://api.trakt.tv'
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.systime = (self.datetime).strftime('%Y%m%d%H%M%S%f')
         self.year_date = (self.datetime - datetime.timedelta(days = 365)).strftime('%Y-%m-%d')
         self.today_date = (self.datetime).strftime('%Y-%m-%d')
