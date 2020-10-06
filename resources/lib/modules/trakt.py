@@ -248,6 +248,8 @@ def slug(name):
     name = name.lower()
     name = re.sub('[^a-z0-9_]', '-', name)
     name = re.sub('--+', '-', name)
+    if name.endswith('-'):
+        name = name.rstrip('-')
     return name
 
 

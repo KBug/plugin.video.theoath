@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.2.7[/COLOR][/B]
+- TV Networks now list all shows of given network, instead of current season's shows
+- Added some threading here and there
+
 [B][COLOR gold]v3.2.6[/COLOR][/B]
 - Added a couple web channels on Networks
 - Minor kodi 19 adjustments
