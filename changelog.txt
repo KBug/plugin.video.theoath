@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.2.8[/COLOR][/B]
+- Added option to enable/disable Trakt episodes ratings
+    [I]Context:[/I]  TheTVDb stopped supporting ratings some time ago, so we resorted to Trakt
+    for episodes ratings. But this takes an extra call to Trakt, which slows down the episodes
+    list fetching. Now there's an option to turn this on/off - until a better solution is found.
+- Made Channels main menu item optional
+
 [B][COLOR gold]v3.2.7[/COLOR][/B]
 - TV Networks now list all shows of given network, instead of current season's shows
 - Added some threading here and there
@@ -6,7 +13,7 @@
 - Added a couple web channels on Networks
 - Minor kodi 19 adjustments
 
-[B][COLOR gold]v3.2.4[/COLOR][/B]
+[B][COLOR gold]v3.2.5[/COLOR][/B]
 - Moved scraper accounts settings (ororo, filepursuit) into Oathscrapers's settings
 - Quality identification fixes
 

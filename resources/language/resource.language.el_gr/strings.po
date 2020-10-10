@@ -535,6 +535,10 @@ msgctxt "#32127"
 msgid "Min Quality"
 msgstr "Ελάχιστη ποιότητα"
 
+msgctxt "#32128"
+msgid "Get episodes ratings from Trakt (slow)"
+msgstr "Βαθμολογία επεισοδίων από Trakt (αργό)"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"
