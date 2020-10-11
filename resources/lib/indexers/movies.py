@@ -990,8 +990,6 @@ class movies:
                 tagline = trans_item.get('tagline') or tagline
                 plot = trans_item.get('overview') or plot
             except:
-                failure = traceback.format_exc()
-                log_utils.log('superinfo0: ' + str(failure))
                 pass
 
             try:

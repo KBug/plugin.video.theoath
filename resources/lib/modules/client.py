@@ -24,7 +24,7 @@ import re, sys, gzip, time, random, base64, traceback
 
 import simplejson as json
 
-from resources.lib.modules import cache, dom_parser, log_utils, control
+from resources.lib.modules import cache, cleantitle, control, dom_parser, log_utils
 
 import six
 from six.moves import range as x_range
@@ -75,7 +75,8 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
     """
 
     try:
-        url = url.decode('utf-8')
+        #url = url.decode('utf-8')
+        url = six.ensure_text(url)
     except Exception:
         pass
 
@@ -314,7 +315,8 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
 
             if not as_bytes:
 
-                result = six.ensure_text(result)
+                #result = six.ensure_text(result)
+                result = cleantitle.normalize(result)
 
             return result, headers, content, cookie
 
@@ -366,7 +368,8 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             response.close()
 
         if not as_bytes:
-            result = six.ensure_text(result)
+            #result = six.ensure_text(result)
+            result = cleantitle.normalize(result)
 
         return result
 

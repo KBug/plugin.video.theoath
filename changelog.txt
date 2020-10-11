@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.2.9[/COLOR][/B]
+- Fixed some internal encoding/decoding text issues
+
 [B][COLOR gold]v3.2.8[/COLOR][/B]
 - Added option to enable/disable Trakt episodes ratings
     [I]Context:[/I]  TheTVDb stopped supporting ratings some time ago, so we resorted to Trakt
