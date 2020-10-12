@@ -732,7 +732,7 @@ class movies:
 
                 year = client.parseDOM(item, 'span', attrs = {'class': r'lister-item-year.*?'})
                 year += client.parseDOM(item, 'span', attrs = {'class': 'year_type'})
-                try: year = re.compile(r'(\d{4})').findall(year)[0] if six.PY2 else re.compile(r'(\d{4})').findall(str(year))[0]
+                try: year = re.compile(r'(\d{4})').findall(str(year))[0]
                 except: year = '0'
                 year = six.ensure_str(year)
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
@@ -935,8 +935,10 @@ class movies:
 
             originaltitle = title
 
-            year = item.get('year', 0)
-            year = re.sub(r'[^0-9]', '', str(year))
+            year = self.list[i]['year']
+            if year == '0':
+                year = item.get('year', 0)
+                year = re.sub(r'[^0-9]', '', str(year))
 
             #imdb = item.get('ids', {}).get('imdb', '0')
             #imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))

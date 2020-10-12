@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.3.0[/COLOR][/B]
+- Some more text encoding/decoding fixes
+- Library fix for Kodi 19/py3
+
 [B][COLOR gold]v3.2.9[/COLOR][/B]
 - Fixed some internal encoding/decoding text issues
 

@@ -146,6 +146,8 @@ class libmovies:
             lib = []
 
         files_added = 0
+        #name = cleantitle.normalize(name)
+        #title = cleantitle.normalize(title)
 
         try:
             if not lib == []: raise Exception()
@@ -224,8 +226,9 @@ class libmovies:
 
             sysname, systitle = urllib_parse.quote_plus(name), urllib_parse.quote_plus(title)
 
-            try: transtitle = cleantitle.normalize(title.translate(None, '\/:*?"<>|'))
-            except: transtitle = cleantitle.normalize(title.translate(str.maketrans('', '', '\/:*?"<>|')))
+            try: transtitle = title.translate(None, '\/:*?"<>|')
+            except: transtitle = title.translate(str.maketrans('', '', '\/:*?"<>|'))
+            transtitle = cleantitle.normalize(transtitle)
 
             content = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s' % (sys.argv[0], sysname, systitle, year, imdb)
 
@@ -250,7 +253,7 @@ class libtvshows:
         self.library_setting = control.setting('library.update') or 'true'
         self.dupe_setting = control.setting('library.check') or 'true'
 
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()
         if control.setting('library.importdelay') != 'true':
             self.date = self.datetime.strftime('%Y%m%d')
         else:
@@ -381,11 +384,12 @@ class libtvshows:
         try:
             title, year, imdb, tvdb, season, episode, tvshowtitle, premiered = i['title'], i['year'], i['imdb'], i['tvdb'], i['season'], i['episode'], i['tvshowtitle'], i['premiered']
 
-            episodetitle = urllib_parse.quote_plus(title)
-            systitle, syspremiered = urllib_parse.quote_plus(tvshowtitle), urllib_parse.quote_plus(premiered)
+            episodetitle = urllib_parse.quote_plus(cleantitle.normalize(title))
+            systitle, syspremiered = urllib_parse.quote_plus(cleantitle.normalize(tvshowtitle)), urllib_parse.quote_plus(premiered)
 
-            try: transtitle = cleantitle.normalize(tvshowtitle.translate(None, '\/:*?"<>|'))
-            except: transtitle = cleantitle.normalize(tvshowtitle.translate(str.maketrans('', '', '\/:*?"<>|')))
+            try: transtitle = tvshowtitle.translate(None, '\/:*?"<>|')
+            except: transtitle = tvshowtitle.translate(str.maketrans('', '', '\/:*?"<>|'))
+            transtitle = cleantitle.normalize(transtitle)
 
             content = '%s?action=play&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&tvshowtitle=%s&date=%s' % (sys.argv[0], episodetitle, year, imdb, tvdb, season, episode, systitle, syspremiered)
 
@@ -410,7 +414,7 @@ class libepisodes:
         self.include_special = control.setting('library.include_special')
         self.property = '%s_service_property' % control.addonInfo('name').lower()
 
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()
         if control.setting('library.importdelay') != 'true':
             self.date = self.datetime.strftime('%Y%m%d')
         else:
@@ -494,7 +498,7 @@ class libepisodes:
         files_added = 0
 
         # __init__ doesn't get called from services so self.date never gets updated and new episodes are not added to the library
-        self.datetime = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5))
+        self.datetime = datetime.datetime.utcnow()
         if control.setting('library.importdelay') != 'true':
             self.date = self.datetime.strftime('%Y%m%d')
         else:

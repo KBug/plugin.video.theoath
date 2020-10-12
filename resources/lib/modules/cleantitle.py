@@ -20,9 +20,8 @@
 
 import re
 import unicodedata
-from six import ensure_str, ensure_text
+from six import ensure_str, ensure_text, PY2
 
-from resources.lib.modules import control
 
 def get(title):
     if title is None: return
@@ -150,8 +149,10 @@ def get_query(title):
 
 def normalize(title):
     try:
-        try: return ensure_str(ensure_text(title, encoding='ascii'))
-        except: return str(''.join(c for c in unicodedata.normalize('NFKD', ensure_text(control.six_decode(title))) if unicodedata.category(c) != 'Mn'))
+        if PY2:
+            try: return ensure_str(ensure_text(title, encoding='ascii'))
+            except: pass
+        return ''.join(c for c in unicodedata.normalize('NFKD', ensure_text(ensure_str(title))) if unicodedata.category(c) != 'Mn')
     except:
         return title
 
@@ -159,3 +160,4 @@ def normalize(title):
 def clean_search_query(url):
     url = url.replace('-','+').replace(' ', '+').replace('–', '+').replace('!', '')
     return url
+

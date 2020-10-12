@@ -660,7 +660,7 @@ class tvshows:
 
                 year = client.parseDOM(item, 'span', attrs = {'class': r'lister-item-year.*?'})
                 year += client.parseDOM(item, 'span', attrs = {'class': r'year_type'})
-                try: year = re.findall(r'(\d{4})', year[0])[0] if six.PY2 else re.findall(r'(\d{4})', str(year[0]))[0]
+                try: year = re.findall(r'(\d{4})', str(year)[0])[0]
                 except: year = '0'
                 year = six.ensure_str(year)
 

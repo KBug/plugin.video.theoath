@@ -24,7 +24,7 @@ import re, sys, gzip, time, random, base64, traceback
 
 import simplejson as json
 
-from resources.lib.modules import cache, cleantitle, control, dom_parser, log_utils
+from resources.lib.modules import cache, control, dom_parser, log_utils
 
 import six
 from six.moves import range as x_range
@@ -316,7 +316,8 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             if not as_bytes:
 
                 #result = six.ensure_text(result)
-                result = cleantitle.normalize(result)
+                if isinstance(result, six.binary_type):
+                    result = result.decode('utf-8')
 
             return result, headers, content, cookie
 
@@ -369,7 +370,8 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
 
         if not as_bytes:
             #result = six.ensure_text(result)
-            result = cleantitle.normalize(result)
+            if isinstance(result, six.binary_type):
+                result = result.decode('utf-8')
 
         return result
 
@@ -378,7 +380,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
         _, __, tb = sys.exc_info()
 
         print(traceback.print_tb(tb))
-        log_utils.log('Client module failed, reason of failure: ' + repr(reason))
+        log_utils.log('Client request failed on url: ' + url + ' reason: ' + repr(reason))
 
         return
 
