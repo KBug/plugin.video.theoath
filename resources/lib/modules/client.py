@@ -315,9 +315,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
 
             if not as_bytes:
 
-                #result = six.ensure_text(result)
-                if isinstance(result, six.binary_type):
-                    result = result.decode('utf-8')
+                result = control.six_decode(result)
 
             return result, headers, content, cookie
 
@@ -369,9 +367,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
             response.close()
 
         if not as_bytes:
-            #result = six.ensure_text(result)
-            if isinstance(result, six.binary_type):
-                result = result.decode('utf-8')
+            result = control.six_decode(result)
 
         return result
 

@@ -37,7 +37,7 @@ def download(name, image, url):
 
     if url == None: return
 
-    from resources.lib.modules import control
+    from resources.lib.modules import control, cleantitle
 
     try: headers = dict(urllib_parse.parse_qsl(url.rsplit('|', 1)[1]))
     except: headers = dict('')
@@ -47,6 +47,7 @@ def download(name, image, url):
     content = re.compile('(.+?)\sS(\d*)E\d*$').findall(name)
     try: transname = name.translate(None, '\/:*?"<>|').strip('.')
     except: transname = name.translate(str.maketrans('', '', '\/:*?"<>|')).strip('.')
+    transname = cleantitle.normalize(transname)
     levels =['../../../..', '../../..', '../..', '..']
 
     if len(content) == 0:

@@ -396,7 +396,7 @@ elif action == 'orionsettings':
     control.openSettings('0.0', 'script.module.orion')
 
 elif action == 'download':
-    import json
+    import simplejson as json
     from resources.lib.modules import sources
     from resources.lib.modules import downloader
     try: downloader.download(name, image, sources.sources().sourcesResolve(json.loads(source)[0], True))
@@ -443,24 +443,28 @@ elif action == 'random':
         rlist = tvshows.tvshows().get(url, create_directory=False)
         r = sys.argv[0]+"?action=random&rtype=season"
     from random import randint
-    import json
+    import simplejson as json
     try:
         from resources.lib.modules import control
         rand = randint(1,len(rlist))-1
         for p in ['title','year','imdb','tvdb','season','episode','tvshowtitle','premiered','select']:
             if rtype == "show" and p == "tvshowtitle":
-                try: r += '&'+p+'='+urllib_parse.quote_plus(rlist[rand]['title'])
+                try: r += '&'+p+'='+urllib_parse.quote_plus(rlist[rand]['originaltitle'])
                 except: pass
             else:
+                if rtype == "movie":
+                    rlist[rand]['title'] = rlist[rand]['originaltitle']
+                elif rtype == "episode":
+                    rlist[rand]['tvshowtitle'] = urllib_parse.unquote_plus(rlist[rand]['tvshowtitle'])
                 try: r += '&'+p+'='+urllib_parse.quote_plus(rlist[rand][p])
                 except: pass
         try: r += '&meta='+urllib_parse.quote_plus(json.dumps(rlist[rand]))
-        except: r += '&meta='+urllib_parse.quote_plus("{}")
+        except: r += '&meta={}'
         if rtype == "movie":
-            try: control.infoDialog(rlist[rand]['title'], control.lang(32536), time=30000)
+            try: control.infoDialog('%s (%s)' % (rlist[rand]['title'], rlist[rand]['year']), control.lang(32536), time=20000)
             except: pass
         elif rtype == "episode":
-            try: control.infoDialog(rlist[rand]['tvshowtitle']+" - Season "+rlist[rand]['season']+" - "+rlist[rand]['title'], control.lang(32536), time=30000)
+            try: control.infoDialog('%s - %01dx%02d . %s' % (urllib_parse.unquote_plus(rlist[rand]['tvshowtitle']), int(rlist[rand]['season']), int(rlist[rand]['episode']), rlist[rand]['title']), control.lang(32536), time=20000)
             except: pass
         control.execute('RunPlugin(%s)' % r)
     except:

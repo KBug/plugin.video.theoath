@@ -543,6 +543,14 @@ msgctxt "#32128"
 msgid "Get episodes ratings from Trakt (slow)"
 msgstr ""
 
+msgctxt "#32129"
+msgid "Enable extra & hq artwork"
+msgstr ""
+
+msgctxt "#32130"
+msgid "Please consider entering your personal Fanart.tv API key on Accounts tab"
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""

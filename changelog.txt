@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.3.1[/COLOR][/B]
+- (Re)added option for extra & high quality artwork fetching
+    Personal Fanart.tv API key is recommended to be applied in settings - possibly
+    requiered eventually
+- Fixed some issues with "Play random"
+- Fixed downloading and library insertion when title has accented/special characters
+
 [B][COLOR gold]v3.3.0[/COLOR][/B]
 - Some more text encoding/decoding fixes
 - Library fix for Kodi 19/py3

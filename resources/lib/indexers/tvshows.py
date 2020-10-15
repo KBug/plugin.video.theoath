@@ -566,7 +566,8 @@ class tvshows:
                 if plot == None: plot = '0'
                 plot = client.replaceHTMLCodes(plot)
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': '0', 'next': next})
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
+                                  'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'poster': '0', 'next': next})
             except:
                 failure = traceback.format_exc()
                 log_utils.log('trakt_list0: ' + str(failure))
@@ -931,13 +932,15 @@ class tvshows:
 
         self.list = [i for i in self.list if not i['tvdb'] == '0']
 
-        if self.fanart_tv_user == '':
-            for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
+        #if self.fanart_tv_user == '':
+            #for i in self.list: i.update({'clearlogo': '', 'clearart': ''})
 
 
     def super_info(self, i):
         try:
             if self.list[i]['metacache'] == True: raise Exception()
+
+            hq_artwork = control.setting('hq.artwork') or 'false'
 
             imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
             tvdb = self.list[i]['tvdb'] if 'tvdb' in self.list[i] else '0'
@@ -1009,9 +1012,11 @@ class tvshows:
 
             try: title = client.parseDOM(item, 'SeriesName')[0]
             except: title = ''
-            if title == '': title = '0'
+            if title == '': title = self.list[i]['title']
             title = client.replaceHTMLCodes(title)
             title = six.ensure_str(title)
+
+            originaltitle = title
 
             try: year = client.parseDOM(item, 'FirstAired')[0]
             except: year = ''
@@ -1116,62 +1121,67 @@ class tvshows:
             try: banner = client.parseDOM(item, 'banner')[0]
             except: banner = ''
             if not banner == '': banner = self.tvdb_image + banner
-            else: banner = '0'
+            #else: banner = '0'
             banner = client.replaceHTMLCodes(banner)
             banner = six.ensure_str(banner)
 
             try: fanart = client.parseDOM(item, 'fanart')[0]
             except: fanart = ''
             if not fanart == '': fanart = self.tvdb_image + fanart
-            else: fanart = '0'
+            #else: fanart = '0'
             fanart = client.replaceHTMLCodes(fanart)
             fanart = six.ensure_str(fanart)
 
-            try:
-                artmeta = True
-                #if self.fanart_tv_user == '': raise Exception()
-                art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout='10', error=True)
-                try: art = json.loads(art)
-                except: artmeta = False
-            except:
-                pass
+            if hq_artwork == 'true':# and not self.fanart_tv_user == '':
 
-            try:
-                poster2 = art['tvposter']
-                poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                poster2 = six.ensure_str(poster2[0]['url'])
-            except:
-                poster2 = '0'
+                try:
+                    artmeta = True
+                    #if self.fanart_tv_user == '': raise Exception()
+                    art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout='10', error=True)
+                    try: art = json.loads(art)
+                    except: artmeta = False
+                except:
+                    pass
 
-            try:
-                fanart2 = art['showbackground']
-                fanart2 = [x for x in fanart2 if x.get('lang') == self.lang][::-1] + [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') in ['00', '']][::-1]
-                fanart2 = six.ensure_str(fanart2[0]['url'])
-            except:
-                fanart2 = '0'
+                try:
+                    poster2 = art['tvposter']
+                    poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
+                    poster2 = six.ensure_str(poster2[0]['url'])
+                except:
+                    poster2 = ''
 
-            try:
-                banner2 = art['tvbanner']
-                banner2 = [x for x in banner2 if x.get('lang') == self.lang][::-1] + [x for x in banner2 if x.get('lang') == 'en'][::-1] + [x for x in banner2 if x.get('lang') in ['00', '']][::-1]
-                banner2 = six.ensure_str(banner2[0]['url'])
-            except:
-                banner2 = '0'
+                try:
+                    fanart2 = art['showbackground']
+                    fanart2 = [x for x in fanart2 if x.get('lang') == self.lang][::-1] + [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') in ['00', '']][::-1]
+                    fanart2 = six.ensure_str(fanart2[0]['url'])
+                except:
+                    fanart2 = ''
 
-            try:
-                if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']
-                else: clearlogo = art['clearlogo']
-                clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                clearlogo = six.ensure_str(clearlogo[0]['url'])
-            except:
-                clearlogo = '0'
+                try:
+                    banner2 = art['tvbanner']
+                    banner2 = [x for x in banner2 if x.get('lang') == self.lang][::-1] + [x for x in banner2 if x.get('lang') == 'en'][::-1] + [x for x in banner2 if x.get('lang') in ['00', '']][::-1]
+                    banner2 = six.ensure_str(banner2[0]['url'])
+                except:
+                    banner2 = ''
 
-            try:
-                if 'hdclearart' in art: clearart = art['hdclearart']
-                else: clearart = art['clearart']
-                clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                clearart = six.ensure_str(clearart[0]['url'])
-            except:
-                clearart = '0'
+                try:
+                    if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']
+                    else: clearlogo = art['clearlogo']
+                    clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
+                    clearlogo = six.ensure_str(clearlogo[0]['url'])
+                except:
+                    clearlogo = ''
+
+                try:
+                    if 'hdclearart' in art: clearart = art['hdclearart']
+                    else: clearart = art['clearart']
+                    clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
+                    clearart = six.ensure_str(clearart[0]['url'])
+                except:
+                    clearart = ''
+
+            else:
+                poster2 = fanart2 = banner2 = clearlogo = clearart = ''
 
             item = {'title': title, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'poster2': poster2, 'banner': banner, 'banner2': banner2, 'fanart': fanart, 'fanart2': fanart2,
                     'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'status': status}
@@ -1234,8 +1244,14 @@ class tvshows:
                     if (premiered == '0' and status == 'Upcoming') or (int(re.sub('[^0-9]', '', premiered)) > int(re.sub('[^0-9]', '', str(self.today_date)))):
                         label = '[COLOR crimson]%s [I][Upcoming][/I][/COLOR]' % label
                 except: pass
+
+                poster1 = i.get('poster')
+                if poster1 == '0': poster1 = ''
+                poster2 = i.get('poster2')
+                poster = poster2 or poster1 or addonPoster
+
                 systitle = sysname = urllib_parse.quote_plus(i['originaltitle'])
-                sysimage = urllib_parse.quote_plus(i['poster'])
+                sysimage = urllib_parse.quote_plus(poster)
                 imdb, tvdb, year = i['imdb'], i['tvdb'], i['year']
 
                 meta = dict((k,v) for k, v in six.iteritems(i) if not v == '0')
@@ -1271,7 +1287,9 @@ class tvshows:
                            'ActivateWindow(10025,%s?action=tvshows&url=https://api.trakt.tv/shows/%s/related)' % (
                            sysaddon, imdb)))
 
-                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (sysaddon, urllib_parse.quote_plus(systitle), urllib_parse.quote_plus(year), urllib_parse.quote_plus(imdb), urllib_parse.quote_plus(tvdb))))
+                cm.append((playRandom, 'RunPlugin(%s?action=random&rtype=season&tvshowtitle=%s&year=%s&imdb=%s&tvdb=%s)' % (
+                          sysaddon, urllib_parse.quote_plus(systitle), urllib_parse.quote_plus(year), urllib_parse.quote_plus(imdb), urllib_parse.quote_plus(tvdb)))
+                          )
 
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 
@@ -1291,33 +1309,26 @@ class tvshows:
 
                 art = {}
 
-                if 'poster' in i and not i['poster'] == '0':
-                    art.update({'icon': i['poster'], 'thumb': i['poster'], 'poster': i['poster']})
-                #elif 'poster2' in i and not i['poster2'] == '0':
-                    #art.update({'icon': i['poster2'], 'thumb': i['poster2'], 'poster': i['poster2']})
-                else:
-                    art.update({'icon': addonPoster, 'thumb': addonPoster, 'poster': addonPoster})
+                art.update({'icon': poster, 'thumb': poster, 'poster': poster})
 
-                if 'banner' in i and not i['banner'] == '0':
-                    art.update({'banner': i['banner']})
-                #elif 'banner2' in i and not i['banner2'] == '0':
-                    #art.update({'banner': i['banner2']})
-                elif 'fanart' in i and not i['fanart'] == '0':
-                    art.update({'banner': i['fanart']})
-                else:
-                    art.update({'banner': addonBanner})
+                fanart1 = i.get('fanart')
+                fanart2 = i.get('fanart2')
+                fanart = fanart2 or fanart1 or addonFanart
 
-                if 'clearlogo' in i and not i['clearlogo'] == '0':
+                banner1 = i.get('banner')
+                banner2 = i.get('banner2')
+                banner = banner2 or banner1 or fanart or addonBanner
+                art.update({'banner': banner})
+
+                if 'clearlogo' in i and not i['clearlogo'] == '':
                     art.update({'clearlogo': i['clearlogo']})
 
-                if 'clearart' in i and not i['clearart'] == '0':
+                if 'clearart' in i and not i['clearart'] == '':
                     art.update({'clearart': i['clearart']})
 
-                if settingFanart == 'true' and 'fanart' in i and not i['fanart'] == '0':
-                    item.setProperty('Fanart_Image', i['fanart'])
-                #elif settingFanart == 'true' and 'fanart2' in i and not i['fanart2'] == '0':
-                    #item.setProperty('Fanart_Image', i['fanart2'])
-                elif not addonFanart == None:
+                if settingFanart == 'true':
+                    item.setProperty('Fanart_Image', fanart)
+                else:
                     item.setProperty('Fanart_Image', addonFanart)
 
                 item.setArt(art)

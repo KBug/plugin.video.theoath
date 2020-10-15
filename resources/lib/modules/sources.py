@@ -61,13 +61,14 @@ class sources:
             select = control.setting('hosts.mode') if select == None else select
 
             title = tvshowtitle if not tvshowtitle == None else title
+            title = self.getTitle(title)
 
             if len(items) > 0:
 
                 if select == '1' and 'plugin' in control.infoLabel('Container.PluginName'):
                     control.window.clearProperty(self.itemProperty)
                     control.window.setProperty(self.itemProperty, json.dumps(items))
-                    
+
                     control.window.clearProperty(self.metaProperty)
                     control.window.setProperty(self.metaProperty, meta)
 
@@ -99,7 +100,7 @@ class sources:
 
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
-            allowed = ['poster', 'icon', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
+            allowed = ['icon', 'poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
             return {k: v for k, v in six.iteritems(metadata) if k in allowed}
 
         control.playlist.clear()
@@ -131,24 +132,17 @@ class sources:
             sysname += urllib_parse.quote_plus(' (%s)' % meta['year'])
 
 
-        poster = meta['poster3'] if 'poster3' in meta else '0'
-        if poster == '0': poster = meta['poster'] if 'poster' in meta else '0'
+        poster = meta.get('poster3') or meta.get('poster2') or meta.get('poster') or control.addonPoster()
 
-        fanart = meta['fanart2'] if 'fanart2' in meta else '0'
-        if fanart == '0': fanart = meta['fanart'] if 'fanart' in meta else '0'
+        fanart = meta.get('fanart2') or meta.get('fanart') or control.addonFanart()
 
-        thumb = meta['thumb'] if 'thumb' in meta else '0'
-        if thumb == '0': thumb = poster
-        if thumb == '0': thumb = fanart
+        thumb = meta.get('thumb') or poster or fanart
+
+        if not control.setting('fanart') == 'true': fanart = control.addonFanart()
 
         #banner = meta['banner'] if 'banner' in meta else '0'
         #if banner == '0': banner = poster
-
-        if poster == '0': poster = control.addonPoster()
         #if banner == '0': banner = control.addonBanner()
-        if not control.setting('fanart') == 'true': fanart = '0'
-        if fanart == '0': fanart = control.addonFanart()
-        if thumb == '0': thumb = control.addonFanart()
 
         sysimage = urllib_parse.quote_plus(six.ensure_str(poster))
 
