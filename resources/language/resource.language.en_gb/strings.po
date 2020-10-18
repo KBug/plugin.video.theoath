@@ -551,6 +551,30 @@ msgctxt "#32130"
 msgid "Please consider entering your personal Fanart.tv API key on Accounts tab"
 msgstr ""
 
+msgctxt "#32131"
+msgid "Filename when available"
+msgstr ""
+
+msgctxt "#32132"
+msgid "Regular info"
+msgstr ""
+
+msgctxt "#32133"
+msgid "Min movie size (GB)"
+msgstr ""
+
+msgctxt "#32134"
+msgid "Max movie size (GB)"
+msgstr ""
+
+msgctxt "#32135"
+msgid "Min episode size (GB)"
+msgstr ""
+
+msgctxt "#32136"
+msgid "Max episode size (GB)"
+msgstr ""
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr ""
@@ -788,7 +812,7 @@ msgid "Background"
 msgstr ""
 
 msgctxt "#32338"
-msgid "Sources Filters and Sorting Options"
+msgid "Sources Filters"
 msgstr ""
 
 msgctxt "#32339"
@@ -1188,7 +1212,7 @@ msgid "Recently watched"
 msgstr ""
 
 msgctxt "#32587"
-msgid "Show Extra Source Info"
+msgid "Extra source info"
 msgstr ""
 
 msgctxt "#32588"

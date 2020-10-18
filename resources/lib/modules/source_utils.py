@@ -25,6 +25,7 @@ import re
 import six
 from six.moves import urllib_parse
 
+from resources.lib.modules import cleantitle
 from resources.lib.modules import client
 from resources.lib.modules import directstream
 from resources.lib.modules import trakt
@@ -65,21 +66,13 @@ def get_release_quality(release_name, release_link=None):
     try:
         quality = None
 
-        try: release_name = six.ensure_str(release_name)
-        except: pass
-        fmt = release_name.lower()
-        fmt = re.sub('[^a-z0-9]+', ' ', fmt)
+        release_name = cleantitle.get_title(release_name)
 
-        quality = get_qual(fmt)
+        quality = get_qual(release_name)
 
         if not quality:
             if release_link:
-                try: release_link = six.ensure_str(release_link)
-                except: pass
-                release_link = client.replaceHTMLCodes(release_link)
-                release_link = urllib_parse.unquote(release_link)
-                release_link = release_link.lower()
-                release_link = re.sub('[^a-z0-9]+', ' ', release_link)
+                release_link = cleantitle.get_title(release_link)
 
                 quality = get_qual(release_link)
                 if not quality:
@@ -103,7 +96,7 @@ def getFileType(url):
         url = client.replaceHTMLCodes(url)
         url = urllib_parse.unquote(url)
         url = url.lower()
-        url = re.sub('[^a-z0-9]+', ' ', url)
+        url = re.sub('[^a-z0-9 ]+', ' ', url)
     except:
         url = str(url)
     type = ''
@@ -316,7 +309,7 @@ def append_headers(headers):
 
 
 def _size(siz):
-    if siz in ['0', 0, '', None]: return 0, ''
+    if siz in ['0', 0, '', None]: return 0.0, ''
     div = 1 if siz.lower().endswith(('gb', 'gib')) else 1024
     float_size = float(re.sub('[^0-9|/.|/,]', '', siz.replace(',', '.'))) / div
     str_size = str('%.2f GB' % float_size)

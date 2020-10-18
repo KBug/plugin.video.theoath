@@ -1,3 +1,9 @@
+[B][COLOR gold]v3.3.2[/COLOR][/B]
+- Added file size limits options
+- Added option to display file name as extra source info
+- Rearranged settings
+- Applied nasty hack to circumvent odd issue with double line source list scrolling
+
 [B][COLOR gold]v3.3.1[/COLOR][/B]
 - (Re)added option for extra & high quality artwork fetching
     Personal Fanart.tv API key is recommended to be applied in settings - possibly

@@ -191,7 +191,7 @@ class source:
                 return str('%.2f GB' % size)
         else:
             if fl:
-                return 0
+                return 0.0
             else:
                 return ''
 

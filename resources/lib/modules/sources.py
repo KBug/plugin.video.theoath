@@ -231,11 +231,12 @@ class sources:
 
             for i in list(range(len(items))):
                 try:
+                    label = re.sub(' {2,}', ' ', str(items[i]['label']))
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), label)
                     except:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + label)
 
                     if items[i]['source'] == block: raise Exception()
 
@@ -384,12 +385,10 @@ class sources:
         start_time = time.time()
         end_time = start_time + timeout
 
-        min_quality = control.setting('min.quality')
-        if min_quality == '': min_quality = '3'
+        min_quality = control.setting('min.quality') or '3'
         min_quality = int(min_quality)
 
-        max_quality = control.setting('hosts.quality')
-        if max_quality == '': max_quality = '0'
+        max_quality = control.setting('hosts.quality') or '0'
         max_quality = int(max_quality)
 
         line1 = line3 = ""
@@ -503,7 +502,7 @@ class sources:
         except: pass
         del progressDialog
 
-        self.sourcesFilter()
+        self.sourcesFilter(content)
 
         return self.sources
 
@@ -758,33 +757,40 @@ class sources:
             return
 
 
-    def sourcesFilter(self):
+    def sourcesFilter(self, _content):
 
-        min_quality = control.setting('min.quality')
-        if min_quality == '': min_quality = '3'
+        min_quality = control.setting('min.quality') or '3'
         min_quality = int(min_quality)
 
-        max_quality = control.setting('hosts.quality')
-        if max_quality == '': max_quality = '0'
+        max_quality = control.setting('hosts.quality') or '0'
         max_quality = int(max_quality)
 
-        debrid_only = control.setting('debrid.only')
-        if debrid_only == '': debrid_only = 'false'
+        mov_min_size = control.setting('min.size.mov') or 0
+        mov_min_size = float(mov_min_size)
+        mov_max_size = control.setting('max.size.mov') or 100
+        mov_max_size = float(mov_max_size)
+        ep_min_size = control.setting('min.size.ep') or 0
+        ep_min_size = float(ep_min_size)
+        ep_max_size = control.setting('max.size.ep') or 20
+        ep_max_size = float(ep_max_size)
 
-        remove_cam = control.setting('remove.cam')
-        if remove_cam == '': remove_cam = 'false'
+        debrid_only = control.setting('debrid.only') or 'false'
 
-        remove_captcha = control.setting('remove.captcha')
-        if remove_captcha == '': remove_captcha = 'false'
+        remove_cam = control.setting('remove.cam') or 'false'
 
-        remove_hevc = control.setting('remove.hevc')
-        if remove_hevc == '': remove_hevc = 'false'
+        remove_captcha = control.setting('remove.captcha') or 'false'
 
-        sort_provider = control.setting('hosts.sort.provider')
-        if sort_provider == '': sort_provider = 'true'
+        remove_hevc = control.setting('remove.hevc') or 'false'
 
-        size_sort = control.setting('torr.sort.size')
-        if size_sort == '': size_sort = 'true'
+        sort_provider = control.setting('hosts.sort.provider') or 'true'
+
+        size_sort = control.setting('torr.sort.size') or 'true'
+
+        remove_dups = control.setting('remove.dups') or 'true'
+
+        check_torr_cache = control.setting('check.torr.cache') or 'true'
+
+        remove_uncached = control.setting('remove.uncached') or 'false'
 
         random.shuffle(self.sources)
 
@@ -806,7 +812,7 @@ class sources:
         if size_sort == 'true':
             #for i in self.sources:
                 #if 'magnet:' in i['url']:
-            self.sources = sorted(self.sources, key=lambda k: k.get('size', 0), reverse=True)
+            self.sources = sorted(self.sources, key=lambda k: k.get('size', 0.0), reverse=True)
 
         if remove_hevc == 'true':
             self.sources = [i for i in self.sources if not any(value in i['url'] for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265', 'HEVC', 'H265', 'H.265', 'X265', 'X.265'])]
@@ -821,7 +827,7 @@ class sources:
                 # if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
         try:
-            if control.setting('remove.dups') == 'true' and len(self.sources) > 1:
+            if remove_dups == 'true' and len(self.sources) > 1:
                 stotal = len(self.sources)
                 self.sources = list(self.uniqueSourcesGen(self.sources))
                 dupes = str(stotal - len(self.sources))
@@ -831,13 +837,18 @@ class sources:
             log_utils.log('DUP - Exception: ' + str(failure))
             control.infoDialog('Dupes filter failed', icon='INFO', sound=True)
 
+        if _content == 'movie':
+            self.sources = [i for i in self.sources if (mov_min_size < i.get('size', 0.0) < mov_max_size) or i.get('size', 0.0) == 0.0]
+        elif _content == 'episode':
+            self.sources = [i for i in self.sources if (ep_min_size < i.get('size', 0.0) < ep_max_size) or i.get('size', 0.0) == 0.0]
+
         filter = []
 
         for d in debrid.debrid_resolvers:
             valid_hoster = set([i['source'] for i in self.sources])
             valid_hoster = [i for i in valid_hoster if d.valid_url('', i)]
 
-            if control.setting('check.torr.cache') == 'true':
+            if check_torr_cache == 'true':
                 try:
                     for i in self.sources:
                         if 'magnet:' in i['url']:
@@ -847,7 +858,7 @@ class sources:
                     filter += cached
                     unchecked = [i for i in torrentSources if i.get('source').lower() == 'torrent']
                     filter += unchecked
-                    if control.setting('remove.uncached') == 'false' or len(cached) == 0:
+                    if remove_uncached == 'false' or len(cached) == 0:
                         uncached = [i for i in torrentSources if i.get('source') == '[COLOR dimgrey]uncached torrent[/COLOR]']
                         filter += uncached
                     filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
@@ -898,6 +909,8 @@ class sources:
         simple = control.setting('linesplit') == '2'
         single_line = control.setting('linesplit') == '0'
 
+        name_setting = control.setting('sources.name') == '0'
+
         for i in list(range(len(self.sources))):
 
             try: d = self.sources[i]['debrid']
@@ -917,8 +930,19 @@ class sources:
 
             l = self.sources[i]['language']
 
-            try: f = (' / '.join(['%s' % info.strip() for info in self.sources[i]['info'].split('|')]))
-            except: f = ''
+            try:
+                f = (' / '.join(['%s' % info.strip() for info in self.sources[i]['info'].split('|')]))
+                if name_setting:
+                    if 'name' in self.sources[i] and not self.sources[i]['name'] == '':
+                        size_info = self.sources[i]['info'].split(' |')[0]
+                        if size_info.rstrip().lower().endswith('gb'):
+                            f = size_info + ' / ' + cleantitle.get_title(self.sources[i]['name'])
+                            t = ''
+                        else:
+                            f = cleantitle.get_title(self.sources[i]['name'])
+                            t = ''
+            except:
+                f = ''
 
 
             if d.lower() == 'alldebrid': d = 'AD'
@@ -932,32 +956,42 @@ class sources:
 
             if double_line:
                 if not d == '':
-                    label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
+                    label = '[COLOR %s]%03d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                     label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][CR]    [COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
 
                 else:
-                    label = '%02d' % int(i+1)
+                    label = '%03d' % int(i+1)
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                     label += ' | [B]%s[/B] | %s | [B]%s[/B][CR]    [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
 
             elif simple:
-                label = '%02d' % int(i+1)
+                label = '%03d' % int(i+1)
                 if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                 label += ' | %s | [B]%s[/B] | %s | [B]%s[/B]' % (d, q, p, s)
 
             else:
                 if not d == '':
-                    label = '[COLOR %s]%02d' % (prem_identify, int(i+1))
+                    label = '[COLOR %s]%03d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                     label += ' | %s | [B]%s[/B] | %s | [B]%s[/B] | [/COLOR][COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
 
                 else:
-                    label = '%02d' % int(i+1)
+                    label = '%03d' % int(i+1)
                     if multi == True and not l == 'en': label += ' | [B]%s[/B]' % l
                     label += ' | [B]%s[/B] | %s | [B]%s[/B] | [COLOR %s][I]%s /%s[/I][/COLOR]' % (q, p, s, sec_identify, f, t)
 
             label = label.replace(' |  |', ' |').replace('| 0 |', '|').replace('[I] /[/I]', '').replace('[I] /%s[/I]' % t, '[I]%s[/I]' % t).replace('[I]%s /[/I]' % f, '[I]%s[/I]' % f)
+
+            # nasty
+            if double_line:
+                label_up = label.split('[CR]')[0]
+                label_up_clean = label_up.replace('[COLOR %s]' % prem_identify, '').replace('[/COLOR]', '').replace('[B]', '').replace('[/B]', '')
+                label_down = label.split('[CR]')[1]
+                label_down_clean = label_down.replace('[COLOR %s]' % sec_identify, '').replace('[/COLOR]', '').replace('[I]', '').replace('[/I]', '')
+                if len(label_down_clean) > len(label_up_clean):
+                    label_up += (len(label_down_clean) - len(label_up_clean)) * '  '
+                    label = label_up + '[CR]' + label_down
 
             self.sources[i]['label'] = '[UPPERCASE]' + label + '[/UPPERCASE]'
 
@@ -1055,11 +1089,13 @@ class sources:
                     w = workers.Thread(self.sourcesResolve, items[i])
                     w.start()
 
+                    label = re.sub(' {2,}', ' ', str(items[i]['label']))
+
                     try:
                         if progressDialog.iscanceled(): break
-                        progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), label)
                     except:
-                        progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
+                        progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + label)
 
                     if items[i].get('source').lower() in self.hostcapDict:
                         offset = 60 * 2
@@ -1150,11 +1186,12 @@ class sources:
             pass
 
         for i in list(range(len(items))):
+            label = re.sub(' {2,}', ' ', str(items[i]['label']))
             try:
                 if progressDialog.iscanceled(): break
-                progressDialog.update(int((100 / float(len(items))) * i), str(items[i]['label']))
+                progressDialog.update(int((100 / float(len(items))) * i), label)
             except:
-                progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + str(items[i]['label']))
+                progressDialog.update(int((100 / float(len(items))) * i), str(header) + '[CR]' + label)
 
             try:
                 if control.monitor.abortRequested(): return sys.exit()
@@ -1287,24 +1324,6 @@ class sources:
         self.sourcecfDict = ['123123movies', '123movieshubz', 'extramovies', 'movie4kis', 'projectfree', 'rapidmoviez', 'rlsbb', 'scenerls', 'timewatch', 'tvmovieflix', '1337x', 'btdb', 'ytsam',
                              'animebase', 'filmpalast', 'hdfilme', 'iload', 'movietown', '1putlocker', 'animetoon', 'azmovie', 'cartoonhdto', 'cmoviestv', 'freefmovies', 'ganoolcam', 'projectfreetv', 'putlockeronl',
                              'sharemovies', 'solarmoviefree', 'tvbox', 'xwatchseries', '0day', '2ddl', 'doublr', 'pirateiro']
-
-    def enableAll(self):
-        try:
-            sourceDict = self.sourceDict
-            for i in sourceDict:
-                source_setting = 'provider.' + i[0].split('_')[0]
-                control.setSetting(source_setting, 'true')
-        except: pass
-        control.openSettings('3.3')
-
-    def disableAll(self):
-        try:
-            sourceDict = self.sourceDict
-            for i in sourceDict:
-                source_setting = 'provider.' + i[0].split('_')[0]
-                control.setSetting(source_setting, 'false')
-        except: pass
-        control.openSettings('3.4')
 
     def getPremColor(self, n):
         if n == '0': n = 'blue'

@@ -547,6 +547,30 @@ msgctxt "#32130"
 msgid "Please consider entering your personal Fanart.tv API key on Accounts tab"
 msgstr "Προτείνεται η εισαγωγή προσωπικού κλειδιού API για Fanart.tv"
 
+msgctxt "#32131"
+msgid "Filename when available"
+msgstr "Όνομα αρχείου αν είναι διαθέσιμο"
+
+msgctxt "#32132"
+msgid "Regular info"
+msgstr "Απλές πληροφορίες"
+
+msgctxt "#32133"
+msgid "Min movie size (GB)"
+msgstr "Ελάχιστο μέγεθος - ταινίες (GB)"
+
+msgctxt "#32134"
+msgid "Max movie size (GB)"
+msgstr "Μέγιστο μέγεθος - ταινίες (GB)"
+
+msgctxt "#32135"
+msgid "Min episode size (GB)"
+msgstr "Ελάχιστο μέγεθος - επεισόδια (GB)"
+
+msgctxt "#32136"
+msgid "Max episode size (GB)"
+msgstr "Μέγιστο μέγεθος - επεισόδια (GB)"
+
 msgctxt "#32200"
 msgid "No Color"
 msgstr "Χωρίς Χρώμα"
@@ -785,8 +809,8 @@ msgid "Background"
 msgstr "Παρασκήνιο"
 
 msgctxt "#32338"
-msgid "Sources Filters and Sorting Options"
-msgstr "Φίλτρα/Ταξινόμηση Πηγών"
+msgid "Sources Filters"
+msgstr "Φίλτρα Πηγών"
 
 msgctxt "#32339"
 msgid "Max Quality"
@@ -1153,8 +1177,8 @@ msgid "Hide movies in cinema"
 msgstr "Απόκρυψη ταινιών που προβάλλονται στις αίθουσες"
 
 msgctxt "#32587"
-msgid "Show Extra Source Info"
-msgstr "Προβολή Πρόσθετων Στοιχείων Πηγής"
+msgid "Extra source info"
+msgstr "Πληροφορίες πηγής"
 
 msgctxt "#32588"
 msgid "Premium Source Identifier Color"

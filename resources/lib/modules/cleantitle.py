@@ -38,16 +38,15 @@ def get(title):
 
 def get_title(title):
     if title is None: return
+    from six.moves import urllib_parse
     try:
         title = ensure_str(title)
     except:
         pass
-    title = str(title)
-    title = re.sub('&#(\d);', '', title)
-    title = re.sub('(&#[0-9]+)([^;^0-9]+)', '\\1;\\2', title)
-    title = title.replace('&quot;', '\"').replace('&amp;', '&').replace('–', '-').replace('!', '')
-    title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\_|\.|\?)|\s', '', title)
-    return title.lower()
+    title = urllib_parse.unquote(title).lower()
+    title = re.sub('[^a-z0-9 ]+', ' ', title)
+    title = re.sub(' {2,}', ' ', title)
+    return title
 
 
 def geturl(title):
