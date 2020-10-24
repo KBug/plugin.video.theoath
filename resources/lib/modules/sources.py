@@ -826,6 +826,11 @@ class sources:
             # if 'checkquality' in i and i['checkquality'] == True:
                 # if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
+        if _content == 'movie':
+            self.sources = [i for i in self.sources if (mov_min_size < i.get('size') < mov_max_size) or i.get('size', 0.0) == 0.0]
+        elif _content == 'episode':
+            self.sources = [i for i in self.sources if (ep_min_size < i.get('size') < ep_max_size) or i.get('size', 0.0) == 0.0]
+
         try:
             if remove_dups == 'true' and len(self.sources) > 1:
                 stotal = len(self.sources)
@@ -836,11 +841,6 @@ class sources:
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
             control.infoDialog('Dupes filter failed', icon='INFO', sound=True)
-
-        if _content == 'movie':
-            self.sources = [i for i in self.sources if (mov_min_size < i.get('size', 0.0) < mov_max_size) or i.get('size', 0.0) == 0.0]
-        elif _content == 'episode':
-            self.sources = [i for i in self.sources if (ep_min_size < i.get('size', 0.0) < ep_max_size) or i.get('size', 0.0) == 0.0]
 
         filter = []
 
@@ -937,10 +937,9 @@ class sources:
                         size_info = self.sources[i]['info'].split(' |')[0]
                         if size_info.rstrip().lower().endswith('gb'):
                             f = size_info + ' / ' + cleantitle.get_title(self.sources[i]['name'])
-                            t = ''
                         else:
                             f = cleantitle.get_title(self.sources[i]['name'])
-                            t = ''
+                        t = ''
             except:
                 f = ''
 

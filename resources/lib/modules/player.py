@@ -284,6 +284,7 @@ class player(xbmc.Player):
         subtitles().get(self.name, self.imdb, self.season, self.episode)
         self.idleForPlayback()
 
+
     def onPlayBackStarted(self):
         if int(control.getKodiVersion()) < 18:
             control.execute('Dialog.Close(all,true)')
@@ -310,8 +311,9 @@ class player(xbmc.Player):
         else:
             self.onAVStarted()
 
+
     def onPlayBackStopped(self):
-        control.sleep(3000)
+        #control.sleep(3000)
         if int(self.currentTime) > 120:
             if control.setting('bookmarks') == 'true':
                 bookmarks().reset(self.currentTime, self.totalTime, self.name, self.year)
@@ -326,6 +328,7 @@ class player(xbmc.Player):
 
         if control.setting('crefresh') == 'true':
             control.refresh()
+
 
     def onPlayBackEnded(self):
         self.libForPlayback()
@@ -411,11 +414,14 @@ class subtitles:
             file.write(str(content))
             file.close()
 
-            control.sleep(1000)
-            if control.setting('subtitles.notify') == 'true':
-                if xbmc.Player().isPlayingVideo():
-                    control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
+            xbmc.sleep(1000)
             xbmc.Player().setSubtitles(subtitle)
+
+            if control.setting('subtitles.notify') == 'true':
+                if xbmc.Player().isPlaying() and xbmc.Player().isPlayingVideo():
+                    control.execute('Dialog.Close(all,true)')
+                    xbmc.sleep(3000)
+                    control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
         except:
             pass
 

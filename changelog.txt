@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.3.3[/COLOR][/B]
+- Minor fixes
+
 [B][COLOR gold]v3.3.2[/COLOR][/B]
 - Added file size limits options
 - Added option to display file name as extra source info
