@@ -476,16 +476,16 @@ msgid "Enable metadata on source list"
 msgstr "Metadata στην λίστα πηγών"
 
 msgctxt "#32113"
-msgid "Sort torrents by size"
-msgstr "Ταξινόμηση torrent πηγών κατά μέγεθος"
+msgid "Sort by size if available"
+msgstr "Ταξινόμηση κατά μέγεθος εάν είναι διαθέσιμο"
 
 msgctxt "#32114"
 msgid "Verify torrents cache"
 msgstr "Επαλήθευση debrid cache για πηγές torrent"
 
 msgctxt "#32115"
-msgid "Supported services: Real-Debrid, AllDebrid, Premiumize, Debrid-Link"
-msgstr "Υποστηριζόμενες υπηρεσίες: Real-Debrid, AllDebrid, Premiumize, Debrid-Link"
+msgid "Supported services: Real-Debrid, AllDebrid,[CR]   Premiumize, Debrid-Link"
+msgstr "Υποστηριζόμενες υπηρεσίες: Real-Debrid, AllDebrid,[CR]   Premiumize, Debrid-Link"
 
 msgctxt "#32116"
 msgid "[B]TheOath[/B] : Clear debrid checks..."

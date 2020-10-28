@@ -480,7 +480,7 @@ msgid "Enable metadata on source list"
 msgstr ""
 
 msgctxt "#32113"
-msgid "Sort torrents by size"
+msgid "Sort by size if available"
 msgstr ""
 
 msgctxt "#32114"
@@ -488,7 +488,7 @@ msgid "Verify torrents cache"
 msgstr ""
 
 msgctxt "#32115"
-msgid "Supported services: Real-Debrid, AllDebrid, Premiumize, Debrid-Link"
+msgid "Supported services: Real-Debrid, AllDebrid,[CR]   Premiumize, Debrid-Link"
 msgstr ""
 
 msgctxt "#32116"

@@ -1,4 +1,4 @@
-[B][COLOR gold]v3.3.3[/COLOR][/B]
+[B][COLOR gold]v3.3.4[/COLOR][/B]
 - Minor fixes
 
 [B][COLOR gold]v3.3.2[/COLOR][/B]

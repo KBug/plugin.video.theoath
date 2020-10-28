@@ -34,7 +34,7 @@ from resources.lib.modules import log_utils
 import six
 from six.moves import urllib_parse, urllib_request
 
-import os,sys,re,zipfile,datetime,base64
+import os,sys,re,zipfile,datetime#,base64
 import simplejson as json
 
 try: from cStringIO import StringIO

@@ -33,7 +33,7 @@ from resources.lib.modules import utils
 from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,base64,traceback
+import os,sys,re,datetime,traceback#,base64
 import simplejson as json
 
 import six
@@ -913,7 +913,7 @@ class tvshows:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': '5c06a6c6f543147b420c813fd1d2c866'}
+        self.fanart_tv_headers = {'api-key': 'b2bbaf06eb9046077e3e0e5cc252f907'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 

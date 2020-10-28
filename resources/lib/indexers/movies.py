@@ -30,10 +30,10 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
-from resources.lib.modules import log_utils
+#from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,base64,traceback
+import os,sys,re,datetime#,traceback
 import simplejson as json
 
 import six
@@ -60,7 +60,7 @@ class movies:
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tm_user = control.setting('tm.user')
-        if self.tm_user == '': self.tm_user = '1fb8e8bfd4c9b3234fde8ccf1a675f7c'
+        if self.tm_user == '': self.tm_user = 'a041641d58395718cd8785a21be11d02'
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = str(control.setting('fanart.tv.user')) + str(control.setting('tm.user'))
         self.lang = control.apiLanguage()['trakt']
@@ -896,7 +896,7 @@ class movies:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': '5c06a6c6f543147b420c813fd1d2c866'}
+        self.fanart_tv_headers = {'api-key': 'b2bbaf06eb9046077e3e0e5cc252f907'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
@@ -974,18 +974,21 @@ class movies:
 
             plot = item.get('overview', '0')
 
-            people = trakt.getPeople(imdb, 'movies')
+            try:
+                people = trakt.getPeople(imdb, 'movies')
 
-            director = writer = ''
-            if 'crew' in people and 'directing' in people['crew']:
-                director = ', '.join([director['person']['name'] for director in people['crew']['directing'] if director['job'].lower() == 'director'])
-            if 'crew' in people and 'writing' in people['crew']:
-                writer = ', '.join([writer['person']['name'] for writer in people['crew']['writing'] if writer['job'].lower() in ['writer', 'screenplay', 'author']])
+                director = writer = ''
+                if 'crew' in people and 'directing' in people['crew']:
+                    director = ', '.join([director['person']['name'] for director in people['crew']['directing'] if director['job'].lower() == 'director'])
+                if 'crew' in people and 'writing' in people['crew']:
+                    writer = ', '.join([writer['person']['name'] for writer in people['crew']['writing'] if writer['job'].lower() in ['writer', 'screenplay', 'author']])
 
-            cast = []
-            for person in people.get('cast', []):
-                cast.append({'name': person['person']['name'], 'role': person['character']})
-            cast = [(person['name'], person['role']) for person in cast]
+                cast = []
+                for person in people.get('cast', []):
+                    cast.append({'name': person['person']['name'], 'role': person['character']})
+                cast = [(person['name'], person['role']) for person in cast]
+            except:
+                director = writer = ''; cast = []
 
             try:
                 if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]): raise Exception()
