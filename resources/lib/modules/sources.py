@@ -351,12 +351,16 @@ class sources:
         threads = []
 
         if content == 'movie':
-            title = self.getTitle(title)
+            #title = self.getTitle(title)
+            title, year = cleantitle.scene_rls(title, year)
+            #log_utils.log('movtitle is '+title+' year is '+year)
             localtitle = self.getLocalTitle(title, imdb, tvdb, content)
             aliases = self.getAliasTitles(imdb, localtitle, content)
             for i in sourceDict: threads.append(workers.Thread(self.getMovieSource, title, localtitle, aliases, year, imdb, i[0], i[1]))
         else:
-            tvshowtitle = self.getTitle(tvshowtitle)
+            #tvshowtitle = self.getTitle(tvshowtitle)
+            tvshowtitle, year, season, episode = cleantitle.scene_tvrls(tvshowtitle, year, season, episode)
+            #log_utils.log('tvtitle is '+tvshowtitle+' year is '+year+' season is '+season)
             localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
             #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
@@ -385,11 +389,20 @@ class sources:
         start_time = time.time()
         end_time = start_time + timeout
 
+        max_quality = control.setting('hosts.quality') or '0'
+        max_quality = int(max_quality)
         min_quality = control.setting('min.quality') or '3'
         min_quality = int(min_quality)
 
-        max_quality = control.setting('hosts.quality') or '0'
-        max_quality = int(max_quality)
+        size_filters = control.setting('size.filters') or 'false'
+        mov_min_size = control.setting('min.size.mov') or 0
+        mov_min_size = float(mov_min_size)
+        mov_max_size = control.setting('max.size.mov') or 100
+        mov_max_size = float(mov_max_size)
+        ep_min_size = control.setting('min.size.ep') or 0
+        ep_min_size = float(ep_min_size)
+        ep_max_size = control.setting('max.size.ep') or 20
+        ep_max_size = float(ep_max_size)
 
         line1 = line3 = ""
         debrid_only = control.setting('debrid.only')
@@ -407,12 +420,51 @@ class sources:
         for i in list(range(0, 2 * timeout)):
 
             try:
-                if control.monitor.abortRequested(): return sys.exit()
 
+                if control.monitor.abortRequested(): return sys.exit()
                 try:
                     if progressDialog.iscanceled(): break
                 except:
                     pass
+
+                if pre_emp == 'true':
+                    if size_filters == 'true':
+                        if content == 'movie':
+                            if max_quality == 0:
+                                if len([e for e in self.sources if e['quality'] in ['4k', '4K'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                            elif max_quality == 1:
+                                if len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                            elif max_quality == 2:
+                                if len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                            elif max_quality == 3:
+                                if len([e for e in self.sources if e['quality'] in ['sd', 'SD'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                        elif content == 'episode':
+                            if max_quality == 0:
+                                if len([e for e in self.sources if e['quality'] in ['4k', '4K'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                            elif max_quality == 1:
+                                if len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                            elif max_quality == 2:
+                                if len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+                            elif max_quality == 3:
+                                if len([e for e in self.sources if e['quality'] in ['sd', 'SD'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                    break
+
+                    else:
+                        if max_quality == 0:
+                            if source_4k >= pre_emp_limit: break
+                        elif max_quality == 1:
+                            if source_1080 >= pre_emp_limit: break
+                        elif max_quality == 2:
+                            if source_720 >= pre_emp_limit: break
+                        elif max_quality == 3:
+                            if source_sd >= pre_emp_limit: break
 
                 if len(self.sources) > 0:
                     if min_quality == 0:
@@ -482,17 +534,7 @@ class sources:
                         # log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                         # break
 
-                if pre_emp == 'true':
-                    if max_quality == 0:
-                        if source_4k >= pre_emp_limit: break
-                    elif max_quality == 1:
-                        if source_1080 >= pre_emp_limit: break
-                    elif max_quality == 2:
-                        if source_720 >= pre_emp_limit: break
-                    elif max_quality == 3:
-                        if source_sd >= pre_emp_limit: break
-
-                time.sleep(0.5)
+                control.sleep(500)
             except:
                 failure = traceback.format_exc()
                 log_utils.log('sourcefail: ' + str(failure))
@@ -759,12 +801,13 @@ class sources:
 
     def sourcesFilter(self, _content):
 
-        min_quality = control.setting('min.quality') or '3'
-        min_quality = int(min_quality)
-
         max_quality = control.setting('hosts.quality') or '0'
         max_quality = int(max_quality)
+        min_quality = control.setting('min.quality') or '3'
+        min_quality = int(min_quality)
+        remove_cam = control.setting('remove.cam') or 'false'
 
+        size_filters = control.setting('size.filters') or 'false'
         mov_min_size = control.setting('min.size.mov') or 0
         mov_min_size = float(mov_min_size)
         mov_max_size = control.setting('max.size.mov') or 100
@@ -775,8 +818,6 @@ class sources:
         ep_max_size = float(ep_max_size)
 
         debrid_only = control.setting('debrid.only') or 'false'
-
-        remove_cam = control.setting('remove.cam') or 'false'
 
         remove_captcha = control.setting('remove.captcha') or 'false'
 
@@ -810,8 +851,6 @@ class sources:
             self.sources = sorted(self.sources, key=lambda k: k['provider'])
 
         if size_sort == 'true':
-            #for i in self.sources:
-                #if 'magnet:' in i['url']:
             self.sources = sorted(self.sources, key=lambda k: k.get('size', 0.0), reverse=True)
 
         if remove_hevc == 'true':
@@ -826,10 +865,11 @@ class sources:
             # if 'checkquality' in i and i['checkquality'] == True:
                 # if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
-        if _content == 'movie':
-            self.sources = [i for i in self.sources if (mov_min_size < i.get('size') < mov_max_size) or i.get('size', 0.0) == 0.0]
-        elif _content == 'episode':
-            self.sources = [i for i in self.sources if (ep_min_size < i.get('size') < ep_max_size) or i.get('size', 0.0) == 0.0]
+        if size_filters == 'true':
+            if _content == 'movie':
+                self.sources = [i for i in self.sources if (mov_min_size < i.get('size') < mov_max_size) or i.get('size', 0.0) == 0.0]
+            elif _content == 'episode':
+                self.sources = [i for i in self.sources if (ep_min_size < i.get('size') < ep_max_size) or i.get('size', 0.0) == 0.0]
 
         try:
             if remove_dups == 'true' and len(self.sources) > 1:

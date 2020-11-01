@@ -556,7 +556,7 @@ msgid "Filename when available"
 msgstr ""
 
 msgctxt "#32132"
-msgid "Regular info"
+msgid "Simplified info"
 msgstr ""
 
 msgctxt "#32133"
@@ -573,6 +573,10 @@ msgstr ""
 
 msgctxt "#32136"
 msgid "Max episode size (GB)"
+msgstr ""
+
+msgctxt "#32137"
+msgid "Enable size filtering"
 msgstr ""
 
 msgctxt "#32200"

@@ -552,8 +552,8 @@ msgid "Filename when available"
 msgstr "Όνομα αρχείου αν είναι διαθέσιμο"
 
 msgctxt "#32132"
-msgid "Regular info"
-msgstr "Απλές πληροφορίες"
+msgid "Simplified info"
+msgstr "Απλοποιημένες πληροφορίες"
 
 msgctxt "#32133"
 msgid "Min movie size (GB)"
@@ -570,6 +570,10 @@ msgstr "Ελάχιστο μέγεθος - επεισόδια (GB)"
 msgctxt "#32136"
 msgid "Max episode size (GB)"
 msgstr "Μέγιστο μέγεθος - επεισόδια (GB)"
+
+msgctxt "#32137"
+msgid "Enable size filtering"
+msgstr "Ενεργοποίηση περιορισμών μεγέθους"
 
 msgctxt "#32200"
 msgid "No Color"
@@ -1243,6 +1247,14 @@ msgstr "Προγραμματισμένος συγχρονισμός κάθε _ �
 msgctxt "#32617"
 msgid "0 Value Disables Scheduling"
 msgstr "Τιμή 0 καταργεί τον προγραμματισμό"
+
+msgctxt "#32618"
+msgid "Pre-emptive Termination"
+msgstr "Πρόωρη διακοπή αναζήτησης"
+
+msgctxt "#32619"
+msgid "Pre-emptive Limit"
+msgstr "Ελάχιστα αποτελέσματα Μέγιστης Ποιότητας"
 
 msgctxt "#32620"
 msgid "Autoplay SD Quality only"

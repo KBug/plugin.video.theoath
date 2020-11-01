@@ -160,3 +160,28 @@ def clean_search_query(url):
     url = url.replace('-','+').replace(' ', '+').replace('–', '+').replace('!', '')
     return url
 
+
+def scene_rls(title, year):
+    title = normalize(title)
+    try:
+        title = ensure_str(title)
+    except:
+        pass
+    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
+    title = re.sub(' {2,}', ' ', title)
+    return title, year
+
+
+def scene_tvrls(title, year, season, episode):
+    title = normalize(title)
+    try:
+        title = ensure_str(title)
+    except:
+        pass
+    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
+    title = re.sub(' {2,}', ' ', title)
+    if title in ['The Haunting', 'The Haunting of Bly Manor'] and year == '2018' and season == '2': title = 'The Haunting of Bly Manor'; year = '2020'; season = '1'
+    elif 'Special Victims Unit' in title: title = title.replace('Special Victims Unit', 'SVU')
+    elif title == 'The End of the F***ing World': title = 'The End of the Fucking World'
+    return title, year, season, episode
+
