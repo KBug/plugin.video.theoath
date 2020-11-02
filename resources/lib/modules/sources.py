@@ -431,29 +431,29 @@ class sources:
                     if size_filters == 'true':
                         if content == 'movie':
                             if max_quality == 0:
-                                if len([e for e in self.sources if e['quality'] in ['4k', '4K'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['4k', '4K'] and (mov_min_size <= e.get('size') <= mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                             elif max_quality == 1:
-                                if len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and (mov_min_size <= e.get('size') <= mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                             elif max_quality == 2:
-                                if len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and (mov_min_size <= e.get('size') <= mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                             elif max_quality == 3:
-                                if len([e for e in self.sources if e['quality'] in ['sd', 'SD'] and (mov_min_size < e.get('size') < mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['sd', 'SD'] and (mov_min_size <= e.get('size') <= mov_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                         elif content == 'episode':
                             if max_quality == 0:
-                                if len([e for e in self.sources if e['quality'] in ['4k', '4K'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['4k', '4K'] and (ep_min_size <= e.get('size') <= ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                             elif max_quality == 1:
-                                if len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['1080p', '1080P'] and (ep_min_size <= e.get('size') <= ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                             elif max_quality == 2:
-                                if len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['720p', 'hd', '720P', 'HD'] and (ep_min_size <= e.get('size') <= ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
                             elif max_quality == 3:
-                                if len([e for e in self.sources if e['quality'] in ['sd', 'SD'] and (ep_min_size < e.get('size') < ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
+                                if len([e for e in self.sources if e['quality'] in ['sd', 'SD'] and (ep_min_size <= e.get('size') <= ep_max_size or e.get('size', 0.0) == 0.0)]) >= pre_emp_limit:
                                     break
 
                     else:
@@ -867,9 +867,9 @@ class sources:
 
         if size_filters == 'true':
             if _content == 'movie':
-                self.sources = [i for i in self.sources if (mov_min_size < i.get('size') < mov_max_size) or i.get('size', 0.0) == 0.0]
+                self.sources = [i for i in self.sources if (mov_min_size <= i.get('size') <= mov_max_size) or i.get('size', 0.0) == 0.0]
             elif _content == 'episode':
-                self.sources = [i for i in self.sources if (ep_min_size < i.get('size') < ep_max_size) or i.get('size', 0.0) == 0.0]
+                self.sources = [i for i in self.sources if (ep_min_size <= i.get('size') <= ep_max_size) or i.get('size', 0.0) == 0.0]
 
         try:
             if remove_dups == 'true' and len(self.sources) > 1:

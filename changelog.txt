@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.3.6[/COLOR][/B]
+- Minor tweaks to previous commits
+
 [B][COLOR gold]v3.3.5[/COLOR][/B]
 - Added option to enable/disable size filtering
     If you already use size filtering you'll have to enable this option, as it's off by default

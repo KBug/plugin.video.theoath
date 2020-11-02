@@ -180,7 +180,9 @@ def scene_tvrls(title, year, season, episode):
         pass
     title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
     title = re.sub(' {2,}', ' ', title)
-    if title in ['The Haunting', 'The Haunting of Bly Manor'] and year == '2018' and season == '2': title = 'The Haunting of Bly Manor'; year = '2020'; season = '1'
+    if title in ['The Haunting', 'The Haunting of Bly Manor', 'The Haunting of Hill House'] and year == '2018':
+        if season == '1': title = 'The Haunting of Hill House'
+        elif season == '2': title = 'The Haunting of Bly Manor'; year = '2020'; season = '1'
     elif 'Special Victims Unit' in title: title = title.replace('Special Victims Unit', 'SVU')
     elif title == 'The End of the F***ing World': title = 'The End of the Fucking World'
     return title, year, season, episode

@@ -185,6 +185,12 @@ def getFileType(url):
         type += ' SUBS /'
     if any(i in url for i in [' dub ', ' dubbed ', ' dublado ']):
         type += ' DUB /'
+    if ' repack ' in url:
+        type += ' REPACK /'
+    if ' proper ' in url:
+        type += ' PROPER /'
+    if ' nuked ' in url:
+        type += ' NUKED /'
     type = type.rstrip('/')
     return type
 
