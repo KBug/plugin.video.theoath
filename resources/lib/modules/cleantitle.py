@@ -167,8 +167,9 @@ def scene_rls(title, year):
         title = ensure_str(title)
     except:
         pass
-    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
+    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
     title = re.sub(' {2,}', ' ', title)
+    if title.startswith('Birdman or') and year == '2014': title = 'Birdman'
     return title, year
 
 
@@ -178,12 +179,13 @@ def scene_tvrls(title, year, season, episode):
         title = ensure_str(title)
     except:
         pass
-    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
+    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
     title = re.sub(' {2,}', ' ', title)
     if title in ['The Haunting', 'The Haunting of Bly Manor', 'The Haunting of Hill House'] and year == '2018':
         if season == '1': title = 'The Haunting of Hill House'
         elif season == '2': title = 'The Haunting of Bly Manor'; year = '2020'; season = '1'
     elif 'Special Victims Unit' in title: title = title.replace('Special Victims Unit', 'SVU')
-    elif title == 'The End of the F***ing World': title = 'The End of the Fucking World'
+    elif title == 'The End of the F ing World': title = 'The End of the Fucking World'
+    elif title == 'M A S H': title = 'MASH'
     return title, year, season, episode
 

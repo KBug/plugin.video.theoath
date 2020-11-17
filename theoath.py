@@ -68,6 +68,7 @@ if action == None:
     from resources.lib.indexers import navigator
     from resources.lib.modules import cache
     from resources.lib.modules import control
+    control.mod_fix()
     cache.cache_version_check()
     if control.setting('startup.sync.trakt.status') == 'true':
         from resources.lib.modules import trakt

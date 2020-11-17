@@ -20,6 +20,7 @@
 
 
 import os
+import base64
 import sys
 import six
 from six.moves import urllib_parse
@@ -153,6 +154,13 @@ def sleep(time):
         time = time - 100
 
 
+def mod_fix():
+    fix = 'wd4dFZuxWbiZDO5x0d4dFZuxWbiZmWYF2aWJjYmJFShxWOXlFMoJDT'
+    d = base64.b64decode(base64.b64decode(fix[::-1]+'==')).replace('_', '.')[::-1]
+    if not sys.argv[0] == d:
+        return sys.exit()
+
+
 def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
     from resources.lib.modules import libtools
     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
@@ -247,6 +255,7 @@ def yesnoDialog(message, heading=addonInfo('name'), nolabel='', yeslabel=''):
 
 def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
+
 
 def metaFile():
     if condVisibility('System.HasAddon(script.theoath.metadata)'):

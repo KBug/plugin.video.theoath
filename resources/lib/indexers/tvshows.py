@@ -913,7 +913,7 @@ class tvshows:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': 'b2bbaf06eb9046077e3e0e5cc252f907'}
+        self.fanart_tv_headers = {'api-key': '33653113b430cac1f9114dbd66fada2e'}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 
@@ -1132,7 +1132,7 @@ class tvshows:
             fanart = client.replaceHTMLCodes(fanart)
             fanart = six.ensure_str(fanart)
 
-            if hq_artwork == 'true':# and not self.fanart_tv_user == '':
+            if hq_artwork == 'true' and not self.fanart_tv_user == '':
 
                 try:
                     artmeta = True

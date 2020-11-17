@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.3.7[/COLOR][/B]
+- Re-arranged source fetching and filtering (internally) for more accuracy on source counting,
+    and pre-emptive termination to take into account more filters (WiP)
+- Personal Fanart.tv API key is now required to be entered in settings, in order to fetch hq artwork
+    That was done due to some add-ons (like fake-exodus from kodibae and pressplay) cloning TheOath,
+    along with the add-on's hard-coded API keys
+
 [B][COLOR gold]v3.3.6[/COLOR][/B]
 - Minor tweaks to previous commits
 

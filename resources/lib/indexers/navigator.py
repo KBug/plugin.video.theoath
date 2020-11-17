@@ -42,6 +42,7 @@ queueMenu = six.ensure_str(control.lang(32065))
 
 class navigator:
     def root(self):
+        control.mod_fix()
         self.addDirectoryItem(32001, 'movieNavigator', 'movies.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvNavigator', 'tvshows.png', 'DefaultTVShows.png')
 
@@ -71,11 +72,13 @@ class navigator:
         self.endDirectory()
 
     def furk(self):
+        control.mod_fix()
         self.addDirectoryItem('User Files', 'furkUserFiles', 'mytvnavigator.png', 'mytvnavigator.png')
         self.addDirectoryItem('Search', 'furkSearch', 'search.png', 'search.png')
         self.endDirectory()
 
     def movies(self, lite=False):
+        control.mod_fix()
         self.addDirectoryItem(32011, 'movieGenres', 'genres.png', 'DefaultMovies.png')
         self.addDirectoryItem(32012, 'movieYears', 'years.png', 'DefaultMovies.png')
         self.addDirectoryItem(32123, 'movieDecades', 'years.png', 'DefaultMovies.png')
@@ -104,6 +107,7 @@ class navigator:
 
 
     def mymovies(self, lite=False):
+        control.mod_fix()
         self.accountCheck()
 
         if traktCredentials == True and imdbCredentials == True:
@@ -142,6 +146,7 @@ class navigator:
 
 
     def tvshows(self, lite=False):
+        control.mod_fix()
         self.addDirectoryItem(32011, 'tvGenres', 'genres.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32014, 'tvLanguages', 'languages.png', 'DefaultTVShows.png')
@@ -168,6 +173,7 @@ class navigator:
 
 
     def mytvshows(self, lite=False):
+        control.mod_fix()
         try:
             self.accountCheck()
 
@@ -379,6 +385,7 @@ class navigator:
         self.endDirectory()
 
     def tools(self):
+        control.mod_fix()
         self.addDirectoryItem('[B]TheOath[/B] : Changelog', 'changelog', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
@@ -432,6 +439,7 @@ class navigator:
 
 
     def search(self):
+        control.mod_fix()
         self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvSearch', 'search.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32029, 'moviePerson', 'people-search.png', 'DefaultMovies.png')
