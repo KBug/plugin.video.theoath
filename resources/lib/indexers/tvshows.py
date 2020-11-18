@@ -30,10 +30,11 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
+from resources.lib.modules import api_keys
 from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,traceback#,base64
+import os,sys,re,datetime,traceback
 import simplejson as json
 
 import six
@@ -56,7 +57,7 @@ class tvshows:
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'https://www.tvmaze.com'
         self.logo_link = 'https://i.imgur.com/'
-        self.tvdb_key = 'JMCO8LQHIXX76CGN'
+        self.tvdb_key = api_keys.tvdb_key
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.trakt_user = control.setting('trakt.user').strip()
@@ -913,7 +914,7 @@ class tvshows:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': '33653113b430cac1f9114dbd66fada2e'}
+        self.fanart_tv_headers = {'api-key': api_keys.fanarttv_key}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 

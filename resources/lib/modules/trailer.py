@@ -26,6 +26,7 @@ from six.moves import urllib_parse
 
 from resources.lib.modules import client
 from resources.lib.modules import control
+from resources.lib.modules import api_keys
 
 
 class trailer:
@@ -34,7 +35,7 @@ class trailer:
         self.content = control.infoLabel('Container.Content')
         self.base_link = 'https://www.youtube.com'
         self.key = control.addon('plugin.video.youtube').getSetting('youtube.api.key')
-        if self.key == '': self.key = 'AIzaSyDw__6wPoiNWWxVdkaEKTg0ayGt8lL7P_c'
+        if self.key == '': self.key = api_keys.yt_key
         try: self.key_link = '&key=%s' % self.key
         except: pass
         if self.mode == '1':

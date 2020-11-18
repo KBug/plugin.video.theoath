@@ -30,6 +30,7 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
+from resources.lib.modules import api_keys
 #from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
@@ -60,7 +61,7 @@ class movies:
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.tm_user = control.setting('tm.user')
-        if self.tm_user == '': self.tm_user = 'a041641d58395718cd8785a21be11d02'
+        if self.tm_user == '': self.tm_user = api_keys.tmdb_key
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = str(control.setting('fanart.tv.user')) + str(control.setting('tm.user'))
         self.lang = control.apiLanguage()['trakt']
@@ -896,7 +897,7 @@ class movies:
         self.meta = []
         total = len(self.list)
 
-        self.fanart_tv_headers = {'api-key': '33653113b430cac1f9114dbd66fada2e'}
+        self.fanart_tv_headers = {'api-key': api_keys.fanarttv_key}
         if not self.fanart_tv_user == '':
             self.fanart_tv_headers.update({'client-key': self.fanart_tv_user})
 

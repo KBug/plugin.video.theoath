@@ -21,9 +21,6 @@
 
 import re
 import time
-import base64
-#import urllib
-#import urlparse
 
 import six
 from six.moves import urllib_parse
@@ -35,6 +32,7 @@ from resources.lib.modules import client
 from resources.lib.modules import control
 from resources.lib.modules import log_utils
 from resources.lib.modules import utils
+from resources.lib.modules import api_keys
 
 if six.PY2:
     str = unicode
@@ -47,8 +45,8 @@ CLIENT_SECRET = control.setting('trakt.client_secret')
 REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob'
 
 if V2_API_KEY == "" or CLIENT_SECRET == "":
-    V2_API_KEY = base64.b64decode("OGQ5Njg1M2Y0MGQ1MWJkMDY2MWI2Mzc4ZjUzYzM0ZTM2YzVjZTQzZjM0MmI0YTg0NWI3Nzk4N2Q0NjZjMjY0ZQ==")
-    CLIENT_SECRET = base64.b64decode("NTg2ZDAzNGJhNzM3OGU2ZDY4Y2NjODE5ZWE4M2M5ZmU5N2I5ODg1Yjk2YTQ1ZGQ2OTQ1OWI3OWNkZGU0MmU4OQ==")
+    V2_API_KEY = api_keys.trakt_client_id
+    CLIENT_SECRET = api_keys.trakt_secret
 
 def __getTrakt(url, post=None):
     try:
@@ -65,9 +63,9 @@ def __getTrakt(url, post=None):
         resp_header = result[2]
         result = result[0]
 
-        if resp_code in ['500', '502', '503', '504', '520', '521', '522', '524']:
+        if resp_code in ['423', '429', '500', '502', '503', '504', '520', '521', '522', '524']:
             log_utils.log('Temporary Trakt Error: %s' % resp_code, log_utils.LOGWARNING)
-            control.infoDialog('Trakt Error: ' + str(resp_code), sound=True, icon='WARNING')
+            control.infoDialog('Trakt Error: ' + str(resp_code), sound=True)
             return
         elif resp_code in ['404']:
             log_utils.log('Object Not Found : %s' % resp_code, log_utils.LOGWARNING)

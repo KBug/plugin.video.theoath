@@ -29,12 +29,13 @@ from resources.lib.modules import playcount
 from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
+from resources.lib.modules import api_keys
 from resources.lib.modules import log_utils
 
 import six
 from six.moves import urllib_parse, urllib_request
 
-import os,sys,re,zipfile,datetime#,base64
+import os,sys,re,zipfile,datetime
 import simplejson as json
 
 try: from cStringIO import StringIO
@@ -56,8 +57,7 @@ class seasons:
         self.ratings = control.setting('ep.ratings') or 'false'
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
-        #self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
-        self.tvdb_key = 'JMCO8LQHIXX76CGN'#base64.b64decode(self.etvdb_key)#
+        self.tvdb_key = api_keys.tvdb_key
 
         self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key, '%s', '%s')
         self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
@@ -600,8 +600,7 @@ class episodes:
 
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'https://api.tvmaze.com'
-        #self.etvdb_key = 'Sk1DTzhMUUhJWFg3NkNHTg=='
-        self.tvdb_key = 'JMCO8LQHIXX76CGN'#base64.b64decode(self.etvdb_key)#
+        self.tvdb_key = api_keys.tvdb_key
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.systime = self.datetime.strftime('%Y%m%d%H%M%S%f')
         self.today_date = self.datetime.strftime('%Y-%m-%d')
