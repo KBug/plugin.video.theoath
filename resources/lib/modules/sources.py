@@ -315,7 +315,7 @@ class sources:
             control.idle()
 
         progressDialog.create(self.module_name)
-        progressDialog.update(0)
+        #progressDialog.update(0)
 
         self.prepareSources()
 

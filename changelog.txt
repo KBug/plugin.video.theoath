@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.3.9[/COLOR][/B]
+- Kodi 19 fix
+
 [B][COLOR gold]v3.3.7-8[/COLOR][/B]
 - Re-arranged source fetching and filtering (internally) for more accuracy on source counting,
     and pre-emptive termination to take into account more filters (WiP)
