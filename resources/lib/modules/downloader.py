@@ -24,11 +24,11 @@ import simplejson as json
 import xbmc
 import xbmcgui
 import xbmcplugin
-#import xbmcvfs
+import xbmcvfs
 import os
 import inspect
 import sys
-from io import open
+#from io import open
 
 from six.moves import urllib_parse, urllib_request
 
@@ -180,8 +180,8 @@ def doDownload(url, dest, title, image, headers):
 
     print('Download File Size : %dMB %s ' % (mb, dest))
 
-    f = open(dest, mode='wb')
-    #f = xbmcvfs.File(dest, 'w')
+    #f = open(dest, mode='wb')
+    f = xbmcvfs.File(dest, 'w')
 
     chunk  = None
     chunks = []
