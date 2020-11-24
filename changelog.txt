@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.3.93[/COLOR][/B]
+- Re:sources filters tweaks
+
 [B][COLOR gold]v3.3.92[/COLOR][/B]
 - Fixed downloading to network shares
 

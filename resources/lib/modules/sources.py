@@ -513,13 +513,12 @@ class sources:
                 log_utils.log('sourcefail: ' + str(failure))
                 pass
 
+        control.sleep(200)
+        self.sourcesFilter(content)
         progressDialog.close()
         del progressDialog
         del threads
 
-        if pre_emp == 'true':
-            control.sleep(200)
-            self.sourcesFilter(content)
         self.sourcesSort()
         control.idle()
 
@@ -831,19 +830,16 @@ class sources:
         except:
             failure = traceback.format_exc()
             log_utils.log('DUP - Exception: ' + str(failure))
-            control.infoDialog('Dupes filter failed', icon='INFO', sound=True)
+            pass
 
         if remove_hevc == 'true':
-            _sources = [i for i in _sources if not any(value in i['url'] for value in ['hevc', 'h265', 'h.265', 'x265', 'x.265', 'HEVC', 'H265', 'H.265', 'X265', 'X.265'])]
+            _sources = [i for i in _sources if not any(x in i['url'] for x in ['hevc', 'h265', 'x265', 'h.265', 'x.265', 'HEVC', 'H265', 'X265', 'H.265', 'X.265']) and not any(
+                                                       x in i.get('name', '').lower() for x in ['hevc', 'h265', 'x265', 'h.265', 'x.265'])]
 
         if remove_captcha == 'true':
             _sources = [i for i in _sources if not (i['source'].lower() in self.hostcapDict and not 'debrid' in i)]
 
         _sources = [i for i in _sources if not i['source'].lower() in self.hostblockDict]
-
-        # for i in self.sources:
-            # if 'checkquality' in i and i['checkquality'] == True:
-                # if not i['source'].lower() in self.hosthqDict and i['quality'] not in ['SD', 'SCR', 'CAM']: i.update({'quality': 'SD'})
 
         if size_filters == 'true':
             if _content == 'movie':
