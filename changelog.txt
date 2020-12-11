@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.4.000[/COLOR][/B]
+[I]!! YOU HAVE TO RE-AUTHORISE TRAKT AFTER UPDATING TO THIS RELEASE !![/I]
+    (unless you use your own trakt client-id/client-secret.
+    say thanks for this to kodibae and pressplay cloning TheOath along with it's API keys)
+- Fixed Trakt episode indicators for Kodi 19
+- Various other fixes
+
 [B][COLOR gold]v3.3.93[/COLOR][/B]
 - Re:sources filters tweaks
 

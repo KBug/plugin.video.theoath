@@ -21,6 +21,7 @@
 import base64
 import hashlib
 import re
+import xbmc
 
 import six
 from six.moves import urllib_parse
@@ -37,6 +38,10 @@ RES_720 = [' 720', ' 720p', ' 720i', ' hd720', ' 720hd', ' 72o', ' 72op']
 RES_SD = [' 576', ' 576p', ' 576i', ' sd576', ' 576sd', ' 480', ' 480p', ' 480i', ' sd480', ' 480sd', ' 360', ' 360p', ' 360i', ' sd360', ' 360sd', ' 240', ' 240p', ' 240i', ' sd240', ' 240sd']
 SCR = [' scr', ' screener', ' dvdscr', ' dvd scr', ' r5', ' r6']
 CAM = [' camrip', ' tsrip', ' hdcam', ' hd cam', ' cam rip', ' hdts', ' dvdcam', ' dvdts', ' cam', ' telesync', ' ts']
+
+def supported_video_extensions():
+    supported_video_extensions = xbmc.getSupportedMedia('video').split('|')
+    return [i for i in supported_video_extensions if i != '' and i != '.zip']
 
 def get_qual(term):
     if any(i in term for i in RES_4K):

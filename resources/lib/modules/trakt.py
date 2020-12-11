@@ -344,6 +344,7 @@ def cachesyncTVShows(timeout=0):
 
 def timeoutsyncTVShows():
     timeout = cache.timeout(syncTVShows, control.setting('trakt.user').strip())
+    if not timeout: timeout = 0
     return timeout
 
 
