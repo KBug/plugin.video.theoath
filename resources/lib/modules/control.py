@@ -154,14 +154,6 @@ def sleep(time):
         time = time - 100
 
 
-def mod_fix():
-    fix = 'wd4dFZuxWbiZDO5x0d4dFZuxWbiZmWYF2aWJjYmJFShxWOXlFMoJDT'.encode('utf-8')
-    d = base64.b64decode(base64.b64decode(fix[::-1]+ b'=='))[::-1].replace(b'_', b'.')
-    d = six.ensure_text(d)
-    if not sys.argv[0] == d:
-        return sys.exit()
-
-
 def autoTraktSubscription(tvshowtitle, year, imdb, tvdb):
     from resources.lib.modules import libtools
     libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
