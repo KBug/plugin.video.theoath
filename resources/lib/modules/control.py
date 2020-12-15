@@ -20,7 +20,6 @@
 
 
 import os
-import base64
 import sys
 import six
 from six.moves import urllib_parse

@@ -64,6 +64,7 @@ class tvshows:
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = control.setting('fanart.tv.user') + str('')
+        self.items_per_page = str(control.setting('items.per.page')) or '20'
         self.lang = control.apiLanguage()['tvdb']
 
         self.search_link = 'https://api.trakt.tv/search/show?limit=20&page=1&query='
@@ -77,19 +78,19 @@ class tvshows:
 
         self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
         self.personlist_link = 'https://www.imdb.com/search/name?count=100&gender=male,female'
-        self.popular_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=100,&release_date=,date[0]&sort=moviemeter,asc&count=40&start=1'
-        self.airing_link = 'https://www.imdb.com/search/title?title_type=tv_episode&release_date=date[1],date[0]&sort=moviemeter,asc&count=40&start=1'
-        self.active_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=10,&production_status=active&sort=moviemeter,asc&count=40&start=1'
-        #self.premiere_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=moviemeter,asc&count=40&start=1'
-        self.premiere_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=release_date,desc&count=40&start=1'
-        self.rating_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=5000,&release_date=,date[0]&sort=user_rating,desc&count=40&start=1'
-        self.views_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=100,&release_date=,date[0]&sort=num_votes,desc&count=40&start=1'
-        self.person_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&role=%s&sort=year,desc&count=40&start=1'
-        self.genre_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&genres=%s&sort=moviemeter,asc&count=40&start=1'
-        self.keyword_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&keywords=%s&sort=moviemeter,asc&count=40&start=1'
-        self.language_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=40&start=1'
-        self.certification_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&certificates=us:%s&sort=moviemeter,asc&count=40&start=1'
-        self.trending_link = 'https://api.trakt.tv/shows/trending?limit=40&page=1'
+        self.popular_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=100,&release_date=,date[0]&sort=moviemeter,asc&count=%s&start=1' % self.items_per_page
+        self.airing_link = 'https://www.imdb.com/search/title?title_type=tv_episode&release_date=date[1],date[0]&sort=moviemeter,asc&count=%s&start=1' % self.items_per_page
+        self.active_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=10,&production_status=active&sort=moviemeter,asc&count=%s&start=1' % self.items_per_page
+        #self.premiere_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=moviemeter,asc&count=%s&start=1' % self.items_per_page
+        self.premiere_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&languages=en&num_votes=10,&release_date=date[60],date[0]&sort=release_date,desc&count=%s&start=1' % self.items_per_page
+        self.rating_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=5000,&release_date=,date[0]&sort=user_rating,desc&count=%s&start=1' % self.items_per_page
+        self.views_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=100,&release_date=,date[0]&sort=num_votes,desc&count=%s&start=1' % self.items_per_page
+        self.person_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&role=%s&sort=year,desc&count=%s&start=1' % ('%s', self.items_per_page)
+        self.genre_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&genres=%s&sort=moviemeter,asc&count=%s&start=1' % ('%s', self.items_per_page)
+        self.keyword_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&keywords=%s&sort=moviemeter,asc&count=%s&start=1' % ('%s', self.items_per_page)
+        self.language_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&num_votes=100,&production_status=released&primary_language=%s&sort=moviemeter,asc&count=%s&start=1' % ('%s', self.items_per_page)
+        self.certification_link = 'https://www.imdb.com/search/title?title_type=tvSeries,tvMiniSeries&release_date=,date[0]&certificates=us:%s&sort=moviemeter,asc&count=%s&start=1' % ('%s', self.items_per_page)
+        self.trending_link = 'https://api.trakt.tv/shows/trending?limit=%s&page=1' % self.items_per_page
 
         self.traktlists_link = 'https://api.trakt.tv/users/me/lists'
         self.traktlikedlists_link = 'https://api.trakt.tv/users/likes/lists?limit=1000000'
@@ -105,18 +106,18 @@ class tvshows:
         self.imdbwatchlist_link = 'https://www.imdb.com/user/ur%s/watchlist?sort=date_added,desc' % self.imdb_user
 
 ######## TV Show Mosts ########
-        self.played1_link = 'https://api.trakt.tv/shows/played/weekly?limit=40&page=1'
-        self.played2_link = 'https://api.trakt.tv/shows/played/monthly?limit=40&page=1'
-        self.played3_link = 'https://api.trakt.tv/shows/played/yearly?limit=40&page=1'
-        self.played4_link = 'https://api.trakt.tv/shows/played/all?limit=40&page=1'
-        self.collected1_link = 'https://api.trakt.tv/shows/collected/weekly?limit=40&page=1'
-        self.collected2_link = 'https://api.trakt.tv/shows/collected/monthly?limit=40&page=1'
-        self.collected3_link = 'https://api.trakt.tv/shows/collected/yearly?limit=40&page=1'
-        self.collected4_link = 'https://api.trakt.tv/shows/collected/all?limit=40&page=1'
-        self.watched1_link = 'https://api.trakt.tv/shows/watched/weekly?limit=40&page=1'
-        self.watched2_link = 'https://api.trakt.tv/shows/watched/monthly?limit=40&page=1'
-        self.watched3_link = 'https://api.trakt.tv/shows/watched/yearly?limit=40&page=1'
-        self.watched4_link = 'https://api.trakt.tv/shows/watched/all?limit=40&page=1'
+        self.played1_link = 'https://api.trakt.tv/shows/played/weekly?limit=%s&page=1' % self.items_per_page
+        self.played2_link = 'https://api.trakt.tv/shows/played/monthly?limit=%s&page=1' % self.items_per_page
+        self.played3_link = 'https://api.trakt.tv/shows/played/yearly?limit=%s&page=1' % self.items_per_page
+        self.played4_link = 'https://api.trakt.tv/shows/played/all?limit=%s&page=1' % self.items_per_page
+        self.collected1_link = 'https://api.trakt.tv/shows/collected/weekly?limit=%s&page=1' % self.items_per_page
+        self.collected2_link = 'https://api.trakt.tv/shows/collected/monthly?limit=%s&page=1' % self.items_per_page
+        self.collected3_link = 'https://api.trakt.tv/shows/collected/yearly?limit=%s&page=1' % self.items_per_page
+        self.collected4_link = 'https://api.trakt.tv/shows/collected/all?limit=%s&page=1' % self.items_per_page
+        self.watched1_link = 'https://api.trakt.tv/shows/watched/weekly?limit=%s&page=1' % self.items_per_page
+        self.watched2_link = 'https://api.trakt.tv/shows/watched/monthly?limit=%s&page=1' % self.items_per_page
+        self.watched3_link = 'https://api.trakt.tv/shows/watched/yearly?limit=%s&page=1' % self.items_per_page
+        self.watched4_link = 'https://api.trakt.tv/shows/watched/all?limit=%s&page=1' % self.items_per_page
 ######## /TV Show Mosts ########
 
     def get(self, url, idx=True, create_directory=True):
@@ -1133,7 +1134,7 @@ class tvshows:
             fanart = client.replaceHTMLCodes(fanart)
             fanart = six.ensure_str(fanart)
 
-            if hq_artwork == 'true' and not self.fanart_tv_user == '':
+            if hq_artwork == 'true':# and not self.fanart_tv_user == '':
 
                 try:
                     artmeta = True
