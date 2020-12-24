@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.4.003[/COLOR][/B]
+- Minor Kodi 19 fixes
+- Cloudflare scraper updated from source
+
 [B][COLOR gold]v3.4.002[/COLOR][/B]
 - Quantity of items per page on paginated lists made customizable (defaults to 20)
 
