@@ -353,7 +353,7 @@ class movies:
     def search_new(self):
         control.idle()
 
-        t = six.ensure_str(control.lang(32010))
+        t = control.lang(32010)
         k = control.keyboard('', t) ; k.doModal()
         q = k.getText() if k.isConfirmed() else None
 
@@ -367,7 +367,7 @@ class movies:
         dbcon.commit()
         dbcur.close()
         url = self.search_link + urllib_parse.quote_plus(q)
-        if int(control.getKodiVersion()) >= 18:
+        if control.getKodiVersion() >= 18:
             self.get(url)
         else:
             url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
@@ -384,7 +384,7 @@ class movies:
         dbcon.commit()
         dbcur.close()
         url = self.search_link + urllib_parse.quote_plus(q)
-        if int(control.getKodiVersion()) >= 18:
+        if control.getKodiVersion() >= 18:
             self.get(url)
         else:
             url = '%s?action=moviePage&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
@@ -394,7 +394,7 @@ class movies:
         try:
             control.idle()
 
-            t = six.ensure_str(control.lang(32010))
+            t = control.lang(32010)
             k = control.keyboard('', t);
             k.doModal()
             q = k.getText() if k.isConfirmed() else None
@@ -402,7 +402,7 @@ class movies:
             if (q == None or q == ''): return
 
             url = self.persons_link + urllib_parse.quote_plus(q)
-            if int(control.getKodiVersion()) >= 18:
+            if control.getKodiVersion() >= 18:
                 self.persons(url)
             else:
                 url = '%s?action=moviePersons&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
@@ -577,7 +577,7 @@ class movies:
             u = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
 
             result = trakt.getTraktAsJson(u)
-            result = control.six_decode(result)
+            #result = control.six_decode(result)
 
             items = []
             for i in result:
@@ -931,7 +931,7 @@ class movies:
             imdb = self.list[i]['imdb']
 
             item = trakt.getMovieSummary(imdb)
-            item = control.six_decode(item)
+            #item = control.six_decode(item)
 
             title = item.get('title')
             title = client.replaceHTMLCodes(title)
@@ -1118,25 +1118,25 @@ class movies:
         #indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators() #fixme
         indicators = playcount.getMovieIndicators()
 
-        playbackMenu = six.ensure_str(control.lang(32063)) if control.setting('hosts.mode') == '2' else six.ensure_str(control.lang(32064))
+        playbackMenu = control.lang(32063) if control.setting('hosts.mode') == '2' else control.lang(32064)
 
-        watchedMenu = six.ensure_str(control.lang(32068)) if trakt.getTraktIndicatorsInfo() == True else six.ensure_str(control.lang(32066))
+        watchedMenu = control.lang(32068) if trakt.getTraktIndicatorsInfo() == True else control.lang(32066)
 
-        unwatchedMenu = six.ensure_str(control.lang(32069)) if trakt.getTraktIndicatorsInfo() == True else six.ensure_str(control.lang(32067))
+        unwatchedMenu = control.lang(32069) if trakt.getTraktIndicatorsInfo() == True else control.lang(32067)
 
-        queueMenu = six.ensure_str(control.lang(32065))
+        queueMenu = control.lang(32065)
 
-        traktManagerMenu = six.ensure_str(control.lang(32070))
+        traktManagerMenu = control.lang(32070)
 
-        nextMenu = six.ensure_str(control.lang(32053))
+        nextMenu = control.lang(32053)
 
-        addToLibrary = six.ensure_str(control.lang(32551))
+        addToLibrary = control.lang(32551)
 
-        clearProviders = six.ensure_str(control.lang(32081))
+        clearProviders = control.lang(32081)
 
-        findSimilar = six.ensure_str(control.lang(32100))
+        findSimilar = control.lang(32100)
 
-        infoMenu = six.ensure_str(control.lang(32101))
+        infoMenu = control.lang(32101)
 
         for i in items:
             try:
@@ -1278,11 +1278,11 @@ class movies:
 
         addonFanart, addonThumb, artPath = control.addonFanart(), control.addonThumb(), control.artPath()
 
-        queueMenu = six.ensure_str(control.lang(32065))
+        queueMenu = control.lang(32065)
 
-        playRandom = six.ensure_str(control.lang(32535))
+        playRandom = control.lang(32535)
 
-        addToLibrary = six.ensure_str(control.lang(32551))
+        addToLibrary = control.lang(32551)
 
         for i in items:
             try:

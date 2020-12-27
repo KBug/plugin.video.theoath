@@ -43,8 +43,8 @@ except: from pysqlite2 import dbapi2 as database
 try: import resolveurl
 except: pass
 
-try: import xbmc
-except: pass
+from kodi_six import xbmc
+
 
 class sources:
     def __init__(self):
@@ -147,7 +147,7 @@ class sources:
 
         sysimage = urllib_parse.quote_plus(six.ensure_str(poster))
 
-        downloadMenu = six.ensure_str(control.lang(32403))
+        downloadMenu = control.lang(32403)
 
 
         for i in list(range(len(items))):
@@ -321,7 +321,7 @@ class sources:
 
         sourceDict = self.sourceDict
 
-        progressDialog.update(0, six.ensure_str(control.lang(32600)))
+        progressDialog.update(0, control.lang(32600))
         content = 'movie' if tvshowtitle == None else 'episode'
         if content == 'movie':
             sourceDict = [(i[0], i[1], getattr(i[1], 'movie', None)) for i in sourceDict]
@@ -390,13 +390,13 @@ class sources:
         start_time = time.time()
         end_time = start_time + timeout
 
-        string1 = six.ensure_str(control.lang(32404))
-        string2 = six.ensure_str(control.lang(32405))
-        string3 = six.ensure_str(control.lang(32406))
-        string4 = six.ensure_str(control.lang(32601))
-        string5 = six.ensure_str(control.lang(32602))
-        string6 = six.ensure_str(control.lang(32606))
-        string7 = six.ensure_str(control.lang(32607))
+        string1 = control.lang(32404)
+        string2 = control.lang(32405)
+        string3 = control.lang(32406)
+        string4 = control.lang(32601)
+        string5 = control.lang(32602)
+        string6 = control.lang(32606)
+        string7 = control.lang(32607)
 
         source_4k = source_1080 = source_720 = source_sd = total = source_filtered_out = 0
 
@@ -682,7 +682,7 @@ class sources:
         try:
             control.idle()
 
-            yes = control.yesnoDialog(six.ensure_str(control.lang(32407)))
+            yes = control.yesnoDialog(control.lang(32407))
             if not yes: return
 
             control.makeFile(control.dataPath)
@@ -693,7 +693,7 @@ class sources:
             dbcur.execute("VACUUM")
             dbcon.commit()
 
-            control.infoDialog(six.ensure_str(control.lang(32408)), sound=True, icon='INFO')
+            control.infoDialog(control.lang(32408), sound=True, icon='INFO')
         except:
             pass
 
@@ -1250,7 +1250,7 @@ class sources:
         return u
 
     def errorForSources(self):
-        control.infoDialog(six.ensure_str(control.lang(32401)), sound=False, icon='INFO')
+        control.infoDialog(control.lang(32401), sound=False, icon='INFO')
 
 
     def getLanguage(self):

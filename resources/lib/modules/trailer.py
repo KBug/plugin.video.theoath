@@ -22,6 +22,7 @@ import sys
 import simplejson as json
 import re
 import base64
+import six
 from six.moves import urllib_parse
 
 from resources.lib.modules import client
@@ -117,7 +118,7 @@ class trailer:
                 url += "&relevanceLanguage=%s" % apiLang
 
             result = client.request(url)
-            result = control.six_decode(result)
+            result = six.ensure_text(result)
 
             json_items = json.loads(result).get('items', [])
             items = [i.get('id', {}).get('videoId') for i in json_items]

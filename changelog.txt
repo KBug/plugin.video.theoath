@@ -1,3 +1,9 @@
+[B][COLOR gold]v3.4.004[/COLOR][/B]
+- Utilise kodi_six lib to handle py2/3 diffs on Kodi's python API
+    modules cleaner
+- Removed Feature: check movie/episode before importing to library
+    It's just an insignificant reason to stress our providers when importing lists
+
 [B][COLOR gold]v3.4.003[/COLOR][/B]
 - Minor Kodi 19 fixes
 - Cloudflare scraper updated from source

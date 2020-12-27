@@ -20,7 +20,7 @@
 
 import sys
 from six.moves import urllib_parse
-import xbmcgui
+from kodi_six import xbmcgui
 
 params = dict(urllib_parse.parse_qsl(sys.argv[2].replace('?','')))
 

@@ -21,8 +21,7 @@
 import base64
 import hashlib
 import re
-import xbmc
-
+from kodi_six import xbmc
 import six
 from six.moves import urllib_parse
 
