@@ -170,6 +170,8 @@ def scene_rls(title, year):
     title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace("'", "").replace(':', '').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
     title = re.sub(' {2,}', ' ', title)
     if title.startswith('Birdman or') and year == '2014': title = 'Birdman'
+    elif title == 'Birds of Prey (and the Fantabulous Emancipation of One Harley Quinn)' and year == '2020': title = 'Birds of Prey'
+    elif title == 'Roald Dahls The Witches' and year == '2020': title = 'The Witches'
     return title, year
 
 

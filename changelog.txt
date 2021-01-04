@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.4.005[/COLOR][/B]
+- Added some more titles to the meta/scene mismatches function
+
 [B][COLOR gold]v3.4.004[/COLOR][/B]
 - Utilise kodi_six lib to handle py2/3 diffs on Kodi's python API
     modules cleaner
