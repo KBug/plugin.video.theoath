@@ -28,6 +28,7 @@ from six.moves import urllib_parse
 from resources.lib.modules import client
 from resources.lib.modules import control
 from resources.lib.modules import api_keys
+from resources.lib.modules import log_utils
 
 
 class trailer:
@@ -118,6 +119,10 @@ class trailer:
                 url += "&relevanceLanguage=%s" % apiLang
 
             result = client.request(url)
+            if result == None:
+                log_utils.log('yt_api_failed_resp: ' + str(result))
+                control.infoDialog('Please utilise your own API key[CR]on YouTube add-on', 'API key quota limit reached', time=5000)
+                return
             result = six.ensure_text(result)
 
             json_items = json.loads(result).get('items', [])

@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.4.006[/COLOR][/B]
+- Added notification when trying to play trailer and API key's quota limit has been reached
+- Cloudflare scraper updated from source
+
 [B][COLOR gold]v3.4.005[/COLOR][/B]
 - Added some more titles to the meta/scene mismatches function
 
