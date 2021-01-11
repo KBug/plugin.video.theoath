@@ -189,5 +189,6 @@ def scene_tvrls(title, year, season, episode):
     elif 'Special Victims Unit' in title: title = title.replace('Special Victims Unit', 'SVU')
     elif title == 'The End of the F ing World': title = 'The End of the Fucking World'
     elif title == 'M A S H': title = 'MASH'
+    elif title == 'Cobra Kai' and year == '1984': year = '2018'
     return title, year, season, episode
 

@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.4.007[/COLOR][/B]
+- Cosmetic and other minor fixes
+
 [B][COLOR gold]v3.4.006[/COLOR][/B]
 - Added notification when trying to play trailer and API key's quota limit has been reached
 - Cloudflare scraper updated from source

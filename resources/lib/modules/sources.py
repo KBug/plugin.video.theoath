@@ -403,8 +403,8 @@ class sources:
         line1 = line3 = ""
 
         total_format = '[COLOR %s][B]%s[/B][/COLOR]'
-        pdiag_format = '4K: %s  |  1080P: %s  |  720P: %s  |  SD: %s %s: %s  |  (Filtered-out: %s)' % ('%s','%s','%s','%s','[CR]TOTAL','%s','%s') if not progressDialog == control.progressDialogBG else \
-                       '4K: %s | 1080P: %s | 720P: %s | SD: %s %s: %s (-%s)' % ('%s','%s','%s','%s','| T','%s','%s')
+        pdiag_format = '4K: %s | 1080P: %s | 720P: %s | SD: %s | TOTAL: %s[CR][I] Filtered-out: %s[/I]' if not progressDialog == control.progressDialogBG else \
+                       '4K: %s | 1080P: %s | 720P: %s | SD: %s | T: %s (-%s)'
 
         # for i in list(range(0, 4 * timeout)):
         for i in list(range(0, 2 * timeout)):
