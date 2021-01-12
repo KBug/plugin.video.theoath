@@ -161,7 +161,7 @@ def clean_search_query(url):
     return url
 
 
-def scene_rls(title, year):
+def scene_title(title, year):
     title = normalize(title)
     try:
         title = ensure_str(title)
@@ -175,7 +175,7 @@ def scene_rls(title, year):
     return title, year
 
 
-def scene_tvrls(title, year, season, episode):
+def scene_tvtitle(title, year, season, episode):
     title = normalize(title)
     try:
         title = ensure_str(title)
@@ -186,6 +186,9 @@ def scene_tvrls(title, year, season, episode):
     if title in ['The Haunting', 'The Haunting of Bly Manor', 'The Haunting of Hill House'] and year == '2018':
         if season == '1': title = 'The Haunting of Hill House'
         elif season == '2': title = 'The Haunting of Bly Manor'; year = '2020'; season = '1'
+    if title in ['Cosmos', 'Cosmos A Spacetime Odyssey', 'Cosmos Possible Worlds'] and year == '2014':
+        if season == '1': title = 'Cosmos A Spacetime Odyssey'
+        elif season == '2': title = 'Cosmos Possible Worlds'; year = '2020'; season = '1'
     elif 'Special Victims Unit' in title: title = title.replace('Special Victims Unit', 'SVU')
     elif title == 'The End of the F ing World': title = 'The End of the Fucking World'
     elif title == 'M A S H': title = 'MASH'
