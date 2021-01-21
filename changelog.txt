@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.4.009[/COLOR][/B]
+- Search queries tweaks
+
 [B][COLOR gold]v3.4.007-8[/COLOR][/B]
 - Cosmetic and other minor fixes
 
