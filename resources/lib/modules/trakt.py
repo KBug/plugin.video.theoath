@@ -410,14 +410,14 @@ def markEpisodeAsNotWatched(tvdb, season, episode):
     return __getTrakt('/sync/history/remove', {"shows": [{"seasons": [{"episodes": [{"number": episode}], "number": season}], "ids": {"tvdb": tvdb}}]})[0]
 
 
-def scrobbleMovie(imdb, watched_percent):
+def scrobbleMovie(imdb, watched_percent, action):
     if not imdb.startswith('tt'): imdb = 'tt' + imdb
-    return __getTrakt('/scrobble/pause', {"movie": {"ids": {"imdb": imdb}}, "progress": watched_percent})[0]
+    return __getTrakt('/scrobble/%s' % action, {"movie": {"ids": {"imdb": imdb}}, "progress": watched_percent})[0]
 
 
-def scrobbleEpisode(tvdb, season, episode, watched_percent):
+def scrobbleEpisode(tvdb, season, episode, watched_percent, action):
     season, episode = int('%01d' % int(season)), int('%01d' % int(episode))
-    return __getTrakt('/scrobble/pause', {"show": {"ids": {"tvdb": tvdb}}, "episode": {"season": season, "number": episode}, "progress": watched_percent})[0]
+    return __getTrakt('/scrobble/%s' % action, {"show": {"ids": {"tvdb": tvdb}}, "episode": {"season": season, "number": episode}, "progress": watched_percent})[0]
 
 
 def getMovieTranslation(id, lang, full=False):

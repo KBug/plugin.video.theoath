@@ -1,3 +1,10 @@
+[B][COLOR gold]v3.4.010[/COLOR][/B]
+- Added check for youtube add-on upon attempt to play trailer, and prompt to install it
+    if it isn't already
+- Reworked resume points/trakt scrobbles, as a preparation for removing MetaHandler dependency
+    This means loss of local resume points. New resume points will properly propagate though
+    Also Trakt scrobbles now properly stop upon finishing playback
+
 [B][COLOR gold]v3.4.009[/COLOR][/B]
 - Search queries tweaks
 
