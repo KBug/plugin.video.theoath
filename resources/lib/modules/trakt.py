@@ -61,7 +61,7 @@ def __getTrakt(url, post=None):
 
         resp_code = result[1]
         resp_header = result[2]
-        result = result[0]
+        result = six.ensure_text(result[0])
 
         if resp_code in ['423', '500', '502', '503', '504', '520', '521', '522', '524']:
             log_utils.log('Trakt Error: %s' % str(resp_code), log_utils.LOGWARNING)
@@ -92,7 +92,7 @@ def __getTrakt(url, post=None):
         headers['Authorization'] = 'Bearer %s' % token
 
         result = client.request(url, post=post, headers=headers, output='extended', error=True)
-        return result[0], result[2]
+        return six.ensure_text(result[0]), six.ensure_text(result[2])
     except Exception as e:
         log_utils.log('Unknown Trakt Error: %s' % e, log_utils.LOGWARNING)
         pass

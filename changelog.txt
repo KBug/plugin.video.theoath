@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.4.011[/COLOR][/B]
+- Resume/scrobble fixes for Kodi 19
+
 [B][COLOR gold]v3.4.010[/COLOR][/B]
 - Added check for youtube add-on upon attempt to play trailer, and prompt to install it
     if it isn't already

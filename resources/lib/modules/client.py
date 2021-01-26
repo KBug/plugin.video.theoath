@@ -375,7 +375,7 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
 
         _, __, tb = sys.exc_info()
 
-        print(traceback.print_tb(tb))
+        log_utils.log('client_fail' + traceback.print_tb(str(tb)))
         log_utils.log('Client request failed on url: ' + url + ' reason: ' + repr(reason))
 
         return

@@ -71,15 +71,14 @@ class Bookmarks:
             try:
 
                 idFile = hashlib.md5()
-                for i in name: idFile.update(str(i))
-                for i in year: idFile.update(str(i))
-                idFile = str(idFile.hexdigest())
+                for i in name: idFile.update(i.encode('utf-8'))
+                for i in year: idFile.update(i.encode('utf-8'))
+                idFile = idFile.hexdigest()
 
                 dbcon = database.connect(control.bookmarksFile)
                 dbcur = dbcon.cursor()
                 dbcur.execute("SELECT * FROM bookmarks WHERE idFile = '%s'" % idFile)
                 match = dbcur.fetchone()
-                dbcon.commit()
                 if match:
                     self.offset = str(match[1])
                     return self.offset
@@ -88,6 +87,7 @@ class Bookmarks:
                         #raise Exception()
                 else:
                     return offset
+                dbcon.commit()
             except:
                 failure = traceback.format_exc()
                 log_utils.log('bookmarks_get: ' + str(failure))
@@ -103,9 +103,9 @@ class Bookmarks:
             watched = (current_time / total_time) >= .92
 
             idFile = hashlib.md5()
-            for i in _name: idFile.update(str(i))
-            for i in _year: idFile.update(str(i))
-            idFile = str(idFile.hexdigest())
+            for i in _name: idFile.update(i.encode('utf-8'))
+            for i in _year: idFile.update(i.encode('utf-8'))
+            idFile = idFile.hexdigest()
 
             control.makeFile(control.dataPath)
             dbcon = database.connect(control.bookmarksFile)
