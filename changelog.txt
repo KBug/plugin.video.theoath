@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.4.012[/COLOR][/B]
+- Fixed some issues with metadata cacheing
+- Updated cloudflare scraper from source
+
 [B][COLOR gold]v3.4.011[/COLOR][/B]
 - Resume/scrobble fixes for Kodi 19
 

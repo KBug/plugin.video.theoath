@@ -373,9 +373,6 @@ def request(url, close=True, redirect=True, error=False, verify=True, proxy=None
 
     except Exception as reason:
 
-        _, __, tb = sys.exc_info()
-
-        log_utils.log('client_fail' + traceback.print_tb(str(tb)))
         log_utils.log('Client request failed on url: ' + url + ' reason: ' + repr(reason))
 
         return

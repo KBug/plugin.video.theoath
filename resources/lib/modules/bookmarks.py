@@ -138,11 +138,11 @@ class Bookmarks:
         try:
             percent = float((current_time / total_time)) * 100
             if int(current_time) > 120 and percent < 92:
-                trakt.scrobbleMovie(_imdb, percent, action='pause') if _content == 'movie' else trakt.scrobbleEpisode(_tvdb, _season, _episode, percent, action='pause')
+                trakt.scrobbleMovie(_imdb, percent, action='pause') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='pause')
                 if control.setting('trakt.scrobble.notify') == 'true':
                     control.infoDialog('Trakt: Scrobble Paused')
             elif percent >= 92:
-                trakt.scrobbleMovie(_imdb, percent, action='stop') if _content == 'movie' else trakt.scrobbleEpisode(_tvdb, _season, _episode, percent, action='stop')
+                trakt.scrobbleMovie(_imdb, percent, action='stop') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='stop')
                 if control.setting('trakt.scrobble.notify') == 'true':
                     control.infoDialog('Trakt: Scrobbled')
         except:
