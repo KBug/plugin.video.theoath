@@ -956,7 +956,6 @@ class tvshows:
                 ids_from_trakt = ids_from_trakt.get('show', '0')
                 _imdb = ids_from_trakt.get('ids', {}).get('imdb', '0')
                 _imdb = 'tt' + re.sub('[^0-9]', '', str(_imdb))
-                log_utils.log('_imdbs: ' + str(_imdb))
                 tmdb = ids_from_trakt.get('ids', {}).get('tmdb', 0)
                 tmdb = str(tmdb)
 

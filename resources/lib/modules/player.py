@@ -58,7 +58,7 @@ class player(xbmc.Player):
             self.ids = {'imdb': self.imdb, 'tvdb': self.tvdb}
             self.ids = dict((k,v) for k, v in six.iteritems(self.ids) if not v == '0')
 
-            self.offset = bookmarks.Bookmarks().get(self.name, season, episode, imdb, self.year)
+            self.offset = bookmarks.get(self.content, imdb, season, episode)
 
             poster, thumb, meta = self.getMeta(meta)
 
@@ -194,7 +194,7 @@ class player(xbmc.Player):
                     self.totalTime = self.getTotalTime()
                     self.currentTime = self.getTime()
 
-                    watcher = (self.currentTime / self.totalTime >= .9)
+                    watcher = (self.currentTime / self.totalTime >= .92)
                     property = control.window.getProperty(pname)
 
                     if watcher == True and not property == '7':
@@ -216,7 +216,7 @@ class player(xbmc.Player):
                     self.totalTime = self.getTotalTime()
                     self.currentTime = self.getTime()
 
-                    watcher = (self.currentTime / self.totalTime >= .9)
+                    watcher = (self.currentTime / self.totalTime > .92)
                     property = control.window.getProperty(pname)
 
                     if watcher == True and not property == '7':
@@ -311,9 +311,9 @@ class player(xbmc.Player):
     def onPlayBackStopped(self):
         #control.sleep(3000)
         #if control.setting('bookmarks') == 'true':
-        bookmarks.Bookmarks().reset(self.currentTime, self.totalTime, self.content, self.imdb, self.season, self.episode, self.name, self.year)
+        bookmarks.reset(self.currentTime, self.totalTime, self.content, self.imdb, self.season, self.episode)
         if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
-            bookmarks.Bookmarks().set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tvdb, self.season, self.episode)
+            bookmarks.set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tvdb, self.season, self.episode)
 
         try:
             if float(self.currentTime / self.totalTime) >= 0.92:
@@ -326,9 +326,9 @@ class player(xbmc.Player):
 
 
     def onPlayBackEnded(self):
-        bookmarks.Bookmarks().reset(1, 1, self.content, self.imdb, self.season, self.episode, self.name, self.year)
+        bookmarks.reset(1, 1, self.content, self.imdb, self.season, self.episode)
         if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
-            bookmarks.Bookmarks().set_scrobble(1, 1, self.content, self.imdb, self.tvdb, self.season, self.episode)
+            bookmarks.set_scrobble(1, 1, self.content, self.imdb, self.tvdb, self.season, self.episode)
         self.libForPlayback()
 
 

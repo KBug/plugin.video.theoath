@@ -24,129 +24,200 @@ try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
 
 from resources.lib.modules import control
-from resources.lib.modules import playcount
 from resources.lib.modules import trakt
 from resources.lib.modules import log_utils
 
-class Bookmarks:
-    def get(self, name, season, episode, imdb, year='0'):
-        offset = '0'
 
-        if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
-            try:
-                self.offset = '0'
-                if not episode is None:
+def get(type, imdb, season, episode):
+    offset = '0'
 
-                    # Looking for a Episode progress
-                    traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
-                    for i in traktInfo:
-                        if imdb == i['show']['ids']['imdb']:
-                            # Checking Episode Number
-                            if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
-                                seekable = 1 < i['progress'] < 92
-                                if seekable:
-                                    # Calculating Offset to seconds
-                                    self.offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
-                                else:
-                                    self.offset = '0'
-                else:
+    if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
+        try:
+            _offset = '0'
+            if not episode is None:
 
-                    # Looking for a Movie Progress
-                    traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/movies?extended=full')
-                    for i in traktInfo:
-                        if imdb == i['movie']['ids']['imdb']:
+                # Looking for a Episode progress
+                traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
+                for i in traktInfo:
+                    if imdb == i['show']['ids']['imdb']:
+                        # Checking Episode Number
+                        if int(season) == i['episode']['season'] and int(episode) == i['episode']['number']:
                             seekable = 1 < i['progress'] < 92
                             if seekable:
                                 # Calculating Offset to seconds
-                                self.offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
+                                offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
                             else:
-                                self.offset = '0'
+                                offset = '0'
+            else:
 
-                return self.offset
+                # Looking for a Movie Progress
+                traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/movies?extended=full')
+                for i in traktInfo:
+                    if imdb == i['movie']['ids']['imdb']:
+                        seekable = 1 < i['progress'] < 92
+                        if seekable:
+                            # Calculating Offset to seconds
+                            offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
+                        else:
+                            offset = '0'
 
-            except:
-                return offset
+            return offset
 
-        else:
-            try:
+        except:
+            return _offset
 
-                idFile = hashlib.md5()
-                for i in name: idFile.update(i.encode('utf-8'))
-                for i in year: idFile.update(i.encode('utf-8'))
-                idFile = idFile.hexdigest()
-
-                dbcon = database.connect(control.bookmarksFile)
-                dbcur = dbcon.cursor()
-                dbcur.execute("SELECT * FROM bookmarks WHERE idFile = '%s'" % idFile)
-                match = dbcur.fetchone()
-                if match:
-                    self.offset = str(match[1])
-                    return self.offset
-                    # if self.offset == '0':
-                        # return offset
-                        #raise Exception()
-                else:
-                    return offset
-                dbcon.commit()
-            except:
-                failure = traceback.format_exc()
-                log_utils.log('bookmarks_get: ' + str(failure))
-                return offset
-
-
-    def reset(self, current_time, total_time, type, imdb, season, episode, _name, _year='0'):
+    else:
         try:
-            playcount = 0
-            overlay = 6
-            timeInSeconds = str(current_time)
-            ok = int(current_time) > 120 and (current_time / total_time) < .92
-            watched = (current_time / total_time) >= .92
 
-            idFile = hashlib.md5()
-            for i in _name: idFile.update(i.encode('utf-8'))
-            for i in _year: idFile.update(i.encode('utf-8'))
-            idFile = idFile.hexdigest()
+            # idFile = hashlib.md5()
+            # for i in name: idFile.update(i.encode('utf-8'))
+            # for i in year: idFile.update(i.encode('utf-8'))
+            # idFile = idFile.hexdigest()
 
-            control.makeFile(control.dataPath)
+            sql_select = "SELECT * FROM bookmarks WHERE imdb = '%s'" % imdb
+            if type == 'episode':
+                sql_select += " AND season = '%s' AND episode = '%s'" % (season, episode)
+
             dbcon = database.connect(control.bookmarksFile)
             dbcur = dbcon.cursor()
-            dbcur.execute("CREATE TABLE IF NOT EXISTS bookmarks (""idFile TEXT, ""timeInSeconds TEXT, ""type TEXT, ""imdb TEXT, ""season TEXT, ""episode TEXT, ""playcount INTEGER, ""overlay INTEGER, ""UNIQUE(idFile)"");")
-            dbcur.execute("SELECT * FROM bookmarks WHERE idFile = '%s'" % idFile)
+            dbcur.execute(sql_select)
             match = dbcur.fetchone()
             if match:
-                if ok:
-                    dbcur.execute("UPDATE bookmarks SET timeInSeconds = ? WHERE idFile = ?", (timeInSeconds, idFile))
-                elif watched:
-                    playcount = match[6] + 1
-                    overlay = 7
-                    dbcur.execute("UPDATE bookmarks SET timeInSeconds = ?, playcount = ?, overlay = ? WHERE idFile = ?", ('0', playcount, overlay, idFile))
+                offset = str(match[0])
+                return offset
             else:
-                if ok:
-                    dbcur.execute("INSERT INTO bookmarks Values (?, ?, ?, ?, ?, ?, ?, ?)", (idFile, timeInSeconds, type, imdb, season, episode, playcount, overlay))
-                elif watched:
-                    playcount = 1
-                    overlay = 7
-                    dbcur.execute("INSERT INTO bookmarks Values (?, ?, ?, ?, ?, ?, ?, ?)", (idFile, '0', type, imdb, season, episode, playcount, overlay))
+                return _offset
             dbcon.commit()
         except:
             failure = traceback.format_exc()
-            log_utils.log('bookmarks_reset: ' + str(failure))
-            pass
+            log_utils.log('bookmarks_get: ' + str(failure))
+            return _offset
 
 
-    def set_scrobble(self, current_time, total_time, _content, _imdb='', _tvdb='', _season='', _episode=''):
-        try:
-            percent = float((current_time / total_time)) * 100
-            if int(current_time) > 120 and percent < 92:
-                trakt.scrobbleMovie(_imdb, percent, action='pause') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='pause')
-                if control.setting('trakt.scrobble.notify') == 'true':
-                    control.infoDialog('Trakt: Scrobble Paused')
-            elif percent >= 92:
-                trakt.scrobbleMovie(_imdb, percent, action='stop') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='stop')
-                if control.setting('trakt.scrobble.notify') == 'true':
-                    control.infoDialog('Trakt: Scrobbled')
-        except:
-            failure = traceback.format_exc()
-            log_utils.log('Scrobble - Exception: ' + str(failure))
-            control.infoDialog('Scrobble Failed')
+def reset(current_time, total_time, type, imdb, season='', episode=''):
+    try:
+        _playcount = 0
+        overlay = 6
+        timeInSeconds = str(current_time)
+        ok = int(current_time) > 120 and (current_time / total_time) < .92
+        watched = (current_time / total_time) >= .92
+
+        # idFile = hashlib.md5()
+        # for i in _name: idFile.update(i.encode('utf-8'))
+        # for i in _year: idFile.update(i.encode('utf-8'))
+        # idFile = idFile.hexdigest()
+
+        sql_select = "SELECT * FROM bookmarks WHERE imdb = '%s'" % imdb
+        if type == 'episode':
+            sql_select += " AND season = '%s' AND episode = '%s'" % (season, episode)
+
+        sql_update = "UPDATE bookmarks SET timeInSeconds = '%s' WHERE imdb = '%s'" % (timeInSeconds, imdb)
+        if type == 'episode':
+            sql_update += " AND season = '%s' AND episode = '%s'" % (season, episode)
+
+        if type == 'movie':
+            sql_update_watched = "UPDATE bookmarks SET timeInSeconds = '0', playcount = %s, overlay = %s WHERE imdb = '%s'" % ('%s', '%s', imdb)
+        elif type == 'episode':
+            sql_update_watched = "UPDATE bookmarks SET timeInSeconds = '0', playcount = %s, overlay = %s WHERE imdb = '%s' AND season = '%s' AND episode = '%s'" % ('%s', '%s', imdb, season, episode)
+
+        if type == 'movie':
+            sql_insert = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '', '', '%s', '%s')" % (timeInSeconds, type, imdb, _playcount, overlay)
+        elif type == 'episode':
+            sql_insert = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (timeInSeconds, type, imdb, season, episode, _playcount, overlay)
+
+        if type == 'movie':
+            sql_insert_watched = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '', '', '%s', '%s')" % (timeInSeconds, type, imdb, '%s', '%s')
+        elif type == 'episode':
+            sql_insert_watched = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (timeInSeconds, type, imdb, season, episode, '%s', '%s')
+
+        control.makeFile(control.dataPath)
+        dbcon = database.connect(control.bookmarksFile)
+        dbcur = dbcon.cursor()
+        dbcur.execute("CREATE TABLE IF NOT EXISTS bookmarks (""timeInSeconds TEXT, ""type TEXT, ""imdb TEXT, ""season TEXT, ""episode TEXT, ""playcount INTEGER, ""overlay INTEGER, ""UNIQUE(imdb, season, episode)"");")
+        dbcur.execute(sql_select)
+        match = dbcur.fetchone()
+        if match:
+            if ok:
+                dbcur.execute(sql_update)
+            elif watched:
+                _playcount = match[5] + 1
+                overlay = 7
+                dbcur.execute(sql_update_watched % (_playcount, overlay))
+        else:
+            if ok:
+                dbcur.execute(sql_insert)
+            elif watched:
+                _playcount = 1
+                overlay = 7
+                dbcur.execute(sql_insert_watched % (_playcount, overlay))
+        dbcon.commit()
+    except:
+        failure = traceback.format_exc()
+        log_utils.log('bookmarks_reset: ' + str(failure))
+        pass
+
+
+def set_scrobble(current_time, total_time, _content, _imdb='', _tvdb='', _season='', _episode=''):
+    try:
+        percent = float((current_time / total_time)) * 100
+        if int(current_time) > 120 and percent < 92:
+            trakt.scrobbleMovie(_imdb, percent, action='pause') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='pause')
+            if control.setting('trakt.scrobble.notify') == 'true':
+                control.infoDialog('Trakt: Scrobble Paused')
+        elif percent >= 92:
+            trakt.scrobbleMovie(_imdb, percent, action='stop') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='stop')
+            if control.setting('trakt.scrobble.notify') == 'true':
+                control.infoDialog('Trakt: Scrobbled')
+    except:
+        failure = traceback.format_exc()
+        log_utils.log('Scrobble - Exception: ' + str(failure))
+        control.infoDialog('Scrobble Failed')
+
+
+def _indicators():
+    control.makeFile(control.dataPath)
+    dbcon = database.connect(control.bookmarksFile)
+    dbcur = dbcon.cursor()
+    dbcur.execute("SELECT * FROM bookmarks WHERE overlay = 7")
+    match = dbcur.fetchall()
+    if match:
+        return [i[2] for i in match]
+    dbcon.commit()
+
+
+def _get_watched(media_type, imdb, season, episode):
+    sql_select = "SELECT * FROM bookmarks WHERE imdb = '%s' AND overlay = 7" % imdb
+    if media_type == 'episode':
+        sql_select += " AND season = '%s' AND episode = '%s'" % (season, episode)
+    control.makeFile(control.dataPath)
+    dbcon = database.connect(control.bookmarksFile)
+    dbcur = dbcon.cursor()
+    dbcur.execute(sql_select)
+    match = dbcur.fetchone()
+    if match:
+        return 7
+    else:
+        return 6
+    dbcon.commit()
+
+
+def _update_watched(media_type, new_value, imdb, season, episode):
+    sql_update = "UPDATE bookmarks SET overlay = %s WHERE imdb = '%s'" % (new_value, imdb)
+    if media_type == 'episode':
+        sql_update += " AND season = '%s' AND episode = '%s'" % (season, episode)
+    dbcon = database.connect(control.bookmarksFile)
+    dbcur = dbcon.cursor()
+    dbcur.execute(sql_update)
+    dbcon.commit()
+
+
+def _delete_record(media_type, imdb, season, episode):
+    sql_delete = "DELETE FROM bookmarks WHERE imdb = '%s'" % imdb
+    if media_type == 'episode':
+        sql_delete += " AND season = '%s' AND episode = '%s'" % (season, episode)
+    dbcon = database.connect(control.bookmarksFile)
+    dbcur = dbcon.cursor()
+    dbcur.execute(sql_delete)
+    dbcon.commit()
+
 

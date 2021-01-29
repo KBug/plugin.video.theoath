@@ -1115,8 +1115,8 @@ class movies:
 
         isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
 
-        #indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators() #fixme
-        indicators = playcount.getMovieIndicators()
+        indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators() #fixme
+        #indicators = playcount.getMovieIndicators()
 
         playbackMenu = control.lang(32063) if control.setting('hosts.mode') == '2' else control.lang(32064)
 
