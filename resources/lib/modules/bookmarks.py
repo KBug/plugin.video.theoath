@@ -28,13 +28,11 @@ from resources.lib.modules import trakt
 from resources.lib.modules import log_utils
 
 
-def get(type, imdb, season, episode):
-    offset = '0'
+def get(media_type, imdb, season, episode):
 
     if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
         try:
-            _offset = '0'
-            if not episode is None:
+            if media_type == 'episode':
 
                 # Looking for a Episode progress
                 traktInfo = trakt.getTraktAsJson('https://api.trakt.tv/sync/playback/episodes?extended=full')
@@ -64,20 +62,16 @@ def get(type, imdb, season, episode):
             return offset
 
         except:
-            return _offset
+            return '0'
 
     else:
         try:
 
-            # idFile = hashlib.md5()
-            # for i in name: idFile.update(i.encode('utf-8'))
-            # for i in year: idFile.update(i.encode('utf-8'))
-            # idFile = idFile.hexdigest()
-
             sql_select = "SELECT * FROM bookmarks WHERE imdb = '%s'" % imdb
-            if type == 'episode':
+            if media_type == 'episode':
                 sql_select += " AND season = '%s' AND episode = '%s'" % (season, episode)
 
+            control.makeFile(control.dataPath)
             dbcon = database.connect(control.bookmarksFile)
             dbcur = dbcon.cursor()
             dbcur.execute(sql_select)
@@ -86,15 +80,15 @@ def get(type, imdb, season, episode):
                 offset = str(match[0])
                 return offset
             else:
-                return _offset
+                return '0'
             dbcon.commit()
         except:
             failure = traceback.format_exc()
             log_utils.log('bookmarks_get: ' + str(failure))
-            return _offset
+            return '0'
 
 
-def reset(current_time, total_time, type, imdb, season='', episode=''):
+def reset(current_time, total_time, media_type, imdb, season='', episode=''):
     try:
         _playcount = 0
         overlay = 6
@@ -102,33 +96,28 @@ def reset(current_time, total_time, type, imdb, season='', episode=''):
         ok = int(current_time) > 120 and (current_time / total_time) < .92
         watched = (current_time / total_time) >= .92
 
-        # idFile = hashlib.md5()
-        # for i in _name: idFile.update(i.encode('utf-8'))
-        # for i in _year: idFile.update(i.encode('utf-8'))
-        # idFile = idFile.hexdigest()
-
         sql_select = "SELECT * FROM bookmarks WHERE imdb = '%s'" % imdb
-        if type == 'episode':
+        if media_type == 'episode':
             sql_select += " AND season = '%s' AND episode = '%s'" % (season, episode)
 
         sql_update = "UPDATE bookmarks SET timeInSeconds = '%s' WHERE imdb = '%s'" % (timeInSeconds, imdb)
-        if type == 'episode':
+        if media_type == 'episode':
             sql_update += " AND season = '%s' AND episode = '%s'" % (season, episode)
 
-        if type == 'movie':
+        if media_type == 'movie':
             sql_update_watched = "UPDATE bookmarks SET timeInSeconds = '0', playcount = %s, overlay = %s WHERE imdb = '%s'" % ('%s', '%s', imdb)
-        elif type == 'episode':
+        elif media_type == 'episode':
             sql_update_watched = "UPDATE bookmarks SET timeInSeconds = '0', playcount = %s, overlay = %s WHERE imdb = '%s' AND season = '%s' AND episode = '%s'" % ('%s', '%s', imdb, season, episode)
 
-        if type == 'movie':
-            sql_insert = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '', '', '%s', '%s')" % (timeInSeconds, type, imdb, _playcount, overlay)
-        elif type == 'episode':
-            sql_insert = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (timeInSeconds, type, imdb, season, episode, _playcount, overlay)
+        if media_type == 'movie':
+            sql_insert = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '', '', '%s', '%s')" % (timeInSeconds, media_type, imdb, _playcount, overlay)
+        elif media_type == 'episode':
+            sql_insert = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (timeInSeconds, media_type, imdb, season, episode, _playcount, overlay)
 
-        if type == 'movie':
-            sql_insert_watched = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '', '', '%s', '%s')" % (timeInSeconds, type, imdb, '%s', '%s')
-        elif type == 'episode':
-            sql_insert_watched = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (timeInSeconds, type, imdb, season, episode, '%s', '%s')
+        if media_type == 'movie':
+            sql_insert_watched = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '', '', '%s', '%s')" % (timeInSeconds, media_type, imdb, '%s', '%s')
+        elif media_type == 'episode':
+            sql_insert_watched = "INSERT INTO bookmarks Values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (timeInSeconds, media_type, imdb, season, episode, '%s', '%s')
 
         control.makeFile(control.dataPath)
         dbcon = database.connect(control.bookmarksFile)

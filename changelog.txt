@@ -1,9 +1,12 @@
+[B][COLOR gold]v3.5.001[/COLOR][/B]
+- Fix playback not starting on local resume point
+
 [B][COLOR gold]v3.5.000[/COLOR][/B]
 - Removed MetaHandler dependency. Local indicators are now handled internaly.
-    [I]NOTE:[/I] Unfortunately, due to this, all [I]local[/I] watched statuses and resume points
-    will reset. This was necessary for several reasons:
-    Metahandler was doing unnecessary API calls, fetching information we already had - it was
-    actually not needed, a leftover from Genesis days.
+    [I]NOTE:[/I] Unfortunately, due to this, all [I]local[/I] watched statuses and resume
+    points will reset. This was necessary for several reasons:
+    Metahandler was doing unnecessary API calls, fetching information we already had -
+    it was actually not needed, a leftover from Genesis days.
     There are various versions of it floating around, some (kinda) working, some don't.
     It's also not compatible with Kodi 19, and will stop working once tvdb v1 API phases out.
 
