@@ -163,7 +163,8 @@ class sources:
                 if downloads == True:
                     cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' % (sysaddon, sysname, sysimage, syssource)))
 
-                item = control.item(label=label)
+                try: item = control.item(label=label, offscreen=True)
+                except: item = control.item(label=label)
                 item.addContextMenuItems(cm)
 
                 if listMeta == 'true':

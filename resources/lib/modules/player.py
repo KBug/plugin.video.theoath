@@ -216,7 +216,7 @@ class player(xbmc.Player):
                     self.totalTime = self.getTotalTime()
                     self.currentTime = self.getTime()
 
-                    watcher = (self.currentTime / self.totalTime > .92)
+                    watcher = (self.currentTime / self.totalTime >= .92)
                     property = control.window.getProperty(pname)
 
                     if watcher == True and not property == '7':
@@ -261,7 +261,7 @@ class player(xbmc.Player):
     def onAVStarted(self):
         control.execute('Dialog.Close(all,true)')
 
-        if control.setting('bookmarks') == 'true' and not self.offset == '0' and self.isPlayingVideo(): 
+        if control.setting('bookmarks') == 'true' and int(self.offset) > 120 and self.isPlayingVideo():
             if control.setting('bookmarks.auto') == 'true':
                 self.seekTime(float(self.offset))
             else:
@@ -286,7 +286,7 @@ class player(xbmc.Player):
         if control.getKodiVersion() < 18:
             control.execute('Dialog.Close(all,true)')
 
-            if control.setting('bookmarks') == 'true' and not self.offset == '0' and self.isPlayingVideo(): 
+            if control.setting('bookmarks') == 'true' and int(self.offset) > 120 and self.isPlayingVideo():
                 if control.setting('bookmarks.auto') == 'true':
                     self.seekTime(float(self.offset))
                 else:
