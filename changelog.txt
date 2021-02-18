@@ -1,3 +1,7 @@
+[B][COLOR gold]v3.5.003[/COLOR][/B]
+- Applied extra artwork to the player
+- Fixed resume from local resume points (again)
+
 [B][COLOR gold]v3.5.002[/COLOR][/B]
 - Fix local resume points prompting to resume from <120 secs offset
 - Library database fixes

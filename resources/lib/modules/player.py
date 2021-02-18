@@ -60,10 +60,13 @@ class player(xbmc.Player):
 
             self.offset = bookmarks.get(self.content, imdb, season, episode)
 
-            poster, thumb, meta = self.getMeta(meta)
+            poster, thumb, fanart, clearlogo, clearart, discart, meta = self.getMeta(meta)
 
             item = control.item(path=url)
-            item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
+            if self.content == 'movie':
+                item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'fanart': fanart, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart})
+            else:
+                item.setArt({'icon': thumb, 'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart})
             item.setInfo(type='video', infoLabels = control.metadataClean(meta))
 
             if 'plugin' in control.infoLabel('Container.PluginName'):
@@ -82,12 +85,14 @@ class player(xbmc.Player):
 
     def getMeta(self, meta):
         try:
-            poster = meta['poster'] if 'poster' in meta else '0'
-            thumb = meta['thumb'] if 'thumb' in meta else poster
+            poster = meta.get('poster2', '') or meta.get('poster3', '') or meta.get('poster', '') or control.addonPoster()
+            thumb = meta.get('thumb', '') or poster
+            fanart = meta.get('fanart2', '') or meta.get('fanart', '') or control.addonFanart()
+            clearlogo = meta.get('clearlogo', '') or ''
+            clearart = meta.get('clearart', '') or ''
+            discart = meta.get('discart', '') or ''
 
-            if poster == '0': poster = control.addonPoster()
-
-            return (poster, thumb, meta)
+            return poster, thumb, fanart, clearlogo, clearart, discart, meta
         except:
             pass
 
@@ -114,7 +119,7 @@ class player(xbmc.Player):
 
             poster = thumb = meta['thumbnail']
 
-            return (poster, thumb, meta)
+            return poster, thumb, '', '', '', '', meta
         except:
             pass
 
@@ -147,13 +152,13 @@ class player(xbmc.Player):
 
             thumb = meta['thumbnail']
 
-            return (poster, thumb, meta)
+            return poster, thumb, '', '', '', '', meta
         except:
             pass
 
 
-        poster, thumb, meta = '', '', {'title': self.name}
-        return (poster, thumb, meta)
+        poster, thumb, fanart, clearlogo, clearart, discart, meta = '', '', '', '', '', '', {'title': self.name}
+        return poster, thumb, fanart, clearlogo, clearart, discart, meta
 
 
     def keepPlaybackAlive(self):
@@ -266,7 +271,7 @@ class player(xbmc.Player):
                 self.seekTime(float(self.offset))
             else:
                 self.pause()
-                minutes, seconds = divmod(float(self.offset), 60);
+                minutes, seconds = divmod(float(self.offset), 60)
                 hours, minutes = divmod(minutes, 60)
                 label = '%02d:%02d:%02d' % (hours, minutes, seconds)
                 label = control.lang2(12022).format(label)
@@ -291,7 +296,7 @@ class player(xbmc.Player):
                     self.seekTime(float(self.offset))
                 else:
                     self.pause()
-                    minutes, seconds = divmod(float(self.offset), 60);
+                    minutes, seconds = divmod(float(self.offset), 60)
                     hours, minutes = divmod(minutes, 60)
                     label = '%02d:%02d:%02d' % (hours, minutes, seconds)
                     label = six.ensure_str(control.lang2(12022).format(label))

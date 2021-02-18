@@ -101,7 +101,7 @@ class sources:
 
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
-            allowed = ['icon', 'poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'thumb', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
+            allowed = ['icon', 'poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'thumb', 'clearlogo', 'clearart', 'discart', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
             return {k: v for k, v in six.iteritems(metadata) if k in allowed}
 
         control.playlist.clear()
@@ -133,11 +133,12 @@ class sources:
             sysname += urllib_parse.quote_plus(' (%s)' % meta['year'])
 
 
-        poster = meta.get('poster3') or meta.get('poster2') or meta.get('poster') or control.addonPoster()
-
+        poster = meta.get('poster2') or meta.get('poster3') or meta.get('poster') or control.addonPoster()
         fanart = meta.get('fanart2') or meta.get('fanart') or control.addonFanart()
-
         thumb = meta.get('thumb') or poster or fanart
+        clearlogo = meta.get('clearlogo', '') or ''
+        clearart = meta.get('clearart', '') or ''
+        discart = meta.get('discart', '') or ''
 
         if not control.setting('fanart') == 'true': fanart = control.addonFanart()
 
@@ -168,7 +169,7 @@ class sources:
                 item.addContextMenuItems(cm)
 
                 if listMeta == 'true':
-                    item.setArt({'thumb': thumb, 'icon': thumb, 'poster': poster, 'fanart': fanart})
+                    item.setArt({'thumb': thumb, 'icon': thumb, 'poster': poster, 'fanart': fanart, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart})
                     video_streaminfo = {'codec': 'h264'}
                     item.addStreamInfo('video', video_streaminfo)
                     item.setInfo(type='video', infoLabels=control.metadataClean(meta))

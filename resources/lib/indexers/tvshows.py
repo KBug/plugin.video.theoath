@@ -1143,7 +1143,7 @@ class tvshows:
             fanart = client.replaceHTMLCodes(fanart)
             fanart = six.ensure_str(fanart)
 
-            poster2 = fanart2 = banner2 = clearlogo = clearart = ''
+            poster2 = fanart2 = banner2 = clearlogo = clearart = landscape = ''
             if hq_artwork == 'true':# and not self.fanart_tv_user == '':
 
                 artmeta = True
@@ -1194,8 +1194,16 @@ class tvshows:
                 except:
                     clearart = ''
 
+                try:
+                    if 'tvthumb' in art: landscape = art['tvthumb']
+                    else: landscape = art['showbackground']
+                    landscape = [x for x in landscape if x.get('lang') == self.lang][::-1] + [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') in ['00', '']][::-1]
+                    landscape = six.ensure_str(landscape[0]['url'])
+                except:
+                    landscape = ''
+
             item = {'title': title, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'poster2': poster2, 'banner': banner, 'banner2': banner2, 'fanart': fanart, 'fanart2': fanart2,
-                    'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'status': status}
+                    'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'cast': cast, 'plot': plot, 'status': status}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             self.list[i].update(item)
 
@@ -1326,6 +1334,11 @@ class tvshows:
                 fanart2 = i.get('fanart2')
                 fanart = fanart2 or fanart1 or addonFanart
 
+                if settingFanart == 'true':
+                    art.update({'fanart': fanart})
+                else:
+                    art.update({'fanart': addonFanart})
+
                 banner1 = i.get('banner')
                 banner2 = i.get('banner2')
                 banner = banner2 or banner1 or fanart or addonBanner
@@ -1337,10 +1350,11 @@ class tvshows:
                 if 'clearart' in i and not i['clearart'] == '':
                     art.update({'clearart': i['clearart']})
 
-                if settingFanart == 'true':
-                    item.setProperty('Fanart_Image', fanart)
+                if 'landscape' in i and not i['landscape'] == '':
+                    landscape = i['landscape']
                 else:
-                    item.setProperty('Fanart_Image', addonFanart)
+                    landscape = fanart
+                art.update({'landscape': landscape})
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)

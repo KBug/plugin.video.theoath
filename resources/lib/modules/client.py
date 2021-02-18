@@ -455,6 +455,9 @@ def replaceHTMLCodes(txt):
     txt = txt.replace("&gt;", ">")
     txt = txt.replace("&#38;", "&")
     txt = txt.replace("&nbsp;", "")
+    txt = txt.replace('&#8230;', '...')
+    txt = txt.replace('&#8217;', '\'')
+    txt = txt.replace('&#8211;', '-')
     txt = txt.strip()
     return txt
 

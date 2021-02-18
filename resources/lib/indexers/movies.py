@@ -1002,7 +1002,7 @@ class movies:
             except:
                 pass
 
-            poster2 = fanart = banner = clearlogo = clearart = '0'
+            poster2 = fanart = banner = clearlogo = clearart = landscape = discart = '0'
             if hq_artwork == 'true':# and not self.fanart_tv_user == '':
 
                 artmeta = True
@@ -1055,6 +1055,20 @@ class movies:
                 except:
                     clearart = '0'
 
+                try:
+                    if 'moviethumb' in art: landscape = art['moviethumb']
+                    else: landscape = art['moviebackground']
+                    landscape = [x for x in landscape if x.get('lang') == self.lang][::-1] + [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') in ['00', '']][::-1]
+                    landscape = six.ensure_str(landscape[0]['url'])
+                except:
+                    landscape = '0'
+
+                try:
+                    if 'moviedisc' in art: discart = art['moviedisc']
+                    discart = [x for x in discart if x.get('lang') == self.lang][::-1] + [x for x in discart if x.get('lang') == 'en'][::-1] + [x for x in discart if x.get('lang') in ['00', '']][::-1]
+                    discart = six.ensure_str(discart[0]['url'])
+                except:
+                    discart = '0'
             try:
                 if self.tm_user == '': raise Exception()
 
@@ -1084,8 +1098,8 @@ class movies:
             except:
                 fanart2 = '0'
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2,
-                    'clearlogo': clearlogo, 'clearart': clearart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo,
+                    'clearart': clearart, 'landscape': landscape, 'discart': discart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             self.list[i].update(item)
 
@@ -1208,10 +1222,22 @@ class movies:
 
                 cm.append((clearProviders, 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
 
-                item = control.item(label=label)
+                try: item = control.item(label=label, offscreen=True)
+                except: item = control.item(label=label)
 
                 art = {}
                 art.update({'icon': poster, 'thumb': poster, 'poster': poster})
+
+                fanart1 = i.get('fanart')
+                if fanart1 == '0': fanart1 = ''
+                fanart2 = i.get('fanart2')
+                if fanart2 == '0': fanart2 = ''
+                fanart = fanart1 or fanart2 or addonFanart
+
+                if settingFanart == 'true':
+                    art.update({'fanart': fanart})
+                else:
+                    art.update({'fanart': addonFanart})
 
                 if 'banner' in i and not i['banner'] == '0':
                     art.update({'banner': i['banner']})
@@ -1224,16 +1250,14 @@ class movies:
                 if 'clearart' in i and not i['clearart'] == '0':
                     art.update({'clearart': i['clearart']})
 
-                fanart1 = i.get('fanart')
-                if fanart1 == '0': fanart1 = ''
-                fanart2 = i.get('fanart2')
-                if fanart2 == '0': fanart2 = ''
-                fanart = fanart1 or fanart2 or addonFanart
-
-                if settingFanart == 'true':
-                    item.setProperty('Fanart_Image', fanart)
+                if 'landscape' in i and not i['landscape'] == '0':
+                    landscape = i['landscape']
                 else:
-                    item.setProperty('Fanart_Image', addonFanart)
+                    landscape = fanart
+                art.update({'landscape': landscape})
+
+                if 'discart' in i and not i['discart'] == '0':
+                    art.update({'discart': i['discart']})
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)
@@ -1254,7 +1278,8 @@ class movies:
             icon = control.addonNext()
             url = '%s?action=moviePage&url=%s' % (sysaddon, urllib_parse.quote_plus(url))
 
-            item = control.item(label=nextMenu)
+            try: item = control.item(label=nextMenu, offscreen=True)
+            except: item = control.item(label=nextMenu)
 
             item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
             if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
@@ -1306,7 +1331,8 @@ class movies:
                 try: cm.append((addToLibrary, 'RunPlugin(%s?action=moviesToLibrary&url=%s)' % (sysaddon, urllib_parse.quote_plus(i['context']))))
                 except: pass
 
-                item = control.item(label=name)
+                try: item = control.item(label=name, offscreen=True)
+                except: item = control.item(label=name)
 
                 item.setArt({'icon': thumb, 'thumb': thumb})
                 if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)

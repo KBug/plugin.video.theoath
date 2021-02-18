@@ -77,8 +77,8 @@ def get(media_type, imdb, season, episode):
             dbcur.execute(sql_select)
             match = dbcur.fetchone()
             if match:
-                offset = str(match[0])
-                return offset
+                offset = match[0]
+                return float(offset)
             else:
                 return '0'
             dbcon.commit()

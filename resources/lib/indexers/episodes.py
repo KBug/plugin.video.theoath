@@ -568,9 +568,9 @@ class seasons:
                     art.update({'banner': addonBanner})
 
                 if settingFanart == 'true' and 'fanart' in i and not i['fanart'] == '0':
-                    item.setProperty('Fanart_Image', i['fanart'])
+                    art.update({'fanart': i['fanart']})
                 elif not addonFanart == None:
-                    item.setProperty('Fanart_Image', addonFanart)
+                    art.update({'fanart': addonFanart})
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)
@@ -1648,9 +1648,9 @@ class episodes:
                     art.update({'banner': addonBanner})
 
                 if settingFanart == 'true' and 'fanart' in i and not i['fanart'] == '0':
-                    item.setProperty('Fanart_Image', i['fanart'])
+                    art.update({'fanart': i['fanart']})
                 elif not addonFanart == None:
-                    item.setProperty('Fanart_Image', addonFanart)
+                    art.update({'fanart': addonFanart})
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)
