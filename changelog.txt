@@ -1,3 +1,9 @@
+[B][COLOR gold]v3.5.004[/COLOR][/B]
+- Attempt to fix error when upgrade Kodi 18 to 19 has occured and
+    openscrapers package was already installed
+    NOTE: Openscrapers is not Kodi 19 compatible so can't be used.
+    If you have it, uninstall from Add-ons/My add-ons/Program add-ons.
+
 [B][COLOR gold]v3.5.003[/COLOR][/B]
 - Applied extra artwork to the player
 - Fixed resume from local resume points (again)

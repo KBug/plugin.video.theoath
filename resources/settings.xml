@@ -74,8 +74,8 @@
 
     <category label="32345">
         <setting type="lsep" label="32083" />
-        <setting id="module.provider" type="select" label="32084" values="TheOath Scrapers|Open Scrapers|Built-in|TheOath + Built-in|Open + Built-in" default="TheOath Scrapers" visible="System.HasAddon(script.module.openscrapers)" />
-        <setting id="module.provider.alt" type="select" label="32084" values="TheOath Scrapers|Built-in|TheOath + Built-in" default="TheOath Scrapers" visible="!System.HasAddon(script.module.openscrapers)" />
+        <setting id="module.provider" type="select" label="32084" values="OathScrapers|Openscrapers|Built-in|OathScrapers + Built-in|Openscrapers + Built-in" default="OathScrapers" visible="System.HasAddon(script.module.openscrapers)" />
+        <setting id="module.provider.alt" type="select" label="32084" values="OathScrapers|Built-in|OathScrapers + Built-in" default="OathScrapers" visible="!System.HasAddon(script.module.openscrapers)" />
         <setting id="open.Osettings" subsetting="true" type="action" label="32085" option="close" action="RunPlugin(plugin://script.module.oathscrapers/?mode=oathscrapersettings)" />
         <setting id="open.Lsettings" subsetting="true" type="action" label="32086" option="close" action="RunPlugin(plugin://script.module.openscrapers/?mode=OpenscrapersSettings)" visible="System.HasAddon(script.module.openscrapers)" />
         <setting id="install.openscrapers" subsetting="true" type="action" label="Install Openscrapers" option="close" action="InstallAddon(script.module.openscrapers)" visible="!System.HasAddon(script.module.openscrapers)" />

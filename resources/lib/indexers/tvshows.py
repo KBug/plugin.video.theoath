@@ -380,36 +380,36 @@ class tvshows:
 
     def languages(self):
         languages = [
-        ('Arabic', 'ar'),
-        ('Bosnian', 'bs'),
-        ('Bulgarian', 'bg'),
-        ('Chinese', 'zh'),
-        ('Croatian', 'hr'),
-        ('Dutch', 'nl'),
-        ('English', 'en'),
-        ('Finnish', 'fi'),
-        ('French', 'fr'),
-        ('German', 'de'),
-        ('Greek', 'el'),
-        ('Hebrew', 'he'),
-        ('Hindi ', 'hi'),
-        ('Hungarian', 'hu'),
-        ('Icelandic', 'is'),
-        ('Italian', 'it'),
-        ('Japanese', 'ja'),
-        ('Korean', 'ko'),
-        ('Norwegian', 'no'),
-        ('Persian', 'fa'),
-        ('Polish', 'pl'),
-        ('Portuguese', 'pt'),
-        ('Punjabi', 'pa'),
-        ('Romanian', 'ro'),
-        ('Russian', 'ru'),
-        ('Serbian', 'sr'),
-        ('Spanish', 'es'),
-        ('Swedish', 'sv'),
-        ('Turkish', 'tr'),
-        ('Ukrainian', 'uk')
+            ('Arabic', 'ar'),
+            ('Bosnian', 'bs'),
+            ('Bulgarian', 'bg'),
+            ('Chinese', 'zh'),
+            ('Croatian', 'hr'),
+            ('Dutch', 'nl'),
+            ('English', 'en'),
+            ('Finnish', 'fi'),
+            ('French', 'fr'),
+            ('German', 'de'),
+            ('Greek', 'el'),
+            ('Hebrew', 'he'),
+            ('Hindi ', 'hi'),
+            ('Hungarian', 'hu'),
+            ('Icelandic', 'is'),
+            ('Italian', 'it'),
+            ('Japanese', 'ja'),
+            ('Korean', 'ko'),
+            ('Norwegian', 'no'),
+            ('Persian', 'fa'),
+            ('Polish', 'pl'),
+            ('Portuguese', 'pt'),
+            ('Punjabi', 'pa'),
+            ('Romanian', 'ro'),
+            ('Russian', 'ru'),
+            ('Serbian', 'sr'),
+            ('Spanish', 'es'),
+            ('Swedish', 'sv'),
+            ('Turkish', 'tr'),
+            ('Ukrainian', 'uk')
         ]
 
         for i in languages: self.list.append({'name': str(i[0]), 'url': self.language_link % i[1], 'image': 'languages.png', 'action': 'tvshows'})
@@ -575,8 +575,8 @@ class tvshows:
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
                                   'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'next': next})
             except:
-                failure = traceback.format_exc()
-                log_utils.log('trakt_list0: ' + str(failure))
+                # failure = traceback.format_exc()
+                # log_utils.log('trakt_list0: ' + str(failure))
                 pass
 
         try:
@@ -587,8 +587,8 @@ class tvshows:
 
             return self.list
         except:
-            failure = traceback.format_exc()
-            log_utils.log('trakt_list1: ' + str(failure))
+            # failure = traceback.format_exc()
+            # log_utils.log('trakt_list1: ' + str(failure))
             return
 
 
@@ -817,8 +817,8 @@ class tvshows:
             nextp = client.parseDOM(result, 'li', attrs = {'class': 'next'})
             if last != [] or nextp == []: next = ''
         except:
-            failure = traceback.format_exc()
-            log_utils.log('tvm-list fail: ' + str(failure))
+            # failure = traceback.format_exc()
+            # log_utils.log('tvm-list fail: ' + str(failure))
             return
 
         def items_list(i):
@@ -898,8 +898,8 @@ class tvshows:
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot,
                                   'imdb': imdb, 'tvdb': tvdb, 'poster': poster, 'content': content, 'next': next})
             except:
-                failure = traceback.format_exc()
-                log_utils.log('tvmaze0: ' + str(failure))
+                # failure = traceback.format_exc()
+                # log_utils.log('tvmaze0: ' + str(failure))
                 pass
 
         try:
@@ -910,8 +910,8 @@ class tvshows:
 
             return self.list
         except:
-            failure = traceback.format_exc()
-            log_utils.log('tvmaze1: ' + str(failure))
+            # failure = traceback.format_exc()
+            # log_utils.log('tvmaze1: ' + str(failure))
             return
 
 
@@ -1231,8 +1231,7 @@ class tvshows:
         try: isOld = False ; control.item().getArt('type')
         except: isOld = True
 
-        #indicators = playcount.getTVShowIndicators(refresh=True) if action == 'tvshows' else playcount.getTVShowIndicators() #fixme
-        indicators = playcount.getTVShowIndicators()
+        indicators = playcount.getTVShowIndicators(refresh=True) if action == 'tvshows' else playcount.getTVShowIndicators() #fixme
 
         flatten = True if control.setting('flatten.tvshows') == 'true' else False
 
@@ -1376,8 +1375,7 @@ class tvshows:
 
             item = control.item(label=nextMenu)
 
-            item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-            if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+            item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon, 'fanart': addonFanart})
 
             control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
         except:
@@ -1427,8 +1425,7 @@ class tvshows:
 
                 item = control.item(label=name)
 
-                item.setArt({'icon': thumb, 'thumb': thumb})
-                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
 
                 item.addContextMenuItems(cm)
 

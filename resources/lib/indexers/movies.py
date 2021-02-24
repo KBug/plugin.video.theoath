@@ -1281,8 +1281,7 @@ class movies:
             try: item = control.item(label=nextMenu, offscreen=True)
             except: item = control.item(label=nextMenu)
 
-            item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon})
-            if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+            item.setArt({'icon': icon, 'thumb': icon, 'poster': icon, 'banner': icon, 'fanart': addonFanart})
 
             control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
         except:
@@ -1334,8 +1333,7 @@ class movies:
                 try: item = control.item(label=name, offscreen=True)
                 except: item = control.item(label=name)
 
-                item.setArt({'icon': thumb, 'thumb': thumb})
-                if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+                item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
 
                 item.addContextMenuItems(cm)
 

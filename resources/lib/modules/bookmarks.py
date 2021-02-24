@@ -83,8 +83,8 @@ def get(media_type, imdb, season, episode):
                 return '0'
             dbcon.commit()
         except:
-            failure = traceback.format_exc()
-            log_utils.log('bookmarks_get: ' + str(failure))
+            # failure = traceback.format_exc()
+            # log_utils.log('bookmarks_get: ' + str(failure))
             return '0'
 
 
@@ -141,8 +141,8 @@ def reset(current_time, total_time, media_type, imdb, season='', episode=''):
                 dbcur.execute(sql_insert_watched % (_playcount, overlay))
         dbcon.commit()
     except:
-        failure = traceback.format_exc()
-        log_utils.log('bookmarks_reset: ' + str(failure))
+        # failure = traceback.format_exc()
+        # log_utils.log('bookmarks_reset: ' + str(failure))
         pass
 
 

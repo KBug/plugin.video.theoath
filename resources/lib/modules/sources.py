@@ -1304,44 +1304,46 @@ class sources:
 
         if control.condVisibility('System.HasAddon(script.module.openscrapers)'):
             scraperSetting = control.setting('module.provider')
+            try:
+                import openscrapers
+                sourceDir3 = openscrapers.sources()
+            except:
+                pass
         else:
             scraperSetting = control.setting('module.provider.alt')
-
-        oas_module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):' \
-                          if control.addon('script.module.oathscrapers').getSetting('package.folder') != 'Oathscrapers' else 'OathScrapers:'
 
         import oathscrapers
         sourceDir1 = oathscrapers.sources()
         from resources.lib import sources
         sourceDir2 = sources.sources()
-        try:
-            import openscrapers
-            sourceDir3 = openscrapers.sources()
-        except:
-            pass
+
+        oas_module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):' \
+                          if control.addon('script.module.oathscrapers').getSetting('package.folder') != 'Oathscrapers' else 'OathScrapers:'
 
         try:
-            if scraperSetting == 'TheOath Scrapers':
+            if scraperSetting == 'OathScrapers':
                 self.sourceDict = sourceDir1
                 self.module_name = oas_module_name
-            elif scraperSetting == 'Open Scrapers':
+            elif scraperSetting == 'Openscrapers':
                 self.sourceDict = sourceDir3
-                self.module_name = 'OpenScrapers:'
+                self.module_name = 'Openscrapers:'
             elif scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in providers:'
-            elif scraperSetting == 'TheOath + Built-in':
+            elif scraperSetting == 'OathScrapers + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
                 self.module_name = 'Built-in + ' + oas_module_name
-            elif scraperSetting == 'Open + Built-in':
+            elif scraperSetting == 'Openscrapers + Built-in':
                 self.sourceDict = sourceDir3 + sourceDir2
-                self.module_name = 'Built-in + OpenScrapers:'
+                self.module_name = 'Built-in + Openscrapers:'
             else:
                 self.sourceDict = sourceDir1
                 self.module_name = oas_module_name
-                control.setSetting('module.provider', 'TheOath Scrapers')
+                control.setSetting('module.provider', 'OathScrapers')
         except:
-            return
+            self.sourceDict = sourceDir1
+            self.module_name = oas_module_name
+            control.setSetting('module.provider', 'OathScrapers')
 
         try:
             self.hostDict = resolveurl.relevant_resolvers(order_matters=True)
