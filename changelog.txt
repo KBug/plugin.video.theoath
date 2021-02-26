@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.5.005[/COLOR][/B]
+- Minor fixes
+
 [B][COLOR gold]v3.5.004[/COLOR][/B]
 - Attempt to fix error when upgrade Kodi 18 to 19 has occured and
     openscrapers package was already installed
