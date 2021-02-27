@@ -392,10 +392,6 @@ class navigator:
         self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32108, 'cleanSettings', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png', isFolder=False)
-        if not control.condVisibility('System.HasAddon(script.module.openscrapers)'):
-            self.addDirectoryItem('[B]Openscrapers[/B] : Install', 'installOpenscrapers', 'openscr.png', 'DefaultAddonProgram.png', isFolder=False)
-        else:
-            self.addDirectoryItem(32082, 'openscrapersettings', 'openscr.png', 'DefaultAddonProgram.png', isFolder=False)
         if not control.condVisibility('System.HasAddon(script.module.orion)'):
             self.addDirectoryItem('[B]Orion[/B] : Install', 'installOrion', 'orion.png', 'DefaultAddonProgram.png', isFolder=False)
         else:

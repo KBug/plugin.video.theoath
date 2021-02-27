@@ -1302,15 +1302,7 @@ class sources:
 
         self.sourceFile = control.providercacheFile
 
-        if control.condVisibility('System.HasAddon(script.module.openscrapers)'):
-            scraperSetting = control.setting('module.provider')
-            try:
-                import openscrapers
-                sourceDir3 = openscrapers.sources()
-            except:
-                pass
-        else:
-            scraperSetting = control.setting('module.provider.alt')
+        scraperSetting = control.setting('module.provider.alt')
 
         import oathscrapers
         sourceDir1 = oathscrapers.sources()
@@ -1324,18 +1316,12 @@ class sources:
             if scraperSetting == 'OathScrapers':
                 self.sourceDict = sourceDir1
                 self.module_name = oas_module_name
-            elif scraperSetting == 'Openscrapers':
-                self.sourceDict = sourceDir3
-                self.module_name = 'Openscrapers:'
             elif scraperSetting == 'Built-in':
                 self.sourceDict = sourceDir2
                 self.module_name = 'Built-in providers:'
             elif scraperSetting == 'OathScrapers + Built-in':
                 self.sourceDict = sourceDir1 + sourceDir2
                 self.module_name = 'Built-in + ' + oas_module_name
-            elif scraperSetting == 'Openscrapers + Built-in':
-                self.sourceDict = sourceDir3 + sourceDir2
-                self.module_name = 'Built-in + Openscrapers:'
             else:
                 self.sourceDict = sourceDir1
                 self.module_name = oas_module_name

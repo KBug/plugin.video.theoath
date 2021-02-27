@@ -373,16 +373,6 @@ elif action == 'oathscrapersettings':
     from resources.lib.modules import control
     control.openSettings('0.0', 'script.module.oathscrapers')
 
-elif action == 'installOpenscrapers':
-    from resources.lib.modules import control
-    control.installAddon('script.module.openscrapers')
-    control.sleep(200)
-    control.refresh()
-
-elif action == 'openscrapersettings':
-    from resources.lib.modules import control
-    control.openSettings('0.0', 'script.module.openscrapers')
-
 elif action == 'installOrion':
     from resources.lib.modules import control
     control.installAddon('script.module.orion')
