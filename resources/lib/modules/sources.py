@@ -311,6 +311,7 @@ class sources:
         except:
             pass
 
+
     def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='720p', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
         if progressDialog == control.progressDialogBG:
@@ -408,8 +409,7 @@ class sources:
         pdiag_format = '4K: %s | 1080P: %s | 720P: %s | SD: %s | TOTAL: %s[CR][I] Filtered-out: %s[/I]' if not progressDialog == control.progressDialogBG else \
                        '4K: %s | 1080P: %s | 720P: %s | SD: %s | T: %s (-%s)'
 
-        # for i in list(range(0, 4 * timeout)):
-        for i in list(range(0, 2 * timeout)):
+        for i in list(range(0, 4 * timeout)):
 
             try:
 
@@ -509,7 +509,7 @@ class sources:
                         # log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
                         # break
 
-                control.sleep(500)
+                control.sleep(250)
             except:
                 failure = traceback.format_exc()
                 log_utils.log('sourcefail: ' + str(failure))

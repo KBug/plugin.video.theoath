@@ -45,7 +45,7 @@ def get(media_type, imdb, season, episode):
                                 # Calculating Offset to seconds
                                 offset = (float(i['progress'] / 100) * int(i['episode']['runtime']) * 60)
                             else:
-                                offset = '0'
+                                offset = 0
             else:
 
                 # Looking for a Movie Progress
@@ -57,12 +57,12 @@ def get(media_type, imdb, season, episode):
                             # Calculating Offset to seconds
                             offset = (float(i['progress'] / 100) * int(i['movie']['runtime']) * 60)
                         else:
-                            offset = '0'
+                            offset = 0
 
             return offset
 
         except:
-            return '0'
+            return 0
 
     else:
         try:
@@ -80,12 +80,12 @@ def get(media_type, imdb, season, episode):
                 offset = match[0]
                 return float(offset)
             else:
-                return '0'
+                return 0
             dbcon.commit()
         except:
             # failure = traceback.format_exc()
             # log_utils.log('bookmarks_get: ' + str(failure))
-            return '0'
+            return 0
 
 
 def reset(current_time, total_time, media_type, imdb, season='', episode=''):
@@ -148,8 +148,11 @@ def reset(current_time, total_time, media_type, imdb, season='', episode=''):
 
 def set_scrobble(current_time, total_time, _content, _imdb='', _tvdb='', _season='', _episode=''):
     try:
-        percent = float((current_time / total_time)) * 100
-        if int(current_time) > 120 and percent < 92:
+        if not (current_time == 0 or total_time == 0):
+            percent = float((current_time / total_time)) * 100
+        else:
+            percent = 0
+        if int(current_time) > 120 and 2 < percent < 92:
             trakt.scrobbleMovie(_imdb, percent, action='pause') if _content == 'movie' else trakt.scrobbleEpisode(_imdb, _season, _episode, percent, action='pause')
             if control.setting('trakt.scrobble.notify') == 'true':
                 control.infoDialog('Trakt: Scrobble Paused')

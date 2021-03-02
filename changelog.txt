@@ -1,3 +1,8 @@
+[B][COLOR gold]v3.6.000[/COLOR][/B]
+- Description update
+- Stop attempting to scrobble when playback fails to start
+- Minor source fetching function tweaks
+
 [B][COLOR gold]v3.5.007[/COLOR][/B]
 - Removed Openscrapers support
     Causes unsolvable installation issue in the case of Kodi 18 to 19 upgrade
