@@ -1,3 +1,6 @@
+[B][COLOR gold]v3.6.001[/COLOR][/B]
+- Fixed issue with size filtering
+
 [B][COLOR gold]v3.6.000[/COLOR][/B]
 - Description update
 - Stop attempting to scrobble when playback fails to start

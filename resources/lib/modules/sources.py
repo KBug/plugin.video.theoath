@@ -845,9 +845,9 @@ class sources:
 
         if size_filters == 'true':
             if _content == 'movie':
-                _sources = [i for i in _sources if (mov_min_size <= i.get('size') <= mov_max_size) or i.get('size', 0.0) == 0.0]
+                _sources = [i for i in _sources if (mov_min_size <= i.get('size', 0.0) <= mov_max_size) or i.get('size', 0.0) == 0.0]
             elif _content == 'episode':
-                _sources = [i for i in _sources if (ep_min_size <= i.get('size') <= ep_max_size) or i.get('size', 0.0) == 0.0]
+                _sources = [i for i in _sources if (ep_min_size <= i.get('size', 0.0) <= ep_max_size) or i.get('size', 0.0) == 0.0]
 
         filtered_out = [i for i in stotal if not i in _sources]
         self.f_out_sources.extend(filtered_out)
