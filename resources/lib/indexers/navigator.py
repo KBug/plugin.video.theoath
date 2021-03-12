@@ -145,7 +145,8 @@ class navigator:
 
     def tvshows(self, lite=False):
         self.addDirectoryItem(32011, 'tvGenres', 'genres.png', 'DefaultTVShows.png')
-        self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'DefaultTVShows.png')
+        #self.addDirectoryItem(32016, 'tvNetworks', 'networks.png', 'DefaultTVShows.png')
+        self.addDirectoryItem(32016, 'tvNetworks2', 'networks.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32014, 'tvLanguages', 'languages.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32015, 'tvCertificates', 'certificates.png', 'DefaultTVShows.png')
         self.addDirectoryItem(32017, 'tvshows&url=trending', 'people-watching.png', 'DefaultRecentlyAddedEpisodes.png')
@@ -538,7 +539,8 @@ class navigator:
         cm = []
         if queue == True: cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
         if not context == None: cm.append((control.lang(context[0]), 'RunPlugin(%s?action=%s)' % (sysaddon, context[1])))
-        item = control.item(label=name)
+        try: item = control.item(label=name, offscreen=True)
+        except: item = control.item(label=name)
         item.addContextMenuItems(cm)
         item.setArt({'icon': thumb, 'thumb': thumb})
         if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)

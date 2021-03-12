@@ -60,6 +60,12 @@ source = params.get('source')
 
 content = params.get('content')
 
+fanart = params.get('fanart')
+
+duration = params.get('duration')
+
+status = params.get('status')
+
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ("0","1") else 0
 
@@ -278,6 +284,10 @@ elif action == 'tvNetworks':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().networks()
 
+elif action == 'tvNetworks2':
+    from resources.lib.indexers import tvshows
+    tvshows.tvshows().networks2()
+
 elif action == 'tvLanguages':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().languages()
@@ -296,11 +306,11 @@ elif action == 'tvUserlists':
 
 elif action == 'seasons':
     from resources.lib.indexers import episodes
-    episodes.seasons().get(tvshowtitle, year, imdb, tvdb)
+    episodes.seasons().get(tvshowtitle, year, imdb, tmdb, fanart)
 
 elif action == 'episodes':
     from resources.lib.indexers import episodes
-    episodes.episodes().get(tvshowtitle, year, imdb, tvdb, season, episode)
+    episodes.episodes().get(tvshowtitle, year, imdb, tmdb, fanart, duration, status, season, episode)
 
 elif action == 'calendar':
     from resources.lib.indexers import episodes
@@ -344,11 +354,11 @@ elif action == 'moviePlaycount':
 
 elif action == 'episodePlaycount':
     from resources.lib.modules import playcount
-    playcount.episodes(imdb, tvdb, season, episode, query)
+    playcount.episodes(imdb, tmdb, season, episode, query)
 
 elif action == 'tvPlaycount':
     from resources.lib.modules import playcount
-    playcount.tvshows(name, imdb, tvdb, season, query)
+    playcount.tvshows(name, imdb, tmdb, season, query)
 
 elif action == 'trailer':
     from resources.lib.modules import control, trailer
@@ -358,7 +368,7 @@ elif action == 'trailer':
 
 elif action == 'traktManager':
     from resources.lib.modules import trakt
-    trakt.manager(name, imdb, tvdb, content)
+    trakt.manager(name, imdb, tmdb, content)
 
 elif action == 'authTrakt':
     from resources.lib.modules import trakt
@@ -394,7 +404,7 @@ elif action == 'play':
     from resources.lib.modules import control
     control.busy()
     from resources.lib.modules import sources
-    sources.sources().play(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select)
+    sources.sources().play(title, year, imdb, tmdb, season, episode, tvshowtitle, premiered, meta, select)
 
 elif action == 'addItem':
     from resources.lib.modules import sources
@@ -420,11 +430,11 @@ elif action == 'random':
         r = sys.argv[0]+"?action=play"
     elif rtype == 'episode':
         from resources.lib.indexers import episodes
-        rlist = episodes.episodes().get(tvshowtitle, year, imdb, tvdb, season, create_directory=False)
+        rlist = episodes.episodes().get(tvshowtitle, year, imdb, tmdb, fanart, duration, status, season, create_directory=False)
         r = sys.argv[0]+"?action=play"
     elif rtype == 'season':
         from resources.lib.indexers import episodes
-        rlist = episodes.seasons().get(tvshowtitle, year, imdb, tvdb, create_directory=False)
+        rlist = episodes.seasons().get(tvshowtitle, year, imdb, tmdb, fanart, create_directory=False)
         r = sys.argv[0]+"?action=random&rtype=episode"
     elif rtype == 'show':
         from resources.lib.indexers import tvshows
@@ -435,7 +445,7 @@ elif action == 'random':
     try:
         from resources.lib.modules import control
         rand = randint(1,len(rlist))-1
-        for p in ['title','year','imdb','tvdb','season','episode','tvshowtitle','premiered','select']:
+        for p in ['title','year','imdb','tmdb','season','episode','tvshowtitle','premiered','select']:
             if rtype == "show" and p == "tvshowtitle":
                 try: r += '&'+p+'='+urllib_parse.quote_plus(rlist[rand]['originaltitle'])
                 except: pass
@@ -473,7 +483,7 @@ elif action == 'moviesToLibrarySilent':
 
 elif action == 'tvshowToLibrary':
     from resources.lib.modules import libtools
-    libtools.libtvshows().add(tvshowtitle, year, imdb, tvdb)
+    libtools.libtvshows().add(tvshowtitle, year, imdb, tmdb)
 
 elif action == 'tvshowsToLibrary':
     from resources.lib.modules import libtools

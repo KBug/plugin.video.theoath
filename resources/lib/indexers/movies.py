@@ -20,6 +20,7 @@
 
 
 from resources.lib.modules import trakt
+from resources.lib.modules import bookmarks
 from resources.lib.modules import cleangenre
 from resources.lib.modules import cleantitle
 from resources.lib.modules import control
@@ -31,10 +32,10 @@ from resources.lib.modules import workers
 from resources.lib.modules import views
 from resources.lib.modules import utils
 from resources.lib.modules import api_keys
-#from resources.lib.modules import log_utils
+from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime#,traceback
+import os,sys,re,datetime,traceback
 import simplejson as json
 
 import six
@@ -286,6 +287,7 @@ class movies:
 
             elif u in self.trakt_link and '/sync/playback/' in url:
                 self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+                self.list = sorted(self.list, key=lambda k: int(k['paused_at']), reverse=True)
                 if idx == True: self.worker()
 
             elif u in self.trakt_link:
@@ -653,7 +655,11 @@ class movies:
                 if tagline == None: tagline = '0'
                 tagline = client.replaceHTMLCodes(tagline)
 
-                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'next': next})
+                paused_at = item.get('paused_at', '0') or '0'
+                paused_at = re.sub('[^0-9]+', '', paused_at)
+
+                self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
+                                  'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'next': next, 'paused_at': paused_at})
             except:
                 pass
 
@@ -744,7 +750,7 @@ class movies:
 
                 try: poster = client.parseDOM(item, 'img', ret='loadlate')[0]
                 except: poster = '0'
-                if '/nopicture/' in poster: poster = '0'
+                if '/nopicture/' in poster or '/sash/' in poster: poster = '0'
                 poster = re.sub(r'(?:_SX|_SY|_UX|_UY|_CR|_AL)(?:\d+|_).+?\.', '_SX500.', poster)
                 poster = client.replaceHTMLCodes(poster)
                 poster = six.ensure_str(poster)
@@ -928,6 +934,8 @@ class movies:
 
             hq_artwork = control.setting('hq.artwork') or 'false'
 
+            settingFanart = control.setting('fanart')
+
             imdb = self.list[i]['imdb']
 
             item = trakt.getMovieSummary(imdb)
@@ -942,8 +950,6 @@ class movies:
             if year == '0':
                 year = item.get('year', 0)
                 year = re.sub(r'[^0-9]', '', str(year))
-
-            poster = self.list[i]['poster']
 
             #imdb = item.get('ids', {}).get('imdb', '0')
             #imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))
@@ -1002,7 +1008,9 @@ class movies:
             except:
                 pass
 
-            poster2 = fanart = banner = clearlogo = clearart = landscape = discart = '0'
+            poster1 = self.list[i].get('poster', '0')
+
+            poster3 = fanart = banner = clearlogo = clearart = landscape = discart = '0'
             if hq_artwork == 'true':# and not self.fanart_tv_user == '':
 
                 artmeta = True
@@ -1018,11 +1026,11 @@ class movies:
                 if artmeta == False: pass
 
                 try:
-                    poster2 = art['movieposter']
-                    poster2 = [x for x in poster2 if x.get('lang') == self.lang][::-1] + [x for x in poster2 if x.get('lang') == 'en'][::-1] + [x for x in poster2 if x.get('lang') in ['00', '']][::-1]
-                    poster2 = six.ensure_str(poster2[0]['url'])
+                    poster3 = art['movieposter']
+                    poster3 = [x for x in poster3 if x.get('lang') == self.lang][::-1] + [x for x in poster3 if x.get('lang') == 'en'][::-1] + [x for x in poster3 if x.get('lang') in ['00', '']][::-1]
+                    poster3 = six.ensure_str(poster3[0]['url'])
                 except:
-                    poster2 = '0'
+                    poster3 = '0'
 
                 try:
                     if 'moviebackground' in art: fanart = art['moviebackground']
@@ -1069,36 +1077,41 @@ class movies:
                     discart = six.ensure_str(discart[0]['url'])
                 except:
                     discart = '0'
-            try:
-                if self.tm_user == '': raise Exception()
 
-                art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
-                art2 = json.loads(art2)
-            except:
-                pass
+            poster2 = fanart2 = '0'
+            if (poster3 == '0' and poster1 == '0') or (settingFanart == 'true' and fanart == '0'):
+                #log_utils.log('Fetching_TMDb_art')
 
-            try:
-                poster3 = art2['posters']
-                poster3 = [x for x in poster3 if x.get('iso_639_1') == self.lang] + [x for x in poster3 if x.get('iso_639_1') == 'en'] + [x for x in poster3 if x.get('iso_639_1') not in [self.lang, 'en']]
-                poster3 = [(x['width'], x['file_path']) for x in poster3]
-                poster3 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster3]
-                poster3 = self.tm_img_link % poster3[0]
-                poster3 = six.ensure_str(poster3)
-            except:
-                poster3 = '0'
+                try:
+                    if self.tm_user == '': raise Exception()
 
-            try:
-                fanart2 = art2['backdrops']
-                fanart2 = [x for x in fanart2 if x.get('iso_639_1') == self.lang] + [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
-                fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
-                fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
-                fanart2 = self.tm_img_link % fanart2[0]
-                fanart2 = six.ensure_str(fanart2)
-            except:
-                fanart2 = '0'
+                    art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
+                    art2 = json.loads(art2)
+                except:
+                    pass
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo,
+                try:
+                    poster2 = art2['posters']
+                    poster2 = [x for x in poster2 if x.get('iso_639_1') == self.lang] + [x for x in poster2 if x.get('iso_639_1') == 'en'] + [x for x in poster2 if x.get('iso_639_1') not in [self.lang, 'en']]
+                    poster2 = [(x['width'], x['file_path']) for x in poster2]
+                    poster2 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster2]
+                    poster2 = self.tm_img_link % poster2[0]
+                    poster2 = six.ensure_str(poster2)
+                except:
+                    poster2 = '0'
+
+                try:
+                    fanart2 = art2['backdrops']
+                    fanart2 = [x for x in fanart2 if x.get('iso_639_1') == self.lang] + [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
+                    fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
+                    fanart2 = [(x['width'], x['file_path']) for x in fanart2]
+                    fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
+                    fanart2 = self.tm_img_link % fanart2[0]
+                    fanart2 = six.ensure_str(fanart2)
+                except:
+                    fanart2 = '0'
+
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster1, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo,
                     'clearart': clearart, 'landscape': landscape, 'discart': discart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             self.list[i].update(item)
@@ -1174,13 +1187,13 @@ class movies:
 
                 #poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
                 #poster = poster[0] if poster else addonPoster
-                poster1 = i.get('poster')
+                poster1 = i.get('poster', '')
                 if poster1 == '0': poster1 = ''
-                poster2 = i.get('poster2')
+                poster2 = i.get('poster2', '')
                 if poster2 == '0': poster2 = ''
-                poster3 = i.get('poster3')
+                poster3 = i.get('poster3', '')
                 if poster3 == '0': poster3 = ''
-                poster = poster2 or poster3 or poster1 or addonPoster
+                poster = poster3 or poster2 or poster1 or addonPoster
                 meta.update({'poster': poster})
 
                 sysmeta = urllib_parse.quote_plus(json.dumps(meta))
@@ -1262,6 +1275,15 @@ class movies:
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setProperty('IsPlayable', isPlayable)
+
+                offset = bookmarks.get('movie', imdb, '', '', True)
+                #log_utils.log('offset: ' + str(offset))
+                if float(offset) > 120:
+                    percentPlayed = int(float(offset) / float(meta['duration']) * 100)
+                    #log_utils.log('percentPlayed: ' + str(percentPlayed))
+                    item.setProperty('resumetime', str(offset))
+                    item.setProperty('percentplayed', str(percentPlayed))
+
                 item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
 
                 video_streaminfo = {'codec': 'h264'}

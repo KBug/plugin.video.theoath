@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.theoath" name="TheOath" provider-name="host505" version="3.6.001">
+<addon id="plugin.video.theoath" name="TheOath" provider-name="host505" version="4.0.000">
     <requires>
         <!--<import addon="xbmc.python" version="2.20.0" />-->
         <import addon="script.theoath.artwork" />
@@ -27,7 +27,7 @@
         <forum />
         <website />
         <source />
-        <disclaimer lang="en_GB">The author of this add-on does not host any of the content which is found and has no affiliation with any of the content providers. This add-on simply searches websites for content. Use at your own risk!</disclaimer>
+        <disclaimer lang="en_GB">The author of this add-on does not host any of the content which is found and has no affiliation with any of the content providers. This add-on simply searches websites for content. Use at your own risk![CR]This project uses the TMDb, Trakt, Fanart.tv APIs, but is not affiliated nor endorsed by any of their respective ogranisations.[CR]Please support these ogranisations however you can.</disclaimer>
         <assets>
             <icon>icon.png</icon>
             <fanart>fanart.jpg</fanart>

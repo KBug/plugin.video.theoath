@@ -28,9 +28,9 @@ from resources.lib.modules import trakt
 from resources.lib.modules import log_utils
 
 
-def get(media_type, imdb, season, episode):
+def get(media_type, imdb, season, episode, local=False):
 
-    if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True:
+    if control.setting('rersume.source') == '1' and trakt.getTraktCredentialsInfo() == True and local == False:
         try:
             if media_type == 'episode':
 

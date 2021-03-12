@@ -26,14 +26,14 @@ from six.moves import urllib_parse
 
 from kodi_six import xbmc, xbmcaddon, xbmcgui, xbmcplugin, xbmcvfs
 
-def six_encode(txt, char='utf-8'):
+def six_encode(txt, char='utf-8', errors='replace'):
     if six.PY2 and isinstance(txt, six.text_type):
-        txt = txt.encode(char)
+        txt = txt.encode(char, errors=errors)
     return txt
 
-def six_decode(txt, char='utf-8'):
+def six_decode(txt, char='utf-8', errors='replace'):
     if six.PY3 and isinstance(txt, six.binary_type):
-        txt = txt.decode(char)
+        txt = txt.decode(char, errors=errors)
     return txt
 
 def getKodiVersion():
@@ -85,6 +85,8 @@ image = xbmcgui.ControlImage
 
 getCurrentDialogId = xbmcgui.getCurrentWindowDialogId()
 
+getCurrentWinId = xbmcgui.getCurrentWindowId()
+
 keyboard = xbmc.Keyboard
 
 monitor = xbmc.Monitor()
@@ -131,7 +133,7 @@ metacacheFile = os.path.join(dataPath, 'meta.5.db')
 
 searchFile = os.path.join(dataPath, 'search.1.db')
 
-libcacheFile = os.path.join(dataPath, 'library.db')
+libcacheFile = os.path.join(dataPath, 'library.1.db')
 
 cacheFile = os.path.join(dataPath, 'cache.db')
 
@@ -334,8 +336,7 @@ def openSettings(query=None, id=addonInfo('id')):
 
 
 def getCurrentViewId():
-    win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
-    return str(win.getFocusId())
+    return str(getCurrentWinId.getFocusId())
 
 
 def refresh():

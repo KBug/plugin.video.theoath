@@ -38,7 +38,7 @@ class player(xbmc.Player):
         xbmc.Player.__init__(self)
 
 
-    def run(self, title, year, season, episode, imdb, tvdb, url, meta):
+    def run(self, title, year, season, episode, imdb, tmdb, url, meta):
         try:
             control.sleep(200)
 
@@ -54,8 +54,8 @@ class player(xbmc.Player):
 
             self.DBID = None
             self.imdb = imdb if not imdb == None else '0'
-            self.tvdb = tvdb if not tvdb == None else '0'
-            self.ids = {'imdb': self.imdb, 'tvdb': self.tvdb}
+            self.tmdb = tmdb if not tmdb == None else '0'
+            self.ids = {'imdb': self.imdb, 'tmdb': self.tmdb}
             self.ids = dict((k,v) for k, v in six.iteritems(self.ids) if not v == '0')
 
             self.offset = bookmarks.get(self.content, imdb, season, episode)
@@ -84,8 +84,9 @@ class player(xbmc.Player):
 
 
     def getMeta(self, meta):
+
         try:
-            poster = meta.get('poster2', '') or meta.get('poster3', '') or meta.get('poster', '') or control.addonPoster()
+            poster = meta.get('poster3', '') or meta.get('poster2', '') or meta.get('poster', '') or control.addonPoster()
             thumb = meta.get('thumb', '') or poster
             fanart = meta.get('fanart2', '') or meta.get('fanart', '') or control.addonFanart()
             clearlogo = meta.get('clearlogo', '') or ''
@@ -156,7 +157,6 @@ class player(xbmc.Player):
         except:
             pass
 
-
         poster, thumb, fanart, clearlogo, clearart, discart, meta = '', '', '', '', '', '', {'title': self.name}
         return poster, thumb, fanart, clearlogo, clearart, discart, meta
 
@@ -170,7 +170,7 @@ class player(xbmc.Player):
             overlay = playcount.getMovieOverlay(playcount.getMovieIndicators(), self.imdb)
 
         elif self.content == 'episode':
-            overlay = playcount.getEpisodeOverlay(playcount.getTVShowIndicators(), self.imdb, self.tvdb, self.season, self.episode)
+            overlay = playcount.getEpisodeOverlay(playcount.getTVShowIndicators(), self.imdb, self.tmdb, self.season, self.episode)
 
         else:
             overlay = '6'
@@ -226,11 +226,11 @@ class player(xbmc.Player):
 
                     if watcher == True and not property == '7':
                         control.window.setProperty(pname, '7')
-                        playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '7')
+                        playcount.markEpisodeDuringPlayback(self.imdb, self.tmdb, self.season, self.episode, '7')
 
                     elif watcher == False and not property == '6':
                         control.window.setProperty(pname, '6')
-                        playcount.markEpisodeDuringPlayback(self.imdb, self.tvdb, self.season, self.episode, '6')
+                        playcount.markEpisodeDuringPlayback(self.imdb, self.tmdb, self.season, self.episode, '6')
                 except:
                     pass
                 xbmc.sleep(2000)
@@ -318,7 +318,7 @@ class player(xbmc.Player):
         #if control.setting('bookmarks') == 'true':
         bookmarks.reset(self.currentTime, self.totalTime, self.content, self.imdb, self.season, self.episode)
         if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
-            bookmarks.set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tvdb, self.season, self.episode)
+            bookmarks.set_scrobble(self.currentTime, self.totalTime, self.content, self.imdb, self.tmdb, self.season, self.episode)
 
         try:
             if float(self.currentTime / self.totalTime) >= 0.92:
@@ -333,7 +333,7 @@ class player(xbmc.Player):
     def onPlayBackEnded(self):
         bookmarks.reset(1, 1, self.content, self.imdb, self.season, self.episode)
         if (trakt.getTraktCredentialsInfo() == True and control.setting('trakt.scrobble') == 'true'):
-            bookmarks.set_scrobble(1, 1, self.content, self.imdb, self.tvdb, self.season, self.episode)
+            bookmarks.set_scrobble(1, 1, self.content, self.imdb, self.tmdb, self.season, self.episode)
         self.libForPlayback()
 
 

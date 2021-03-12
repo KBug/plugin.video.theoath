@@ -1,3 +1,10 @@
+[B][COLOR gold]v4.0.000[/COLOR][/B]
+- Switched to TMDb API for TV Shows metadata
+    [I]Note:[/I]  This is a big change - large parts of the code have been re-written
+    and many other parts (some obvious some not) have been touched.
+    Please report any issues at: [I]https://github.com/host505/plugin.video.theoath/issues[/I]
+    Thanks to all the testers involved with this release.
+
 [B][COLOR gold]v3.6.001[/COLOR][/B]
 - Fixed issue with size filtering
 

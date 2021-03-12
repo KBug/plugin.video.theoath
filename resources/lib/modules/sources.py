@@ -52,12 +52,12 @@ class sources:
         self.sources = []
         self.f_out_sources = []
 
-    def play(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, meta, select):
+    def play(self, title, year, imdb, tmdb, season, episode, tvshowtitle, premiered, meta, select):
 
         try:
             url = None
 
-            items = self.getSources(title, year, imdb, tvdb, season, episode, tvshowtitle, premiered)
+            items = self.getSources(title, year, imdb, tmdb, season, episode, tvshowtitle, premiered)
 
             select = control.setting('hosts.mode') if select == None else select
 
@@ -92,7 +92,7 @@ class sources:
             except: pass
 
             from resources.lib.modules.player import player
-            player().run(title, year, season, episode, imdb, tvdb, url, meta)
+            player().run(title, year, season, episode, imdb, tmdb, url, meta)
         except:
             pass
 
@@ -133,14 +133,15 @@ class sources:
             sysname += urllib_parse.quote_plus(' (%s)' % meta['year'])
 
 
-        poster = meta.get('poster2') or meta.get('poster3') or meta.get('poster') or control.addonPoster()
-        fanart = meta.get('fanart2') or meta.get('fanart') or control.addonFanart()
+        poster = meta.get('poster3') or meta.get('poster2') or meta.get('poster') or control.addonPoster()
+        if control.setting('fanart') == 'true':
+            fanart = meta.get('fanart2') or meta.get('fanart') or control.addonFanart()
+        else:
+            fanart = control.addonFanart()
         thumb = meta.get('thumb') or poster or fanart
         clearlogo = meta.get('clearlogo', '') or ''
         clearart = meta.get('clearart', '') or ''
         discart = meta.get('discart', '') or ''
-
-        if not control.setting('fanart') == 'true': fanart = control.addonFanart()
 
         #banner = meta['banner'] if 'banner' in meta else '0'
         #if banner == '0': banner = poster
@@ -197,6 +198,7 @@ class sources:
 
             imdb = meta['imdb'] if 'imdb' in meta else None
             tvdb = meta['tvdb'] if 'tvdb' in meta else None
+            tmdb = meta['tmdb'] if 'tmdb' in meta else None
 
             next = [] ; prev = [] ; total = []
 
@@ -297,7 +299,7 @@ class sources:
                     control.execute('Dialog.Close(yesnoDialog)')
 
                     from resources.lib.modules.player import player
-                    player().run(title, year, season, episode, imdb, tvdb, self.url, meta)
+                    player().run(title, year, season, episode, imdb, tmdb, self.url, meta)
 
                     return self.url
                 except:
@@ -312,7 +314,7 @@ class sources:
             pass
 
 
-    def getSources(self, title, year, imdb, tvdb, season, episode, tvshowtitle, premiered, quality='720p', timeout=30):
+    def getSources(self, title, year, imdb, tmdb, season, episode, tvshowtitle, premiered, quality='720p', timeout=30):
         progressDialog = control.progressDialog if control.setting('progress.dialog') == '0' else control.progressDialogBG
         if progressDialog == control.progressDialogBG:
             control.idle()
@@ -331,7 +333,7 @@ class sources:
             genres = trakt.getGenre('movie', 'imdb', imdb)
         else:
             sourceDict = [(i[0], i[1], getattr(i[1], 'tvshow', None)) for i in sourceDict]
-            genres = trakt.getGenre('show', 'tvdb', tvdb)
+            genres = trakt.getGenre('show', 'tmdb', tmdb)
 
         sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter or any(x in i[1].genre_filter for x in genres)]
         sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == None]
@@ -358,18 +360,18 @@ class sources:
             #title = self.getTitle(title)
             title, year = cleantitle.scene_title(title, year)
             #log_utils.log('movtitle is '+title+' year is '+year)
-            localtitle = self.getLocalTitle(title, imdb, tvdb, content)
+            localtitle = self.getLocalTitle(title, imdb, tmdb, content)
             aliases = self.getAliasTitles(imdb, localtitle, content)
             for i in sourceDict: threads.append(workers.Thread(self.getMovieSource, title, localtitle, aliases, year, imdb, i[0], i[1]))
         else:
             #tvshowtitle = self.getTitle(tvshowtitle)
             tvshowtitle, year, season, episode = cleantitle.scene_tvtitle(tvshowtitle, year, season, episode)
             #log_utils.log('tvtitle is '+tvshowtitle+' year is '+year+' season is '+season)
-            localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tvdb, content)
+            localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tmdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
             #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
             #season, episode = thexem.get_scene_episode_number(tvdb, season, episode)
-            for i in sourceDict: threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
+            for i in sourceDict: threads.append(workers.Thread(self.getEpisodeSource, title, year, imdb, tmdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, i[0], i[1]))
 
         s = [i[0] + (i[1],) for i in zip(sourceDict, threads)]
         s = [(i[3].getName(), i[0], i[2]) for i in s]
@@ -601,7 +603,7 @@ class sources:
             pass
 
 
-    def getEpisodeSource(self, title, year, imdb, tvdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, source, call):
+    def getEpisodeSource(self, title, year, imdb, tmdb, season, episode, tvshowtitle, localtvshowtitle, aliases, premiered, source, call):
         try:
             dbcon = database.connect(self.sourceFile)
             dbcur = dbcon.cursor()
@@ -630,7 +632,7 @@ class sources:
             pass
 
         try:
-            if url == None: url = call.tvshow(imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year)
+            if url == None: url = call.tvshow(imdb, tmdb, tvshowtitle, localtvshowtitle, aliases, year)
             if url == None: raise Exception()
             dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, '', ''))
             dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, '', '', repr(url)))
@@ -648,7 +650,7 @@ class sources:
 
         try:
             if url == None: raise Exception()
-            if ep_url == None: ep_url = call.episode(url, imdb, tvdb, title, premiered, season, episode)
+            if ep_url == None: ep_url = call.episode(url, imdb, tmdb, title, premiered, season, episode)
             if ep_url == None: raise Exception()
             dbcur.execute("DELETE FROM rel_url WHERE source = '%s' AND imdb_id = '%s' AND season = '%s' AND episode = '%s'" % (source, imdb, season, episode))
             dbcur.execute("INSERT INTO rel_url Values (?, ?, ?, ?, ?)", (source, imdb, season, episode, repr(ep_url)))
@@ -1262,7 +1264,7 @@ class sources:
         return langDict.get(name, ['en'])
 
 
-    def getLocalTitle(self, title, imdb, tvdb, content):
+    def getLocalTitle(self, title, imdb, tmdb, content):
         lang = self._getPrimaryLang()
         if not lang:
             return title
@@ -1270,7 +1272,7 @@ class sources:
         if content == 'movie':
             t = trakt.getMovieTranslation(imdb, lang)
         else:
-            t = tvmaze.tvMaze().getTVShowTranslation(tvdb, lang)
+            t = trakt.getTVShowTranslation(tmdb, lang)
 
         return t or title
 
