@@ -284,10 +284,6 @@ elif action == 'tvNetworks':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().networks()
 
-elif action == 'tvNetworks2':
-    from resources.lib.indexers import tvshows
-    tvshows.tvshows().networks2()
-
 elif action == 'tvLanguages':
     from resources.lib.indexers import tvshows
     tvshows.tvshows().languages()

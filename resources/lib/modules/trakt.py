@@ -23,8 +23,6 @@ import re
 import time
 import traceback
 
-#import requests
-
 import six
 from six.moves import urllib_parse
 import simplejson as json
@@ -60,8 +58,7 @@ def __getTrakt(url, post=None):
         if getTraktCredentialsInfo():
             headers.update({'Authorization': 'Bearer %s' % control.setting('trakt.token')})
 
-        result = client.request(url, post=post, headers=headers, output='extended', error=True, timeout='10')
-        #result = requests.post(url, data=post, headers=headers).content
+        result = client.request(url, post=post, headers=headers, output='extended', error=True)
         result = utils.byteify(result)
 
         resp_code = result[1]
@@ -99,8 +96,7 @@ def __getTrakt(url, post=None):
         result = client.request(url, post=post, headers=headers, output='extended', error=True)
         result = utils.byteify(result)
         return result[0], result[2]
-    except:# Exception as e:
-        #log_utils.log('Unknown Trakt Error: %s' % e, log_utils.LOGWARNING)
+    except:
         fail = traceback.format_exc()
         log_utils.log('getTrakt Error: ' + str(fail))
         pass

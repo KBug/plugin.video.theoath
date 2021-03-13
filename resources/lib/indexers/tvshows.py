@@ -128,6 +128,7 @@ class tvshows:
         self.watched4_link = 'https://api.trakt.tv/shows/watched/all?limit=%s&page=1' % self.items_per_page
 ######## /TV Show Mosts ########
 
+
     def get(self, url, idx=True, create_directory=True):
         try:
             try: url = getattr(self, url + '_link')
@@ -181,6 +182,7 @@ class tvshows:
             # log_utils.log('tv_get: ' + str(failure))
             pass
 
+
     def search(self):
 
         navigator.navigator().addDirectoryItem(32603, 'tvSearchnew', 'search.png', 'DefaultTVShows.png')
@@ -210,6 +212,7 @@ class tvshows:
 
         navigator.navigator().endDirectory(False)
 
+
     def search_new(self):
         control.idle()
 
@@ -233,6 +236,7 @@ class tvshows:
             url = '%s?action=tvshowPage&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
             control.execute('Container.Update(%s)' % url)
 
+
     def search_term(self, q):
         control.idle()
         q = q.lower()
@@ -249,6 +253,7 @@ class tvshows:
         else:
             url = '%s?action=tvshowPage&url=%s' % (sys.argv[0], urllib_parse.quote_plus(url))
             control.execute('Container.Update(%s)' % url)
+
 
     def person(self):
         try:
@@ -268,6 +273,7 @@ class tvshows:
                 control.execute('Container.Update(%s)' % url)
         except:
             return
+
 
     def genres(self):
         genres = [
@@ -309,7 +315,87 @@ class tvshows:
         self.addDirectory(self.list)
         return self.list
 
+
     def networks(self):
+        networks = [
+            ('A&E', '129', 'https://i.imgur.com/xLDfHjH.png'),
+            ('ABC', '2', 'https://i.imgur.com/qePLxos.png'),
+            ('Acorn TV', '2697', 'https://i.imgur.com/fSWB5gB.png'),
+            ('Adult Swim', '80', 'https://i.imgur.com/jCqbRcS.png'),
+            ('Amazon', '1024', 'https://i.imgur.com/ru9DDlL.png'),
+            ('AMC', '174', 'https://i.imgur.com/ndorJxi.png'),
+            ('Animal Planet', '91', 'https://i.imgur.com/olKc4RP.png'),
+            ('Apple TV+', '2552', 'https://i.imgur.com/fAQMVNp.png'),
+            ('AT-X', '173', 'https://i.imgur.com/JshJYGN.png'),
+            ('Audience', '251', 'https://i.imgur.com/5Q3mo5A.png'),
+            ('BBC One', '4', 'https://i.imgur.com/u8x26te.png'),
+            ('BBC Two', '332', 'https://i.imgur.com/SKeGH1a.png'),
+            ('BBC Three', '3', 'https://i.imgur.com/SDLeLcn.png'),
+            ('BBC Four', '100', 'https://i.imgur.com/PNDalgw.png'),
+            ('BBC America', '493', 'https://i.imgur.com/TUHDjfl.png'),
+            ('BET', '24', 'https://i.imgur.com/ZpGJ5UQ.png'),
+            ('Bravo', '74', 'https://i.imgur.com/TmEO3Tn.png'),
+            ('Cartoon Network', '56', 'https://i.imgur.com/zmOLbbI.png'),
+            ('CBC', '23', 'https://i.imgur.com/unQ7WCZ.png'),
+            ('CBS All Access', '1709', 'https://i.imgur.com/ZvaWMuU.png'),
+            ('CBS', '16', 'https://i.imgur.com/8OT8igR.png'),
+            ('Channel 4', '26', 'https://i.imgur.com/6ZA9UHR.png'),
+            ('Channel 5', '99', 'https://i.imgur.com/5ubnvOh.png'),
+            ('Cinemax', '359', 'https://i.imgur.com/zWypFNI.png'),
+            ('Comedy Central', '47', 'https://i.imgur.com/ko6XN77.png'),
+            ('Crackle', '928', 'https://i.imgur.com/53kqZSY.png'),
+            ('CTV', '110', 'https://i.imgur.com/qUlyVHz.png'),
+            ('DC Universe', '2243', 'https://i.imgur.com/bhWIubn.png'),
+            ('Discovery Channel', '64', 'https://i.imgur.com/8UrXnAB.png'),
+            ('Disney+', '2739', 'https://i.imgur.com/DVrPgbM.png'),
+            ('Disney Channel', '54', 'https://i.imgur.com/ZCgEkp6.png'),
+            ('Disney XD', '44', 'https://i.imgur.com/PAJJoqQ.png'),
+            ('E!', '76', 'https://i.imgur.com/3Delf9f.png'),
+            ('E4', '136', 'https://i.imgur.com/frpunK8.png'),
+            ('FOX', '19', 'https://i.imgur.com/6vc0Iov.png'),
+            ('Freeform', '1267', 'https://i.imgur.com/f9AqoHE.png'),
+            ('Hallmark Channel', '384', 'https://i.imgur.com/zXS64I8.png'),
+            ('HBO Max', '3186', 'https://i.imgur.com/mmRMG75.png'),
+            ('HBO', '49', 'https://i.imgur.com/Hyu8ZGq.png'),
+            ('HGTV', '210', 'https://i.imgur.com/INnmgLT.png'),
+            ('History Channel', '65', 'https://i.imgur.com/LEMgy6n.png'),
+            ('Hulu', '453', 'https://i.imgur.com/cLVo7NH.png'),
+            ('ITV', '9', 'https://i.imgur.com/5Hxp5eA.png'),
+            ('Lifetime', '34', 'https://i.imgur.com/tvYbhen.png'),
+            ('MTV', '33', 'https://i.imgur.com/QM6DpNW.png'),
+            ('National Geographic', '43', 'https://i.imgur.com/XCGNKVQ.png'),
+            ('NBC', '6', 'https://i.imgur.com/yPRirQZ.png'),
+            ('Netflix', '213', 'https://i.imgur.com/02VN1wq.png'),
+            ('Nick Junior', '35', 'https://i.imgur.com/leuCWYt.png'),
+            ('Nickelodeon', '13', 'https://i.imgur.com/OUVoqYc.png'),
+            ('PBS', '14', 'https://i.imgur.com/r9qeDJY.png'),
+            ('Showtime', '67', 'https://i.imgur.com/SawAYkO.png'),
+            ('Sky Atlantic', '1063', 'https://i.imgur.com/9u6M0ef.png'),
+            ('Sky One', '214', 'https://i.imgur.com/xbgzhPU.png'),
+            ('Spike', '55', 'https://i.imgur.com/BhXYytR.png'),
+            ('Starz', '318', 'https://i.imgur.com/Z0ep2Ru.png'),
+            ('SundanceTV', '270', 'https://i.imgur.com/qldG5p2.png'),
+            ('Syfy', '77', 'https://i.imgur.com/9yCq37i.png'),
+            ('TBS', '68', 'https://i.imgur.com/RVCtt4Z.png'),
+            ('The CW', '71', 'https://i.imgur.com/Q8tooeM.png'),
+            ('The WB', '21', 'https://i.imgur.com/rzfVME6.png'),
+            ('TLC', '84', 'https://i.imgur.com/c24MxaB.png'),
+            ('TNT', '41', 'https://i.imgur.com/WnzpAGj.png'),
+            ('Travel Channel', '209', 'https://i.imgur.com/mWXv7SF.png'),
+            ('truTV', '364', 'https://i.imgur.com/HnB3zfc.png'),
+            ('TV Land', '397', 'https://i.imgur.com/1nIeDA5.png'),
+            ('USA Network', '30', 'https://i.imgur.com/Doccw9E.png'),
+            ('VH1', '158', 'https://i.imgur.com/IUtHYzA.png'),
+            ('WGN America', '202', 'https://i.imgur.com/TL6MzgO.png'),
+            ('YouTube Premium', '1436', 'https://i.imgur.com/9xpox47.png')
+        ]
+
+        for i in networks: self.list.append({'name': i[0], 'url': self.tmdb_networks_link % i[1], 'image': i[2], 'action': 'tvshows'})
+        self.addDirectory(self.list)
+        return self.list
+
+
+    def networks2(self):
         networks = [
             ('A&E', '/shows?Show[network_id]=29&page=1', 'https://i.imgur.com/xLDfHjH.png'),
             ('ABC', '/shows?Show[network_id]=3&page=1', 'https://i.imgur.com/qePLxos.png'),
@@ -385,85 +471,6 @@ class tvshows:
         ]
 
         for i in networks: self.list.append({'name': i[0], 'url': self.tvmaze_link + i[1], 'image': i[2], 'action': 'tvshows'})
-        self.addDirectory(self.list)
-        return self.list
-
-
-    def networks2(self):
-        networks = [
-            ('A&E', '129', 'https://i.imgur.com/xLDfHjH.png'),
-            ('ABC', '2', 'https://i.imgur.com/qePLxos.png'),
-            ('Acorn TV', '2697', 'https://i.imgur.com/fSWB5gB.png'),
-            ('Adult Swim', '80', 'https://i.imgur.com/jCqbRcS.png'),
-            ('Amazon', '1024', 'https://i.imgur.com/ru9DDlL.png'),
-            ('AMC', '174', 'https://i.imgur.com/ndorJxi.png'),
-            ('Animal Planet', '91', 'https://i.imgur.com/olKc4RP.png'),
-            ('Apple TV+', '2552', 'https://i.imgur.com/fAQMVNp.png'),
-            ('AT-X', '173', 'https://i.imgur.com/JshJYGN.png'),
-            ('Audience', '251', 'https://i.imgur.com/5Q3mo5A.png'),
-            ('BBC One', '4', 'https://i.imgur.com/u8x26te.png'),
-            ('BBC Two', '332', 'https://i.imgur.com/SKeGH1a.png'),
-            ('BBC Three', '3', 'https://i.imgur.com/SDLeLcn.png'),
-            ('BBC Four', '100', 'https://i.imgur.com/PNDalgw.png'),
-            ('BBC America', '493', 'https://i.imgur.com/TUHDjfl.png'),
-            ('BET', '24', 'https://i.imgur.com/ZpGJ5UQ.png'),
-            ('Bravo', '74', 'https://i.imgur.com/TmEO3Tn.png'),
-            ('Cartoon Network', '56', 'https://i.imgur.com/zmOLbbI.png'),
-            ('CBC', '23', 'https://i.imgur.com/unQ7WCZ.png'),
-            ('CBS All Access', '1709', 'https://i.imgur.com/ZvaWMuU.png'),
-            ('CBS', '16', 'https://i.imgur.com/8OT8igR.png'),
-            ('Channel 4', '26', 'https://i.imgur.com/6ZA9UHR.png'),
-            ('Channel 5', '99', 'https://i.imgur.com/5ubnvOh.png'),
-            ('Cinemax', '359', 'https://i.imgur.com/zWypFNI.png'),
-            ('Comedy Central', '47', 'https://i.imgur.com/ko6XN77.png'),
-            ('Crackle', '928', 'https://i.imgur.com/53kqZSY.png'),
-            ('CTV', '110', 'https://i.imgur.com/qUlyVHz.png'),
-            ('DC Universe', '2243', 'https://i.imgur.com/bhWIubn.png'),
-            ('Discovery Channel', '64', 'https://i.imgur.com/8UrXnAB.png'),
-            ('Disney+', '2739', 'https://i.imgur.com/DVrPgbM.png'),
-            ('Disney Channel', '54', 'https://i.imgur.com/ZCgEkp6.png'),
-            ('Disney XD', '44', 'https://i.imgur.com/PAJJoqQ.png'),
-            ('E!', '76', 'https://i.imgur.com/3Delf9f.png'),
-            ('E4', '136', 'https://i.imgur.com/frpunK8.png'),
-            ('FOX', '19', 'https://i.imgur.com/6vc0Iov.png'),
-            ('Freeform', '1267', 'https://i.imgur.com/f9AqoHE.png'),
-            ('Hallmark Channel', '384', 'https://i.imgur.com/zXS64I8.png'),
-            ('HBO Max', '3186', 'https://i.imgur.com/mmRMG75.png'),
-            ('HBO', '49', 'https://i.imgur.com/Hyu8ZGq.png'),
-            ('HGTV', '210', 'https://i.imgur.com/INnmgLT.png'),
-            ('History Channel', '65', 'https://i.imgur.com/LEMgy6n.png'),
-            ('Hulu', '453', 'https://i.imgur.com/cLVo7NH.png'),
-            ('ITV', '9', 'https://i.imgur.com/5Hxp5eA.png'),
-            ('Lifetime', '34', 'https://i.imgur.com/tvYbhen.png'),
-            ('MTV', '33', 'https://i.imgur.com/QM6DpNW.png'),
-            ('National Geographic', '43', 'https://i.imgur.com/XCGNKVQ.png'),
-            ('NBC', '6', 'https://i.imgur.com/yPRirQZ.png'),
-            ('Netflix', '213', 'https://i.imgur.com/02VN1wq.png'),
-            ('Nick Junior', '35', 'https://i.imgur.com/leuCWYt.png'),
-            ('Nickelodeon', '13', 'https://i.imgur.com/OUVoqYc.png'),
-            ('PBS', '14', 'https://i.imgur.com/r9qeDJY.png'),
-            ('Showtime', '67', 'https://i.imgur.com/SawAYkO.png'),
-            ('Sky Atlantic', '1063', 'https://i.imgur.com/9u6M0ef.png'),
-            ('Sky One', '214', 'https://i.imgur.com/xbgzhPU.png'),
-            ('Spike', '55', 'https://i.imgur.com/BhXYytR.png'),
-            ('Starz', '318', 'https://i.imgur.com/Z0ep2Ru.png'),
-            ('SundanceTV', '270', 'https://i.imgur.com/qldG5p2.png'),
-            ('Syfy', '77', 'https://i.imgur.com/9yCq37i.png'),
-            ('TBS', '68', 'https://i.imgur.com/RVCtt4Z.png'),
-            ('The CW', '71', 'https://i.imgur.com/Q8tooeM.png'),
-            ('The WB', '21', 'https://i.imgur.com/rzfVME6.png'),
-            ('TLC', '84', 'https://i.imgur.com/c24MxaB.png'),
-            ('TNT', '41', 'https://i.imgur.com/WnzpAGj.png'),
-            ('Travel Channel', '209', 'https://i.imgur.com/mWXv7SF.png'),
-            ('truTV', '364', 'https://i.imgur.com/HnB3zfc.png'),
-            ('TV Land', '397', 'https://i.imgur.com/1nIeDA5.png'),
-            ('USA Network', '30', 'https://i.imgur.com/Doccw9E.png'),
-            ('VH1', '158', 'https://i.imgur.com/IUtHYzA.png'),
-            ('WGN America', '202', 'https://i.imgur.com/TL6MzgO.png'),
-            ('YouTube Premium', '1436', 'https://i.imgur.com/9xpox47.png')
-        ]
-
-        for i in networks: self.list.append({'name': i[0], 'url': self.tmdb_networks_link % i[1], 'image': i[2], 'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 
