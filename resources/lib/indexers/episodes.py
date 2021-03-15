@@ -21,7 +21,6 @@
 
 from resources.lib.modules import trakt
 from resources.lib.modules import bookmarks
-from resources.lib.modules import cleantitle
 from resources.lib.modules import cleangenre
 from resources.lib.modules import control
 from resources.lib.modules import client
@@ -34,13 +33,10 @@ from resources.lib.modules import api_keys
 from resources.lib.modules import log_utils
 
 import six
-from six.moves import urllib_parse, urllib_request
+from six.moves import urllib_parse
 
-import os,sys,re,zipfile,datetime,traceback
+import os,sys,re,datetime,traceback
 import simplejson as json
-
-try: from cStringIO import StringIO
-except: from io import BytesIO as StringIO
 
 import requests
 
@@ -52,40 +48,31 @@ class seasons:
     def __init__(self):
         self.list = []
 
-        self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
         self.specials = control.setting('tv.specials') or 'true'
-        self.ratings = control.setting('ep.ratings') or 'false'
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
+        self.lang = control.apiLanguage()['tmdb'] or 'en'
 
-        self.tm_lang = control.apiLanguage()['tmdb']
         self.tm_user = control.setting('tm.user') or api_keys.tmdb_key
         self.tmdb_show_link = 'https://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=aggregate_credits,content_ratings' % ('%s', self.tm_user, '%s')
         self.tmdb_show_lite_link = 'https://api.themoviedb.org/3/tv/%s?api_key=%s&language=en' % ('%s', self.tm_user)
         self.tmdb_by_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ('%s', self.tm_user)
         self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
-        self.tvdb_key = api_keys.tvdb_key
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key, '%s', '%s')
-        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
-        self.tvdb_image = 'https://thetvdb.com/banners/'
-        self.tvdb_poster = 'https://thetvdb.com/banners/_cache/'
 
-
-    def get(self, tvshowtitle, year, imdb, tmdb, fanart=None, idx=True, create_directory=True):
+    def get(self, tvshowtitle, year, imdb, tmdb, idx=True, create_directory=True):
 
         if idx == True:
-            self.list = cache.get(self.tmdb_list, 24, tvshowtitle, year, imdb, tmdb, fanart)
+            self.list = cache.get(self.tmdb_list, 24, tvshowtitle, year, imdb, tmdb)
             if create_directory == True: self.seasonDirectory(self.list)
             return self.list
         else:
-            self.list = self.tmdb_list(tvshowtitle, year, imdb, tmdb, fanart, lite=True)
+            self.list = self.tmdb_list(tvshowtitle, year, imdb, tmdb, lite=True)
             return self.list
 
 
-    def tmdb_list(self, tvshowtitle, year, imdb, tmdb, fanart, lite=False):
+    def tmdb_list(self, tvshowtitle, year, imdb, tmdb, lite=False):
         try:
 
             tvdb = '0'
@@ -128,10 +115,10 @@ class seasons:
         try:
             if tmdb == '0': raise Exception()
 
-            seasons_url = self.tmdb_show_link % (tmdb, self.tm_lang) + ',translations'
+            seasons_url = self.tmdb_show_link % (tmdb, self.lang) + ',translations'
             seasons_en_url = self.tmdb_show_link % (tmdb, 'en')
             seasons_lite_url = self.tmdb_show_lite_link % tmdb
-            if self.tm_lang == 'en':
+            if self.lang == 'en':
                 item = requests.get(seasons_en_url, timeout=10, verify=True).json()
             elif lite == True:
                 item = requests.get(seasons_lite_url, timeout=10, verify=True).json()
@@ -192,7 +179,7 @@ class seasons:
             if not show_plot: show_plot = '0'
             show_plot = six.ensure_str(show_plot)
 
-            if not self.tm_lang == 'en' and show_plot == '0':
+            if not self.lang == 'en' and show_plot == '0':
                 try:
                     translations = item.get('translations', {})
                     translations = translations.get('translations', [])
@@ -209,11 +196,10 @@ class seasons:
             if poster_path: show_poster = self.tm_img_link % ('500', poster_path)
             else: show_poster = '0'
 
-            if not fanart:
-                try: fanart_path = item['backdrop_path']
-                except: fanart_path = ''
-                if fanart_path: fanart = self.tm_img_link % ('1280', fanart_path)
-                else: fanart = '0'
+            try: fanart_path = item['backdrop_path']
+            except: fanart_path = ''
+            if fanart_path: fanart = self.tm_img_link % ('1280', fanart_path)
+            else: fanart = '0'
 
         except:
             # failure = traceback.format_exc()
@@ -232,24 +218,18 @@ class seasons:
                     if self.showunaired != 'true': raise Exception()
 
                 plot = item['overview']
-                if not plot: plot = show_plot
-                plot = client.replaceHTMLCodes(six.ensure_str(plot))
+                if plot: plot = client.replaceHTMLCodes(six.ensure_str(plot))
+                else: plot = show_plot
 
                 try: poster_path = item['poster_path']
                 except: poster_path = ''
                 if poster_path: poster = self.tm_img_link % ('500', poster_path)
                 else: poster = show_poster
 
-                try:
-                    label = item['name']
-                    label = six.ensure_str(label)
-                except:
-                    label = '%01dx%02d' % (int(season), int(episode))
-
                 banner = '0'
                 thumb = '0'
 
-                self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'label': label, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa,
+                self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa,
                                   'cast': cast, 'castwiththumb': castwiththumb, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 #self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
@@ -318,8 +298,6 @@ class seasons:
                 try: meta.update({'duration': str(int(meta['duration']) * 60)})
                 except: pass
                 try: meta.update({'genre': cleangenre.lang(meta['genre'], self.lang)})
-                except: pass
-                try: meta.update({'tvshowtitle': i['label']})
                 except: pass
                 try:
                     seasonYear = i['premiered']
@@ -412,27 +390,20 @@ class episodes:
 
         self.trakt_link = 'https://api.trakt.tv'
         self.tvmaze_link = 'https://api.tvmaze.com'
-        self.tvdb_key = api_keys.tvdb_key
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.systime = self.datetime.strftime('%Y%m%d%H%M%S%f')
         self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.trakt_user = control.setting('trakt.user').strip()
-        self.lang = control.apiLanguage()['tvdb']
         self.showunaired = control.setting('showunaired') or 'true'
         self.specials = control.setting('tv.specials') or 'true'
-        self.ratings = control.setting('ep.ratings') or 'false'
+        self.lang = control.apiLanguage()['tmdb'] or 'en'
 
-        self.tm_lang = control.apiLanguage()['tmdb']
         self.tm_user = control.setting('tm.user') or api_keys.tmdb_key
         self.tmdb_season_link = 'https://api.themoviedb.org/3/tv/%s/season/%s?api_key=%s&language=%s&append_to_response=aggregate_credits' % ('%s', '%s', self.tm_user, '%s')
         self.tmdb_season_lite_link = 'https://api.themoviedb.org/3/tv/%s/season/%s?api_key=%s&language=en' % ('%s', '%s', self.tm_user)
-        self.tmdb_episode_link = 'https://api.themoviedb.org/3/tv/%s/season/%s/episode/%s?api_key=%s&language=%s&append_to_response=credits' % ('%s', '%s', '%s', self.tm_user, self.tm_lang)
+        self.tmdb_episode_link = 'https://api.themoviedb.org/3/tv/%s/season/%s/episode/%s?api_key=%s&language=%s&append_to_response=credits' % ('%s', '%s', '%s', self.tm_user, self.lang)
         self.tmdb_by_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ('%s', self.tm_user)
         self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
-
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/all/%s.zip' % (self.tvdb_key, '%s', '%s')
-        self.tvdb_image = 'https://thetvdb.com/banners/'
-        self.tvdb_poster = 'https://thetvdb.com/banners/_cache/'
 
         self.added_link = 'https://api.tvmaze.com/schedule'
         #https://api.trakt.tv/calendars/all/shows/date[30]/31 #use this for new episodes?
@@ -694,8 +665,8 @@ class episodes:
                 paused_at = item.get('paused_at', '0') or '0'
                 paused_at = re.sub('[^0-9]+', '', paused_at)
 
-                itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio,
-                                 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'thumb': '0', 'paused_at': paused_at})
+                itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio, 'genre': genre,
+                                 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'thumb': '0', 'paused_at': paused_at})
             except:
                 pass
 
@@ -1159,23 +1130,13 @@ class episodes:
                 duration = str(duration)
                 duration = six.ensure_str(duration)
 
-                if self.ratings == 'true':
-                    try:
-                        rating, votes = trakt.getEpisodeRating(imdb, int(season), int(episode))
-                    except:
-                        rating, votes = '0', '0'
-                    if rating == None or rating == '0.0':
-                        rating = '0'
-                    if votes == None:
-                        votes = '0'
-                else:
-                    try: rating = item['show']['rating']['average']
-                    except: rating = '0'
-                    if rating == None or rating == '0.0': rating = '0'
-                    rating = str(rating)
-                    rating = six.ensure_str(rating)
+                try: rating = item['show']['rating']['average']
+                except: rating = '0'
+                if rating == None or rating == '0.0': rating = '0'
+                rating = str(rating)
+                rating = six.ensure_str(rating)
 
-                    votes = '0'
+                votes = '0'
 
                 try: plot = item['show']['summary']
                 except: plot = '0'
@@ -1237,7 +1198,7 @@ class episodes:
         try:
             if tmdb == '0': raise Exception()
 
-            episodes_url = self.tmdb_season_link % (tmdb, season, self.tm_lang)
+            episodes_url = self.tmdb_season_link % (tmdb, season, self.lang)
             episodes_en_url = self.tmdb_season_lite_link % (tmdb, season)
             episodes_lite_url = self.tmdb_season_lite_link % (tmdb, season)
             if lite == False:
@@ -1296,7 +1257,7 @@ class episodes:
                 if not episodeplot: episodeplot = '0'
                 else: episodeplot = client.replaceHTMLCodes(six.ensure_str(episodeplot))
 
-                # if not self.tm_lang == 'en' and episodeplot == '0':
+                # if not self.lang == 'en' and episodeplot == '0':
                     # try:
                         # en_item = en_result.get('episodes', [])
                         # episodeplot = en_item['overview']
@@ -1479,29 +1440,19 @@ class episodes:
 
                 art = {}
 
-                if 'poster' in i and not i['poster'] == '0':
-                    art.update({'poster': i['poster'], 'tvshow.poster': i['poster'], 'season.poster': i['poster']})
-                else:
-                    art.update({'poster': addonPoster, 'tvshow.poster': addonPoster, 'season.poster': addonPoster})
+                poster = meta.get('poster', '') or addonPoster
 
-                if 'thumb' in i and not i['thumb'] == '0':
-                    art.update({'icon': i['thumb'], 'thumb': i['thumb'], 'poster': i['thumb']})
-                elif 'fanart' in i and not i['fanart'] == '0':
-                    art.update({'icon': i['fanart'], 'thumb': i['fanart']})
-                elif 'poster' in i and not i['poster'] == '0':
-                    art.update({'icon': i['poster'], 'thumb': i['poster']})
-                else:
-                    art.update({'icon': addonFanart, 'thumb': addonFanart})
+                fanart = meta.get('fanart', '') or addonFanart
 
-                if 'banner' in i and not i['banner'] == '0':
-                    art.update({'banner': i['banner']})
-                elif 'fanart' in i and not i['fanart'] == '0':
-                    art.update({'banner': i['fanart']})
-                else:
-                    art.update({'banner': addonBanner})
+                banner = meta.get('banner', '') or fanart
 
-                if settingFanart == 'true' and 'fanart' in i and not i['fanart'] == '0':
-                    art.update({'fanart': i['fanart']})
+                thumb = meta.get('thumb', '') or fanart
+
+                meta.update({'poster': poster, 'fanart': fanart, 'banner': banner})
+                art.update({'icon': thumb, 'thumb': thumb, 'banner': banner, 'poster': thumb, 'tvshow.poster': poster, 'season.poster': poster})
+
+                if settingFanart == 'true':
+                    art.update({'fanart': fanart})
                 elif not addonFanart == None:
                     art.update({'fanart': addonFanart})
 

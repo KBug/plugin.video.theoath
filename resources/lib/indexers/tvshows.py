@@ -58,7 +58,6 @@ class tvshows:
         self.tvmaze_link = 'https://www.tvmaze.com'
         self.tmdb_link = 'https://api.themoviedb.org/3'
         self.logo_link = 'https://i.imgur.com/'
-        self.tvdb_key = api_keys.tvdb_key
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
         self.trakt_user = control.setting('trakt.user').strip()
@@ -66,23 +65,18 @@ class tvshows:
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.user = control.setting('fanart.tv.user') + str('')
         self.items_per_page = str(control.setting('items.per.page')) or '20'
-        self.lang = control.apiLanguage()['tvdb']
+        self.lang = control.apiLanguage()['tmdb'] or 'en'
 
-        self.tm_lang = control.apiLanguage()['tmdb'] or 'en'
         self.tm_user = control.setting('tm.user') or api_keys.tmdb_key
-        self.tmdb_api_link = 'https://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=aggregate_credits,content_ratings,external_ids' % ('%s', self.tm_user, self.tm_lang)
+        self.tmdb_api_link = 'https://api.themoviedb.org/3/tv/%s?api_key=%s&language=%s&append_to_response=aggregate_credits,content_ratings,external_ids' % ('%s', self.tm_user, self.lang)
         self.tmdb_by_imdb = 'https://api.themoviedb.org/3/find/%s?api_key=%s&external_source=imdb_id' % ('%s', self.tm_user)
         self.tmdb_networks_link = 'https://api.themoviedb.org/3/discover/tv?api_key=%s&sort_by=popularity.desc&with_networks=%s&page=1' % (self.tm_user, '%s')
         self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
 
         self.search_link = 'https://api.trakt.tv/search/show?limit=20&page=1&query='
         self.tvmaze_info_link = 'https://api.tvmaze.com/shows/%s'
-        self.tvdb_info_link = 'https://thetvdb.com/api/%s/series/%s/%s.xml' % (self.tvdb_key, '%s', self.lang)
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/tv/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
-        self.tvdb_by_imdb = 'https://thetvdb.com/api/GetSeriesByRemoteID.php?imdbid=%s'
-        self.tvdb_by_query = 'https://thetvdb.com/api/GetSeries.php?seriesname=%s'
-        self.tvdb_image = 'https://thetvdb.com/banners/'
 
         self.persons_link = 'https://www.imdb.com/search/name?count=100&name='
         self.personlist_link = 'https://www.imdb.com/search/name?count=100&gender=male,female'
@@ -368,6 +362,7 @@ class tvshows:
             ('Netflix', '213', 'https://i.imgur.com/02VN1wq.png'),
             ('Nick Junior', '35', 'https://i.imgur.com/leuCWYt.png'),
             ('Nickelodeon', '13', 'https://i.imgur.com/OUVoqYc.png'),
+            ('Paramount Network', '2076', 'https://i.imgur.com/oEz8xLB.png'),
             ('PBS', '14', 'https://i.imgur.com/r9qeDJY.png'),
             ('Showtime', '67', 'https://i.imgur.com/SawAYkO.png'),
             ('Sky Atlantic', '1063', 'https://i.imgur.com/9u6M0ef.png'),
@@ -1153,8 +1148,8 @@ class tvshows:
             if tmdb == '0': raise Exception()
 
             en_url = self.tmdb_api_link % (tmdb)# + ',images'
-            f_url = self.tmdb_api_link % (tmdb) + ',translations'#,images&include_image_language=en,%s,null' % self.tm_lang
-            if self.tm_lang == 'en':
+            f_url = self.tmdb_api_link % (tmdb) + ',translations'#,images&include_image_language=en,%s,null' % self.lang
+            if self.lang == 'en':
                 item = requests.get(en_url, timeout=10, verify=True).json()
             else:
                 item = requests.get(f_url, timeout=10, verify=True).json()
@@ -1235,7 +1230,7 @@ class tvshows:
             if not tagline: tagline = '0'
             else: tagline = client.replaceHTMLCodes(six.ensure_str(tagline, errors='replace'))
 
-            if not self.tm_lang == 'en' and plot == '0':
+            if not self.lang == 'en' and plot == '0':
                 try:
                     translations = item.get('translations', {})
                     translations = translations.get('translations', [])
@@ -1271,7 +1266,7 @@ class tvshows:
 
             # try:
                 # poster2 = art['posters']
-                # poster2 = [x for x in poster2 if x.get('iso_639_1') == self.tm_lang] + [x for x in poster2 if x.get('iso_639_1') == 'en'] + [x for x in poster2 if x.get('iso_639_1') not in [self.tm_lang, 'en']]
+                # poster2 = [x for x in poster2 if x.get('iso_639_1') == self.lang] + [x for x in poster2 if x.get('iso_639_1') == 'en'] + [x for x in poster2 if x.get('iso_639_1') not in [self.lang, 'en']]
                 # poster2 = sorted(poster2, key=lambda x: x['width'])[0]
                 # poster2 = poster2['file_path']
                 # poster2 = self.tm_img_link % ('500', poster2)
@@ -1282,7 +1277,7 @@ class tvshows:
 
             # try:
                 # fanart = art['backdrops']
-                # fanart = [x for x in fanart if x.get('iso_639_1') == self.tm_lang] + [x for x in fanart if x.get('iso_639_1') == 'en'] + [x for x in fanart if x.get('iso_639_1') not in [self.tm_lang, 'en']]
+                # fanart = [x for x in fanart if x.get('iso_639_1') == self.lang] + [x for x in fanart if x.get('iso_639_1') == 'en'] + [x for x in fanart if x.get('iso_639_1') not in [self.lang, 'en']]
                 # fanart = [x for x in fanart if x.get('width') == 1920] + [x for x in fanart if x.get('width') < 1920]
                 # fanart = [(x['width'], x['file_path']) for x in fanart]
                 # fanart = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart]
@@ -1361,7 +1356,7 @@ class tvshows:
 
             #if artmeta == False: raise Exception()
 
-            meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.tm_lang, 'user': self.user, 'item': item}
+            meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
             self.meta.append(meta)
         except:
             # failure = traceback.format_exc()
@@ -1518,8 +1513,8 @@ class tvshows:
                 # if flatten == True:
                     # url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&fanart=%s&duration=%s' % (sysaddon, systitle, year, imdb, tmdb, fanart, i['duration'])
                 # else:
-                    # url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&fanart=%s' % (sysaddon, systitle, year, imdb, tmdb, fanart)
-                url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&fanart=%s' % (sysaddon, systitle, year, imdb, tmdb, fanart)
+                    # url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s' % (sysaddon, systitle, year, imdb, tmdb)
+                url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s' % (sysaddon, systitle, year, imdb, tmdb)
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:

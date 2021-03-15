@@ -1,4 +1,4 @@
-[B][COLOR gold]v4.0.00x[/COLOR][/B]
+[B][COLOR gold]v4.00.xx[/COLOR][/B]
 - Switched to TMDb API for TV Shows metadata
     [I]Note:[/I]  This is a big change - large parts of the code have been re-written
     and many other parts (some obvious some not) have been touched.

@@ -302,7 +302,7 @@ elif action == 'tvUserlists':
 
 elif action == 'seasons':
     from resources.lib.indexers import episodes
-    episodes.seasons().get(tvshowtitle, year, imdb, tmdb, fanart)
+    episodes.seasons().get(tvshowtitle, year, imdb, tmdb)
 
 elif action == 'episodes':
     from resources.lib.indexers import episodes
@@ -430,7 +430,7 @@ elif action == 'random':
         r = sys.argv[0]+"?action=play"
     elif rtype == 'season':
         from resources.lib.indexers import episodes
-        rlist = episodes.seasons().get(tvshowtitle, year, imdb, tmdb, fanart, create_directory=False)
+        rlist = episodes.seasons().get(tvshowtitle, year, imdb, tmdb, create_directory=False)
         r = sys.argv[0]+"?action=random&rtype=episode"
     elif rtype == 'show':
         from resources.lib.indexers import tvshows
