@@ -80,7 +80,7 @@ class seasons:
             if tmdb == '0' and not imdb == '0':
                 try:
                     url = self.tmdb_by_imdb % imdb
-                    result = requests.get(url, timeout=10, verify=True).json()
+                    result = requests.get(url, timeout=10).json()
                     id = result.get('tv_results', [])[0]
                     tmdb = id.get('id')
                     if not tmdb: tmdb = '0'
@@ -119,13 +119,13 @@ class seasons:
             seasons_en_url = self.tmdb_show_link % (tmdb, 'en')
             seasons_lite_url = self.tmdb_show_lite_link % tmdb
             if self.lang == 'en':
-                item = requests.get(seasons_en_url, timeout=10, verify=True).json()
+                item = requests.get(seasons_en_url, timeout=10).json()
             elif lite == True:
-                item = requests.get(seasons_lite_url, timeout=10, verify=True).json()
+                item = requests.get(seasons_lite_url, timeout=10).json()
             else:
-                item = requests.get(seasons_url, timeout=10, verify=True).json()
+                item = requests.get(seasons_url, timeout=10).json()
             item = control.six_decode(item)
-            #item = requests.get(url, timeout=10, verify=True).content
+            #item = requests.get(url, timeout=10).content
             #item = utils.json_loads_as_str(item)
             #log_utils.log('tmdb_item: ' + str(item))
             if item == None: raise Exception()
@@ -757,7 +757,7 @@ class episodes:
             if (not tmdb or tmdb == '0') and not i['imdb'] == '0':
                 try:
                     url = self.tmdb_by_imdb % i['imdb']
-                    result = requests.get(url, timeout=10, verify=True).json()
+                    result = requests.get(url, timeout=10).json()
                     id = result.get('tv_results', [])[0]
                     tmdb = id.get('id')
                     if not tmdb: tmdb = '0'
@@ -780,10 +780,10 @@ class episodes:
                 _season = str(int(i['snum']) + 1)
 
                 url = self.tmdb_episode_link % (tmdb, i['snum'], _episode)
-                result = requests.get(url, timeout=10, verify=True).json()
+                result = requests.get(url, timeout=10).json()
                 if result.get('success') == False:
                     url2 = self.tmdb_episode_link % (tmdb, _season, '1')
-                    result = requests.get(url2, timeout=10, verify=True).json()
+                    result = requests.get(url2, timeout=10).json()
                 item = control.six_decode(result)
 
                 try: premiered = item['air_date']
@@ -903,7 +903,7 @@ class episodes:
             if (not tmdb or tmdb == '0') and not i['imdb'] == '0':
                 try:
                     url = self.tmdb_by_imdb % i['imdb']
-                    result = requests.get(url, timeout=10, verify=True).json()
+                    result = requests.get(url, timeout=10).json()
                     id = result.get('tv_results', [])[0]
                     tmdb = id.get('id')
                     if not tmdb: tmdb = '0'
@@ -924,7 +924,7 @@ class episodes:
 
                 if i['season'] == '0': raise Exception()
                 url = self.tmdb_episode_link % (tmdb, i['season'], i['episode'])
-                result = requests.get(url, timeout=10, verify=True).json()
+                result = requests.get(url, timeout=10).json()
                 item = control.six_decode(result)
 
                 try: premiered = item['air_date']
@@ -1163,7 +1163,7 @@ class episodes:
             if tmdb == '0' and not imdb == '0':
                 try:
                     url = self.tmdb_by_imdb % imdb
-                    result = requests.get(url, timeout=10, verify=True).json()
+                    result = requests.get(url, timeout=10).json()
                     id = result.get('tv_results', [])[0]
                     tmdb = id.get('id')
                     if not tmdb: tmdb = '0'
@@ -1202,9 +1202,9 @@ class episodes:
             episodes_en_url = self.tmdb_season_lite_link % (tmdb, season)
             episodes_lite_url = self.tmdb_season_lite_link % (tmdb, season)
             if lite == False:
-                result = requests.get(episodes_url, timeout=10, verify=True).json()
+                result = requests.get(episodes_url, timeout=10).json()
             else:
-                result = requests.get(episodes_lite_url, timeout=10, verify=True).json()
+                result = requests.get(episodes_lite_url, timeout=10).json()
             result = control.six_decode(result)
             episodes = result.get('episodes', [])
             r_cast = result.get('aggregate_credits', {}).get('cast', [])

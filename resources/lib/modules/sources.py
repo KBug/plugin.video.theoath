@@ -1213,6 +1213,9 @@ class sources:
         filter = [i for i in items if i['source'].lower() in self.hostblockDict]# and i['debrid'] == '']
         items = [i for i in items if not i in filter]
 
+        filter = [i for i in items if 'uncached' in i['source'].lower()]
+        items = [i for i in items if not i in filter]
+
         items = [i for i in items if ('autoplay' in i and i['autoplay'] == True) or not 'autoplay' in i]
 
         if control.setting('autoplay.sd') == 'true':
