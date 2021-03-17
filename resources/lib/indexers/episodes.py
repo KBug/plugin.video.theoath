@@ -658,7 +658,7 @@ class episodes:
                     title = item.get('title') or title
                     plot = item.get('overview') or plot
 
-                    tvshowtitle = trakt.getTVShowTranslation(imdb, lang=self.lang) or tvshowtitle
+                    #tvshowtitle = trakt.getTVShowTranslation(imdb, lang=self.lang) or tvshowtitle
                 except:
                     pass
 

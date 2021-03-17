@@ -1,4 +1,4 @@
-[B][COLOR gold]v4.00.03[/COLOR][/B]
+[B][COLOR gold]v4.00.03-4[/COLOR][/B]
 - Withdraw uncached torrents from autoplay
 - Fixed issue where local (translated) TV show title would pass for scraping
 - Code cleanup
