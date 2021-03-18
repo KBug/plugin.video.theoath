@@ -1,3 +1,8 @@
+[B][COLOR gold]v4.00.05[/COLOR][/B]
+- Fixed setting Viewtypes
+- Fixed issues with some episodes listings
+- Some more code cleanup
+
 [B][COLOR gold]v4.00.03-4[/COLOR][/B]
 - Withdraw uncached torrents from autoplay
 - Fixed issue where local (translated) TV show title would pass for scraping

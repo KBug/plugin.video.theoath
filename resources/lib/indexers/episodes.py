@@ -177,7 +177,7 @@ class seasons:
             try: show_plot = item['overview']
             except: show_plot = ''
             if not show_plot: show_plot = '0'
-            show_plot = six.ensure_str(show_plot)
+            else: show_plot = client.replaceHTMLCodes(six.ensure_str(show_plot, errors='replace'))
 
             if not self.lang == 'en' and show_plot == '0':
                 try:
@@ -185,7 +185,7 @@ class seasons:
                     translations = translations.get('translations', [])
                     fallback_item = [x['data'] for x in translations if x.get('iso_639_1') == 'en'][0]
                     show_plot = fallback_item['overview']
-                    show_plot = six.ensure_str(show_plot)
+                    show_plot = client.replaceHTMLCodes(six.ensure_str(show_plot, errors='replace'))
                 except:
                     pass
 
@@ -218,7 +218,7 @@ class seasons:
                     if self.showunaired != 'true': raise Exception()
 
                 plot = item['overview']
-                if plot: plot = client.replaceHTMLCodes(six.ensure_str(plot))
+                if plot: plot = client.replaceHTMLCodes(six.ensure_str(plot, errors='replace'))
                 else: plot = show_plot
 
                 try: poster_path = item['poster_path']
@@ -464,6 +464,7 @@ class episodes:
                 self.blist = cache.get(self.trakt_episodes_list, 720, url, self.trakt_user, self.lang)
                 self.list = []
                 self.list = cache.get(self.trakt_episodes_list, 0, url, self.trakt_user, self.lang)
+                self.list = sorted(self.list, key=lambda k: k['premiered'], reverse=True)
 
             elif self.trakt_link in url and '/users/' in url:
                 self.list = cache.get(self.trakt_list, 0.3, url, self.trakt_user)
@@ -598,8 +599,8 @@ class episodes:
                 if episode == '0': raise Exception()
 
                 tvshowtitle = item['show']['title']
-                if tvshowtitle == None or tvshowtitle == '': raise Exception()
-                tvshowtitle = client.replaceHTMLCodes(tvshowtitle)
+                if not tvshowtitle: raise Exception()
+                else: tvshowtitle = client.replaceHTMLCodes(six.ensure_str(tvshowtitle))
 
                 year = item['show']['year']
                 year = re.sub('[^0-9]', '', str(year))
@@ -621,16 +622,16 @@ class episodes:
                 except: premiered = '0'
 
                 studio = item['show']['network']
-                if studio == None: studio = '0'
+                if not studio: studio = '0'
 
                 genre = item['show']['genres']
                 genre = [i.title() for i in genre]
-                if genre == []: genre = '0'
-                genre = ' / '.join(genre)
+                if not genre: genre = '0'
+                else: genre = ' / '.join(genre)
 
                 try: duration = str(item['show']['runtime'])
-                except: duration = '0'
-                if duration == None: duration = '0'
+                except: duration = ''
+                if not duration: duration = '0'
 
                 try: rating = str(item['episode']['rating'])
                 except: rating = '0'
@@ -640,30 +641,34 @@ class episodes:
                 except: votes = '0'
                 try: votes = str(format(int(votes),',d'))
                 except: pass
-                if votes == None: votes = '0'
+                if not votes: votes = '0'
 
                 mpaa = item['show']['certification']
-                if mpaa == None: mpaa = '0'
+                if not mpaa: mpaa = '0'
 
-                plot = item['episode']['overview']
-                if plot == None or plot == '': plot = item['show']['overview']
-                if plot == None or plot == '': plot = '0'
-                plot = client.replaceHTMLCodes(plot)
+                try: plot = item['episode']['overview']
+                except: plot = ''
+                if not plot: plot = item['show']['overview']
+                if not plot: plot = '0'
+                else: plot = client.replaceHTMLCodes(six.ensure_str(plot, errors='replace'))
+
+                try:
+                    paused_at = item.get('paused_at', '0') or '0'
+                    paused_at = re.sub('[^0-9]+', '', paused_at)
+                except:
+                    paused_at = '0'
 
                 try:
                     if self.lang == 'en': raise Exception()
 
-                    item = trakt.getTVShowTranslation(imdb, lang=self.lang, season=season, episode=episode, full=True)
+                    trans_item = trakt.getTVShowTranslation(imdb, lang=self.lang, season=season, episode=episode, full=True)
 
-                    title = item.get('title') or title
-                    plot = item.get('overview') or plot
+                    title = client.replaceHTMLCodes(six.ensure_str(trans_item.get('title'))) or title
+                    plot = client.replaceHTMLCodes(six.ensure_str(trans_item.get('overview'), errors='replace')) or plot
 
                     #tvshowtitle = trakt.getTVShowTranslation(imdb, lang=self.lang) or tvshowtitle
                 except:
                     pass
-
-                paused_at = item.get('paused_at', '0') or '0'
-                paused_at = re.sub('[^0-9]+', '', paused_at)
 
                 itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio, 'genre': genre,
                                  'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'thumb': '0', 'paused_at': paused_at})
@@ -699,26 +704,26 @@ class episodes:
                 episode = str(episode[-1]['number'])
 
                 tvshowtitle = item['show']['title']
-                if tvshowtitle == None or tvshowtitle == '': raise Exception()
-                tvshowtitle = client.replaceHTMLCodes(tvshowtitle)
+                if not tvshowtitle: raise Exception()
+                else: tvshowtitle = client.replaceHTMLCodes(six.ensure_str(tvshowtitle))
 
                 year = item['show']['year']
                 year = re.sub('[^0-9]', '', str(year))
                 if int(year) > int(self.datetime.strftime('%Y')): raise Exception()
 
                 imdb = item['show']['ids']['imdb']
-                if imdb == None or imdb == '': imdb = '0'
+                if not imdb: imdb = '0'
 
                 tvdb = item['show']['ids']['tvdb']
-                #if tvdb == None or tvdb == '': raise Exception()
-                tvdb = re.sub('[^0-9]', '', str(tvdb))
+                if not tvdb: tvdb = '0'
+                else: tvdb = re.sub('[^0-9]', '', str(tvdb))
 
                 tmdb = item['show']['ids']['tmdb']
                 if not tmdb: tmdb = '0'
                 else: tmdb = str(tmdb)
 
                 studio = item.get('show').get('network', '0')
-                if studio == None or studio == '': studio = '0'
+                if not studio: studio = '0'
 
                 duration = item['show']['runtime']
                 if not duration: duration = '0'
@@ -730,8 +735,8 @@ class episodes:
                 if not status: status = '0'
 
                 genre = item['show']['genres']
-                if genre == []: genre = '0'
-                genre = ' / '.join(genre)
+                if not genre: genre = '0'
+                else: genre = ' / '.join(genre)
 
                 last_watched = item['last_watched_at']
                 if last_watched == None or last_watched == '': last_watched = '0'
@@ -753,10 +758,10 @@ class episodes:
 
         def items_list(i):
 
-            tmdb = i['tmdb']
-            if (not tmdb or tmdb == '0') and not i['imdb'] == '0':
+            tmdb, imdb, tvdb = i['tmdb'], i['imdb'], i['tvdb']
+            if (not tmdb or tmdb == '0') and not imdb == '0':
                 try:
-                    url = self.tmdb_by_imdb % i['imdb']
+                    url = self.tmdb_by_imdb % imdb
                     result = requests.get(url, timeout=10).json()
                     id = result.get('tv_results', [])[0]
                     tmdb = id.get('id')
@@ -789,7 +794,6 @@ class episodes:
                 try: premiered = item['air_date']
                 except: premiered = ''
                 if not premiered: premiered = '0'
-                premiered = six.ensure_str(premiered)
 
                 unaired = ''
                 if i['status'] == 'Ended': pass
@@ -799,9 +803,8 @@ class episodes:
                     if self.showunaired != 'true': raise Exception()
 
                 title = item['name']
-                if title == '': title = '0'
-                title = client.replaceHTMLCodes(title)
-                title = six.ensure_str(title)
+                if not title: title = '0'
+                else: title = client.replaceHTMLCodes(six.ensure_str(title))
 
                 season = item['season_number']
                 season = '%01d' % season
@@ -812,11 +815,8 @@ class episodes:
                 episode = '%01d' % episode
 
                 tvshowtitle = i['tvshowtitle']
-                imdb, tvdb = i['imdb'], i['tvdb']
 
                 year = i['year']
-                try: year = six.ensure_str(year)
-                except: pass
 
                 poster = '0'
 
@@ -836,12 +836,10 @@ class episodes:
                 except: votes = ''
                 if not votes: votes = '0'
 
-                try:
-                    plot = item['overview']
-                    plot = six.ensure_str(plot)
-                except:
-                    plot = ''
+                try: plot = item['overview']
+                except: plot = ''
                 if not plot: plot = '0'
+                else: plot = client.replaceHTMLCodes(six.ensure_str(plot, errors='replace'))
 
                 try:
                     r_crew = item['crew']
@@ -899,10 +897,10 @@ class episodes:
 
         def items_list(i):
 
-            tmdb = i['tmdb']
-            if (not tmdb or tmdb == '0') and not i['imdb'] == '0':
+            tmdb, imdb, tvdb = i['tmdb'], i['imdb'], i['tvdb']
+            if (not tmdb or tmdb == '0') and not imdb == '0':
                 try:
-                    url = self.tmdb_by_imdb % i['imdb']
+                    url = self.tmdb_by_imdb % imdb
                     result = requests.get(url, timeout=10).json()
                     id = result.get('tv_results', [])[0]
                     tmdb = id.get('id')
@@ -927,15 +925,9 @@ class episodes:
                 result = requests.get(url, timeout=10).json()
                 item = control.six_decode(result)
 
-                try: premiered = item['air_date']
-                except: premiered = ''
-                if not premiered: premiered = '0'
-                premiered = six.ensure_str(premiered)
-
                 title = item['name']
-                if title == '': title = '0'
-                title = client.replaceHTMLCodes(title)
-                title = six.ensure_str(title)
+                if not title: title = '0'
+                else: title = client.replaceHTMLCodes(six.ensure_str(title))
 
                 season = item['season_number']
                 season = '%01d' % season
@@ -946,13 +938,11 @@ class episodes:
                 episode = '%01d' % episode
 
                 tvshowtitle = i['tvshowtitle']
-                imdb, tvdb = i['imdb'], i['tvdb']
+                premiered = i['premiered']
 
-                status, duration, mpaa, studio, genre = i['status'], i['duration'], i['mpaa'], i['studio'], i['genre']
+                status, duration, mpaa, studio, genre, year = i['status'], i['duration'], i['mpaa'], i['studio'], i['genre'], i['year']
 
-                year = i['year']
-                try: year = six.ensure_str(year)
-                except: pass
+                rating, votes = i['rating'], i['votes']
 
                 poster = '0'
 
@@ -964,14 +954,10 @@ class episodes:
                 except: thumb = ''
                 if not thumb : thumb = '0'
 
-                rating, votes = i['rating'], i['votes']
-
-                try:
-                    plot = item['overview']
-                    plot = six.ensure_str(plot)
-                except:
-                    plot = ''
+                try: plot = item['overview']
+                except: plot = ''
                 if not plot: plot = i['plot']
+                else: plot = client.replaceHTMLCodes(six.ensure_str(plot, errors='replace'))
 
                 try:
                     r_crew = item['crew']
@@ -1223,9 +1209,10 @@ class episodes:
 
         for item in episodes:
             try:
-                title = item['name']
-                if title == '': title = '0'
-                title = six.ensure_str(title)
+                try: title = item['name']
+                except: title = ''
+                if not title: title = '0'
+                else: title = client.replaceHTMLCodes(six.ensure_str(title))
 
                 label = title
 
@@ -1250,12 +1237,10 @@ class episodes:
                 except: votes = ''
                 if not votes: votes = '0'
 
-                try:
-                    episodeplot = item['overview']
-                except:
-                    episodeplot = ''
+                try: episodeplot = item['overview']
+                except: episodeplot = ''
                 if not episodeplot: episodeplot = '0'
-                else: episodeplot = client.replaceHTMLCodes(six.ensure_str(episodeplot))
+                else: episodeplot = client.replaceHTMLCodes(six.ensure_str(episodeplot, errors='replace'))
 
                 # if not self.lang == 'en' and episodeplot == '0':
                     # try:

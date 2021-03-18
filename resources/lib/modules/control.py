@@ -336,7 +336,8 @@ def openSettings(query=None, id=addonInfo('id')):
 
 
 def getCurrentViewId():
-    return str(getCurrentWinId.getFocusId())
+    win = xbmcgui.Window(xbmcgui.getCurrentWindowId())
+    return str(win.getFocusId())
 
 
 def refresh():
