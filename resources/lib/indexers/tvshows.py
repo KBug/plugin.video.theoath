@@ -1181,7 +1181,7 @@ class tvshows:
             try: originaltitle = item['original_name']
             except: originaltitle = ''
             if originaltitle: originaltitle = six.ensure_str(originaltitle, errors='replace')
-            else:: originaltitle = title
+            else: originaltitle = title
 
             try: premiered = item['first_air_date']
             except: premiered = ''

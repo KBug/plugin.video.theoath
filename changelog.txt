@@ -1,4 +1,4 @@
-[B][COLOR gold]v4.00.05[/COLOR][/B]
+[B][COLOR gold]v4.00.05-6[/COLOR][/B]
 - Fixed setting Viewtypes
 - Fixed issues with some episodes listings
 - Some more code cleanup
