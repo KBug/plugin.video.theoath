@@ -20,6 +20,7 @@
 
 import re
 import unicodedata
+from string import printable
 from six import ensure_str, ensure_text, PY2
 
 
@@ -149,9 +150,10 @@ def get_query(title):
 def normalize(title):
     try:
         if PY2:
-            try: return ensure_str(ensure_text(title, encoding='ascii'))
+            try: return title.decode('ascii').encode("utf-8")
             except: pass
-        return ''.join(c for c in unicodedata.normalize('NFKD', ensure_text(ensure_str(title))) if unicodedata.category(c) != 'Mn')
+            return str(''.join(c for c in unicodedata.normalize('NFKD', unicode(title.decode('utf-8'))) if c in printable))
+        return ''.join(c for c in unicodedata.normalize('NFKD', ensure_text(title)) if c in printable)
     except:
         return title
 
@@ -167,7 +169,8 @@ def scene_title(title, year):
         title = ensure_str(title)
     except:
         pass
-    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
+    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ')
+    title = title.replace('!', '').replace('?', '').replace('...', '').replace(',', '').replace(':', '').replace(';', '').replace('"', '').replace("'", "")
     title = re.sub(' {2,}', ' ', title)
     if title.startswith('Birdman or') and year == '2014': title = 'Birdman'
     if title == 'Birds of Prey (and the Fantabulous Emancipation of One Harley Quinn)' and year == '2020': title = 'Birds of Prey'
@@ -181,7 +184,8 @@ def scene_tvtitle(title, year, season, episode):
         title = ensure_str(title)
     except:
         pass
-    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace('!', '').replace('?', '').replace('...', '').replace(',', '')
+    title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ')
+    title = title.replace('!', '').replace('?', '').replace('...', '').replace(',', '').replace(':', '').replace(';', '').replace('"', '').replace("'", "")
     title = re.sub(' {2,}', ' ', title)
     if title in ['The Haunting', 'The Haunting of Bly Manor', 'The Haunting of Hill House'] and year == '2018':
         if season == '1': title = 'The Haunting of Hill House'

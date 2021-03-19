@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.00.07[/COLOR][/B]
+- Tweaked title query for scraping
+
 [B][COLOR gold]v4.00.05-6[/COLOR][/B]
 - Fixed setting Viewtypes
 - Fixed issues with some episodes listings
