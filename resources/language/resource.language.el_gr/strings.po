@@ -588,8 +588,8 @@ msgid "Log file is empty.[CR]Please enable debugging in add-on\'s settings and r
 msgstr "Το αρχείο του log είναι άδειο.[CR]Ενεργοποιήστε το debugging στις ρυθμίσεις του πρόσθετου και επανεκκινήστε το Kodi.[CR]Αναπαράγετε το πρόβλημα και δοκιμάστε ξανά.[CR]ΑΠΕΝΕΡΓΟΠΟΙΗΣΤΕ το debugging μετά."
 
 msgctxt "#32141"
-msgid "Your log file was uploaded to:[CR][CR]    %s"
-msgstr "Το αρχείο log σας ανέβηκε εδώ:[CR][CR]    %s"
+msgid "Your log file was uploaded to:[CR][CR]    [B]%s[/B]"
+msgstr "Το αρχείο log σας ανέβηκε εδώ:[CR][CR]    [B]%s[/B]"
 
 msgctxt "#32200"
 msgid "No Color"

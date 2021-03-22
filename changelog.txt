@@ -1,5 +1,8 @@
-[B][COLOR gold]v4.00.08[/COLOR][/B]
-- Added function on Tools menu to upload add-on's log to a paste website, for easier debugging
+[B][COLOR gold]v4.00.08-9[/COLOR][/B]
+- Added logging functions (on Tools menu):
+    View add-on's log
+    Upload add-on's log to a paste website, for easier debugging
+    Empty log
 - Other logging changes
 
 [B][COLOR gold]v4.00.07[/COLOR][/B]

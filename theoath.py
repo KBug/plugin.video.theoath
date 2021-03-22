@@ -208,6 +208,10 @@ elif action == 'emptyLog':
     from resources.lib.indexers import navigator
     navigator.navigator().emptyLog()
 
+elif action == 'viewLog':
+    from resources.lib.modules import log_utils
+    log_utils.view_log()
+
 elif action == 'movies':
     from resources.lib.indexers import movies
     movies.movies().get(url)

@@ -20,7 +20,7 @@
 import os
 import traceback
 from datetime import datetime
-from kodi_six import xbmc
+from kodi_six import xbmc, xbmcgui
 
 import six
 
@@ -124,4 +124,28 @@ def empty_log():
     except:
         control.infoDialog('Error emptying log file', heading=name, time=3000, sound=True)
         log('log_empty_fail', 1)
+
+
+def view_log():
+    if six.PY2:
+        from io import open as io_open
+        r = io_open(log_file, 'r', encoding='utf-8')
+    else:
+        r = open(log_file, 'r', encoding='utf-8')
+    text = r.read()
+    r.close()
+    id = 10147
+    control.execute('ActivateWindow(%d)' % id)
+    control.sleep(500)
+    win = xbmcgui.Window(id)
+    retry = 50
+    while (retry > 0):
+        try:
+            control.sleep(10)
+            retry -= 1
+            win.getControl(1).setLabel('[COLOR gold]theoath.log[/COLOR]')
+            win.getControl(5).setText(text)
+            return
+        except:
+            pass
 
