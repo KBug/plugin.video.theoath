@@ -29,7 +29,6 @@ import simplejson as json
 import os
 import re
 import sys
-#import traceback
 from kodi_six import xbmc
 
 import six
@@ -334,8 +333,7 @@ class libtvshows:
         if self.library_setting == 'true' and not control.condVisibility('Library.IsScanningVideo') and files_added > 0:
             control.execute('UpdateLibrary(video)')
         # except:
-            # failure = traceback.format_exc()
-            # log_utils.log('lib_tv_add: ' + str(failure))
+            # log_utils.log('lib_tv_add', 1)
 
     def silent(self, url):
         control.idle()
@@ -411,8 +409,7 @@ class libtvshows:
             lib_tools.create_folder(folder)
             lib_tools.write_file(os.path.join(folder, lib_tools.legal_filename('%s S%02dE%02d' % (transtitle, int(season), int(episode))) + '.strm'), content)
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('strmFile: ' + str(failure))
+            # log_utils.log('strmFile', 1)
             pass
 
 
@@ -472,15 +469,13 @@ class libepisodes:
 
                     items.append({'tvshowtitle': tvshowtitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb})
                 except:
-                    # failure = traceback.format_exc()
-                    # log_utils.log('lib_ep_upd1: ' + str(failure))
+                    # log_utils.log('lib_ep_upd1', 1)
                     pass
 
             items = [i for x, i in enumerate(items) if i not in items[x + 1:]]
             if len(items) == 0: raise Exception()
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('lib_ep_upd1: ' + str(failure))
+            # log_utils.log('lib_ep_upd1', 1)
             return
 
         try:
@@ -500,8 +495,7 @@ class libepisodes:
             dbcur = dbcon.cursor()
             dbcur.execute("CREATE TABLE IF NOT EXISTS tvshows (""id TEXT, ""items TEXT, ""UNIQUE(id)"");")
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('lib_ep_upd2: ' + str(failure))
+            # log_utils.log('lib_ep_upd2', 1)
             return
 
         try:
@@ -548,8 +542,7 @@ class libepisodes:
                 dbcur.execute("INSERT INTO tvshows Values (?, ?)", (item['imdb'], repr(it)))
                 dbcon.commit()
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('lib_ep_upd3: ' + str(failure))
+                # log_utils.log('lib_ep_upd3', 1)
                 pass
 
             try:
@@ -568,8 +561,7 @@ class libepisodes:
                 #log_utils.log('lib_it: ' + str(it))
                 if len(it) == 0: continue
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('lib_ep_upd4: ' + str(failure))
+                # log_utils.log('lib_ep_upd4', 1)
                 continue
 
             for i in it:
@@ -586,8 +578,7 @@ class libepisodes:
                     libtvshows().strmFile(i)
                     files_added += 1
                 except:
-                    # failure = traceback.format_exc()
-                    # log_utils.log('lib_ep_upd5: ' + str(failure))
+                    # log_utils.log('lib_ep_upd5', 1)
                     pass
 
         if self.infoDialog == True:

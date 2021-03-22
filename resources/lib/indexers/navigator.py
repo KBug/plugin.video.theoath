@@ -72,10 +72,12 @@ class navigator:
 
         self.endDirectory()
 
+
     def furk(self):
         self.addDirectoryItem('User Files', 'furkUserFiles', 'mytvnavigator.png', 'mytvnavigator.png')
         self.addDirectoryItem('Search', 'furkSearch', 'search.png', 'search.png')
         self.endDirectory()
+
 
     def movies(self, lite=False):
         self.addDirectoryItem(32011, 'movieGenres', 'genres.png', 'DefaultMovies.png')
@@ -364,6 +366,7 @@ class navigator:
 
         self.endDirectory()
 
+
     def showMosts(self):
         self.addDirectoryItem('Most Played This Week', 'tvshows&url=played1', 'trakt.png', 'playlist.jpg')
         self.addDirectoryItem('Most Played This Month', 'tvshows&url=played2', 'trakt.png', 'playlist.jpg')
@@ -380,26 +383,25 @@ class navigator:
 
         self.endDirectory()
 
+
     def tools(self):
         self.addDirectoryItem('[B]TheOath[/B] : Changelog', 'changelog', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32043, 'openSettings&query=0.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
-        self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32116, 'clearDebridCheck', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32108, 'cleanSettings', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32079, 'oathscrapersettings', 'icon.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png', isFolder=False)
         if not control.condVisibility('System.HasAddon(script.module.orion)'):
             self.addDirectoryItem('[B]Orion[/B] : Install', 'installOrion', 'orion.png', 'DefaultAddonProgram.png', isFolder=False)
         else:
             self.addDirectoryItem(32080, 'orionsettings', 'orion.png', 'DefaultAddonProgram.png', isFolder=False)
-        self.addDirectoryItem(32076, 'smuSettings', 'resolveurl.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32049, 'viewsNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32556, 'libraryNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('[B]TheOath[/B] : Cache Functions', 'cacheNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem('[B]TheOath[/B] : Log Functions', 'logNavigator', 'tools.png', 'DefaultAddonProgram.png')
+        self.addDirectoryItem(32108, 'cleanSettings', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
         self.addDirectoryItem(32073, 'authTrakt', 'trakt.png', 'DefaultAddonProgram.png', isFolder=False)
 
         self.endDirectory()
+
 
     def library(self):
         self.addDirectoryItem(32557, 'openSettings&query=6.0', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
@@ -415,6 +417,7 @@ class navigator:
 
         self.endDirectory()
 
+
     def downloads(self):
         movie_downloads = control.setting('movie.download.path')
         tv_downloads = control.setting('tv.download.path')
@@ -427,6 +430,23 @@ class navigator:
         self.endDirectory()
 
 
+    def cache_functions(self):
+        self.addDirectoryItem(32604, 'clearCacheSearch', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32050, 'clearSources', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32116, 'clearDebridCheck', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32052, 'clearCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem(32611, 'clearAllCache', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+
+        self.endDirectory()
+
+
+    def log_functions(self):
+        self.addDirectoryItem('[B]TheOath[/B] : Upload Log to hastebin', 'uploadLog', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+        self.addDirectoryItem('[B]TheOath[/B] : Empty Log', 'emptyLog', 'tools.png', 'DefaultAddonProgram.png', isFolder=False)
+
+        self.endDirectory()
+
+
     def search(self):
         self.addDirectoryItem(32001, 'movieSearch', 'search.png', 'DefaultMovies.png')
         self.addDirectoryItem(32002, 'tvSearch', 'search.png', 'DefaultTVShows.png')
@@ -434,6 +454,7 @@ class navigator:
         self.addDirectoryItem(32030, 'tvPerson', 'people-search.png', 'DefaultTVShows.png')
 
         self.endDirectory()
+
 
     def views(self):
         try:
@@ -529,6 +550,20 @@ class navigator:
         from resources.lib.modules import cache
         cache.cache_clear_all()
         control.infoDialog(control.lang(32057), sound=True, icon='INFO')
+
+    def uploadLog(self):
+        #control.idle()
+        yes = control.yesnoDialog(control.lang(32056))
+        if not yes: return
+        from resources.lib.modules import log_utils
+        log_utils.upload_log()
+
+    def emptyLog(self):
+        #control.idle()
+        yes = control.yesnoDialog(control.lang(32056))
+        if not yes: return
+        from resources.lib.modules import log_utils
+        log_utils.empty_log()
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
         try: name = control.lang(name)

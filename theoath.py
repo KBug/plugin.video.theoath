@@ -168,6 +168,14 @@ elif action == 'viewsNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().views()
 
+elif action == 'cacheNavigator':
+    from resources.lib.indexers import navigator
+    navigator.navigator().cache_functions()
+
+elif action == 'logNavigator':
+    from resources.lib.indexers import navigator
+    navigator.navigator().log_functions()
+
 elif action == 'clearCache':
     from resources.lib.indexers import navigator
     navigator.navigator().clearCache()
@@ -191,6 +199,14 @@ elif action == 'clearAllCache':
 elif action == 'infoCheck':
     from resources.lib.indexers import navigator
     navigator.navigator().infoCheck('')
+
+elif action == 'uploadLog':
+    from resources.lib.indexers import navigator
+    navigator.navigator().uploadLog()
+
+elif action == 'emptyLog':
+    from resources.lib.indexers import navigator
+    navigator.navigator().emptyLog()
 
 elif action == 'movies':
     from resources.lib.indexers import movies

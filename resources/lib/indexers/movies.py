@@ -35,7 +35,7 @@ from resources.lib.modules import api_keys
 from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,traceback
+import os,sys,re,datetime
 import simplejson as json
 
 import six
@@ -307,6 +307,7 @@ class movies:
             if idx == True and create_directory == True: self.movieDirectory(self.list)
             return self.list
         except:
+            log_utils.log('movies_get', 1)
             pass
 
 
@@ -588,6 +589,7 @@ class movies:
             if len(items) == 0:
                 items = result
         except:
+            log_utils.log('movies_trakt_list0', 1)
             return
 
         try:
@@ -661,6 +663,7 @@ class movies:
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'genre': genre, 'duration': duration, 'rating': rating, 'votes': votes,
                                   'mpaa': mpaa, 'plot': plot, 'tagline': tagline, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'poster': '0', 'next': next, 'paused_at': paused_at})
             except:
+                log_utils.log('movies_trakt_list1', 1)
                 pass
 
         return self.list
@@ -1121,6 +1124,7 @@ class movies:
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': '0', 'lang': self.lang, 'user': self.user, 'item': item}
             self.meta.append(meta)
         except:
+            log_utils.log('movies_superinfo', 1)
             pass
 
 
@@ -1291,6 +1295,7 @@ class movies:
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=False)
             except:
+                log_utils.log('movies_dir', 1)
                 pass
 
         try:

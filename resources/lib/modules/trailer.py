@@ -21,7 +21,6 @@
 import sys
 import simplejson as json
 import re
-import base64
 import six
 from six.moves import urllib_parse
 

@@ -46,8 +46,8 @@ def sources():
                     # [/ORION]
 
                     sourceDict.append((module_name, module.source()))
-                except Exception as e:
-                    log_utils.log('Could not load "%s": %s' % (module_name, e), log_utils.LOGDEBUG)
+                except:
+                    log_utils.log('Could not load "%s"' % module_name, 1)
         return sourceDict
     except:
         return []

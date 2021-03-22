@@ -19,12 +19,10 @@
 """
 
 
-#import traceback
-
 from resources.lib.modules import bookmarks
 from resources.lib.modules import control
 from resources.lib.modules import trakt
-#from resources.lib.modules import log_utils
+from resources.lib.modules import log_utils
 
 
 def getMovieIndicators(refresh=False):
@@ -272,8 +270,7 @@ def tvshows(tvshowtitle, imdb, tmdb, season, watched):
         try: dialog.close()
         except: pass
     except:
-        # failure = traceback.format_exc()
-        # log_utils.log('playcount_local_shows: ' + str(failure))
+        log_utils.log('playcount_local_shows', 1)
         try: dialog.close()
         except: pass
 
@@ -295,8 +292,7 @@ def tvshows(tvshowtitle, imdb, tmdb, season, watched):
             else: trakt.markTVShowAsNotWatched(imdb)
         trakt.cachesyncTVShows()
     except:
-        # failure = traceback.format_exc()
-        # log_utils.log('playcount_trakt_shows: ' + str(failure))
+        log_utils.log('playcount_trakt_shows', 1)
         pass
 
     control.refresh()

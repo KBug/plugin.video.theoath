@@ -19,7 +19,7 @@
 """
 
 
-import sys,re,random,datetime,time,traceback
+import sys,re,random,datetime,time
 import simplejson as json
 
 import six
@@ -359,14 +359,14 @@ class sources:
         if content == 'movie':
             #title = self.getTitle(title)
             title, year = cleantitle.scene_title(title, year)
-            #log_utils.log('movtitle is '+title+' year is '+year)
+            log_utils.log('movtitle is '+title+' year is '+year)
             localtitle = self.getLocalTitle(title, imdb, tmdb, content)
             aliases = self.getAliasTitles(imdb, localtitle, content)
             for i in sourceDict: threads.append(workers.Thread(self.getMovieSource, title, localtitle, aliases, year, imdb, i[0], i[1]))
         else:
             #tvshowtitle = self.getTitle(tvshowtitle)
             tvshowtitle, year, season, episode = cleantitle.scene_tvtitle(tvshowtitle, year, season, episode)
-            #log_utils.log('tvtitle is '+tvshowtitle+' year is '+year+' season is '+season)
+            log_utils.log('tvtitle is '+tvshowtitle+' year is '+year+' season is '+season)
             localtvshowtitle = self.getLocalTitle(tvshowtitle, imdb, tmdb, content)
             aliases = self.getAliasTitles(imdb, localtvshowtitle, content)
             #Disabled on 11/11/17 due to hang. Should be checked in the future and possible enabled again.
@@ -494,8 +494,8 @@ class sources:
                     else: progressDialog.update(max(1, percent), self.module_name, line1 + '[CR]' + line3)
                     # if len(mainleft) == 0: break
                     if end_time < current_time: break
-                except Exception as e:
-                    log_utils.log('Source fetching dialog exception : %s' % str(e), log_utils.LOGERROR)
+                except:
+                    log_utils.log('Source fetching dialog exception', 1)
                     break
                 # else: # old implementation that makes "priority: 0" scrapers to ignore the timeout setting
                     # try:
@@ -508,13 +508,12 @@ class sources:
                         # if not progressDialog == control.progressDialogBG: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
                         # else: progressDialog.update(max(1, percent), line1 + '[CR]' + line3)
                     # except Exception as e:
-                        # log_utils.log('Exception Raised: %s' % str(e), log_utils.LOGERROR)
+                        # log_utils.log('Exception Raised: %s' % str(e))
                         # break
 
                 control.sleep(250)
             except:
-                failure = traceback.format_exc()
-                log_utils.log('sourcefail: ' + str(failure))
+                log_utils.log('sourcefail', 1)
                 pass
 
         control.sleep(200)
@@ -774,8 +773,7 @@ class sources:
             else:
                 return
         except:
-            failure = traceback.format_exc()
-            log_utils.log('Torrent check - Exception: ' + str(failure))
+            log_utils.log('torrent_check', 1)
             control.infoDialog('Error Processing Torrents')
             return
 
@@ -832,8 +830,7 @@ class sources:
             if remove_dups == 'true' and len(self.sources) > 1:
                 _sources = list(self.uniqueSourcesGen(_sources))
         except:
-            failure = traceback.format_exc()
-            log_utils.log('DUP - Exception: ' + str(failure))
+            log_utils.log('DUP - Exception', 1)
             pass
 
         if remove_hevc == 'true':
@@ -1199,11 +1196,11 @@ class sources:
             except: pass
             del progressDialog
 
-        except Exception as e:
+        except:
             try: progressDialog.close()
             except: pass
             del progressDialog
-            log_utils.log('Error %s' % str(e), log_utils.LOGNOTICE)
+            log_utils.log('sourcesDialog', 1)
 
 
     def sourcesDirect(self, items):

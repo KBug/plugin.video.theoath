@@ -35,7 +35,7 @@ from resources.lib.modules import log_utils
 import six
 from six.moves import urllib_parse
 
-import os,sys,re,datetime,traceback
+import os,sys,re,datetime
 import simplejson as json
 
 import requests
@@ -108,8 +108,7 @@ class seasons:
                     pass
 
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tmdb-list0 Exception: ' + str(failure))
+            log_utils.log('tmdb-list0 Exception', 1)
             return
 
         try:
@@ -202,8 +201,7 @@ class seasons:
             else: fanart = '0'
 
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tmdb-list1 Exception: ' + str(failure))
+            log_utils.log('tmdb-list1 Exception', 1)
             pass
 
         for item in seasons:
@@ -233,8 +231,7 @@ class seasons:
                                   'cast': cast, 'castwiththumb': castwiththumb, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 #self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('seasons_dir Exception: ' + str(failure))
+                log_utils.log('seasons_dir Exception', 1)
                 pass
 
         return self.list
@@ -372,8 +369,7 @@ class seasons:
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('season-dir Exception: ' + str(failure))
+                log_utils.log('season-dir Exception', 1)
                 pass
 
         try: control.property(syshandle, 'showplot', items[0]['plot'])
@@ -438,8 +434,7 @@ class episodes:
                 self.list = self.tmdb_list(tvshowtitle, year, imdb, tmdb, fanart=None, duration=None, status=None, season=season, lite=True)
                 return self.list
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('episodes_get Exception: ' + str(failure))
+            log_utils.log('episodes_get Exception', 1)
             pass
 
 
@@ -578,9 +573,10 @@ class episodes:
             itemlist = []
             items = trakt.getTraktAsJson(u)
         except:
-            print("Unexpected error in info builder script:", sys.exc_info()[0])
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            print(exc_type, exc_tb.tb_lineno)
+            # print("Unexpected error in info builder script:", sys.exc_info()[0])
+            # exc_type, exc_obj, exc_tb = sys.exc_info()
+            # print(exc_type, exc_tb.tb_lineno)
+            log_utils.log('trakt_list0', 1)
             return
 
 
@@ -673,6 +669,7 @@ class episodes:
                 itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio, 'genre': genre,
                                  'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'thumb': '0', 'paused_at': paused_at})
             except:
+                log_utils.log('trakt_list1', 1)
                 pass
 
         itemlist = itemlist[::-1]
@@ -752,8 +749,7 @@ class episodes:
 
             items = [i for i in items if not i['tmdb'] in result]
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('TProgress1: ' + str(failure))
+            log_utils.log('TProgress1', 1)
             pass
 
         def items_list(i):
@@ -869,8 +865,7 @@ class episodes:
                                   'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes', 'unaired': unaired, '_last_watched': i['_last_watched'],
                                   'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, '_sort_key': max(i['_last_watched'],premiered)})
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('TProgress: ' + str(failure))
+                log_utils.log('TProgress', 1)
                 pass
 
 
@@ -1177,8 +1172,7 @@ class episodes:
                     pass
 
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tmdb_list0 Exception: ' + str(failure))
+            log_utils.log('tmdb_list0 Exception', 1)
             return
 
         try:
@@ -1197,8 +1191,7 @@ class episodes:
             if self.specials == 'false':
                 episodes = [e for e in episodes if not e['season_number'] == 0]
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tmdb_list1 Exception: ' + str(failure))
+            log_utils.log('tmdb_list1 Exception', 1)
             return
 
         try: poster = self.tm_img_link % ('500', result['poster_path'])
@@ -1281,8 +1274,7 @@ class episodes:
                                   'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
                 #self.list = sorted(self.list, key=lambda k: (int(k['season']), int(k['episode'])))
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('tmdb_list2 Exception: ' + str(failure))
+                log_utils.log('tmdb_list2 Exception', 1)
                 pass
 
         return self.list
@@ -1464,8 +1456,7 @@ class episodes:
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('ep_dir Exception: ' + str(failure))
+                log_utils.log('ep_dir Exception', 1)
                 pass
 
         control.content(syshandle, 'episodes')

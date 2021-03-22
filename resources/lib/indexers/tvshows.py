@@ -34,7 +34,7 @@ from resources.lib.modules import api_keys
 from resources.lib.modules import log_utils
 from resources.lib.indexers import navigator
 
-import os,sys,re,datetime,traceback
+import os,sys,re,datetime
 import simplejson as json
 
 import six
@@ -172,8 +172,7 @@ class tvshows:
             if idx == True and create_directory == True: self.tvshowDirectory(self.list)
             return self.list
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tv_get: ' + str(failure))
+            log_utils.log('tv_get', 1)
             pass
 
 
@@ -668,8 +667,7 @@ class tvshows:
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration,
                                   'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'next': next})
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('trakt_list0: ' + str(failure))
+                log_utils.log('trakt_list0', 1)
                 pass
 
         try:
@@ -680,8 +678,7 @@ class tvshows:
 
             return self.list
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('trakt_list1: ' + str(failure))
+            log_utils.log('trakt_list1', 1)
             return
 
 
@@ -824,8 +821,7 @@ class tvshows:
 
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': imdb, 'tmdb': '0', 'tvdb': '0', 'poster': poster, 'next': next})
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('imdb_list: ' + str(failure))
+                log_utils.log('imdb_list', 1)
                 pass
 
         return self.list
@@ -913,8 +909,7 @@ class tvshows:
             nextp = client.parseDOM(result, 'li', attrs = {'class': 'next'})
             if last != [] or nextp == []: next = ''
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tvm-list fail: ' + str(failure))
+            log_utils.log('tvm-list fail', 1)
             return
 
         def items_list(i):
@@ -994,8 +989,7 @@ class tvshows:
                 self.list.append({'title': title, 'originaltitle': title, 'year': year, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'rating': rating, 'plot': plot,
                                   'imdb': imdb, 'tvdb': tvdb, 'tmdb': '0', 'poster': poster, 'content': content, 'next': next})
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('tvmaze0: ' + str(failure))
+                # log_utils.log('tvmaze0', 1)
                 pass
 
         try:
@@ -1006,8 +1000,7 @@ class tvshows:
 
             return self.list
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tvmaze1: ' + str(failure))
+            # log_utils.log('tvmaze1', 1)
             return
 
 
@@ -1017,8 +1010,7 @@ class tvshows:
             result = control.six_decode(result)
             items = result['results']
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('tmdb_list0: ' + str(failure))
+            log_utils.log('tmdb_list0', 1)
             return
 
         try:
@@ -1072,8 +1064,7 @@ class tvshows:
 
                 self.list.append({'title': title, 'originaltitle': originaltitle, 'premiered': premiered, 'year': year, 'rating': rating, 'votes': votes, 'plot': plot, 'imdb': '0', 'tmdb': tmdb, 'tvdb': '0', 'poster': poster, 'next': next})
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('tmdb_list1: ' + str(failure))
+                log_utils.log('tmdb_list1', 1)
                 pass
 
         return self.list
@@ -1272,7 +1263,6 @@ class tvshows:
                 # poster2 = self.tm_img_link % ('500', poster2)
                 # poster2 = six.ensure_str(poster2)
             # except:
-                # failure = traceback.format_exc()
                 # poster2 = '0'
 
             # try:
@@ -1359,8 +1349,7 @@ class tvshows:
             meta = {'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'lang': self.lang, 'user': self.user, 'item': item}
             self.meta.append(meta)
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('superinfo_fail: ' + str(failure))
+            log_utils.log('superinfo_fail', 1)
             pass
 
 
@@ -1518,8 +1507,7 @@ class tvshows:
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:
-                # failure = traceback.format_exc()
-                # log_utils.log('addir_fail: ' + str(failure))
+                log_utils.log('addir_fail', 1)
                 pass
 
         try:

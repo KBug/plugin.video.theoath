@@ -18,8 +18,6 @@
 """
 
 
-import hashlib, traceback
-
 try: from sqlite3 import dbapi2 as database
 except: from pysqlite2 import dbapi2 as database
 
@@ -83,8 +81,7 @@ def get(media_type, imdb, season, episode, local=False):
                 return 0
             dbcon.commit()
         except:
-            # failure = traceback.format_exc()
-            # log_utils.log('bookmarks_get: ' + str(failure))
+            log_utils.log('bookmarks_get', 1)
             return 0
 
 
@@ -141,8 +138,7 @@ def reset(current_time, total_time, media_type, imdb, season='', episode=''):
                 dbcur.execute(sql_insert_watched % (_playcount, overlay))
         dbcon.commit()
     except:
-        # failure = traceback.format_exc()
-        # log_utils.log('bookmarks_reset: ' + str(failure))
+        log_utils.log('bookmarks_reset', 1)
         pass
 
 
@@ -161,8 +157,7 @@ def set_scrobble(current_time, total_time, _content, _imdb='', _tvdb='', _season
             if control.setting('trakt.scrobble.notify') == 'true':
                 control.infoDialog('Trakt: Scrobbled')
     except:
-        failure = traceback.format_exc()
-        log_utils.log('Scrobble - Exception: ' + str(failure))
+        log_utils.log('Scrobble - Exception', 1)
         control.infoDialog('Scrobble Failed')
 
 

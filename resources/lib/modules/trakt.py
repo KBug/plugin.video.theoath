@@ -21,7 +21,6 @@
 
 import re
 import time
-import traceback
 
 import six
 from six.moves import urllib_parse
@@ -66,15 +65,15 @@ def __getTrakt(url, post=None):
         result = result[0]
 
         if resp_code in ['423', '500', '502', '503', '504', '520', '521', '522', '524']:
-            log_utils.log('Trakt Error: %s' % str(resp_code), log_utils.LOGWARNING)
+            log_utils.log('Trakt Error: %s' % str(resp_code))
             control.infoDialog('Trakt Error: ' + str(resp_code), sound=True)
             return
         elif resp_code in ['429']:
-            log_utils.log('Trakt Rate Limit Reached: %s' % str(resp_code), log_utils.LOGWARNING)
+            log_utils.log('Trakt Rate Limit Reached: %s' % str(resp_code))
             control.infoDialog('Trakt Rate Limit Reached: ' + str(resp_code), sound=True)
             return
         elif resp_code in ['404']:
-            log_utils.log('Object Not Found : %s' % str(resp_code), log_utils.LOGWARNING)
+            log_utils.log('Object Not Found : %s' % str(resp_code))
             return
 
         if resp_code not in ['401', '405']:
@@ -97,8 +96,7 @@ def __getTrakt(url, post=None):
         result = utils.byteify(result)
         return result[0], result[2]
     except:
-        fail = traceback.format_exc()
-        log_utils.log('getTrakt Error: ' + str(fail))
+        log_utils.log('getTrakt Error', 1)
         pass
 
 def getTraktAsJson(url, post=None):
@@ -164,7 +162,7 @@ def authTrakt():
         control.setSetting(id='trakt.refresh', value=refresh)
         raise Exception()
     except:
-        control.openSettings('4.1')
+        control.openSettings('4.0')
 
 
 def getTraktCredentialsInfo():

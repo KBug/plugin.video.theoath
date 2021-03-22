@@ -159,8 +159,9 @@
     </category>
 
     <category label="Debugging">
-        <setting id="addon_debug" type="bool" label="Enable Debug" default="false" />
-        <setting id="debug.location" type="enum" label="Log location" values="Kodi log|Add-on log" default="0" />
+        <setting id="addon.debug" type="bool" label="Enable Debugging" default="false" />
+        <setting id="debug.text" type="text" label="32139" enable="false" />
+        <!--<setting id="debug.location" type="enum" label="Log location" values="Kodi log|Add-on log" default="0" />-->
     </category>
 
 </settings>

@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.00.08[/COLOR][/B]
+- Added function on Tools menu to upload add-on's log to a paste website, for easier debugging
+- Other logging changes
+
 [B][COLOR gold]v4.00.07[/COLOR][/B]
 - Tweaked title query for scraping
 
