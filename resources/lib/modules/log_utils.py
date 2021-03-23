@@ -76,7 +76,6 @@ def log(msg, trace=0):
 
 
 def upload_log():
-    import requests
     url = 'https://paste.kodi.tv/'
 
     if not os.path.exists(log_file):
@@ -96,6 +95,7 @@ def upload_log():
         if ok: control.openSettings('9.0')
 
     else:
+        import requests
         session = requests.Session()
         UserAgent = 'TheOath %s' % version
         try:
@@ -134,18 +134,11 @@ def view_log():
         r = open(log_file, 'r', encoding='utf-8')
     text = r.read()
     r.close()
+    head = '[COLOR gold][I]%s[/I][/COLOR]' % six.ensure_str(log_file, errors='replace')
     id = 10147
     control.execute('ActivateWindow(%d)' % id)
     control.sleep(500)
     win = xbmcgui.Window(id)
-    retry = 50
-    while (retry > 0):
-        try:
-            control.sleep(10)
-            retry -= 1
-            win.getControl(1).setLabel('[COLOR gold]theoath.log[/COLOR]')
-            win.getControl(5).setText(text)
-            return
-        except:
-            pass
+    win.getControl(1).setLabel(head)
+    win.getControl(5).setText(text)
 

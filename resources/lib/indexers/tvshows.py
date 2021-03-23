@@ -1164,15 +1164,17 @@ class tvshows:
                 except:
                     tvdb = '0'
 
-            try: title = item['name']
-            except: title = ''
-            if not title: title = self.list[i]['title']
-            else: title = six.ensure_str(title, errors='replace')
+            original_language = item.get('original_language', '')
 
-            try: originaltitle = item['original_name']
-            except: originaltitle = ''
-            if originaltitle: originaltitle = six.ensure_str(originaltitle, errors='replace')
-            else: originaltitle = title
+            if original_language == 'en': title = item.get('original_name', '')
+            else: title = item.get('name', '')
+            if title: title = six.ensure_str(title)
+            else: title = self.list[i]['title']
+
+            try: label = item.get('name', '')
+            except: label = ''
+            if label: label = six.ensure_str(label)
+            else: label = '0'
 
             try: premiered = item['first_air_date']
             except: premiered = ''
@@ -1221,15 +1223,21 @@ class tvshows:
             if not tagline: tagline = '0'
             else: tagline = client.replaceHTMLCodes(six.ensure_str(tagline, errors='replace'))
 
-            if not self.lang == 'en' and plot == '0':
-                try:
-                    translations = item.get('translations', {})
-                    translations = translations.get('translations', [])
-                    trans_item = [x['data'] for x in translations if x.get('iso_639_1') == 'en'][0]
-                    plot = trans_item['overview']
-                    plot = client.replaceHTMLCodes(six.ensure_str(plot, errors='replace'))
-                except:
-                    pass
+            if not self.lang == 'en':
+                translations = item.get('translations', {})
+                translations = translations.get('translations', [])
+                trans_item = [x['data'] for x in translations if x.get('iso_639_1') == 'en'][0]
+
+                en_title = trans_item.get('name', '')
+                if en_title and not original_language == 'en': title = label = six.ensure_str(en_title)
+
+                if plot == '0':
+                    en_plot = trans_item.get('overview', '')
+                    if en_plot: plot = client.replaceHTMLCodes(six.ensure_str(en_plot, errors='replace'))
+
+                if tagline == '0':
+                    en_tagline = trans_item.get('tagline', '')
+                    if en_tagline: tagline = client.replaceHTMLCodes(six.ensure_str(en_tagline, errors='replace'))
 
             try:
                 c = item['aggregate_credits']['cast'][:30]
@@ -1337,9 +1345,9 @@ class tvshows:
                     except:
                         landscape = '0'
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster1, 'poster2': poster2, 'poster3': poster3, 'banner': banner,
-                    'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': studio, 'genre': genre,
-                    'duration': duration, 'mpaa': mpaa, 'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot, 'status': status, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': title, 'label': label, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster1, 'poster2': poster2, 'poster3': poster3,
+                    'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': studio,
+                    'genre': genre, 'duration': duration, 'mpaa': mpaa, 'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot, 'status': status, 'tagline': tagline}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             #log_utils.log('superinfo_item: ' + str(item))
             self.list[i].update(item)
@@ -1393,7 +1401,7 @@ class tvshows:
 
         for i in items:
             try:
-                label = i['title']
+                label = i['label'] if 'label' in i and not i['label'] == '0' else i['title']
                 status = i.get('status', '')
                 try:
                     premiered = i['premiered']
@@ -1406,7 +1414,7 @@ class tvshows:
                 poster3 = i.get('poster3', '')
                 poster = poster3 or poster2 or poster1 or addonPoster
 
-                systitle = sysname = urllib_parse.quote_plus(i['originaltitle'])
+                systitle = sysname = urllib_parse.quote_plus(i['title'])
                 sysimage = urllib_parse.quote_plus(poster)
                 imdb, tvdb, tmdb, year = i.get('imdb', ''), i.get('tvdb', ''), i.get('tmdb', ''), i.get('year', '')
 
@@ -1415,8 +1423,8 @@ class tvshows:
                 meta.update({'tvdb_id': tvdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'tvshow'})
-                meta.update({'tvshowtitle': i['originaltitle']})
-                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib_parse.quote_plus(label))})
+                meta.update({'tvshowtitle': i['title']})
+                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systitle)})
                 if not 'duration' in i: meta.update({'duration': '60'})
                 elif i['duration'] == '0': meta.update({'duration': '60'})
                 try: meta.update({'duration': str(int(meta['duration']) * 60)})

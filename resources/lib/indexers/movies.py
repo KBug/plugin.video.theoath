@@ -1180,7 +1180,7 @@ class movies:
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tmdb_id': tmdb})
                 meta.update({'mediatype': 'movie'})
-                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, urllib_parse.quote_plus(label))})
+                meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systitle)})
                 #meta.update({'trailer': 'plugin://script.extendedinfo/?info=playtrailer&&id=%s' % imdb})
                 if not 'duration' in i: meta.update({'duration': '120'})
                 elif i['duration'] == '0': meta.update({'duration': '120'})

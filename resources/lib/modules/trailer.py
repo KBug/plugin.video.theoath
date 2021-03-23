@@ -117,6 +117,7 @@ class trailer:
             if apiLang != 'en':
                 url += "&relevanceLanguage=%s" % apiLang
 
+            #log_utils.log('yt_url: ' + str(url))
             result = client.request(url)
             if result == None:
                 log_utils.log('yt_api_failed_resp: ' + str(result))

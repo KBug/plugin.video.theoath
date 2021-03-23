@@ -14,18 +14,11 @@ def get():
         r = open(changelogfile, 'r', encoding='utf-8')
     text = r.read()
     r.close()
+    head = '[COLOR gold]TheOath [/COLOR] --Changelog--'
     id = 10147
     control.execute('ActivateWindow(%d)' % id)
     control.sleep(500)
     win = xbmcgui.Window(id)
-    retry = 50
-    while (retry > 0):
-        try:
-            control.sleep(10)
-            retry -= 1
-            win.getControl(1).setLabel('[COLOR gold]TheOath [/COLOR] --Changelog--')
-            win.getControl(5).setText(text)
-            return
-        except:
-            pass
+    win.getControl(1).setLabel(head)
+    win.getControl(5).setText(text)
 
