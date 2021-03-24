@@ -153,7 +153,7 @@ def normalize(title):
             try: return title.decode('ascii').encode("utf-8")
             except: pass
             return str(''.join(c for c in unicodedata.normalize('NFKD', title.decode('utf-8')) if c in printable))
-        return u''.join(c for c in unicodedata.normalize('NFKD', six.ensure_text(title)) if c in printable)
+        return u''.join(c for c in unicodedata.normalize('NFKD', ensure_text(title)) if c in printable)
     except:
         return title
 

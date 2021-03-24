@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.00.11[/COLOR][/B]
+- Fixed de-accent scraping title in Kodi 19
+
 [B][COLOR gold]v4.00.10[/COLOR][/B]
 - Make sure we always use English TV show title for scraping
 
