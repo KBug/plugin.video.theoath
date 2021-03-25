@@ -461,6 +461,10 @@ class episodes:
                 self.list = cache.get(self.trakt_episodes_list, 0, url, self.trakt_user, self.lang)
                 self.list = sorted(self.list, key=lambda k: k['premiered'], reverse=True)
 
+            elif self.trakt_link in url and url == self.trakthistory_link:
+                self.list = cache.get(self.trakt_episodes_list, 0.3, url, self.trakt_user, self.lang)
+                self.list = sorted(self.list, key=lambda k: int(k['watched_at']), reverse=True)
+
             elif self.trakt_link in url and '/users/' in url:
                 self.list = cache.get(self.trakt_list, 0.3, url, self.trakt_user)
                 self.list = self.list[::-1]
@@ -655,6 +659,12 @@ class episodes:
                     paused_at = '0'
 
                 try:
+                    watched_at = item.get('watched_at', '0') or '0'
+                    watched_at = re.sub('[^0-9]+', '', watched_at)
+                except:
+                    watched_at = '0'
+
+                try:
                     if self.lang == 'en': raise Exception()
 
                     trans_item = trakt.getTVShowTranslation(imdb, lang=self.lang, season=season, episode=episode, full=True)
@@ -667,7 +677,7 @@ class episodes:
                     pass
 
                 itemlist.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': 'Continuing', 'studio': studio, 'genre': genre,
-                                 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'thumb': '0', 'paused_at': paused_at})
+                                 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'plot': plot, 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': '0', 'thumb': '0', 'paused_at': paused_at, 'watched_at': watched_at})
             except:
                 log_utils.log('trakt_list1', 1)
                 pass
@@ -978,13 +988,14 @@ class episodes:
                 else: cast = [(p['name'], p['role']) for p in castwiththumb]
 
                 paused_at = i.get('paused_at', '0') or '0'
-                paused_at = re.sub('[^0-9]+', '', paused_at)
+
+                watched_at = i.get('watched_at', '0') or '0'
 
                 #log_utils.log('ondeck_pause: ' + str(paused_at) + ' - ' + str(tvshowtitle))
 
                 self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre,
                                   'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot,
-                                  'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'paused_at': paused_at})
+                                  'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'paused_at': paused_at, 'watched_at': watched_at})
             except:
                 pass
 

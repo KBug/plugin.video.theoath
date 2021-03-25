@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.00.12[/COLOR][/B]
+- Fixed Trakt episodes history thumbnails
+- Fixed issues with log viewing/uploading
+
 [B][COLOR gold]v4.00.11[/COLOR][/B]
 - Fixed de-accent scraping title in Kodi 19
 

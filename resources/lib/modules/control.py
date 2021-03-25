@@ -246,6 +246,19 @@ def selectDialog(list, heading=addonInfo('name')):
     return dialog.select(heading, list)
 
 
+def textViewer(file, heading=addonInfo('name'), monofont=True):
+    sleep(200)
+    if not os.path.exists(file):
+        w = open(file, 'w')
+        w.close()
+    with open(file, 'rb') as r:
+        text = r.read()
+    if not text: text = ' '
+    head = '[COLOR gold][I]%s[/I][/COLOR]' % six.ensure_str(heading, errors='replace')
+    if getKodiVersion() >= 18: return dialog.textviewer(head, text, monofont)
+    else: return dialog.textviewer(head, text)
+
+
 def metaFile():
     if condVisibility('System.HasAddon(script.theoath.metadata)'):
         return os.path.join(xbmcaddon.Addon('script.theoath.metadata').getAddonInfo('path'), 'resources', 'data', 'meta.db')

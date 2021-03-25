@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-    tknorris shared module
-    Copyright (C) 2016 tknorris
+    TheOath add-on
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,11 +19,12 @@
 import os
 import traceback
 from datetime import datetime
-from kodi_six import xbmc, xbmcgui
+from kodi_six import xbmc
 
 import six
 
 from resources.lib.modules import control
+
 
 LOGDEBUG = xbmc.LOGDEBUG
 LOGINFO = xbmc.LOGINFO
@@ -41,7 +41,6 @@ LOGPATH = control.transPath('special://logpath/')
 log_file = os.path.join(LOGPATH, 'theoath.log')
 debug_enabled = control.setting('addon.debug')
 #debug_log = control.setting('debug.location')
-
 
 
 def log(msg, trace=0):
@@ -81,15 +80,11 @@ def upload_log():
     if not os.path.exists(log_file):
         w = open(log_file, 'w')
         w.close()
-    if six.PY2:
-        from io import open as io_open
-        f = io_open(log_file, 'r', encoding='utf-8')
-    else:
-        f = open(log_file, 'r', encoding='utf-8')
+    f = open(log_file, 'rb')
     data = f.read()
     f.close()
 
-    if data == '':
+    if not data:
         msg = control.lang(32140)
         ok = control.dialog.ok(name, msg)
         if ok: control.openSettings('9.0')
@@ -99,7 +94,7 @@ def upload_log():
         session = requests.Session()
         UserAgent = 'TheOath %s' % version
         try:
-            response = session.post(url + 'documents', data=data.encode('utf-8', errors='ignore'), headers={'User-Agent': UserAgent})
+            response = session.post(url + 'documents', data=data, headers={'User-Agent': UserAgent})
             #log('log_response: ' + str(response))
             if 'key' in response.json():
                 result = url + response.json()['key']
@@ -107,38 +102,29 @@ def upload_log():
                 log('log_upload_url: ' + result)
                 control.dialog.ok(name, msg)
             elif 'message' in response.json():
-                control.infoDialog('Log upload failed: %s' % str(response.json()['message']), heading=name, time=3000, sound=True)
+                control.infoDialog('Log upload failed: %s' % str(response.json()['message']), sound=True)
                 log('log_upload_msg: %s' % str(response.json()['message']))
             else:
-                control.infoDialog('Log upload failed', heading=name, time=3000, sound=True)
+                control.infoDialog('Log upload failed', sound=True)
                 log('log_error: %s' % response.text)
         except:
-            control.infoDialog('Unable to retrieve the paste url', heading=name, time=3000, sound=True)
+            control.infoDialog('Unable to retrieve the paste url', sound=True)
             log('log_upload_fail', 1)
 
 
 def empty_log():
     try:
-        open(log_file, 'w').close()
+        control.openFile(log_file, 'w').close()
         control.infoDialog(control.lang(32057), sound=True, icon='INFO')
     except:
-        control.infoDialog('Error emptying log file', heading=name, time=3000, sound=True)
+        control.infoDialog('Error emptying log file', sound=True)
         log('log_empty_fail', 1)
 
 
 def view_log():
-    if six.PY2:
-        from io import open as io_open
-        r = io_open(log_file, 'r', encoding='utf-8')
-    else:
-        r = open(log_file, 'r', encoding='utf-8')
-    text = r.read()
-    r.close()
-    head = '[COLOR gold][I]%s[/I][/COLOR]' % six.ensure_str(log_file, errors='replace')
-    id = 10147
-    control.execute('ActivateWindow(%d)' % id)
-    control.sleep(500)
-    win = xbmcgui.Window(id)
-    win.getControl(1).setLabel(head)
-    win.getControl(5).setText(text)
+    try:
+        control.textViewer(log_file, log_file)
+    except:
+        control.infoDialog('Error opening log file', sound=True)
+        log('log_view_fail', 1)
 

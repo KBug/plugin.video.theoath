@@ -1,24 +1,14 @@
 # -*- coding: UTF-8 -*-
 
 import os
-from six import PY2
-from kodi_six import xbmcgui
-from resources.lib.modules import control
+from resources.lib.modules import control, log_utils
 
 def get():
-    changelogfile = os.path.join(control.addonPath, 'changelog.txt')
-    if PY2:
-        from io import open as io_open
-        r = io_open(changelogfile, 'r', encoding='utf-8')
-    else:
-        r = open(changelogfile, 'r', encoding='utf-8')
-    text = r.read()
-    r.close()
-    head = '[COLOR gold]TheOath [/COLOR] --Changelog--'
-    id = 10147
-    control.execute('ActivateWindow(%d)' % id)
-    control.sleep(500)
-    win = xbmcgui.Window(id)
-    win.getControl(1).setLabel(head)
-    win.getControl(5).setText(text)
+    try:
+        changelogfile = os.path.join(control.addonPath, 'changelog.txt')
+        head = 'TheOath  -- Changelog --'
+        control.textViewer(changelogfile, head)
+    except:
+        control.infoDialog('Error opening changelog', sound=True)
+        log_utils.log('changeloglog_view_fail', 1)
 
