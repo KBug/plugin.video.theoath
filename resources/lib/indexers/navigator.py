@@ -28,8 +28,6 @@ from resources.lib.modules import trakt
 from resources.lib.modules import cache
 from resources.lib.modules import api_keys
 
-sysaddon = sys.argv[0] ; syshandle = int(sys.argv[1])
-
 artPath = control.artPath() ; addonFanart = control.addonFanart()
 
 imdbCredentials = False if control.setting('imdb.user') == '' else True
@@ -567,6 +565,8 @@ class navigator:
         log_utils.empty_log()
 
     def addDirectoryItem(self, name, query, thumb, icon, context=None, queue=False, isAction=True, isFolder=True):
+        sysaddon = sys.argv[0]
+        syshandle = int(sys.argv[1])
         try: name = control.lang(name)
         except: pass
         url = '%s?action=%s' % (sysaddon, query) if isAction == True else query
@@ -582,5 +582,6 @@ class navigator:
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
     def endDirectory(self, cache=True):
+        syshandle = int(sys.argv[1])
         control.content(syshandle, 'addons')
         control.directory(syshandle, cacheToDisc=cache)

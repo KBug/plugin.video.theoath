@@ -345,6 +345,7 @@ class tvshows:
             ('Disney XD', '44', 'https://i.imgur.com/PAJJoqQ.png'),
             ('E!', '76', 'https://i.imgur.com/3Delf9f.png'),
             ('E4', '136', 'https://i.imgur.com/frpunK8.png'),
+            ('Epix', '922', 'https://i.imgur.com/XcuclbM.png'),
             ('FOX', '19', 'https://i.imgur.com/6vc0Iov.png'),
             ('Freeform', '1267', 'https://i.imgur.com/f9AqoHE.png'),
             ('Hallmark Channel', '384', 'https://i.imgur.com/zXS64I8.png'),

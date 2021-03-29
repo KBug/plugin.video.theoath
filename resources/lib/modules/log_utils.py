@@ -114,7 +114,7 @@ def upload_log():
 
 def empty_log():
     try:
-        control.openFile(log_file, 'w').close()
+        open(log_file, 'w').close()
         control.infoDialog(control.lang(32057), sound=True, icon='INFO')
     except:
         control.infoDialog('Error emptying log file', sound=True)

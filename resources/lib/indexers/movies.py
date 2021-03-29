@@ -274,7 +274,7 @@ class movies:
                     if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user): raise Exception()
                     self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
                 except:
-                    self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+                    self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
 
                 if '/users/me/' in url and '/collection/' in url:
                     self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
@@ -304,6 +304,7 @@ class movies:
                 if idx == True: self.worker()
 
 
+            #log_utils.log('movies_get_list: ' + str(self.list))
             if idx == True and create_directory == True: self.movieDirectory(self.list)
             return self.list
         except:
@@ -578,6 +579,7 @@ class movies:
             q.update({'extended': 'full'})
             q = (urllib_parse.urlencode(q)).replace('%2C', ',')
             u = url.replace('?' + urllib_parse.urlparse(url).query, '') + '?' + q
+            #log_utils.log('movies_trakt_list_u: ' + str(u))
 
             result = trakt.getTraktAsJson(u)
             #result = control.six_decode(result)
@@ -588,6 +590,7 @@ class movies:
                 except: pass
             if len(items) == 0:
                 items = result
+            #log_utils.log('movies_trakt_list_items: ' + str(items))
         except:
             log_utils.log('movies_trakt_list0', 1)
             return
@@ -607,35 +610,38 @@ class movies:
                 title = item['title']
                 title = client.replaceHTMLCodes(title)
 
-                year = item['year']
-                year = re.sub(r'[^0-9]', '', str(year))
+                year = item.get('year')
+                if year: year = re.sub(r'[^0-9]', '', str(year))
+                else: year = '0'
 
                 if int(year) > int((self.datetime).strftime('%Y')): raise Exception()
 
-                imdb = item['ids']['imdb']
-                if imdb == None or imdb == '': raise Exception()
-                imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))
+                imdb = item.get('ids', {}).get('imdb')
+                #if imdb == None or imdb == '': raise Exception()
+                if not imdb: imdb = '0'
+                else: imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))
 
-                tmdb = str(item.get('ids', {}).get('tmdb', 0))
+                tmdb = item.get('ids', {}).get('tmdb')
+                if not tmdb: tmdb == '0'
+                else: tmdb = str(tmdb)
 
-                try: premiered = item['released']
-                except: premiered = '0'
-                try: premiered = re.compile(r'(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-                except: premiered = '0'
+                premiered = item.get('released')
+                if premiered: premiered = re.compile(r'(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+                else: premiered = '0'
 
-                try: genre = item['genres']
-                except: genre = '0'
-                genre = [i.title() for i in genre]
-                if genre == []: genre = '0'
-                genre = ' / '.join(genre)
+                genre = item.get('genres')
+                if genre:
+                    genre = [i.title() for i in genre]
+                    genre = ' / '.join(genre)
+                else: genre = '0'
 
-                try: duration = str(item['runtime'])
-                except: duration = '0'
-                if duration == None: duration = '0'
+                duration = item.get('runtime')
+                if duration: duration = str(duration)
+                else: duration = '0'
 
-                try: rating = str(item['rating'])
-                except: rating = '0'
-                if rating == None or rating == '0.0': rating = '0'
+                rating = item.get('rating')
+                if rating and not rating == '0.0': rating = str(rating)
+                else: rating = '0'
 
                 try: votes = str(item['votes'])
                 except: votes = '0'
@@ -643,19 +649,16 @@ class movies:
                 except: pass
                 if votes == None: votes = '0'
 
-                try: mpaa = item['certification']
-                except: mpaa = '0'
-                if mpaa == None: mpaa = '0'
+                mpaa = item.get('certification')
+                if not mpaa: mpaa = '0'
 
-                try: plot = item['overview']
-                except: plot = '0'
-                if plot == None: plot = '0'
-                plot = client.replaceHTMLCodes(plot)
+                tagline = item.get('tagline')
+                if tagline: tagline = client.replaceHTMLCodes(tagline)
+                else: tagline = '0'
 
-                try: tagline = item['tagline']
-                except: tagline = '0'
-                if tagline == None: tagline = '0'
-                tagline = client.replaceHTMLCodes(tagline)
+                plot = item.get('overview')
+                if plot: plot = client.replaceHTMLCodes(plot)
+                else: plot = '0'
 
                 paused_at = item.get('paused_at', '0') or '0'
                 paused_at = re.sub('[^0-9]+', '', paused_at)
@@ -933,6 +936,7 @@ class movies:
 
     def super_info(self, i):
         try:
+            #log_utils.log('si_list: ' + repr(self.list[i]))
             if self.list[i]['metacache'] == True: raise Exception()
 
             hq_artwork = control.setting('hq.artwork') or 'false'
@@ -941,34 +945,52 @@ class movies:
 
             imdb = self.list[i]['imdb']
 
-            item = trakt.getMovieSummary(imdb)
+            tmdb = self.list[i]['tmdb']
+
+            if not imdb == '0':
+                item = trakt.getMovieSummary(imdb)
+            elif not tmdb == '0':
+                item = trakt.getMovieSummary(tmdb)
+            else:
+                raise Exception()
             #item = control.six_decode(item)
 
-            title = item.get('title')
+            if imdb == '0':
+                _imdb = item.get('ids', {}).get('imdb')
+                if _imdb: imdb = 'tt' + re.sub(r'[^0-9]', '', str(_imdb))
+
+            if tmdb == '0':
+                _tmdb = item.get('ids', {}).get('tmdb')
+                if _tmdb: tmdb = str(_tmdb)
+
+            id = imdb if not imdb == '0' else tmdb
+            #log_utils.log('si_id: ' + id)
+
+            title = item.get('title') or self.list[i]['title']
             title = client.replaceHTMLCodes(title)
 
             originaltitle = title
 
             year = self.list[i]['year']
             if year == '0':
-                year = item.get('year', 0)
-                year = re.sub(r'[^0-9]', '', str(year))
+                _year = item.get('year')
+                if _year: year = re.sub(r'[^0-9]', '', str(_year))
 
-            #imdb = item.get('ids', {}).get('imdb', '0')
-            #imdb = 'tt' + re.sub(r'[^0-9]', '', str(imdb))
-
-            tmdb = str(item.get('ids', {}).get('tmdb', 0))
-
-            premiered = item.get('released', '0')
-            try: premiered = re.compile(r'(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
-            except: premiered = '0'
+            premiered = item.get('released')
+            if premiered:
+                try: premiered = re.compile(r'(\d{4}-\d{2}-\d{2})').findall(premiered)[0]
+                except: premiered = '0'
+            else: premiered = '0'
 
             genre = item.get('genres', [])
-            genre = [x.title() for x in genre]
-            genre = ' / '.join(genre).strip()
-            if not genre: genre = '0'
+            if genre:
+                genre = [x.title() for x in genre]
+                genre = ' / '.join(genre).strip()
+            else: genre = '0'
 
-            duration = str(item.get('Runtime', 0))
+            duration = item.get('Runtime')
+            if duration: duration = str(duration)
+            else: duration = '0'
 
             #rating = item.get('rating', '0')
             #if not rating or rating == '0.0': rating = '0'
@@ -977,15 +999,17 @@ class movies:
             #try: votes = str(format(int(votes), ',d'))
             #except: pass
 
-            mpaa = item.get('certification', '0')
+            mpaa = item.get('certification')
             if not mpaa: mpaa = '0'
 
-            tagline = item.get('tagline', '0')
+            tagline = item.get('tagline')
+            if not tagline: tagline = '0'
 
-            plot = item.get('overview', '0')
+            plot = item.get('overview')
+            if not plot: plot = '0'
 
             try:
-                people = trakt.getPeople(imdb, 'movies')
+                people = trakt.getPeople(id, 'movies')
 
                 director = writer = ''
                 if 'crew' in people and 'directing' in people['crew']:
@@ -1003,7 +1027,7 @@ class movies:
             try:
                 if self.lang == 'en' or self.lang not in item.get('available_translations', [self.lang]): raise Exception()
 
-                trans_item = trakt.getMovieTranslation(imdb, self.lang, full=True)
+                trans_item = trakt.getMovieTranslation(id, self.lang, full=True)
 
                 title = trans_item.get('title') or title
                 tagline = trans_item.get('tagline') or tagline
@@ -1014,7 +1038,7 @@ class movies:
             poster1 = self.list[i].get('poster', '0')
 
             poster3 = fanart = banner = clearlogo = clearart = landscape = discart = '0'
-            if hq_artwork == 'true':# and not self.fanart_tv_user == '':
+            if hq_artwork == 'true' and not imdb == '0':# and not self.fanart_tv_user == '':
 
                 artmeta = True
                 try:
@@ -1088,7 +1112,7 @@ class movies:
                 try:
                     if self.tm_user == '': raise Exception()
 
-                    art2 = client.request(self.tm_art_link % imdb, timeout='10', error=True)
+                    art2 = client.request(self.tm_art_link % id, timeout='10', error=True)
                     art2 = json.loads(art2)
                 except:
                     pass

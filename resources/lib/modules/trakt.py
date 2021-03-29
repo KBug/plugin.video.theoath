@@ -107,6 +107,7 @@ def getTraktAsJson(url, post=None):
             r = sort_list(res_headers['X-Sort-By'], res_headers['X-Sort-How'], r)
         return r
     except:
+        log_utils.log('getTraktAsJson Error', 1)
         pass
 
 def authTrakt():
@@ -277,11 +278,11 @@ def sort_list(sort_key, sort_direction, list_data):
 
 def _released_key(item):
     if 'released' in item:
-        return item['released']
+        return item['released'] or '0'
     elif 'first_aired' in item:
-        return item['first_aired']
+        return item['first_aired'] or '0'
     else:
-        return 0
+        return '0'
 
 def getActivity():
     try:

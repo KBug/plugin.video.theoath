@@ -1,3 +1,8 @@
+[B][COLOR gold]v4.00.13[/COLOR][/B]
+- Fixed issue with personal Trakt lists failing to load if sorted by release date
+    and some list item(s) has no release date on Trakt database
+- Other minor fixes
+
 [B][COLOR gold]v4.00.12[/COLOR][/B]
 - Fixed Trakt episodes history thumbnails
 - Fixed issues with log viewing/uploading
