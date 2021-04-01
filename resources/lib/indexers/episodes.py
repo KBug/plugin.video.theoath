@@ -224,11 +224,8 @@ class seasons:
                 if poster_path: poster = self.tm_img_link % ('500', poster_path)
                 else: poster = show_poster
 
-                banner = '0'
-                thumb = '0'
-
                 self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa,
-                                  'cast': cast, 'castwiththumb': castwiththumb, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'unaired': unaired})
+                                  'cast': cast, 'castwiththumb': castwiththumb, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'fanart': fanart, 'unaired': unaired})
                 #self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
                 log_utils.log('seasons_dir Exception', 1)
@@ -335,16 +332,12 @@ class seasons:
 
                 art = {}
 
-                if 'thumb' in i and not i['thumb'] == '0':
-                    art.update({'icon': i['thumb'], 'thumb': i['thumb'], 'poster': i['thumb']})
-                elif 'poster' in i and not i['poster'] == '0':
+                if 'poster' in i and not i['poster'] == '0':
                     art.update({'icon': i['poster'], 'thumb': i['poster'], 'poster': i['poster']})
                 else:
                     art.update({'icon': addonPoster, 'thumb': addonPoster, 'poster': addonPoster})
 
-                if 'banner' in i and not i['banner'] == '0':
-                    art.update({'banner': i['banner']})
-                elif 'fanart' in i and not i['fanart'] == '0':
+                if 'fanart' in i and not i['fanart'] == '0':
                     art.update({'banner': i['fanart']})
                 else:
                     art.update({'banner': addonBanner})
@@ -990,8 +983,6 @@ class episodes:
                 paused_at = i.get('paused_at', '0') or '0'
 
                 watched_at = i.get('watched_at', '0') or '0'
-
-                #log_utils.log('ondeck_pause: ' + str(paused_at) + ' - ' + str(tvshowtitle))
 
                 self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre,
                                   'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot,

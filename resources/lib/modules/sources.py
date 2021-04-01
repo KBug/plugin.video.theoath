@@ -101,7 +101,7 @@ class sources:
 
         def sourcesDirMeta(metadata):
             if metadata == None: return metadata
-            allowed = ['icon', 'poster', 'poster2', 'poster3', 'fanart', 'fanart2', 'thumb', 'clearlogo', 'clearart', 'discart', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
+            allowed = ['icon', 'poster', 'fanart', 'thumb', 'clearlogo', 'clearart', 'discart', 'title', 'year', 'tvshowtitle', 'season', 'episode', 'rating', 'plot', 'trailer', 'mediatype']
             return {k: v for k, v in six.iteritems(metadata) if k in allowed}
 
         control.playlist.clear()
@@ -133,9 +133,9 @@ class sources:
             sysname += urllib_parse.quote_plus(' (%s)' % meta['year'])
 
 
-        poster = meta.get('poster3') or meta.get('poster2') or meta.get('poster') or control.addonPoster()
+        poster = meta.get('poster') or control.addonPoster()
         if control.setting('fanart') == 'true':
-            fanart = meta.get('fanart2') or meta.get('fanart') or control.addonFanart()
+            fanart = meta.get('fanart') or control.addonFanart()
         else:
             fanart = control.addonFanart()
         thumb = meta.get('thumb') or poster or fanart

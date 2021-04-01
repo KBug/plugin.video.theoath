@@ -86,9 +86,9 @@ class player(xbmc.Player):
     def getMeta(self, meta):
 
         try:
-            poster = meta.get('poster3', '') or meta.get('poster2', '') or meta.get('poster', '') or control.addonPoster()
+            poster = meta.get('poster', '') or control.addonPoster()
             thumb = meta.get('thumb', '') or poster
-            fanart = meta.get('fanart2', '') or meta.get('fanart', '') or control.addonFanart()
+            fanart = meta.get('fanart', '') or control.addonFanart()
             clearlogo = meta.get('clearlogo', '') or ''
             clearart = meta.get('clearart', '') or ''
             discart = meta.get('discart', '') or ''

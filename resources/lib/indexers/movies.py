@@ -67,6 +67,8 @@ class movies:
         self.lang = control.apiLanguage()['trakt']
         self.hidecinema = control.setting('hidecinema') or 'false'
         self.items_per_page = str(control.setting('items.per.page')) or '20'
+        self.hq_artwork = control.setting('hq.artwork') or 'false'
+        self.settingFanart = control.setting('fanart')
 
         self.search_link = 'https://api.trakt.tv/search/movie?limit=20&page=1&query='
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
@@ -939,10 +941,6 @@ class movies:
             #log_utils.log('si_list: ' + repr(self.list[i]))
             if self.list[i]['metacache'] == True: raise Exception()
 
-            hq_artwork = control.setting('hq.artwork') or 'false'
-
-            settingFanart = control.setting('fanart')
-
             imdb = self.list[i]['imdb']
 
             tmdb = self.list[i]['tmdb']
@@ -1037,8 +1035,9 @@ class movies:
 
             poster1 = self.list[i].get('poster', '0')
 
-            poster3 = fanart = banner = clearlogo = clearart = landscape = discart = '0'
-            if hq_artwork == 'true' and not imdb == '0':# and not self.fanart_tv_user == '':
+            poster3 = fanart1 = ''
+            banner = clearlogo = clearart = landscape = discart = '0'
+            if self.hq_artwork == 'true' and not imdb == '0':# and not self.fanart_tv_user == '':
 
                 artmeta = True
                 try:
@@ -1053,60 +1052,68 @@ class movies:
                 if artmeta == False: pass
 
                 try:
-                    poster3 = art['movieposter']
-                    poster3 = [x for x in poster3 if x.get('lang') == self.lang][::-1] + [x for x in poster3 if x.get('lang') == 'en'][::-1] + [x for x in poster3 if x.get('lang') in ['00', '']][::-1]
-                    poster3 = six.ensure_str(poster3[0]['url'])
+                    _poster3 = art['movieposter']
+                    _poster3 = [x for x in _poster3 if x.get('lang') == self.lang][::-1] + [x for x in _poster3 if x.get('lang') == 'en'][::-1] + [x for x in _poster3 if x.get('lang') in ['00', '']][::-1]
+                    _poster3 = _poster3[0]['url']
+                    if _poster3: poster3 = six.ensure_str(_poster3)
                 except:
-                    poster3 = '0'
+                    pass
 
                 try:
-                    if 'moviebackground' in art: fanart = art['moviebackground']
-                    else: fanart = art['moviethumb']
-                    fanart = [x for x in fanart if x.get('lang') == self.lang][::-1] + [x for x in fanart if x.get('lang') == 'en'][::-1] + [x for x in fanart if x.get('lang') in ['00', '']][::-1]
-                    fanart = six.ensure_str(fanart[0]['url'])
+                    if 'moviebackground' in art: _fanart1 = art['moviebackground']
+                    else: _fanart1 = art['moviethumb']
+                    _fanart1 = [x for x in _fanart1 if x.get('lang') == self.lang][::-1] + [x for x in _fanart1 if x.get('lang') == 'en'][::-1] + [x for x in _fanart1 if x.get('lang') in ['00', '']][::-1]
+                    _fanart1 = _fanart1[0]['url']
+                    if _fanart1: fanart1 = six.ensure_str(_fanart1)
                 except:
-                    fanart = '0'
+                    pass
 
                 try:
-                    banner = art['moviebanner']
-                    banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                    banner = six.ensure_str(banner[0]['url'])
+                    _banner = art['moviebanner']
+                    _banner = [x for x in _banner if x.get('lang') == self.lang][::-1] + [x for x in _banner if x.get('lang') == 'en'][::-1] + [x for x in _banner if x.get('lang') in ['00', '']][::-1]
+                    _banner = _banner[0]['url']
+                    if _banner: banner = six.ensure_str(_banner)
                 except:
-                    banner = '0'
+                    pass
 
                 try:
-                    if 'hdmovielogo' in art: clearlogo = art['hdmovielogo']
-                    else: clearlogo = art['clearlogo']
-                    clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                    clearlogo = six.ensure_str(clearlogo[0]['url'])
+                    if 'hdmovielogo' in art: _clearlogo = art['hdmovielogo']
+                    else: _clearlogo = art['clearlogo']
+                    _clearlogo = [x for x in _clearlogo if x.get('lang') == self.lang][::-1] + [x for x in _clearlogo if x.get('lang') == 'en'][::-1] + [x for x in _clearlogo if x.get('lang') in ['00', '']][::-1]
+                    _clearlogo = _clearlogo[0]['url']
+                    if _clearlogo: clearlogo = six.ensure_str(_clearlogo)
                 except:
-                    clearlogo = '0'
+                    pass
 
                 try:
-                    if 'hdmovieclearart' in art: clearart = art['hdmovieclearart']
-                    else: clearart = art['clearart']
-                    clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                    clearart = six.ensure_str(clearart[0]['url'])
+                    if 'hdmovieclearart' in art: _clearart = art['hdmovieclearart']
+                    else: _clearart = art['clearart']
+                    _clearart = [x for x in _clearart if x.get('lang') == self.lang][::-1] + [x for x in _clearart if x.get('lang') == 'en'][::-1] + [x for x in _clearart if x.get('lang') in ['00', '']][::-1]
+                    _clearart = _clearart[0]['url']
+                    if _clearart: clearart = six.ensure_str(_clearart)
                 except:
-                    clearart = '0'
+                    pass
 
                 try:
-                    if 'moviethumb' in art: landscape = art['moviethumb']
-                    else: landscape = art['moviebackground']
-                    landscape = [x for x in landscape if x.get('lang') == self.lang][::-1] + [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') in ['00', '']][::-1]
-                    landscape = six.ensure_str(landscape[0]['url'])
+                    if 'moviethumb' in art: _landscape = art['moviethumb']
+                    else: _landscape = art['moviebackground']
+                    _landscape = [x for x in _landscape if x.get('lang') == self.lang][::-1] + [x for x in _landscape if x.get('lang') == 'en'][::-1] + [x for x in _landscape if x.get('lang') in ['00', '']][::-1]
+                    _landscape = _landscape[0]['url']
+                    if _landscape: landscape = six.ensure_str(_landscape)
                 except:
-                    landscape = '0'
+                    pass
 
                 try:
-                    if 'moviedisc' in art: discart = art['moviedisc']
-                    discart = [x for x in discart if x.get('lang') == self.lang][::-1] + [x for x in discart if x.get('lang') == 'en'][::-1] + [x for x in discart if x.get('lang') in ['00', '']][::-1]
-                    discart = six.ensure_str(discart[0]['url'])
+                    if 'moviedisc' in art: _discart = art['moviedisc']
+                    _discart = [x for x in _discart if x.get('lang') == self.lang][::-1] + [x for x in _discart if x.get('lang') == 'en'][::-1] + [x for x in _discart if x.get('lang') in ['00', '']][::-1]
+                    _discart = _discart[0]['url']
+                    if _discart: discart = six.ensure_str(_discart)
                 except:
-                    discart = '0'
+                    pass
 
-            poster2 = fanart2 = '0'
-            if (poster3 == '0' and poster1 == '0') or (settingFanart == 'true' and fanart == '0'):
+            poster2 = ''
+            fanart2 = '0'
+            if (not poster3 and poster1 == '0') or (self.settingFanart == 'true' and not fanart1):
                 #log_utils.log('Fetching_TMDb_art')
 
                 try:
@@ -1118,28 +1125,35 @@ class movies:
                     pass
 
                 try:
-                    poster2 = art2['posters']
-                    poster2 = [x for x in poster2 if x.get('iso_639_1') == self.lang] + [x for x in poster2 if x.get('iso_639_1') == 'en'] + [x for x in poster2 if x.get('iso_639_1') not in [self.lang, 'en']]
-                    poster2 = [(x['width'], x['file_path']) for x in poster2]
-                    poster2 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in poster2]
-                    poster2 = self.tm_img_link % poster2[0]
-                    poster2 = six.ensure_str(poster2)
+                    _poster2 = art2['posters']
+                    _poster2 = [x for x in _poster2 if x.get('iso_639_1') == self.lang] + [x for x in _poster2 if x.get('iso_639_1') == 'en'] + [x for x in _poster2 if x.get('iso_639_1') not in [self.lang, 'en']]
+                    _poster2 = [(x['width'], x['file_path']) for x in _poster2]
+                    _poster2 = [(x[0], x[1]) if x[0] < 300 else ('300', x[1]) for x in _poster2]
+                    if _poster2:
+                        poster2 = self.tm_img_link % _poster2[0]
+                        poster2 = six.ensure_str(poster2)
                 except:
-                    poster2 = '0'
+                    pass
 
                 try:
-                    fanart2 = art2['backdrops']
-                    fanart2 = [x for x in fanart2 if x.get('iso_639_1') == self.lang] + [x for x in fanart2 if x.get('iso_639_1') == 'en'] + [x for x in fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
-                    fanart2 = [x for x in fanart2 if x.get('width') == 1920] + [x for x in fanart2 if x.get('width') < 1920]
-                    fanart2 = [(x['width'], x['file_path']) for x in fanart2]
-                    fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in fanart2]
-                    fanart2 = self.tm_img_link % fanart2[0]
-                    fanart2 = six.ensure_str(fanart2)
+                    _fanart2 = art2['backdrops']
+                    _fanart2 = [x for x in _fanart2 if x.get('iso_639_1') == self.lang] + [x for x in _fanart2 if x.get('iso_639_1') == 'en'] + [x for x in _fanart2 if x.get('iso_639_1') not in [self.lang, 'en']]
+                    _fanart2 = [x for x in _fanart2 if x.get('width') == 1920] + [x for x in _fanart2 if x.get('width') < 1920]
+                    _fanart2 = [(x['width'], x['file_path']) for x in _fanart2]
+                    _fanart2 = [(x[0], x[1]) if x[0] < 1280 else ('1280', x[1]) for x in _fanart2]
+                    if _fanart2:
+                        fanart2 = self.tm_img_link % _fanart2[0]
+                        fanart2 = six.ensure_str(fanart2)
                 except:
-                    fanart2 = '0'
+                    pass
 
-            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster1, 'poster2': poster2, 'poster3': poster3, 'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo,
-                    'clearart': clearart, 'landscape': landscape, 'discart': discart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
+            poster = poster3 or poster2 or poster1
+            fanart = fanart1 or fanart2
+            if not fanart: fanart = '0'
+            #log_utils.log('title: ' + title + ' - poster: ' + repr(poster))
+
+            item = {'title': title, 'originaltitle': originaltitle, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'clearlogo': clearlogo, 'clearart': clearart,
+                    'landscape': landscape, 'discart': discart, 'premiered': premiered, 'genre': genre, 'duration': duration, 'mpaa': mpaa, 'director': director, 'writer': writer, 'cast': cast, 'plot': plot, 'tagline': tagline}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             self.list[i].update(item)
 
@@ -1161,7 +1175,7 @@ class movies:
 
         addonPoster, addonBanner = control.addonPoster(), control.addonBanner()
 
-        addonFanart, settingFanart = control.addonFanart(), control.setting('fanart')
+        addonFanart = control.addonFanart()
 
         traktCredentials = trakt.getTraktCredentialsInfo()
 
@@ -1215,13 +1229,7 @@ class movies:
 
                 #poster = [i[x] for x in ['poster3', 'poster', 'poster2'] if i.get(x, '0') != '0']
                 #poster = poster[0] if poster else addonPoster
-                poster1 = i.get('poster', '')
-                if poster1 == '0': poster1 = ''
-                poster2 = i.get('poster2', '')
-                if poster2 == '0': poster2 = ''
-                poster3 = i.get('poster3', '')
-                if poster3 == '0': poster3 = ''
-                poster = poster3 or poster2 or poster1 or addonPoster
+                poster = i['poster'] if 'poster' in i and not i['poster'] == '0' else addonPoster
                 meta.update({'poster': poster})
 
                 sysmeta = urllib_parse.quote_plus(json.dumps(meta))
@@ -1269,13 +1277,9 @@ class movies:
                 art = {}
                 art.update({'icon': poster, 'thumb': poster, 'poster': poster})
 
-                fanart1 = i.get('fanart')
-                if fanart1 == '0': fanart1 = ''
-                fanart2 = i.get('fanart2')
-                if fanart2 == '0': fanart2 = ''
-                fanart = fanart1 or fanart2 or addonFanart
+                fanart = i['fanart'] if 'fanart' in i and not i['fanart'] == '0' else addonFanart
 
-                if settingFanart == 'true':
+                if self.settingFanart == 'true':
                     art.update({'fanart': fanart})
                 else:
                     art.update({'fanart': addonFanart})

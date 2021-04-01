@@ -23,6 +23,8 @@ from kodi_six import xbmc
 
 import six
 
+from io import open
+
 from resources.lib.modules import control
 
 
@@ -54,22 +56,22 @@ def log(msg, trace=0):
     try:
         if trace == 1:
             failure = six.ensure_str(traceback.format_exc())
-            _msg = '%s: %s' % (six.ensure_str(msg), failure)
+            _msg = '%s: %s' % (six.ensure_text(msg), failure)
         else:
-            _msg = '%s' % six.ensure_str(msg)
+            _msg = '%s' % six.ensure_text(msg)
 
         #if not debug_log == '0':
         if not os.path.exists(log_file):
             f = open(log_file, 'w')
             f.close()
-        with open(log_file, 'a') as f:
+        with open(log_file, 'a', encoding='utf-8') as f:
             line = '[%s %s] %s: %s' % (datetime.now().date(), str(datetime.now().time())[:8], DEBUGPREFIX, _msg)
             f.write(line.rstrip('\r\n')+'\n\n')
         #else:
             #xbmc.log('%s: %s' % (DEBUGPREFIX, _msg), LOGDEBUG)
     except Exception as e:
         try:
-            xbmc.log('Logging Failure: %s' % (e), LOGDEBUG)
+            xbmc.log('TheOath Logging Failure: %s' % e, LOGDEBUG)
         except:
             pass
 

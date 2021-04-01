@@ -60,6 +60,8 @@ class tvshows:
         self.logo_link = 'https://i.imgur.com/'
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
+        self.showunaired = control.setting('showunaired') or 'true'
+        self.hq_artwork = control.setting('hq.artwork') or 'false'
         self.trakt_user = control.setting('trakt.user').strip()
         self.imdb_user = control.setting('imdb.user').replace('ur', '')
         self.fanart_tv_user = control.setting('fanart.tv.user')
@@ -1101,8 +1103,6 @@ class tvshows:
         try:
             if self.list[i]['metacache'] == True: raise Exception()
 
-            hq_artwork = control.setting('hq.artwork') or 'false'
-
             imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
             tmdb = self.list[i]['tmdb'] if 'tmdb' in self.list[i] else '0'
             tvdb = self.list[i]['tvdb'] if 'tvdb' in self.list[i] else '0'
@@ -1252,15 +1252,21 @@ class tvshows:
             if not castwiththumb: castwiththumb = cast = ''
             else: cast = [(p['name'], p['role']) for p in castwiththumb]
 
-            poster1 = self.list[i].get('poster', '0')
+            poster1 = self.list[i].get('poster', '0') or '0'
 
-            poster_path = item.get('poster_path', '')
-            if poster_path: poster2 = self.tm_img_link % ('500', poster_path)
-            else: poster2 = '0'
+            poster_path = item.get('poster_path')
+            if poster_path:
+                poster2 = self.tm_img_link % ('500', poster_path)
+                poster2 = six.ensure_str(poster2)
+            else:
+                poster2 = None
 
-            fanart_path = item.get('backdrop_path', '')
-            if fanart_path: fanart = self.tm_img_link % ('1280', fanart_path)
-            else: fanart = '0'
+            fanart_path = item.get('backdrop_path')
+            if fanart_path:
+                fanart1 = self.tm_img_link % ('1280', fanart_path)
+                fanart1 = six.ensure_str(fanart1)
+            else:
+                fanart1 = '0'
 
             # art = item.get('images')
 
@@ -1285,70 +1291,79 @@ class tvshows:
             # except:
                 # fanart = '0'
 
-            poster3 = fanart2 = banner = clearlogo = clearart = landscape = '0'
-            if hq_artwork == 'true':# and not self.fanart_tv_user == '':
+            poster3 = fanart2 = None
+            banner = clearlogo = clearart = landscape = '0'
+            if self.hq_artwork == 'true' and not tvdb == '0':# and not self.fanart_tv_user == '':
 
-                if not tvdb == '0':
+                artmeta = True
+                try:
+                    #if self.fanart_tv_user == '': raise Exception()
+                    art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout='10', error=True)
+                    try: art = json.loads(art)
+                    except: artmeta = False
+                except:
+                    artmeta = False
 
-                    artmeta = True
-                    try:
-                        #if self.fanart_tv_user == '': raise Exception()
-                        art = client.request(self.fanart_tv_art_link % tvdb, headers=self.fanart_tv_headers, timeout='10', error=True)
-                        try: art = json.loads(art)
-                        except: artmeta = False
-                    except:
-                        artmeta = False
+                if artmeta == False: pass
 
-                    if artmeta == False: pass
+                try:
+                    _poster3 = art['tvposter']
+                    _poster3 = [x for x in _poster3 if x.get('lang') == self.lang][::-1] + [x for x in _poster3 if x.get('lang') == 'en'][::-1] + [x for x in _poster3 if x.get('lang') in ['00', '']][::-1]
+                    _poster3 = _poster3[0]['url']
+                    if _poster3: poster3 = six.ensure_str(_poster3)
+                except:
+                    pass
 
-                    try:
-                        poster3 = art['tvposter']
-                        poster3 = [x for x in poster3 if x.get('lang') == self.lang][::-1] + [x for x in poster3 if x.get('lang') == 'en'][::-1] + [x for x in poster3 if x.get('lang') in ['00', '']][::-1]
-                        poster3 = six.ensure_str(poster3[0]['url'])
-                    except:
-                        poster3 = '0'
+                try:
+                    _fanart2 = art['showbackground']
+                    _fanart2 = [x for x in _fanart2 if x.get('lang') == self.lang][::-1] + [x for x in _fanart2 if x.get('lang') == 'en'][::-1] + [x for x in _fanart2 if x.get('lang') in ['00', '']][::-1]
+                    _fanart2 = _fanart2[0]['url']
+                    if _fanart2: fanart2 = six.ensure_str(_fanart2)
+                except:
+                    pass
 
-                    try:
-                        fanart2 = art['showbackground']
-                        fanart2 = [x for x in fanart2 if x.get('lang') == self.lang][::-1] + [x for x in fanart2 if x.get('lang') == 'en'][::-1] + [x for x in fanart2 if x.get('lang') in ['00', '']][::-1]
-                        fanart2 = six.ensure_str(fanart2[0]['url'])
-                    except:
-                        fanart2 = '0'
+                try:
+                    _banner = art['tvbanner']
+                    _banner = [x for x in _banner if x.get('lang') == self.lang][::-1] + [x for x in _banner if x.get('lang') == 'en'][::-1] + [x for x in _banner if x.get('lang') in ['00', '']][::-1]
+                    _banner = _banner[0]['url']
+                    if _banner: banner = six.ensure_str(_banner)
+                except:
+                    pass
 
-                    try:
-                        banner = art['tvbanner']
-                        banner = [x for x in banner if x.get('lang') == self.lang][::-1] + [x for x in banner if x.get('lang') == 'en'][::-1] + [x for x in banner if x.get('lang') in ['00', '']][::-1]
-                        banner = six.ensure_str(banner[0]['url'])
-                    except:
-                        banner = '0'
+                try:
+                    if 'hdtvlogo' in art: _clearlogo = art['hdtvlogo']
+                    else: _clearlogo = art['clearlogo']
+                    _clearlogo = [x for x in _clearlogo if x.get('lang') == self.lang][::-1] + [x for x in _clearlogo if x.get('lang') == 'en'][::-1] + [x for x in _clearlogo if x.get('lang') in ['00', '']][::-1]
+                    _clearlogo = _clearlogo[0]['url']
+                    if _clearlogo: clearlogo = six.ensure_str(_clearlogo)
+                except:
+                    pass
 
-                    try:
-                        if 'hdtvlogo' in art: clearlogo = art['hdtvlogo']
-                        else: clearlogo = art['clearlogo']
-                        clearlogo = [x for x in clearlogo if x.get('lang') == self.lang][::-1] + [x for x in clearlogo if x.get('lang') == 'en'][::-1] + [x for x in clearlogo if x.get('lang') in ['00', '']][::-1]
-                        clearlogo = six.ensure_str(clearlogo[0]['url'])
-                    except:
-                        clearlogo = '0'
+                try:
+                    if 'hdclearart' in art: _clearart = art['hdclearart']
+                    else: _clearart = art['clearart']
+                    _clearart = [x for x in _clearart if x.get('lang') == self.lang][::-1] + [x for x in _clearart if x.get('lang') == 'en'][::-1] + [x for x in _clearart if x.get('lang') in ['00', '']][::-1]
+                    _clearart = _clearart[0]['url']
+                    if _clearart: clearart = six.ensure_str(_clearart)
+                except:
+                    pass
 
-                    try:
-                        if 'hdclearart' in art: clearart = art['hdclearart']
-                        else: clearart = art['clearart']
-                        clearart = [x for x in clearart if x.get('lang') == self.lang][::-1] + [x for x in clearart if x.get('lang') == 'en'][::-1] + [x for x in clearart if x.get('lang') in ['00', '']][::-1]
-                        clearart = six.ensure_str(clearart[0]['url'])
-                    except:
-                        clearart = '0'
+                try:
+                    if 'tvthumb' in art: _landscape = art['tvthumb']
+                    else: _landscape = art['showbackground']
+                    _landscape = [x for x in _landscape if x.get('lang') == self.lang][::-1] + [x for x in _landscape if x.get('lang') == 'en'][::-1] + [x for x in _landscape if x.get('lang') in ['00', '']][::-1]
+                    _landscape = _landscape[0]['url']
+                    if _landscape: landscape = six.ensure_str(_landscape)
+                except:
+                    pass
 
-                    try:
-                        if 'tvthumb' in art: landscape = art['tvthumb']
-                        else: landscape = art['showbackground']
-                        landscape = [x for x in landscape if x.get('lang') == self.lang][::-1] + [x for x in landscape if x.get('lang') == 'en'][::-1] + [x for x in landscape if x.get('lang') in ['00', '']][::-1]
-                        landscape = six.ensure_str(landscape[0]['url'])
-                    except:
-                        landscape = '0'
+            poster = poster3 or poster2 or poster1
+            fanart = fanart2 or fanart1
+            #log_utils.log('title: ' + title + ' - tvdb: ' + tvdb + ' - poster: ' + repr(poster))
 
-            item = {'title': title, 'originaltitle': title, 'label': label, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster1, 'poster2': poster2, 'poster3': poster3,
-                    'banner': banner, 'fanart': fanart, 'fanart2': fanart2, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': studio,
-                    'genre': genre, 'duration': duration, 'mpaa': mpaa, 'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot, 'status': status, 'tagline': tagline}
+            item = {'title': title, 'originaltitle': title, 'label': label, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'fanart': fanart, 'banner': banner,
+                    'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa,
+                    'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot, 'status': status, 'tagline': tagline}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             #log_utils.log('superinfo_item: ' + str(item))
             self.list[i].update(item)
@@ -1410,10 +1425,7 @@ class tvshows:
                         label = '[COLOR crimson]%s [I][Upcoming][/I][/COLOR]' % label
                 except: pass
 
-                poster1 = i.get('poster', '')
-                poster2 = i.get('poster2', '')
-                poster3 = i.get('poster3', '')
-                poster = poster3 or poster2 or poster1 or addonPoster
+                poster = i['poster'] if 'poster' in i and not i['poster'] == '0' else addonPoster
 
                 systitle = sysname = urllib_parse.quote_plus(i['title'])
                 sysimage = urllib_parse.quote_plus(poster)
@@ -1472,9 +1484,7 @@ class tvshows:
 
                 art.update({'icon': poster, 'thumb': poster, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
 
-                fanart1 = i.get('fanart', '')
-                fanart2 = i.get('fanart2', '')
-                fanart = fanart2 or fanart1 or addonFanart
+                fanart = i['fanart'] if 'fanart' in i and not i['fanart'] == '0' else addonFanart
 
                 if settingFanart == 'true':
                     art.update({'fanart': fanart})
@@ -1485,13 +1495,13 @@ class tvshows:
                 banner = banner1 or fanart or addonBanner
                 art.update({'banner': banner})
 
-                if 'clearlogo' in i and not i['clearlogo'] == '':
+                if 'clearlogo' in i and not i['clearlogo'] == '0':
                     art.update({'clearlogo': i['clearlogo']})
 
-                if 'clearart' in i and not i['clearart'] == '':
+                if 'clearart' in i and not i['clearart'] == '0':
                     art.update({'clearart': i['clearart']})
 
-                if 'landscape' in i and not i['landscape'] == '':
+                if 'landscape' in i and not i['landscape'] == '0':
                     landscape = i['landscape']
                 else:
                     landscape = fanart

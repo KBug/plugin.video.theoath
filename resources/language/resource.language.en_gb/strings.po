@@ -548,7 +548,7 @@ msgid "Enable extra & hq artwork"
 msgstr ""
 
 msgctxt "#32130"
-msgid "Personal Fanart.tv API key required to be entered on Accounts tab"
+msgid "Personal Fanart.tv API key suggested to be entered on Accounts tab"
 msgstr ""
 
 msgctxt "#32131"
