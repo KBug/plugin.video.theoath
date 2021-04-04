@@ -66,7 +66,7 @@ class player(xbmc.Player):
             if self.content == 'movie':
                 item.setArt({'icon': thumb, 'thumb': thumb, 'poster': poster, 'fanart': fanart, 'clearlogo': clearlogo, 'clearart': clearart, 'discart': discart})
             else:
-                item.setArt({'icon': thumb, 'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart})
+                item.setArt({'icon': thumb, 'thumb': thumb, 'tvshow.poster': poster, 'season.poster': poster, 'fanart': fanart, 'clearlogo': clearlogo, 'clearart': clearart})
             item.setInfo(type='video', infoLabels = control.metadataClean(meta))
 
             if 'plugin' in control.infoLabel('Container.PluginName'):

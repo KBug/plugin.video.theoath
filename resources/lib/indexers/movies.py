@@ -70,6 +70,7 @@ class movies:
         self.hq_artwork = control.setting('hq.artwork') or 'false'
         self.settingFanart = control.setting('fanart')
 
+
         self.search_link = 'https://api.trakt.tv/search/movie?limit=20&page=1&query='
         self.fanart_tv_art_link = 'http://webservice.fanart.tv/v3/movies/%s'
         self.fanart_tv_level_link = 'http://webservice.fanart.tv/v3/level'
@@ -276,7 +277,7 @@ class movies:
                     if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user): raise Exception()
                     self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
                 except:
-                    self.list = cache.get(self.trakt_list, 1, url, self.trakt_user)
+                    self.list = self.trakt_list(url, self.trakt_user)
 
                 if '/users/me/' in url and '/collection/' in url:
                     self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
@@ -288,7 +289,7 @@ class movies:
                 if idx == True: self.worker(level=0)
 
             elif u in self.trakt_link and '/sync/playback/' in url:
-                self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+                self.list = self.trakt_list(url, self.trakt_user)
                 self.list = sorted(self.list, key=lambda k: int(k['paused_at']), reverse=True)
                 if idx == True: self.worker()
 
@@ -298,7 +299,7 @@ class movies:
 
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-                self.list = cache.get(self.imdb_list, 0, url)
+                self.list = cache.get(self.imdb_list, 1, url)
                 if idx == True: self.worker()
 
             elif u in self.imdb_link:
@@ -930,7 +931,7 @@ class movies:
 
         self.list = [i for i in self.list if not i['imdb'] == '0']
 
-        self.list = metacache.local(self.list, self.tm_img_link, 'poster3', 'fanart2')
+        #self.list = metacache.local(self.list, self.tm_img_link, 'poster', 'fanart')
 
         #if self.fanart_tv_user == '':
             #for i in self.list: i.update({'clearlogo': '0', 'clearart': '0'})
@@ -939,7 +940,7 @@ class movies:
     def super_info(self, i):
         try:
             #log_utils.log('si_list: ' + repr(self.list[i]))
-            if self.list[i]['metacache'] == True: raise Exception()
+            if self.list[i]['metacache'] == True: return
 
             imdb = self.list[i]['imdb']
 

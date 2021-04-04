@@ -38,8 +38,8 @@ def fetch(items, lang='en', user=''):
 
     for i in list(range(0, len(items))):
         try:
-            dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tvdb = '%s' and lang = '%s' and user = '%s' and not tvdb = '0')" % \
-                                                    (items[i]['imdb'], lang, user, items[i]['tvdb'], lang, user))
+            dbcur.execute("SELECT * FROM meta WHERE (imdb = '%s' and lang = '%s' and user = '%s' and not imdb = '0') or (tmdb = '%s' and lang = '%s' and user = '%s' and not tmdb = '0')" % \
+                                                    (items[i]['imdb'], lang, user, items[i]['tmdb'], lang, user))
             match = dbcur.fetchone()
 
             t1 = int(match[6])

@@ -60,6 +60,7 @@ class tvshows:
         self.logo_link = 'https://i.imgur.com/'
         self.datetime = datetime.datetime.utcnow()# - datetime.timedelta(hours = 5)
         self.today_date = self.datetime.strftime('%Y-%m-%d')
+        self.specials = control.setting('tv.specials') or 'true'
         self.showunaired = control.setting('showunaired') or 'true'
         self.hq_artwork = control.setting('hq.artwork') or 'false'
         self.trakt_user = control.setting('trakt.user').strip()
@@ -140,7 +141,7 @@ class tvshows:
                     if trakt.getActivity() > cache.timeout(self.trakt_list, url, self.trakt_user): raise Exception()
                     self.list = cache.get(self.trakt_list, 720, url, self.trakt_user)
                 except:
-                    self.list = cache.get(self.trakt_list, 0, url, self.trakt_user)
+                    self.list = self.trakt_list(url, self.trakt_user)
 
                 if '/users/me/' in url and '/collection/' in url:
                     self.list = sorted(self.list, key=lambda k: utils.title_key(k['title']))
@@ -156,7 +157,7 @@ class tvshows:
                 if idx == True: self.worker()
 
             elif u in self.imdb_link and ('/user/' in url or '/list/' in url):
-                self.list = cache.get(self.imdb_list, 0, url)
+                self.list = cache.get(self.imdb_list, 1, url)
                 if idx == True: self.worker()
 
             elif u in self.imdb_link:
@@ -1101,7 +1102,7 @@ class tvshows:
 
     def super_info(self, i):
         try:
-            if self.list[i]['metacache'] == True: raise Exception()
+            if self.list[i]['metacache'] == True: return
 
             imdb = self.list[i]['imdb'] if 'imdb' in self.list[i] else '0'
             tmdb = self.list[i]['tmdb'] if 'tmdb' in self.list[i] else '0'
@@ -1426,9 +1427,22 @@ class tvshows:
                 except: pass
 
                 poster = i['poster'] if 'poster' in i and not i['poster'] == '0' else addonPoster
+                fanart = i['fanart'] if 'fanart' in i and not i['fanart'] == '0' else addonFanart
+                banner1 = i.get('banner', '')
+                banner = banner1 or fanart or addonBanner
+                if 'landscape' in i and not i['landscape'] == '0':
+                    landscape = i['landscape']
+                else:
+                    landscape = fanart
 
                 systitle = sysname = urllib_parse.quote_plus(i['title'])
                 sysimage = urllib_parse.quote_plus(poster)
+
+                seasons_meta = {'poster': poster, 'fanart': fanart, 'banner': banner, 'clearlogo': i.get('clearlogo', '0'), 'clearart': i.get('clearart', '0'), 'landscape': landscape}
+
+                sysmeta = urllib_parse.quote_plus(json.dumps(seasons_meta))
+                #log_utils.log('sysmeta: ' + str(sysmeta))
+
                 imdb, tvdb, tmdb, year = i.get('imdb', ''), i.get('tvdb', ''), i.get('tmdb', ''), i.get('year', '')
 
                 meta = dict((k,v) for k, v in six.iteritems(i) if not (v == '0' or 'cast' in k))
@@ -1482,30 +1496,18 @@ class tvshows:
 
                 art = {}
 
-                art.update({'icon': poster, 'thumb': poster, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster})
-
-                fanart = i['fanart'] if 'fanart' in i and not i['fanart'] == '0' else addonFanart
+                art.update({'icon': poster, 'thumb': poster, 'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'banner': banner, 'landscape': landscape})
 
                 if settingFanart == 'true':
                     art.update({'fanart': fanart})
                 else:
                     art.update({'fanart': addonFanart})
 
-                banner1 = i.get('banner', '')
-                banner = banner1 or fanart or addonBanner
-                art.update({'banner': banner})
-
                 if 'clearlogo' in i and not i['clearlogo'] == '0':
                     art.update({'clearlogo': i['clearlogo']})
 
                 if 'clearart' in i and not i['clearart'] == '0':
                     art.update({'clearart': i['clearart']})
-
-                if 'landscape' in i and not i['landscape'] == '0':
-                    landscape = i['landscape']
-                else:
-                    landscape = fanart
-                art.update({'landscape': landscape})
 
                 castwiththumb = i.get('castwiththumb', []) or []
                 cast = i.get('cast', []) or []
@@ -1522,7 +1524,7 @@ class tvshows:
                     # url = '%s?action=episodes&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&fanart=%s&duration=%s' % (sysaddon, systitle, year, imdb, tmdb, fanart, i['duration'])
                 # else:
                     # url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s' % (sysaddon, systitle, year, imdb, tmdb)
-                url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s' % (sysaddon, systitle, year, imdb, tmdb)
+                url = '%s?action=seasons&tvshowtitle=%s&year=%s&imdb=%s&tmdb=%s&meta=%s' % (sysaddon, systitle, year, imdb, tmdb, sysmeta)
 
                 control.addItem(handle=syshandle, url=url, listitem=item, isFolder=True)
             except:

@@ -228,7 +228,7 @@ def tvshows(tvshowtitle, imdb, tmdb, season, watched):
         #log_utils.log('playcount_season: ' + str(season))
         items = []
         if season:
-            items = episodes.episodes().get(tvshowtitle, '0', imdb, tmdb, season=season, idx=False)
+            items = episodes.episodes().get(tvshowtitle, '0', imdb, tmdb, meta=None, season=season, idx=False)
             items = [i for i in items if int('%01d' % int(season)) == int('%01d' % int(i['season']))]
             items = [{'label': '%s S%02dE%02d' % (tvshowtitle, int(i['season']), int(i['episode'])), 'season': int('%01d' % int(i['season'])), 'episode': int('%01d' % int(i['episode'])), 'unaired': i['unaired']} for i in items]
 
@@ -246,11 +246,11 @@ def tvshows(tvshowtitle, imdb, tmdb, season, watched):
                     bookmarks._delete_record('episode', imdb, _season, _episode)
 
         else:
-            seasons = episodes.seasons().get(tvshowtitle, '0', imdb, tmdb, idx=False)
+            seasons = episodes.seasons().get(tvshowtitle, '0', imdb, tmdb, meta=None, idx=False)
             seasons = [i['season'] for i in seasons]
             #log_utils.log('playcount_seasons: ' + str(seasons))
             for s in seasons:
-                items = episodes.episodes().get(tvshowtitle, '0', imdb, tmdb, season=s, idx=False)
+                items = episodes.episodes().get(tvshowtitle, '0', imdb, tmdb, meta=None, season=s, idx=False)
                 items = [{'label': '%s S%02dE%02d' % (tvshowtitle, int(i['season']), int(i['episode'])), 'season': int('%01d' % int(i['season'])), 'episode': int('%01d' % int(i['episode'])), 'unaired': i['unaired']} for i in items]
                 #log_utils.log('playcount_items2: ' + str(items))
 
@@ -281,7 +281,7 @@ def tvshows(tvshowtitle, imdb, tmdb, season, watched):
         #log_utils.log('playcount_season: ' + str(season))
         if season:
             from resources.lib.indexers import episodes
-            items = episodes.episodes().get(tvshowtitle, '0', imdb, tmdb, season=season, idx=False)
+            items = episodes.episodes().get(tvshowtitle, '0', imdb, tmdb, meta=None, season=season, idx=False)
             items = [(int(i['season']), int(i['episode'])) for i in items]
             items = [i[1] for i in items if int('%01d' % int(season)) == int('%01d' % i[0])]
             for i in items:
