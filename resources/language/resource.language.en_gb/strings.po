@@ -368,7 +368,7 @@ msgid "Provider Source:"
 msgstr ""
 
 msgctxt "#32085"
-msgid "Open TheOath Scrapers Settings"
+msgid "OathScrapers Settings"
 msgstr ""
 
 msgctxt "#32086"

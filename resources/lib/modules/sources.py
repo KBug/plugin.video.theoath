@@ -809,6 +809,8 @@ class sources:
         for i in list(range(len(self.sources))):
             if self.sources[i]['quality'] in ['hd', 'HD']:
                 self.sources[i].update({'quality': '720p'})
+            if _content == 'episode' and self.sources[i]['quality'] in ['scr', 'cam', 'SCR', 'CAM']:
+                self.sources[i].update({'quality': 'sd'})
 
         filter = []
         if max_quality == 0:

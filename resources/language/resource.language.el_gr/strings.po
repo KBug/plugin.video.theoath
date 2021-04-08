@@ -368,8 +368,8 @@ msgid "Provider Source:"
 msgstr "Πακέτο παρόχων:"
 
 msgctxt "#32085"
-msgid "Open TheOath Scrapers Settings"
-msgstr "Ρυθμίσεις TheOath Scrapers"
+msgid "OathScrapers Settings"
+msgstr "Ρυθμίσεις OathScrapers"
 
 msgctxt "#32086"
 msgid "Open Openscrapers Settings"

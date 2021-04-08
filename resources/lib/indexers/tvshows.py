@@ -1241,17 +1241,16 @@ class tvshows:
                     en_tagline = trans_item.get('tagline', '')
                     if en_tagline: tagline = client.replaceHTMLCodes(six.ensure_str(en_tagline, errors='replace'))
 
+            castwiththumb = []
             try:
                 c = item['aggregate_credits']['cast'][:30]
-                castwiththumb = []
                 for person in c:
                     _icon = person['profile_path']
                     icon = self.tm_img_link % ('185', _icon) if _icon else ''
                     castwiththumb.append({'name': person['name'], 'role': person['roles'][0]['character'], 'thumbnail': icon})
             except:
-                castwiththumb = ''
-            if not castwiththumb: castwiththumb = cast = ''
-            else: cast = [(p['name'], p['role']) for p in castwiththumb]
+                pass
+            if not castwiththumb: castwiththumb = '0'
 
             poster1 = self.list[i].get('poster', '0') or '0'
 
@@ -1364,7 +1363,7 @@ class tvshows:
 
             item = {'title': title, 'originaltitle': title, 'label': label, 'year': year, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'fanart': fanart, 'banner': banner,
                     'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'premiered': premiered, 'studio': studio, 'genre': genre, 'duration': duration, 'mpaa': mpaa,
-                    'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot, 'status': status, 'tagline': tagline}
+                    'castwiththumb': castwiththumb, 'plot': plot, 'status': status, 'tagline': tagline}
             item = dict((k,v) for k, v in six.iteritems(item) if not v == '0')
             #log_utils.log('superinfo_item: ' + str(item))
             self.list[i].update(item)
@@ -1445,7 +1444,7 @@ class tvshows:
 
                 imdb, tvdb, tmdb, year = i.get('imdb', ''), i.get('tvdb', ''), i.get('tmdb', ''), i.get('year', '')
 
-                meta = dict((k,v) for k, v in six.iteritems(i) if not (v == '0' or 'cast' in k))
+                meta = dict((k,v) for k, v in six.iteritems(i) if not v == '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tvdb_id': tvdb})
                 meta.update({'tmdb_id': tmdb})
@@ -1509,10 +1508,14 @@ class tvshows:
                 if 'clearart' in i and not i['clearart'] == '0':
                     art.update({'clearart': i['clearart']})
 
-                castwiththumb = i.get('castwiththumb', []) or []
-                cast = i.get('cast', []) or []
-                try: item.setCast(castwiththumb)
-                except: meta.update({'cast': cast})
+                castwiththumb = i.get('castwiththumb')
+                if castwiththumb and not castwiththumb == '0':
+                    if control.getKodiVersion() >= 18:
+                        item.setCast(castwiththumb)
+                    else:
+                        cast = [(p['name'], p['role']) for p in castwiththumb]
+                        meta.update({'cast': cast})
+
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setInfo(type='Video', infoLabels=control.metadataClean(meta))

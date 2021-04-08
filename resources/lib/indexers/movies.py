@@ -515,8 +515,7 @@ class movies:
 
     def decades(self):
         year = (self.datetime.strftime('%Y'))
-        yea = int(year[:3])
-        dec = yea * 10
+        dec = int(year[:3]) * 10
 
         for i in list(range(dec, 1890, -10)): self.list.append({'name': str(i) + 's', 'url': self.decade_link % (str(i), str(i+9)), 'image': 'years.png', 'action': 'movies'})
         self.addDirectory(self.list)

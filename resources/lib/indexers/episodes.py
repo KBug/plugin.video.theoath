@@ -166,17 +166,16 @@ class seasons:
             except: status = ''
             if not status: status = '0'
 
+            castwiththumb = []
             try:
                 c = item['aggregate_credits']['cast'][:30]
-                castwiththumb = []
                 for person in c:
                     _icon = person['profile_path']
                     icon = self.tm_img_link % ('185', _icon) if _icon else ''
                     castwiththumb.append({'name': person['name'], 'role': person['roles'][0]['character'], 'thumbnail': icon})
             except:
-                castwiththumb = ''
-            if not castwiththumb: castwiththumb = cast = ''
-            else: cast = [(p['name'], p['role']) for p in castwiththumb]
+                pass
+            if not castwiththumb: castwiththumb = '0'
 
             try: show_plot = item['overview']
             except: show_plot = ''
@@ -238,7 +237,7 @@ class seasons:
                 else: poster = show_poster
 
                 self.list.append({'season': season, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre, 'duration': duration,
-                                  'mpaa': mpaa, 'cast': cast, 'castwiththumb': castwiththumb, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'fanart': fanart,
+                                  'mpaa': mpaa, 'castwiththumb': castwiththumb, 'plot': plot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'poster': poster, 'fanart': fanart,
                                   'banner': banner,'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'unaired': unaired})
                 #self.list = sorted(self.list, key=lambda k: int(k['season']))
             except:
@@ -311,7 +310,7 @@ class seasons:
 
                 imdb, tvdb, tmdb, year, season, fanart, duration, status = i['imdb'], i['tvdb'], i['tmdb'], i['year'], i['season'], i['fanart'], i['duration'], i['status']
 
-                meta = dict((k,v) for k, v in six.iteritems(i) if not (v == '0' or 'cast' in k))
+                meta = dict((k,v) for k, v in six.iteritems(i) if not v == '0')
                 meta.update({'code': imdb, 'imdbnumber': imdb, 'imdb_id': imdb})
                 meta.update({'tvdb_id': tvdb})
                 meta.update({'mediatype': 'tvshow'})
@@ -374,10 +373,14 @@ class seasons:
                 if 'clearart' in i and not i['clearart'] == '0':
                     art.update({'clearart': i['clearart']})
 
-                castwiththumb = i.get('castwiththumb', []) or []
-                cast = i.get('cast', []) or []
-                try: item.setCast(castwiththumb)
-                except: meta.update({'cast': cast})
+                castwiththumb = i.get('castwiththumb')
+                if castwiththumb and not castwiththumb == '0':
+                    if control.getKodiVersion() >= 18:
+                        item.setCast(castwiththumb)
+                    else:
+                        cast = [(p['name'], p['role']) for p in castwiththumb]
+                        meta.update({'cast': cast})
+
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setInfo(type='Video', infoLabels = control.metadataClean(meta))
@@ -876,17 +879,16 @@ class episodes:
                 if not director: director = '0'
                 if not writer: writer = '0'
 
+                castwiththumb = []
                 try:
                     r_cast = item['credits']['cast'][:30]
-                    castwiththumb = []
                     for person in r_cast:
                         _icon = person['profile_path']
                         icon = self.tm_img_link % ('185', _icon) if _icon else ''
                         castwiththumb.append({'name': person['name'], 'role': person['character'], 'thumbnail': icon})
                 except:
-                    castwiththumb = ''
-                if not castwiththumb: castwiththumb = cast = ''
-                else: cast = [(p['name'], p['role']) for p in castwiththumb]
+                    pass
+                if not castwiththumb: castwiththumb = '0'
 
                 poster = fanart = banner = landscape = clearlogo = clearart = '0'
 
@@ -894,7 +896,7 @@ class episodes:
                     poster, fanart, banner, landscape, clearlogo, clearart = self.fanart_tv_art(tvdb)
 
                 self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'studio': i.get('studio'), 'genre': i.get('genre'), 'status': i.get('status'),
-                                  'duration': i.get('duration'), 'rating': rating, 'votes': votes, 'mpaa': i.get('mpaa'), 'director': director, 'writer': writer, 'cast': cast, 'castwiththumb': castwiththumb, 'plot': plot,
+                                  'duration': i.get('duration'), 'rating': rating, 'votes': votes, 'mpaa': i.get('mpaa'), 'director': director, 'writer': writer, 'castwiththumb': castwiththumb, 'plot': plot,
                                   'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'snum': i['snum'], 'enum': i['enum'], 'action': 'episodes',
                                   'unaired': unaired, '_last_watched': i['_last_watched'], 'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, '_sort_key': max(i['_last_watched'],premiered)})
             except:
@@ -992,17 +994,16 @@ class episodes:
                 if not director: director = '0'
                 if not writer: writer = '0'
 
+                castwiththumb = []
                 try:
                     r_cast = item['credits']['cast'][:30]
-                    castwiththumb = []
                     for person in r_cast:
                         _icon = person['profile_path']
                         icon = self.tm_img_link % ('185', _icon) if _icon else ''
                         castwiththumb.append({'name': person['name'], 'role': person['character'], 'thumbnail': icon})
                 except:
-                    castwiththumb = ''
-                if not castwiththumb: castwiththumb = cast = ''
-                else: cast = [(p['name'], p['role']) for p in castwiththumb]
+                    pass
+                if not castwiththumb: castwiththumb = '0'
 
                 paused_at = i.get('paused_at', '0') or '0'
 
@@ -1014,7 +1015,7 @@ class episodes:
                     poster, fanart, banner, landscape, clearlogo, clearart = self.fanart_tv_art(tvdb)
 
                 self.list.append({'title': title, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered, 'status': status, 'studio': studio, 'genre': genre,
-                                  'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castwiththumb': castwiththumb, 'cast': cast, 'plot': plot,
+                                  'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'writer': writer, 'castwiththumb': castwiththumb, 'plot': plot,
                                   'imdb': imdb, 'tvdb': tvdb, 'tmdb': tmdb, 'poster': poster, 'banner': banner, 'fanart': fanart, 'thumb': thumb, 'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape,
                                   'paused_at': paused_at, 'watched_at': watched_at})
             except:
@@ -1372,21 +1373,20 @@ class episodes:
                 if not director: director = '0'
                 if not writer: writer = '0'
 
+                castwiththumb = []
                 try:
-                    castwiththumb = []
                     for person in r_cast[:30]:
                         _icon = person['profile_path']
                         icon = self.tm_img_link % ('185', _icon) if _icon else ''
                         castwiththumb.append({'name': person['name'], 'role': person['roles'][0]['character'], 'thumbnail': icon})
                 except:
-                    castwiththumb = ''
-                if not castwiththumb: castwiththumb = cast = ''
-                else: cast = [(p['name'], p['role']) for p in castwiththumb]
+                    pass
+                if not castwiththumb: castwiththumb = '0'
 
                 thumb = self.tm_img_link % ('300', item['still_path'])
 
                 self.list.append({'title': title, 'label': label, 'season': season, 'episode': episode, 'tvshowtitle': tvshowtitle, 'year': year, 'premiered': premiered,
-                                  'rating': rating, 'votes': votes, 'director': director, 'writer': writer, 'cast': cast, 'castwiththumb': castwiththumb, 'duration': duration,
+                                  'rating': rating, 'votes': votes, 'director': director, 'writer': writer, 'castwiththumb': castwiththumb, 'duration': duration,
                                   'status': status, 'plot': episodeplot, 'imdb': imdb, 'tmdb': tmdb, 'tvdb': tvdb, 'unaired': unaired, 'thumb': thumb, 'poster': poster,
                                   'fanart': fanart, 'banner': banner,'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape})
                 #self.list = sorted(self.list, key=lambda k: (int(k['season']), int(k['episode'])))
@@ -1480,7 +1480,7 @@ class episodes:
                 systvshowtitle = urllib_parse.quote_plus(i['tvshowtitle'])
                 syspremiered = urllib_parse.quote_plus(i['premiered'])
 
-                meta = dict((k,v) for k, v in six.iteritems(i) if not (v == '0' or 'cast' in k))
+                meta = dict((k,v) for k, v in six.iteritems(i) if not v == '0')
                 meta.update({'mediatype': 'episode'})
                 meta.update({'code': imdb, 'imdbnumber': imdb})
                 meta.update({'trailer': '%s?action=trailer&name=%s' % (sysaddon, systvshowtitle)})
@@ -1559,10 +1559,14 @@ class episodes:
                 elif not addonFanart == None:
                     art.update({'fanart': addonFanart})
 
-                castwiththumb = i.get('castwiththumb', []) or []
-                cast = i.get('cast', []) or []
-                try: item.setCast(castwiththumb)
-                except: meta.update({'cast': cast})
+                castwiththumb = i.get('castwiththumb')
+                if castwiththumb and not castwiththumb == '0':
+                    if control.getKodiVersion() >= 18:
+                        item.setCast(castwiththumb)
+                    else:
+                        cast = [(p['name'], p['role']) for p in castwiththumb]
+                        meta.update({'cast': cast})
+
                 item.setArt(art)
                 item.addContextMenuItems(cm)
                 item.setProperty('IsPlayable', isPlayable)

@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.00.16[/COLOR][/B]
+- Stop labeling episode sources as cam/scr quality
+- Other internal changes
+
 [B][COLOR gold]v4.00.15[/COLOR][/B]
 - Added missing artwork types on episodes lists
 - Partial re-arrangement of how TV shows metadata are handled
