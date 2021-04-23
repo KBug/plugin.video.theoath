@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.00.17[/COLOR][/B]
+- Added alternate option to sort source results by Premium primarily and then by resolution
+- Other minor changes to source sort/filtering functions
+
 [B][COLOR gold]v4.00.16[/COLOR][/B]
 - Stop labeling episode sources as cam/scr quality
 - Other internal changes

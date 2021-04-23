@@ -248,7 +248,7 @@ class seasons:
 
 
     def seasonDirectory(self, items):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items == None or len(items) == 0: control.idle()# ; sys.exit()
 
         sysaddon = sys.argv[0]
 
@@ -1398,7 +1398,7 @@ class episodes:
 
 
     def episodeDirectory(self, items):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items == None or len(items) == 0: control.idle()# ; sys.exit()
 
         sysaddon = sys.argv[0]
 
@@ -1595,7 +1595,7 @@ class episodes:
 
 
     def addDirectory(self, items, queue=False):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items == None or len(items) == 0: control.idle()# ; sys.exit()
 
         sysaddon = sys.argv[0]
 

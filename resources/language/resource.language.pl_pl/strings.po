@@ -652,7 +652,7 @@ msgid "Sources Filters and Sorting Options"
 msgstr "Filty Hostingów"
 
 msgctxt "#32339"
-msgid "Max Quality"
+msgid "Max Resolution"
 msgstr "Max Rozdzielczość"
 
 msgctxt "#32340"

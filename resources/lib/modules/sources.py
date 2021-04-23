@@ -826,7 +826,7 @@ class sources:
         _sources = filter
 
         if debrid_only == 'true' and debrid.status():
-            _sources = [i for i in _sources if (i['source'].lower() in self.hostprDict or 'torrent' in i['source'].lower()) and i['debridonly'] == True]
+            _sources = [i for i in _sources if (i['source'].lower() in self.hostprDict or 'torrent' in i['source'].lower())]# and i['debridonly'] == True]
 
         try:
             if remove_dups == 'true' and len(self.sources) > 1:
@@ -859,21 +859,15 @@ class sources:
 
     def sourcesSort(self):
 
-        max_quality = control.setting('hosts.quality') or '0'
-        max_quality = int(max_quality)
-        min_quality = control.setting('min.quality') or '3'
-        min_quality = int(min_quality)
-        remove_cam = control.setting('remove.cam') or 'false'
-
-        sort_provider = control.setting('hosts.sort.provider') or 'true'
+        main_sort = control.setting('main.sort') or '0'
 
         size_sort = control.setting('torr.sort.size') or 'true'
+
+        sort_provider = control.setting('hosts.sort.provider') or 'true'
 
         check_torr_cache = control.setting('check.torr.cache') or 'true'
 
         remove_uncached = control.setting('remove.uncached') or 'false'
-
-        debrid_only = control.setting('debrid.only') or 'false'
 
         random.shuffle(self.sources)
 
@@ -919,25 +913,22 @@ class sources:
                 filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i.get('source').lower() == 'torrent']
                 filter += [dict(list(i.items()) + [('debrid', d.name)]) for i in self.sources if i['source'] in valid_hoster and 'magnet:' not in i['url']]
 
-        if debrid_only == 'false' or debrid.status() == False:
-            filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
+        filter += [i for i in self.sources if not i['source'].lower() in self.hostprDict and i['debridonly'] == False]
 
         self.sources = filter
 
         filter = []
         filter += local
 
-        if max_quality == 0:
-            filter += [i for i in self.sources if i['quality'] in ['4K', '4k']]
-        if max_quality <= 1 and min_quality >= 1:
-            filter += [i for i in self.sources if i['quality'] in ['1080p', '1080P']]
-        if max_quality <= 2 and min_quality >= 2:
-            filter += [i for i in self.sources if i['quality'] in ['720p', '720P']]
-        if max_quality <= 3 and min_quality >= 3:
-            filter += [i for i in self.sources if i['quality'] in ['sd', 'SD']]
-            if remove_cam == 'false':
-                filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
+        filter += [i for i in self.sources if i['quality'] in ['4K', '4k']]
+        filter += [i for i in self.sources if i['quality'] in ['1080p', '1080P']]
+        filter += [i for i in self.sources if i['quality'] in ['720p', '720P']]
+        filter += [i for i in self.sources if i['quality'] in ['sd', 'SD']]
+        filter += [i for i in self.sources if i['quality'] in ['scr', 'cam', 'SCR', 'CAM']]
         self.sources = filter
+
+        if main_sort == '1':
+            self.sources = [i for i in self.sources if i.get('debrid', '')] + [i for i in self.sources if not i.get('debrid', '')]
 
         if multi == True:
             self.sources = [i for i in self.sources if not i['language'] == 'en'] + [i for i in self.sources if i['language'] == 'en']
@@ -1102,6 +1093,7 @@ class sources:
             return url
         except:
             if info == True: self.errorForSources()
+            #log_utils.log('Resolve failure for url: {}'.format(url), 1)
             return
 
 

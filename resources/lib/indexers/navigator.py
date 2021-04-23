@@ -491,7 +491,7 @@ class navigator:
         if traktCredentials == False and imdbCredentials == False:
             control.idle()
             control.infoDialog(control.lang(32042), sound=True, icon='WARNING')
-            sys.exit()
+            #sys.exit()
 
 
     def infoCheck(self, version):
@@ -577,8 +577,7 @@ class navigator:
         try: item = control.item(label=name, offscreen=True)
         except: item = control.item(label=name)
         item.addContextMenuItems(cm)
-        item.setArt({'icon': thumb, 'thumb': thumb})
-        if not addonFanart == None: item.setProperty('Fanart_Image', addonFanart)
+        item.setArt({'icon': thumb, 'thumb': thumb, 'fanart': addonFanart})
         control.addItem(handle=syshandle, url=url, listitem=item, isFolder=isFolder)
 
     def endDirectory(self, cache=True):

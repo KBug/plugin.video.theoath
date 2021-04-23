@@ -1378,7 +1378,7 @@ class tvshows:
 
 
     def tvshowDirectory(self, items):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items == None or len(items) == 0: control.idle()# ; sys.exit()
 
         sysaddon = sys.argv[0]
 
@@ -1556,7 +1556,7 @@ class tvshows:
 
 
     def addDirectory(self, items, queue=False):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items == None or len(items) == 0: control.idle()# ; sys.exit()
 
         sysaddon = sys.argv[0]
 

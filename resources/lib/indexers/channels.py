@@ -79,7 +79,7 @@ class channels:
         [i.start() for i in threads]
         [i.join() for i in threads]
 
-        self.list = metacache.local(self.list, self.tm_img_link, 'poster2', 'fanart')
+        #self.list = metacache.local(self.list, self.tm_img_link, 'poster2', 'fanart')
 
         try: self.list = sorted(self.list, key=lambda k: k['num'])
         except: pass
@@ -199,7 +199,7 @@ class channels:
 
 
     def channelDirectory(self, items):
-        if items == None or len(items) == 0: control.idle() ; sys.exit()
+        if items == None or len(items) == 0: control.idle()# ; sys.exit()
 
         sysaddon = sys.argv[0]
 

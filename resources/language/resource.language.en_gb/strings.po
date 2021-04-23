@@ -536,7 +536,7 @@ msgid "Remove uncached torrents if cached exist"
 msgstr ""
 
 msgctxt "#32127"
-msgid "Min Quality"
+msgid "Min Resolution"
 msgstr ""
 
 msgctxt "#32128"
@@ -593,6 +593,22 @@ msgstr ""
 
 msgctxt "#32141"
 msgid "Your log file was uploaded to:[CR][CR]    [B]%s[/B]"
+msgstr ""
+
+msgctxt "#32142"
+msgid "Sorting Options"
+msgstr ""
+
+msgctxt "#32143"
+msgid "Primal sorting parameter"
+msgstr ""
+
+msgctxt "#32144"
+msgid "Resolution"
+msgstr ""
+
+msgctxt "#32145"
+msgid "Premium"
 msgstr ""
 
 msgctxt "#32200"
@@ -836,7 +852,7 @@ msgid "Sources Filters"
 msgstr ""
 
 msgctxt "#32339"
-msgid "Max Quality"
+msgid "Max Resolution"
 msgstr ""
 
 msgctxt "#32340"

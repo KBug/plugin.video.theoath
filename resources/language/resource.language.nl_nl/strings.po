@@ -656,7 +656,7 @@ msgid "Sources Filters and Sorting Options"
 msgstr "Bestand Bron Filters"
 
 msgctxt "#32339"
-msgid "Max Quality"
+msgid "Max Resolution"
 msgstr "Max. kwaliteit zonder verandering van bronnen"
 
 msgctxt "#32340"

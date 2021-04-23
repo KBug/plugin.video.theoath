@@ -532,8 +532,8 @@ msgid "Remove uncached torrents if cached exist"
 msgstr "Αφαίρεση uncached torrents αν υπάρχουν cached"
 
 msgctxt "#32127"
-msgid "Min Quality"
-msgstr "Ελάχιστη ποιότητα"
+msgid "Min Resolution"
+msgstr "Ελάχιστη Ανάλυση"
 
 msgctxt "#32128"
 msgid "Get episodes ratings from Trakt (slow)"
@@ -590,6 +590,18 @@ msgstr "Το αρχείο του log είναι άδειο.[CR]Ενεργοπο�
 msgctxt "#32141"
 msgid "Your log file was uploaded to:[CR][CR]    [B]%s[/B]"
 msgstr "Το αρχείο log σας ανέβηκε εδώ:[CR][CR]    [B]%s[/B]"
+
+msgctxt "#32142"
+msgid "Sorting Options"
+msgstr "Επιλογές Ταξινόμησης"
+
+msgctxt "#32143"
+msgid "Primal sorting parameter"
+msgstr "Πρωταρχική παράμετρος"
+
+msgctxt "#32144"
+msgid "Resolution"
+msgstr "Ανάλυση"
 
 msgctxt "#32200"
 msgid "No Color"
@@ -833,8 +845,8 @@ msgid "Sources Filters"
 msgstr "Φίλτρα Πηγών"
 
 msgctxt "#32339"
-msgid "Max Quality"
-msgstr "Μέγιστη ποιότητα"
+msgid "Max Resolution"
+msgstr "Μέγιστη Ανάλυση"
 
 msgctxt "#32340"
 msgid "SD Hosters in Auto Play"
