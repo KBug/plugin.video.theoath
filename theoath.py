@@ -122,18 +122,6 @@ elif action == 'mytvliteNavigator':
     from resources.lib.indexers import navigator
     navigator.navigator().mytvshows(lite=True)
 
-elif action == 'customNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().custom()
-
-elif action == 'customliteNavigator':
-    from resources.lib.indexers import navigator
-    navigator.navigator().custom(lite=True)
-
-elif action == 'imdbLists':
-    from resources.lib.indexers import navigator
-    navigator.navigator().imdbLists()
-
 elif action == 'movieMosts':
     from resources.lib.indexers import navigator
     navigator.navigator().movieMosts()
@@ -257,6 +245,18 @@ elif action == 'movieDecades':
 elif action == 'moviePersons':
     from resources.lib.indexers import movies
     movies.movies().persons(url)
+
+elif action == 'movieKeywords':
+    from resources.lib.indexers import movies
+    movies.movies().keywords()
+
+elif action == 'movieKeywords2':
+    from resources.lib.indexers import movies
+    movies.movies().keywords2()
+
+elif action == 'movieCustomLists':
+    from resources.lib.indexers import movies
+    movies.movies().custom_lists()
 
 elif action == 'movieUserlists':
     from resources.lib.indexers import movies

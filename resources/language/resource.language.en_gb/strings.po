@@ -1220,7 +1220,7 @@ msgid "Protected Link. Please enter account credentials in the settings."
 msgstr ""
 
 msgctxt "#32580"
-msgid "Films/TV Movies"
+msgid "Recently Released"
 msgstr ""
 
 msgctxt "#32581"

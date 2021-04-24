@@ -992,8 +992,8 @@ msgid "Premium Source Identifier Color"
 msgstr "Kolor Identyfikujący Źródło Premium"
 
 msgctxt "#32580"
-msgid "Films/TV Movies"
-msgstr "Filmy/Filmy TV"
+msgid "Recently Released"
+msgstr ""
 
 msgctxt "#32581"
 msgid "Results Limit"

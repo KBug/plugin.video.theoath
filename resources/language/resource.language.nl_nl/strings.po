@@ -992,8 +992,8 @@ msgid "Protected Link. Please enter account credentials in the settings."
 msgstr "Beschermde link. Voer de inloggegevens van uw account in de instellingen in."
 
 msgctxt "#32580"
-msgid "Films/TV Movies"
-msgstr "Films/Series"
+msgid "Recently Released"
+msgstr ""
 
 msgctxt "#32581"
 msgid "Results Limit"

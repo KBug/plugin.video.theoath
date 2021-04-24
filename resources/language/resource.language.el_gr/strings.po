@@ -1217,8 +1217,8 @@ msgid "Premium Source Identifier Color"
 msgstr "Επιλογή χρώματος προβολής Premium"
 
 msgctxt "#32580"
-msgid "Films/TV Movies"
-msgstr "Φιλμς/ΤV Ταινίες"
+msgid "Recently Released"
+msgstr "Πρόσφατες Κυκλοφορίες"
 
 msgctxt "#32581"
 msgid "Results Limit"
