@@ -55,6 +55,8 @@ def get_qual(term):
         return 'scr'
     elif any(i in term for i in CAM):
         return 'cam'
+    else:
+        return 'sd'
 
 def is_anime(content, type, type_id):
     try:
@@ -63,27 +65,17 @@ def is_anime(content, type, type_id):
     except:
         return False
 
-def get_release_quality(release_name, release_link=None):
+def get_release_quality(release_name, release_link=''):
 
-    if release_name is None: return
+    if not release_name and not release_link: return 'sd', []
 
     try:
-        quality = None
+        term = ' '.join((cleantitle.get_title(release_name), cleantitle.get_title(release_link)))
 
-        release_name = cleantitle.get_title(release_name)
-
-        quality = get_qual(release_name)
-
+        quality = get_qual(term)
         if not quality:
-            if release_link:
-                release_link = cleantitle.get_title(release_link)
+            quality = 'sd'
 
-                quality = get_qual(release_link)
-                if not quality:
-                    quality = 'sd'
-
-            else:
-                quality = 'sd'
         info = []
         #if '3d' in fmt or '.3D.' in release_name: info.append('3D')
         #if any(i in ['hevc', 'h265', 'h.265', 'x265'] for i in fmt): info.append('HEVC')
@@ -91,7 +83,6 @@ def get_release_quality(release_name, release_link=None):
         return quality, info
     except:
         return 'sd', []
-
 
 def getFileType(url):
 

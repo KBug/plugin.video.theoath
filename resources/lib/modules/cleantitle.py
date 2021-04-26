@@ -44,9 +44,10 @@ def get_title(title):
         title = ensure_str(title)
     except:
         pass
-    title = urllib_parse.unquote(title).lower()
-    title = re.sub('[^a-z0-9 ]+', ' ', title)
+    title = urllib_parse.unquote(title)
+    title = re.sub('[^A-Za-z0-9 ]+', ' ', title)
     title = re.sub(' {2,}', ' ', title)
+    title = title.strip().lower()
     return title
 
 
@@ -171,7 +172,7 @@ def scene_title(title, year):
         pass
     title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace('.', ' ')
     title = re.sub('[^A-Za-z0-9 ]+', '', title)
-    title = re.sub(' {2,}', ' ', title)
+    title = re.sub(' {2,}', ' ', title).strip()
     if title.startswith('Birdman or') and year == '2014': title = 'Birdman'
     if title == 'Birds of Prey and the Fantabulous Emancipation of One Harley Quinn' and year == '2020': title = 'Birds of Prey'
     if title == "Roald Dahls The Witches" and year == '2020': title = 'The Witches'
@@ -186,7 +187,7 @@ def scene_tvtitle(title, year, season, episode):
         pass
     title = title.replace('&', 'and').replace('-', ' ').replace('–', ' ').replace('/', ' ').replace('*', ' ').replace('.', ' ')
     title = re.sub('[^A-Za-z0-9 ]+', '', title)
-    title = re.sub(' {2,}', ' ', title)
+    title = re.sub(' {2,}', ' ', title).strip()
     if title in ['The Haunting', 'The Haunting of Bly Manor', 'The Haunting of Hill House'] and year == '2018':
         if season == '1': title = 'The Haunting of Hill House'
         elif season == '2': title = 'The Haunting of Bly Manor'; year = '2020'; season = '1'

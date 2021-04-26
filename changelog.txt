@@ -1,4 +1,7 @@
 [B][COLOR gold]v4.00.18[/COLOR][/B]
+- Source info parsing tweaks
+
+[B][COLOR gold]v4.00.18[/COLOR][/B]
 - Movie lists cleanup
 
 [B][COLOR gold]v4.00.17[/COLOR][/B]

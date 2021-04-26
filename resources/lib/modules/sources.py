@@ -954,7 +954,9 @@ class sources:
             try: d = self.sources[i]['debrid']
             except: d = self.sources[i]['debrid'] = ''
 
-            t = source_utils.getFileType(self.sources[i]['url'])
+            info_fetch = ' '.join((self.sources[i].get('name', ''), self.sources[i]['url']))
+            t = source_utils.getFileType(info_fetch)
+            #t = source_utils.getFileType(self.sources[i]['url'])
 
             u = self.sources[i]['url']
 
@@ -969,13 +971,13 @@ class sources:
             l = self.sources[i]['language']
 
             try:
-                f = (' / '.join(['%s' % info.strip() for info in self.sources[i]['info'].split('|')]))
+                f = ' / '.join(['%s' % info.strip() for info in self.sources[i].get('info', '').split('|')])
                 if name_setting:
                     if 'name' in self.sources[i] and not self.sources[i]['name'] == '':
                         _name = cleantitle.get_title(self.sources[i]['name'])
-                        size_info = self.sources[i]['info'].split(' |')[0]
+                        size_info = self.sources[i].get('info', '').split(' |')[0]
                         if size_info.rstrip().lower().endswith('gb'):
-                            f = size_info + ' / ' + _name
+                            f = ' / '.join((size_info, _name))
                         else:
                             f = _name
                         t = ''
