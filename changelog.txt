@@ -1,4 +1,7 @@
-[B][COLOR gold]v4.00.18[/COLOR][/B]
+[B][COLOR gold]v4.00.20[/COLOR][/B]
+- Fixed Library source not appearing when "Primal sorting parameter" is set to Premium
+
+[B][COLOR gold]v4.00.19[/COLOR][/B]
 - Source info parsing tweaks
 
 [B][COLOR gold]v4.00.18[/COLOR][/B]
