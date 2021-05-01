@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.00.21[/COLOR][/B]
+- Fixed unfiltered sources sneaking in pre-emptive results
+- Removed unsupported scraper language settings
+
 [B][COLOR gold]v4.00.20[/COLOR][/B]
 - Fixed Library source not appearing when "Primal sorting parameter" is set to Premium
 
