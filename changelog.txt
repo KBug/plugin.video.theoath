@@ -1,5 +1,8 @@
+[B][COLOR gold]v4.00.22[/COLOR][/B]
+- Fixed sources messed-up order
+
 [B][COLOR gold]v4.00.21[/COLOR][/B]
-- Fixed unfiltered sources sneaking in pre-emptive results
+- Fixed unfiltered sources sneaking into pre-emptive results
 - Removed unsupported scraper language settings
 
 [B][COLOR gold]v4.00.20[/COLOR][/B]
