@@ -31,7 +31,7 @@ try:
 except ImportError:
     from pysqlite2 import dbapi2 as db, OperationalError
 
-from resources.lib.modules import control
+from resources.lib.modules import control, log_utils
 
 if six.PY2:
     str = unicode
@@ -51,7 +51,7 @@ def get(function_, duration, *args, **table):
 
         a = hashlib.md5()
         for i in args:
-            a.update(str(i))
+            a.update(six.ensure_binary(i, errors='replace'))
         a = str(a.hexdigest())
 
     except Exception:
@@ -107,6 +107,7 @@ def get(function_, duration, *args, **table):
         dbcon.commit()
 
     except Exception:
+        log_utils.log('cache_get', 1)
         pass
 
     try:
@@ -294,7 +295,7 @@ def _get_function_name(function_instance):
 
 def _generate_md5(*args):
     md5_hash = hashlib.md5()
-    [md5_hash.update(str(arg)) for arg in args]
+    [md5_hash.update(six.ensure_binary(arg, errors='replace')) for arg in args]
     return str(md5_hash.hexdigest())
 
 
