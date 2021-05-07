@@ -1233,7 +1233,7 @@ class movies:
         try: isOld = False ; control.item().getArt('type')
         except: isOld = True
 
-        isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
+        isPlayable = True if not 'plugin' in control.infoLabel('Container.PluginName') else False
 
         #indicators = playcount.getMovieIndicators(refresh=True) if action == 'movies' else playcount.getMovieIndicators() #fixme
         indicators = playcount.getMovieIndicators()
@@ -1357,7 +1357,8 @@ class movies:
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)
-                item.setProperty('IsPlayable', isPlayable)
+                if isPlayable:
+                    item.setProperty('IsPlayable', 'true')
 
                 offset = bookmarks.get('movie', imdb, '', '', True)
                 #log_utils.log('offset: ' + str(offset))

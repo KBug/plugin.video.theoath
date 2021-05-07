@@ -1413,7 +1413,7 @@ class episodes:
         try: isOld = False ; control.item().getArt('type')
         except: isOld = True
 
-        isPlayable = 'true' if not 'plugin' in control.infoLabel('Container.PluginName') else 'false'
+        isPlayable = True if not 'plugin' in control.infoLabel('Container.PluginName') else False
 
         indicators = playcount.getTVShowIndicators(refresh=True)
 
@@ -1569,7 +1569,8 @@ class episodes:
 
                 item.setArt(art)
                 item.addContextMenuItems(cm)
-                item.setProperty('IsPlayable', isPlayable)
+                if isPlayable:
+                    item.setProperty('IsPlayable', 'true')
 
                 offset = bookmarks.get('episode', imdb, season, episode, True)
                 #log_utils.log('offset: ' + str(offset))
