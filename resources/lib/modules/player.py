@@ -316,7 +316,7 @@ class player(xbmc.Player):
 
 
     def onPlayBackStopped(self):
-        if self.totalTime == 0:
+        if self.totalTime == 0 or self.currentTime == 0:
             control.sleep(2000)
             return
         bookmarks.reset(self.currentTime, self.totalTime, self.content, self.imdb, self.season, self.episode)

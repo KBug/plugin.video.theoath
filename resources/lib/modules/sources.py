@@ -1093,15 +1093,15 @@ class sources:
             headers = dict(urllib_parse.parse_qsl(headers))
 
 
-            if url.startswith('http') and '.m3u8' in url:
-                try: result = client.request(url.split('|')[0], headers=headers, output='geturl', timeout='20')
-                except: result = None
-                if result == None: raise Exception()
+            # if url.startswith('http') and '.m3u8' in url:
+                # try: result = client.request(url.split('|')[0], headers=headers, output='geturl', timeout='20')
+                # except: result = None
+                # if result == None: raise Exception()
 
-            elif url.startswith('http'):
-                try: result = client.request(url.split('|')[0], headers=headers, output='chunk', timeout='20')
-                except: result = None
-                if result == None: raise Exception()
+            # elif url.startswith('http'):
+                # try: result = client.request(url.split('|')[0], headers=headers, output='chunk', timeout='20')
+                # except: result = None
+                # if result == None: raise Exception()
 
 
             self.url = url
