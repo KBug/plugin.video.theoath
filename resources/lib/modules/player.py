@@ -380,6 +380,7 @@ class subtitles:
                 fmt = re.split('\.|\(|\)|\[|\]|\s|\-', vidPath)
                 fmt = [i.lower() for i in fmt]
                 fmt = [i for i in fmt if i in quality]
+            #log_utils.log('opensubtitles result: ' + repr(result))
 
             filter = []
             result = [i for i in result if i['SubSumCD'] == '1']
@@ -398,7 +399,6 @@ class subtitles:
             content = server.DownloadSubtitles(token, content)
             content = base64.b64decode(content['data'][0]['data'])
             content = gzip.GzipFile(fileobj=six.BytesIO(content)).read()
-            if six.PY3: content = six.ensure_text(content)
 
             subtitle = control.transPath('special://temp/')
             subtitle = os.path.join(subtitle, 'TemporarySubs.%s.srt' % lang)
@@ -412,7 +412,7 @@ class subtitles:
                     pass
 
             file = control.openFile(subtitle, 'w')
-            file.write(str(content))
+            file.write(content)
             file.close()
 
             xbmc.sleep(1000)
@@ -424,5 +424,6 @@ class subtitles:
                     xbmc.sleep(3000)
                     control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
         except:
+            log_utils.log('subtitles get fail', 1)
             pass
 
