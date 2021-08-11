@@ -283,6 +283,7 @@ class player(xbmc.Player):
                     yes = control.yesnoDialog(label, heading=control.lang2(13404))
                 if yes:
                     self.seekTime(float(self.offset))
+                control.sleep(1000)
                 self.pause()
 
         subtitles().get(self.name, self.imdb, self.season, self.episode)
@@ -308,6 +309,7 @@ class player(xbmc.Player):
                         yes = control.yesnoDialog(label, heading=control.lang2(13404))
                     if yes:
                         self.seekTime(float(self.offset))
+                    control.sleep(1000)
                     self.pause()
 
             subtitles().get(self.name, self.imdb, self.season, self.episode)
@@ -415,13 +417,12 @@ class subtitles:
             file.write(content)
             file.close()
 
-            xbmc.sleep(1000)
+            control.sleep(1000)
             xbmc.Player().setSubtitles(subtitle)
 
             if control.setting('subtitles.notify') == 'true':
                 if xbmc.Player().isPlaying() and xbmc.Player().isPlayingVideo():
-                    control.execute('Dialog.Close(all,true)')
-                    xbmc.sleep(3000)
+                    control.sleep(1000)
                     control.infoDialog(subname, heading='{} subtitles downloaded'.format(str(lang).upper()), time=6000)
         except:
             log_utils.log('subtitles get fail', 1)

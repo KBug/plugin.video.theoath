@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.00.34[/COLOR][/B]
+- Minor metadata and playback fixes
+
 [B][COLOR gold]v4.00.33[/COLOR][/B]
 - Subtitles fix for Kodi 19
 
