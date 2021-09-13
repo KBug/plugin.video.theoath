@@ -227,21 +227,21 @@ class seasons:
             log_utils.log('tmdb-list1 Exception', 1)
             return
 
-        for item in seasons:
+        for s_item in seasons:
             try:
-                season = str(int(item['season_number']))
+                season = str(int(s_item['season_number']))
 
-                premiered = item.get('air_date', '0')
+                premiered = s_item.get('air_date', '0')
                 if status == 'Ended': pass
                 elif not premiered or premiered == '0': raise Exception()
                 elif int(re.sub('[^0-9]', '', str(premiered))) > int(re.sub('[^0-9]', '', str(self.today_date))):
                     unaired = 'true'
                     if self.showunaired != 'true': raise Exception()
 
-                plot = item.get('overview', '')
+                plot = s_item.get('overview', '')
                 if not plot: plot = show_plot
 
-                try: poster_path = item['poster_path']
+                try: poster_path = s_item['poster_path']
                 except: poster_path = ''
                 if poster_path: season_poster = self.tm_img_link % ('500', poster_path)
                 else: season_poster = None
@@ -254,7 +254,7 @@ class seasons:
                                   'banner': banner,'clearlogo': clearlogo, 'clearart': clearart, 'landscape': landscape, 'unaired': unaired})
             except:
                 log_utils.log('seasons_dir Exception', 1)
-                return
+                pass
 
         return self.list
 
