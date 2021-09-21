@@ -1,4 +1,4 @@
-[B][COLOR gold]v4.01.07-8[/COLOR][/B]
+[B][COLOR gold]v4.01.07-9[/COLOR][/B]
 - Trailers:
     Added new trailer searching method through TMDb.
     This method does not require a YouTube API key to be set.

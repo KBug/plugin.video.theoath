@@ -327,7 +327,7 @@ class channels:
                         _poster2 = art['movieposter']
                         _poster2 = [x for x in _poster2 if x.get('lang') == self.lang][::-1] + [x for x in _poster2 if x.get('lang') == 'en'][::-1] + [x for x in _poster2 if x.get('lang') in ['00', '']][::-1]
                         _poster2 = _poster2[0]['url']
-                        if _poster2: poster2 = _poster3
+                        if _poster2: poster2 = _poster2
                     except:
                         pass
 
