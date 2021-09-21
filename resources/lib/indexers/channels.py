@@ -53,7 +53,7 @@ class channels:
         self.trailer_source = control.setting('trailer.source') or '1'
 
         self.sky_now_link = 'https://epgservices.sky.com/5.1.1/api/2.0/channel/json/%s/now/nn/3'
-        self.sky_programme_link = 'http://tv.sky.com/programme/channel/%s/%s/%s.json'
+        # self.sky_programme_link = 'http://tv.sky.com/programme/channel/%s/%s/%s.json'
         self.related_link = 'https://api.trakt.tv/movies/%s/related'
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
@@ -71,6 +71,18 @@ class channels:
 
     def __del__(self):
         self.session.close()
+
+
+    def uk_datetime(self):
+        dt = datetime.datetime.utcnow() + datetime.timedelta(hours = 0)
+        d = datetime.datetime(dt.year, 4, 1)
+        dston = d - datetime.timedelta(days=d.weekday() + 1)
+        d = datetime.datetime(dt.year, 11, 1)
+        dstoff = d - datetime.timedelta(days=d.weekday() + 1)
+        if dston <=  dt < dstoff:
+            return dt + datetime.timedelta(hours = 1)
+        else:
+            return dt
 
 
     def get(self):
@@ -144,7 +156,7 @@ class channels:
                 rated = result['m'][4]
             except:
                 rated = '0'
-            if rated == 'PG': rated = rated
+            if rated == 'PG': pass
             elif rated == 'U': rated = 'G'
             elif '12' in rated: rated = 'PG-13'
             elif rated == '15': rated = 'R'
@@ -197,7 +209,7 @@ class channels:
                     imdb = item['external_ids']['imdb_id']
                     if not imdb: imdb = '0'
                 except:
-                    imdb = '0'
+                    pass
 
             original_language = item.get('original_language', '')
 
@@ -288,13 +300,11 @@ class channels:
             except:
                 director = writer = '0'
 
-            poster1 = '0'
-
             poster_path = item.get('poster_path')
             if poster_path:
-                poster2 = self.tm_img_link % ('500', poster_path)
+                poster1 = self.tm_img_link % ('500', poster_path)
             else:
-                poster2 = None
+                poster1 = '0'
 
             fanart_path = item.get('backdrop_path')
             if fanart_path:
@@ -302,7 +312,7 @@ class channels:
             else:
                 fanart1 = '0'
 
-            poster3 = fanart2 = None
+            poster2 = fanart2 = None
             banner = clearlogo = clearart = landscape = discart = '0'
             if self.hq_artwork == 'true' and not imdb == '0':# and not self.fanart_tv_user == '':
 
@@ -314,10 +324,10 @@ class channels:
                     art = r2.json() if six.PY3 else utils.json_loads_as_str(r2.text)
 
                     try:
-                        _poster3 = art['movieposter']
-                        _poster3 = [x for x in _poster3 if x.get('lang') == self.lang][::-1] + [x for x in _poster3 if x.get('lang') == 'en'][::-1] + [x for x in _poster3 if x.get('lang') in ['00', '']][::-1]
-                        _poster3 = _poster3[0]['url']
-                        if _poster3: poster3 = _poster3
+                        _poster2 = art['movieposter']
+                        _poster2 = [x for x in _poster2 if x.get('lang') == self.lang][::-1] + [x for x in _poster2 if x.get('lang') == 'en'][::-1] + [x for x in _poster2 if x.get('lang') in ['00', '']][::-1]
+                        _poster2 = _poster2[0]['url']
+                        if _poster2: poster2 = _poster3
                     except:
                         pass
 
@@ -376,7 +386,7 @@ class channels:
                     log_utils.log('fanart.tv art fail', 1)
                     pass
 
-            poster = poster3 or poster2 or poster1
+            poster = poster2 or poster1
             fanart = fanart2 or fanart1
             #log_utils.log('title: ' + title + ' - poster: ' + repr(poster))
 
@@ -386,18 +396,6 @@ class channels:
                     'rating': rating, 'votes': votes, 'channel': i[2], 'mpaa': i[3]})
         except:
             pass
-
-
-    def uk_datetime(self):
-        dt = datetime.datetime.utcnow() + datetime.timedelta(hours = 0)
-        d = datetime.datetime(dt.year, 4, 1)
-        dston = d - datetime.timedelta(days=d.weekday() + 1)
-        d = datetime.datetime(dt.year, 11, 1)
-        dstoff = d - datetime.timedelta(days=d.weekday() + 1)
-        if dston <=  dt < dstoff:
-            return dt + datetime.timedelta(hours = 1)
-        else:
-            return dt
 
 
     def channelDirectory(self, items):
@@ -552,10 +550,8 @@ class channels:
                         meta.update({'cast': cast})
 
                 offset = bookmarks.get('movie', imdb, '', '', True)
-                #log_utils.log('offset: ' + str(offset))
                 if float(offset) > 120:
                     percentPlayed = int(float(offset) / float(meta['duration']) * 100)
-                    #log_utils.log('percentPlayed: ' + str(percentPlayed))
                     item.setProperty('resumetime', str(offset))
                     item.setProperty('percentplayed', str(percentPlayed))
 
