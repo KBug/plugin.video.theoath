@@ -39,25 +39,16 @@ class YT_trailer:
 
     def play(self, name='', url='', tmdb='', imdb='', season='', episode='', windowedtrailer=0):
         try:
-            name = control.infoLabel('ListItem.Title')
-            if not name:
-                name = control.infoLabel('ListItem.Label')
-            if self.content == 'movies':
-                name += ' ' + control.infoLabel('ListItem.Year')
-            name += ' trailer'
-            if self.content in ['seasons', 'episodes']:
-                season = control.infoLabel('ListItem.Season')
-                episode = control.infoLabel('ListItem.Episode')
-                if season != '':
-                    name = control.infoLabel('ListItem.TVShowTitle')
+            if self.content not in ['tvshows', 'seasons', 'episodes']:
+                name += ' %s trailer' % control.infoLabel('ListItem.Year')
+            elif self.content in ['seasons', 'episodes']:
+                if season and episode:
+                    name += ' %sx%02d' % (season, int(episode))
+                elif season:
                     name += ' season %01d trailer' % int(season)
-                    if episode != '':
-                        name = name.replace('season ', '').replace(' trailer', '')
-                        name += 'x%02d' % int(episode)
 
             url = self.worker(name, url)
             if not url:
-                #control.infoDialog('Trying TMDb...', 'API key quota limit reached')
                 raise Exception('YT_trailer failed, trying TMDb')
             elif url == 'canceled': return
 
@@ -81,7 +72,6 @@ class YT_trailer:
                 # or the user pressed one of X, ESC, or Backspace keys on the keyboard/remote to stop playback.
                 control.execute('Dialog.Close(%s, true)' % control.getCurrentDialogId)
         except:
-            log_utils.log('YT_trailer fail', 1)
             TMDb_trailer().play(tmdb, imdb, season, episode)
 
     def worker(self, name, url):
@@ -114,7 +104,8 @@ class YT_trailer:
             result = r.json() if six.PY3 else utils.json_loads_as_str(r.text)
 
             json_items = result['items']
-            items = [i.get('id').get('videoId') for i in json_items]
+            items = [i['id']['videoId'] for i in json_items]
+            if not items: return
 
             if self.mode == '1' or (self.mode == '2' and self.content in ['seasons', 'episodes']):
                 labels = [i.get('snippet', {}).get('title') for i in json_items]
@@ -129,6 +120,7 @@ class YT_trailer:
                 url = resolve(vid_id)
                 if url:
                     return url
+            return
         except:
             return
 
@@ -193,24 +185,20 @@ class TMDb_trailer:
             r = requests.get(url)
             r.raise_for_status()
             r.encoding = 'utf-8'
-            results = r.json() if six.PY3 else utils.json_loads_as_str(r.text)
-            results = results['results']
-            results = [r for r in results if r.get('site') == 'YouTube']
-            results = [x for x in results if x.get('iso_639_1') == self.lang] + [x for x in results if x.get('iso_639_1') == 'en'] + [x for x in results if x.get('iso_639_1') not in [self.lang, 'en']]
+            items = r.json() if six.PY3 else utils.json_loads_as_str(r.text)
+            items = items['results']
+            items = [r for r in items if r.get('site') == 'YouTube']
+            results = [x for x in items if x.get('iso_639_1') == self.lang]
+            if not self.lang == 'en': results += [x for x in items if x.get('iso_639_1') == 'en']
+            results += [x for x in items if x.get('iso_639_1') not in set([self.lang, 'en'])]
 
             if not results:
-                if self.content in ['movies', 'tvshows']:
+                if '/season/' in url and '/episode/' in url:
+                    results = self.get_items(s_url, t_url, None)
+                elif '/season/' in url:
+                    results = self.get_items(t_url, None, None)
+                else:
                     return
-                elif self.content == 'seasons':
-                    results = self.get_items(t_url, '', '')
-                    if not results:
-                        return
-                elif self.content == 'episodes':
-                    results = self.get_items(s_url, '', '')
-                    if not results:
-                        results = self.get_items(t_url, '', '')
-                        if not results:
-                            return
 
             return results
         except:
@@ -222,7 +210,7 @@ class TMDb_trailer:
             if not results: return
             if self.mode == '1' or (self.mode == '2' and self.content in ['seasons', 'episodes']):
                 items = [i.get('key') for i in results]
-                labels = [' | '.join((i.get('name'), i.get('type', ''))) for i in results]
+                labels = [' | '.join((i.get('name', ''), i.get('type', ''))) for i in results]
                 select = control.selectDialog(labels, control.lang(32121) % 'TMDb')
                 if select == -1: return 'canceled'
                 vid_id = items[select]
