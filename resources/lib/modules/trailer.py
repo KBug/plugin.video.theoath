@@ -40,12 +40,14 @@ class YT_trailer:
     def play(self, name='', url='', tmdb='', imdb='', season='', episode='', windowedtrailer=0):
         try:
             if self.content not in ['tvshows', 'seasons', 'episodes']:
-                name += ' %s trailer' % control.infoLabel('ListItem.Year')
+                name += ' %s' % control.infoLabel('ListItem.Year')
             elif self.content in ['seasons', 'episodes']:
                 if season and episode:
                     name += ' %sx%02d' % (season, int(episode))
                 elif season:
-                    name += ' season %01d trailer' % int(season)
+                    name += ' season %01d' % int(season)
+            if self.content != 'episodes':
+                name += ' trailer'
 
             url = self.worker(name, url)
             if not url:

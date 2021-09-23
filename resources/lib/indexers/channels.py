@@ -213,16 +213,18 @@ class channels:
 
             original_language = item.get('original_language', '')
 
-            try:
-                translations = item.get('translations', {})
-                translations = translations.get('translations', [])
-                en_trans_item = [x['data'] for x in translations if x.get('iso_639_1') == 'en'][0]
-            except:
-                en_trans_item = {}
+            if self.lang == 'en':
+                en_trans_item = None
+            else:
+                try:
+                    translations = item['translations']['translations']
+                    en_trans_item = [x['data'] for x in translations if x['iso_639_1'] == 'en'][0]
+                except:
+                    en_trans_item = {}
 
             name = item.get('title', '')
             original_name = item.get('original_title', '')
-            en_trans_name = en_trans_item.get('title', '')
+            en_trans_name = en_trans_item.get('title', '') if not self.lang == 'en' else None
             #log_utils.log('self_lang: %s | original_language: %s | _title: %s | name: %s | original_name: %s | en_trans_name: %s' % (self.lang, original_language, _title, name, original_name, en_trans_name))
 
             if self.lang == 'en':
@@ -499,7 +501,7 @@ class channels:
 
                 cm.append((addToLibrary, 'RunPlugin(%s?action=movieToLibrary&name=%s&title=%s&year=%s&imdb=%s&tmdb=%s)' % (sysaddon, sysname, systitle, year, imdb, tmdb)))
 
-                cm.append(('[I]Scrape Unfiltered[/I]', 'RunPlugin(%s?action=playUnfiltered&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
+                cm.append(('[I]Scrape Filterless[/I]', 'RunPlugin(%s?action=playUnfiltered&title=%s&year=%s&imdb=%s&meta=%s&t=%s)' % (sysaddon, systitle, year, imdb, sysmeta, self.systime)))
 
                 cm.append((clearProviders, 'RunPlugin(%s?action=clearCacheProviders)' % sysaddon))
 
