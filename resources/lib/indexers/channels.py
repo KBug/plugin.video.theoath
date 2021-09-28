@@ -54,7 +54,8 @@ class channels:
 
         self.sky_now_link = 'https://epgservices.sky.com/5.1.1/api/2.0/channel/json/%s/now/nn/3'
         # self.sky_programme_link = 'http://tv.sky.com/programme/channel/%s/%s/%s.json'
-        self.related_link = 'https://api.trakt.tv/movies/%s/related'
+        # self.related_link = 'https://api.trakt.tv/movies/%s/related'
+        self.related_link = 'https://api.themoviedb.org/3/movie/%s/similar?api_key=%s&page=1' % ('%s', self.tm_user)
 
         self.fanart_tv_user = control.setting('fanart.tv.user')
         self.fanart_tv_headers = {'api-key': api_keys.fanarttv_key}
@@ -476,7 +477,9 @@ class channels:
 
                 cm = []
 
-                cm.append((findSimilar, 'Container.Update(%s?action=movies&url=%s)' % (sysaddon, self.related_link % imdb)))
+                cm.append((findSimilar, 'Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.related_link % tmdb))))
+
+                cm.append(('[I]Cast[/I]', 'RunPlugin(%s?action=moviecredits&tmdb=%s)' % (sysaddon, tmdb)))
 
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 

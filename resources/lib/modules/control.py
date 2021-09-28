@@ -254,8 +254,8 @@ def yesnoDialog(message, heading=addonInfo('name'), nolabel='', yeslabel=''):
     else: return dialog.yesno(heading, message, nolabel, yeslabel)
 
 
-def selectDialog(list, heading=addonInfo('name')):
-    return dialog.select(heading, list)
+def selectDialog(list, heading=addonInfo('name'), useDetails=False):
+    return dialog.select(heading, list, useDetails=useDetails)
 
 
 def textViewer(file, heading=addonInfo('name'), monofont=True):
