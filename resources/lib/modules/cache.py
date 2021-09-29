@@ -291,9 +291,9 @@ def _is_cache_valid(cached_time, cache_timeout):
 
 def cache_version_check():
     if _find_cache_version():
-        cache_clear()
-        cache_clear_providers()
-        #cache_clear_meta()
+        # cache_clear()
+        # cache_clear_providers()
+        # cache_clear_meta()
         control.clean_settings(info=False)
         control.infoDialog(control.lang(32057), sound=True, icon='INFO')
 

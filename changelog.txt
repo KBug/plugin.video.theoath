@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.02.01[/COLOR][/B]
+- Channels fix
+- Fixed some issues with Trakt (hopefully)
+
 [B][COLOR gold]v4.02.00[/COLOR][/B]
 - Added new "Cast" context menu item, which can list
   all the movies & shows an actor has appeared in
