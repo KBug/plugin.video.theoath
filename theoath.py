@@ -59,6 +59,8 @@ source = params.get('source')
 
 content = params.get('content')
 
+status = params.get('status')
+
 windowedtrailer = params.get('windowedtrailer')
 windowedtrailer = int(windowedtrailer) if windowedtrailer in ('0', '1') else 0
 
@@ -537,8 +539,8 @@ elif action == 'cleanSettings':
 
 elif action == 'tvcredits':
     from resources.lib.modules import credits
-    credits.Credits().get_tv(tmdb)
+    credits.Credits().get_tv(tmdb, status)
 
 elif action == 'moviecredits':
     from resources.lib.modules import credits
-    credits.Credits().get_movies(tmdb)
+    credits.Credits().get_movies(tmdb, status)

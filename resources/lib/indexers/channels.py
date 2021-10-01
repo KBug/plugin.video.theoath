@@ -450,6 +450,9 @@ class channels:
                 label = i['label'] if 'label' in i and not i['label'] == '0' else title
                 label = '%s (%s)' % (label, year)
                 if 'channel' in i: label = '[B]%s[/B] : %s' % (i['channel'].upper(), label)
+
+                status = i['status'] if 'status' in i else '0'
+
                 sysname = urllib_parse.quote_plus('%s (%s)' % (title, year))
                 systitle = urllib_parse.quote_plus(title)
 
@@ -479,7 +482,7 @@ class channels:
 
                 cm.append((findSimilar, 'Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.related_link % tmdb))))
 
-                cm.append(('[I]Cast[/I]', 'RunPlugin(%s?action=moviecredits&tmdb=%s)' % (sysaddon, tmdb)))
+                cm.append(('[I]Cast[/I]', 'RunPlugin(%s?action=moviecredits&tmdb=%s&status=%s)' % (sysaddon, tmdb, status)))
 
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 

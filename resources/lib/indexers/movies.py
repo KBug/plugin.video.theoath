@@ -1422,8 +1422,9 @@ class movies:
                 imdb, tmdb, title, year = i['imdb'], i['tmdb'], i['originaltitle'], i['year']
                 label = i['label'] if 'label' in i and not i['label'] == '0' else title
                 label = '%s (%s)' % (label, year)
+                status = i['status'] if 'status' in i else '0'
                 try:
-                    status, premiered = i['status'], i['premiered']
+                    premiered = i['premiered']
                     if (premiered == '0' and status in ['Rumored', 'Planned', 'In Production', 'Post Production', 'Upcoming']) or (int(re.sub('[^0-9]', '', premiered)) > int(re.sub('[^0-9]', '', str(self.today_date)))):
                         label = '[COLOR crimson]%s [I][Upcoming][/I][/COLOR]' % label
                 except:
@@ -1458,7 +1459,7 @@ class movies:
 
                 cm.append((findSimilar, 'Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.related_link % tmdb))))
 
-                cm.append(('[I]Cast[/I]', 'RunPlugin(%s?action=moviecredits&tmdb=%s)' % (sysaddon, tmdb)))
+                cm.append(('[I]Cast[/I]', 'RunPlugin(%s?action=moviecredits&tmdb=%s&status=%s)' % (sysaddon, tmdb, status)))
 
                 cm.append((queueMenu, 'RunPlugin(%s?action=queueItem)' % sysaddon))
 

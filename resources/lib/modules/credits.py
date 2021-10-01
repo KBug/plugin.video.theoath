@@ -27,17 +27,22 @@ class Credits:
         self.tmdb_moviedirector_link = 'https://api.themoviedb.org/3/discover/movie?api_key=%s&sort_by=primary_release_date.desc&with_crew=%s&include_adult=false&include_video=false&page=1' % (self.tm_user, '%s')
         #self.tmdb_moviepeople_link = 'https://api.themoviedb.org/3/person/%s/movie_credits?api_key=%s' % ('%s', self.tm_user)
         self.tm_img_link = 'https://image.tmdb.org/t/p/w%s%s'
+        self.bio_link = 'https://api.themoviedb.org/3/person/%s?api_key=%s' % ('%s', self.tm_user)
 
-    def get_tv(self, tmdb):
+    def get_tv(self, tmdb, status):
         try:
+            if not tmdb or tmdb == '0':
+                return control.infoDialog('No ID found')
+
             sysaddon = sys.argv[0]
+            cache_dur = 720 if status in ['Ended', 'Canceled'] else 96
 
             url = self.tmdb_tv_credits % tmdb
-            r = cache.get(client.request, 120, url)
-            result = utils.json_loads_as_str(r)
+            r = cache.get(client.request, cache_dur, url)
+            r = utils.json_loads_as_str(r)
 
-            c = result['cast'][:50]
-            ids = [i['id'] for i in c]
+            c = r['cast'][:50]
+            ids = [str(i['id']) for i in c]
             names = [i['name'] for i in c]
 
             items = []
@@ -56,30 +61,36 @@ class Credits:
             if select == -1: return
             c_id = ids[select]
             c_name = names[select]
-            choose = control.selectDialog(['TV Shows appeared in', 'Movies appeared in'], heading=c_name)
+            choose = control.selectDialog(['TV Shows appeared in', 'Movies appeared in', 'Biography'], heading=c_name)
             if choose == -1: return
             elif choose == 0:
                 control.execute('Container.Update(%s?action=tvshows&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.tmdb_tvpeople_link % c_id)))
             elif choose == 1:
                 control.execute('Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.tmdb_moviepeople_link % c_id)))
+            elif choose == 2:
+                self.bio_txt(c_id)
         except:
             log_utils.log('get_tv credits', 1)
             return
 
 
-    def get_movies(self, tmdb):
+    def get_movies(self, tmdb, status):
         try:
+            if not tmdb or tmdb == '0':
+                return control.infoDialog('No ID found')
+
             sysaddon = sys.argv[0]
+            cache_dur = 720 if status in ['Released', 'Canceled'] else 96
 
             url = self.tmdb_movie_credits % tmdb
-            r = cache.get(client.request, 720, url)
-            result = utils.json_loads_as_str(r)
+            r = cache.get(client.request, cache_dur, url)
+            r = utils.json_loads_as_str(r)
 
-            crew = result['crew']
+            crew = r['crew']
             crew_cast = [d for d in crew if d['job'] == 'Director']
-            crew_cast += result['cast'][:40]
+            crew_cast += r['cast'][:40]
 
-            ids = [i['id'] for i in crew_cast]
+            ids = [str(i['id']) for i in crew_cast]
             names = [' '.join((i['name'], i.get('job', ''))) for i in crew_cast]
 
             items = []
@@ -100,15 +111,37 @@ class Credits:
             c_id = ids[select]
             c_name = names[select]
             if 'Director' in c_name:
-                control.execute('Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.tmdb_moviedirector_link % c_id)))
+                choose = control.selectDialog(['Movies credited in', 'Biography'], heading=c_name.replace(' Director', ''))
+                if choose == -1: return
+                elif choose == 0:
+                    control.execute('Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.tmdb_moviedirector_link % c_id)))
+                elif choose == 1:
+                    self.bio_txt(c_id)
             else:
-                choose = control.selectDialog(['Movies appeared in', 'TV Shows appeared in'], heading=c_name)
+                choose = control.selectDialog(['Movies appeared in', 'TV Shows appeared in', 'Biography'], heading=c_name)
                 if choose == -1: return
                 elif choose == 0:
                     control.execute('Container.Update(%s?action=movies&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.tmdb_moviepeople_link % c_id)))
                 elif choose == 1:
                     control.execute('Container.Update(%s?action=tvshows&url=%s)' % (sysaddon, urllib_parse.quote_plus(self.tmdb_tvpeople_link % c_id)))
+                elif choose == 2:
+                    self.bio_txt(c_id)
         except:
             log_utils.log('get_movies credits', 1)
             return
+
+
+    def bio_txt(self, id):
+        try:
+            url = self.bio_link % id
+            r = cache.get(client.request, 168, url)
+            r = utils.json_loads_as_str(r)
+            txt = '[B]Born:[/B] {0}[CR]{1}[CR][B]Biography:[/B][CR]{2}'.format(r['birthday'] or 'N/A', '[B]Died:[/B] {}[CR]'.format(r['deathday']) if r['deathday'] else '', r['biography'])
+            control.textViewer(text=txt, heading=r['name'], monofont=False)
+        except:
+            log_utils.log('bio_txt', 1)
+            return
+
+
+
 

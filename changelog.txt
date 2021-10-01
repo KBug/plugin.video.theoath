@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.02.02[/COLOR][/B]
+- Added biography info on 'Cast' context menu action
+
 [B][COLOR gold]v4.02.01[/COLOR][/B]
 - Channels fix
 - Fixed some issues with Trakt (hopefully)
