@@ -306,6 +306,17 @@ class movies:
             return
 
 
+    def persons(self, url):
+        if url == None:
+            self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
+        else:
+            self.list = cache.get(self.imdb_person_list, 1, url)
+
+        for i in range(0, len(self.list)): self.list[i].update({'action': 'movies'})
+        self.addDirectory(self.list)
+        return self.list
+
+
     def mosts(self):
         keywords = [
             ('Most Played This Week', 'played', 'weekly'),
@@ -371,7 +382,7 @@ class movies:
         return self.list
 
 
-    def keywords(self):
+    def keywords(self): # Poseidon lists/icons (by Soulless)
         keywords = [
             ('anime', 'anime.jpg'),
             ('avant-garde', 'avant.jpg'),
@@ -568,6 +579,7 @@ class movies:
             ('Persian', 'fa'),
             ('Polish', 'pl'),
             ('Portuguese', 'pt'),
+            ('Punjabi', 'pa'),
             ('Romanian', 'ro'),
             ('Russian', 'ru'),
             ('Serbian', 'sr'),
@@ -582,7 +594,7 @@ class movies:
             {
                 'name': i[0],
                 'url': self.language_link % i[1],
-                'image': '{}{}{}'.format('flags/', i[1], '.png'),
+                'image': 'languages.png',
                 'action': 'movies'
             })
         self.addDirectory(self.list)
@@ -616,17 +628,6 @@ class movies:
         dec = int(year[:3]) * 10
 
         for i in range(dec, 1890, -10): self.list.append({'name': str(i) + 's', 'url': self.decade_link % (str(i), str(i+9)), 'image': 'years.png', 'action': 'movies'})
-        self.addDirectory(self.list)
-        return self.list
-
-
-    def persons(self, url):
-        if url == None:
-            self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
-        else:
-            self.list = cache.get(self.imdb_person_list, 1, url)
-
-        for i in range(0, len(self.list)): self.list[i].update({'action': 'movies'})
         self.addDirectory(self.list)
         return self.list
 

@@ -274,6 +274,17 @@ class tvshows:
             return
 
 
+    def persons(self, url):
+        if url == None:
+            self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
+        else:
+            self.list = cache.get(self.imdb_person_list, 1, url)
+
+        for i in range(0, len(self.list)): self.list[i].update({'action': 'tvshows'})
+        self.addDirectory(self.list)
+        return self.list
+
+
     def mosts(self):
         keywords = [
             ('Most Played This Week', 'played', 'weekly'),
@@ -290,16 +301,13 @@ class tvshows:
             ('Most Watched All Time', 'watched', 'all')
         ]
 
-        for i in keywords:
-
-            self.list.append(
-                {
-                    'name': i[0],
-                    'url': self.mosts_link % (i[1], i[2]),
-                    'image': 'trakt.png',
-                    'action': 'tvshows'
-                })
-
+        for i in keywords: self.list.append(
+            {
+                'name': i[0],
+                'url': self.mosts_link % (i[1], i[2]),
+                'image': 'trakt.png',
+                'action': 'tvshows'
+            })
         self.addDirectory(self.list)
         return self.list
 
@@ -342,7 +350,6 @@ class tvshows:
                 'image': '{}{}{}'.format('genres/', i[1], '.png'),
                 'action': 'tvshows'
             })
-
         self.addDirectory(self.list)
         return self.list
 
@@ -534,6 +541,7 @@ class tvshows:
             ('Persian', 'fa'),
             ('Polish', 'pl'),
             ('Portuguese', 'pt'),
+            ('Punjabi', 'pa'),
             ('Romanian', 'ro'),
             ('Russian', 'ru'),
             ('Serbian', 'sr'),
@@ -547,7 +555,7 @@ class tvshows:
             {
                 'name': i[0],
                 'url': self.language_link % i[1],
-                'image': '{}{}{}'.format('flags/', i[1], '.png'),
+                'image': 'languages.png',
                 'action': 'tvshows'
             })
         self.addDirectory(self.list)
@@ -564,17 +572,6 @@ class tvshows:
                 'image': '{}{}{}'.format('mpaa/', i, '.png'),
                 'action': 'tvshows'
             })
-        self.addDirectory(self.list)
-        return self.list
-
-
-    def persons(self, url):
-        if url == None:
-            self.list = cache.get(self.imdb_person_list, 24, self.personlist_link)
-        else:
-            self.list = cache.get(self.imdb_person_list, 1, url)
-
-        for i in range(0, len(self.list)): self.list[i].update({'action': 'tvshows'})
         self.addDirectory(self.list)
         return self.list
 
