@@ -974,8 +974,6 @@ class sources:
         self.sources = filter
 
         filter = []
-        filter += local
-
         filter += [i for i in self.sources if i['quality'] in ['4K', '4k']]
         filter += [i for i in self.sources if i['quality'] in ['1080p', '1080P']]
         filter += [i for i in self.sources if i['quality'] in ['720p', '720P']]
@@ -984,20 +982,23 @@ class sources:
         self.sources = filter
 
         if main_sort == '1':
-            self.sources = local + [i for i in self.sources if i.get('debrid', '')] + [i for i in self.sources if not i.get('debrid', '') and not i in local]
+            self.sources = [i for i in self.sources if i.get('debrid', '')] + [i for i in self.sources if not i.get('debrid', '')]
 
         if multi == True:
             self.sources = [i for i in self.sources if not i['language'] == 'en'] + [i for i in self.sources if i['language'] == 'en']
 
+        self.sources = local + [i for i in self.sources if i.get('official')] + [i for i in self.sources if not i.get('official')]
+
         self.sources = self.sources[:4000]
 
-        prem_color = control.setting('prem.identify')
-        prem_identify = self.getPremColor(prem_color)
-        if prem_identify == '': prem_identify = 'gold'
+        official_color = control.setting('official.identify') or '15'
+        official_identify = self.getPremColor(official_color)
 
-        sec_color = control.setting('sec.identify')
+        prem_color = control.setting('prem.identify') or '20'
+        prem_identify = self.getPremColor(prem_color)
+
+        sec_color = control.setting('sec.identify') or '17'
         sec_identify = self.getPremColor(sec_color)
-        if sec_identify == '': sec_identify = 'cyan'
 
         double_line = control.setting('linesplit') == '1'
         simple = control.setting('linesplit') == '2'
@@ -1021,6 +1022,8 @@ class sources:
             #s = s.rsplit('.', 1)[0]
 
             l = self.sources[i]['language'].upper()
+
+            o = self.sources[i].get('official', False)
 
             try:
                 f = ' / '.join(['%s' % info.strip() for info in self.sources[i].get('info', '').split('|')])
@@ -1048,7 +1051,10 @@ class sources:
             if d == 'ZEVERA': d = 'ZVR'
 
             if double_line:
-                if not d == '':
+                if o:
+                    label = '[COLOR %s]%03d | [B]%s[/B] | %s | [B]%s[/B][/COLOR][CR] ' % (official_identify, int(i+1), q, p, s)
+
+                elif not d == '':
                     label = '[COLOR %s]%03d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'EN': label += ' | [B]%s[/B]' % l
                     label += ' | %s | [B]%s[/B] | %s | [B]%s[/B][/COLOR][CR]    [COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
@@ -1064,7 +1070,10 @@ class sources:
                 label += ' | %s | [B]%s[/B] | %s | [B]%s[/B]' % (d, q, p, s)
 
             else:
-                if not d == '':
+                if o:
+                    label = '[COLOR %s]%03d | [B]%s[/B] | %s | [B]%s[/B][/COLOR]' % (official_identify, int(i+1), q, p, s)
+
+                elif not d == '':
                     label = '[COLOR %s]%03d' % (prem_identify, int(i+1))
                     if multi == True and not l == 'EN': label += ' | [B]%s[/B]' % l
                     label += ' | %s | [B]%s[/B] | %s | [B]%s[/B] | [/COLOR][COLOR %s][I]%s /%s[/I][/COLOR]' % (d, q, p, s, sec_identify, f, t)
@@ -1389,34 +1398,20 @@ class sources:
 
         self.sourceFile = control.providercacheFile
 
-        scraperSetting = control.setting('module.provider.alt')
+        externalEnabled = control.setting('external.providers') or 'true'
 
-        import oathscrapers
-        sourceDir1 = oathscrapers.sources()
         from resources.lib import sources
-        sourceDir2 = sources.sources()
+        self.sourceDict = sources.sources()
+        self.module_name = 'TheOath:'
 
-        oas_module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):' \
-                          if control.addon('script.module.oathscrapers').getSetting('package.folder') != 'Oathscrapers' else 'OathScrapers:'
-
-        try:
-            if scraperSetting == 'OathScrapers':
-                self.sourceDict = sourceDir1
-                self.module_name = oas_module_name
-            elif scraperSetting == 'Built-in':
-                self.sourceDict = sourceDir2
-                self.module_name = 'Built-in providers:'
-            elif scraperSetting == 'OathScrapers + Built-in':
-                self.sourceDict = sourceDir1 + sourceDir2
-                self.module_name = 'Built-in + ' + oas_module_name
-            else:
-                self.sourceDict = sourceDir1
-                self.module_name = oas_module_name
-                control.setSetting('module.provider', 'OathScrapers')
-        except:
-            self.sourceDict = sourceDir1
-            self.module_name = oas_module_name
-            control.setSetting('module.provider', 'OathScrapers')
+        if externalEnabled == 'true':
+            try:
+                import oathscrapers
+                self.sourceDict += oathscrapers.sources()
+                self.module_name = 'OathScrapers (' + str(control.addon('script.module.oathscrapers').getSetting('package.folder')) + ' set):' \
+                                   if control.addon('script.module.oathscrapers').getSetting('package.folder') != 'Oathscrapers' else 'OathScrapers:'
+            except:
+                pass
 
         try:
             self.hostDict = resolveurl.relevant_resolvers(order_matters=True)

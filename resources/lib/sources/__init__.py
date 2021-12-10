@@ -21,10 +21,7 @@
 import pkgutil
 import os
 
-from resources.lib.modules import log_utils, control
-
 __all__ = [x[1] for x in os.walk(os.path.dirname(__file__))][0]
-
 
 def sources():
     try:
@@ -36,15 +33,11 @@ def sources():
 
                 try:
                     module = loader.find_module(module_name).load_module(module_name)
-
-                    # [ORION/]
-                    # if module_name == 'orionoid':
-                        # module_name = 'orion' # messes with setting, and can't get disabled
-                    # [/ORION]
-
                     sourceDict.append((module_name, module.source()))
                 except:
-                    log_utils.log('Could not load "%s"' % module_name, 1)
+                    # from resources.lib.modules import log_utils
+                    # log_utils.log('Could not load "%s"' % module_name, 1)
+                    pass
         return sourceDict
     except:
         return []
