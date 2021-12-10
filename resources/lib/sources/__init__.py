@@ -29,7 +29,6 @@ __all__ = [x[1] for x in os.walk(os.path.dirname(__file__))][0]
 def sources():
     try:
         sourceDict = []
-        orion_color = control.setting('orion.color')
         for i in __all__:
             for loader, module_name, is_pkg in pkgutil.walk_packages([os.path.join(os.path.dirname(__file__), i)]):
                 if is_pkg:
@@ -39,10 +38,8 @@ def sources():
                     module = loader.find_module(module_name).load_module(module_name)
 
                     # [ORION/]
-                    if module_name == 'orionoid':
-                        if not orion_color == 'No color':
-                            module_name = '[COLOR %s]orion[/COLOR]' % orion_color
-                        else: module_name = 'orion'
+                    # if module_name == 'orionoid':
+                        # module_name = 'orion' # messes with setting, and can't get disabled
                     # [/ORION]
 
                     sourceDict.append((module_name, module.source()))

@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.03.09[/COLOR][/B]
+- Cleanup unused modules
+- Furk fixes/tweaks
+
 [B][COLOR gold]v4.03.08[/COLOR][/B]
 - Added support for Easynews
 

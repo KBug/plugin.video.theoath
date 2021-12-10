@@ -375,12 +375,12 @@ class sources:
         content = 'movie' if tvshowtitle == None else 'episode'
         if content == 'movie':
             sourceDict = [(i[0], i[1], getattr(i[1], 'movie', None)) for i in sourceDict]
-            genres = trakt.getGenre('movie', 'imdb', imdb)
+            #genres = trakt.getGenre('movie', 'imdb', imdb)
         else:
             sourceDict = [(i[0], i[1], getattr(i[1], 'tvshow', None)) for i in sourceDict]
-            genres = trakt.getGenre('show', 'tmdb', tmdb)
+            #genres = trakt.getGenre('show', 'tmdb', tmdb)
 
-        sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter or any(x in i[1].genre_filter for x in genres)]
+        sourceDict = [(i[0], i[1], i[2]) for i in sourceDict if not hasattr(i[1], 'genre_filter') or not i[1].genre_filter]# or any(x in i[1].genre_filter for x in genres)]
         sourceDict = [(i[0], i[1]) for i in sourceDict if not i[2] == None]
 
         language = self.getLanguage()
@@ -537,7 +537,7 @@ class sources:
                     # if i >= timeout and len(mainleft) == 0 and len(self.sources) >= 100 * len(info): break # improve responsiveness
                     line1 = pdiag_format % (source_4k_label, source_1080_label, source_720_label, source_sd_label, source_total_label, source_filtered_out_label)
                     if len(info) > 6: line3 = string3 % (str(len(info)))
-                    elif len(info) > 0: line3 = string3 % (', '.join(info).replace('[COLOR %s]' % (control.setting('orion.color').upper()), '').replace('[/COLOR]', ''))
+                    elif len(info) > 0: line3 = string3 % (', '.join(info))
                     else: break
                     # percent = int(100 * float(i) / (2 * timeout) + 0.5)
                     current_time = time.time()
@@ -890,7 +890,7 @@ class sources:
             self.sources = [i for i in self.sources if min_size_gb <= i['gb_per_hour'] <= max_size_gb]
 
         if debrid_only == 'true' and debrid.status():
-            self.sources = [i for i in self.sources if (i['source'].lower() in self.hostprDict or 'torrent' in i['source'].lower())]# and i['debridonly'] == True]
+            self.sources = [i for i in self.sources if (i['source'].lower() in self.hostprDict or 'torrent' in i['source'].lower()) or i['provider'] in ['furk', 'easynews']]
 
         try:
             if remove_dups == 'true' and len(self.sources) > 1:
@@ -946,6 +946,7 @@ class sources:
         filter = []
 
         filter += [dict(list(i.items()) + [('debrid', 'un')]) for i in self.sources if i['provider'] == 'easynews']
+        filter += [dict(list(i.items()) + [('debrid', 'furk')]) for i in self.sources if i['provider'] == 'furk']
 
         for d in debrid.debrid_resolvers:
             valid_hoster = set([i['source'] for i in self.sources])
@@ -1099,14 +1100,15 @@ class sources:
 
             u = url = item['url']
 
-            d = item['debrid'] ; direct = item['direct']
+            d = item['debrid']
+            direct = item['direct']
             local = item.get('local', False)
 
             provider = item['provider']
             call = [i[1] for i in self.sourceDict if i[0] == provider][0]
             u = url = call.resolve(url)
 
-            if url == None or (not '://' in url and not local and 'magnet:' not in url): raise Exception()
+            if not url or (not '://' in url and not local and 'magnet:' not in url): raise Exception()
 
             if not local:
                 url = url[8:] if url.startswith('stack:') else url
@@ -1114,7 +1116,7 @@ class sources:
                 urls = []
                 for part in url.split(' , '):
                     u = part
-                    if not d in ['', 'un']:
+                    if not d in ['', 'un', 'furk']:
                         part = debrid.resolver(part, d)
 
                     elif not direct == True:
@@ -1124,7 +1126,7 @@ class sources:
 
                 url = 'stack://' + ' , '.join(urls) if len(urls) > 1 else urls[0]
 
-            if url == False or url == None: raise Exception()
+            if not url: raise Exception()
 
             ext = url.split('?')[0].split('&')[0].split('|')[0].rsplit('.')[-1].replace('/', '').lower()
             if ext == 'rar': raise Exception()
@@ -1428,7 +1430,7 @@ class sources:
                            'mega.io', 'mega.nz', 'multiup.org', 'nitroflare.com', 'nitro.download', 'oboom.com', 'rapidgator.asia', 'rapidgator.net', 'rg.to',
                            'rockfile.co', 'rockfile.eu', 'turbobit.net', 'ul.to', 'uploaded.net', 'uploaded.to', 'uploadgig.com', 'uploadrocket.net', 'usersdrive.com',
                            '1fichier.com', 'alterupload.com', 'cjoint.net', 'desfichiers.com', 'dfichiers.com', 'megadl.fr', 'mesfichiers.org', 'piecejointe.net', 'pjointe.com',
-                           'tenvoi.com', 'dl4free.com', 'easynews.com']
+                           'tenvoi.com', 'dl4free.com']
 
         self.hostcapDict = ['openload.io', 'openload.co', 'oload.tv', 'oload.stream', 'oload.win', 'oload.download', 'oload.info', 'oload.icu', 'oload.fun', 'oload.life', 'openload.pw',
                             'vev.io', 'vidup.me', 'vidup.tv', 'vidup.io', 'vshare.io', 'vshare.eu', 'flashx.tv', 'flashx.to', 'flashx.sx', 'flashx.bz', 'flashx.cc',
