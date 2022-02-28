@@ -363,42 +363,41 @@ def is_season_match(name, title, season, aliases=None):
         try: titles.extend([cleantitle.get(i['title']) for i in aliases])
         except: pass
 
-    title_match = season_match = False
-
     if t in titles:
-        title_match = True
+        season_match = False
 
-    name += ' '
-    check = []
-    check.append(r'season\s*%s\s+' % season)
-    check.append(r'season\s*%s\s+' % season.zfill(2))
-    check.append(r's%s\s+' % season)
-    check.append(r's%s\s+' % season.zfill(2))
-    check.append(r'complete\s+series')
-    if any(re.search(c, name) for c in check):
-        season_match = True
+        name += ' '
+        check = []
+        check.append(r'season\s*%s\s+' % season)
+        check.append(r'season\s*%s\s+' % season.zfill(2))
+        check.append(r's%s\s+' % season)
+        check.append(r's%s\s+' % season.zfill(2))
+        check.append(r'complete\s+series')
+        if any(re.search(c, name) for c in check):
+            season_match = True
 
-    else:
-        range_match = re.findall(r'(?:s|season)\s*(\d{1,2})\s+(?:to|thru)*\s*(?:s|season)*\s*(\d{1,2})(?:\s|$)', name)
-        if range_match:
-            if int(range_match[0][0]) <= int(season) <= int(range_match[0][1]):
-                season_match = True
+        else:
+            range_match = re.findall(r'(?:s|season)\s*(\d{1,2})\s+(?:to|thru)*\s*(?:s|season)*\s*(\d{1,2})(?:\s|$)', name)
+            if range_match:
+                if int(range_match[0][0]) <= int(season) <= int(range_match[0][1]):
+                    season_match = True
 
-    if not season_match:
-        try:
-            test_range = re.split(r'(season )|[a-z]', name)
-            seasons = test_range[test_range.index('season ') + 1].split()
-            if season in seasons or season.zfill(2) in seasons:
-                season_match = True
-        except:
-            pass
+        if not season_match:
+            try:
+                test_range = re.split(r'(season )|[a-z]', name)
+                seasons = test_range[test_range.index('season ') + 1].split()
+                if season in seasons or season.zfill(2) in seasons:
+                    season_match = True
+            except:
+                pass
 
-    if season_match:
-        no_match = re.search(r'(?:e|ep|episode|episodes)\s*\d{1,2}\s+', name)
-        if no_match:
-            season_match = False
+        if season_match:
+            no_match = re.search(r'(?:e|ep|episode|episodes)\s*\d{1,2}\s+', name)
+            if no_match:
+                return False
+            return True
 
-    return all((title_match, season_match))
+    return False
 
 
 def append_headers(headers):

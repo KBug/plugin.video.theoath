@@ -1,3 +1,8 @@
+[B][COLOR gold]v4.11.01[/COLOR][/B]
+- Added "Browse" context menu option on torrent pack sources
+- Removed "Autoplay sd-only" option
+- Other minor fixes
+
 [B][COLOR gold]v4.11.00[/COLOR][/B]
 - Added basic torrent packs support
   (ResolveURL now supports multi-file torrent resolving via RD, AD, PM, DL)

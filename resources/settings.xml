@@ -59,7 +59,6 @@
         <setting id="min.size.gb" type="slider" label="32133" default="0" range="0,0.5,20" option="float" visible="eq(-1,true)" subsetting="true" />
         <setting id="max.size.gb" type="slider" label="32134" default="20" range="0.5,0.5,50" option="float" visible="eq(-2,true)" subsetting="true" />
         <setting id="debrid.only" type="bool" label="32621" default="false" />
-        <setting id="autoplay.sd" type="bool" label="32620" default="false" />
         <setting id="remove.hevc" type="bool" label="32363" default="false" />
         <setting id="remove.dv" type="bool" label="32364" default="false" />
         <setting id="remove.captcha" type="bool" label="32341" default="false" />

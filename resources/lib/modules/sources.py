@@ -207,6 +207,9 @@ class sources:
 
                 cm = []
 
+                if items[i].get('pack'):
+                    cm.append(('[I]Browse pack[/I]', 'RunPlugin(%s?action=browseItem&title=%s&source=%s)' % (sysaddon, systitle, syssource)))
+
                 if downloads == True:
                     cm.append((downloadMenu, 'RunPlugin(%s?action=download&name=%s&image=%s&source=%s)' % (sysaddon, sysname, sysimage, syssource)))
 
@@ -232,7 +235,7 @@ class sources:
         control.directory(syshandle, cacheToDisc=True)
 
 
-    def playItem(self, title, source):
+    def playItem(self, title, source, browse=False):
         try:
             meta = control.window.getProperty(self.metaProperty)
             meta = json.loads(meta)
@@ -244,6 +247,15 @@ class sources:
             imdb = meta['imdb'] if 'imdb' in meta else None
             tvdb = meta['tvdb'] if 'tvdb' in meta else None
             tmdb = meta['tmdb'] if 'tmdb' in meta else None
+
+            if browse:
+                try:
+                    self.url = self.sourcesResolve(json.loads(source)[0], browse=True)
+                    from resources.lib.modules.player import player
+                    player().run(title, year, season, episode, imdb, tmdb, self.url, meta)
+                    return self.url
+                except:
+                    return self.errorForSources()
 
             next = [] ; prev = [] ; total = []
 
@@ -334,7 +346,7 @@ class sources:
 
                     if w.is_alive() == True: block = items[i]['source']
 
-                    if self.url == None: raise Exception()
+                    if not self.url: raise Exception()
 
                     try: progressDialog.close()
                     except: pass
@@ -356,6 +368,7 @@ class sources:
 
             self.errorForSources()
         except:
+            log_utils.log('playItem', 1)
             pass
 
 
@@ -1112,7 +1125,7 @@ class sources:
         return self.sources
 
 
-    def sourcesResolve(self, item, info=False):
+    def sourcesResolve(self, item, browse=False, info=False):
         try:
             self.url = None
 
@@ -1135,12 +1148,20 @@ class sources:
                 urls = []
                 for part in url.split(' , '):
                     u = part
+
                     if not d in ['', 'un', 'furk']:
+                        if browse and pack:
+                            url_list = debrid.resolver(part, d, from_pack=pack, return_list=True)
+                            select = control.selectDialog([i['name'] for i in url_list], item.get('name', 'File list:'))
+                            if select == -1: return
+                            part = url_list[select]['link']
+                            pack = None
                         part = debrid.resolver(part, d, from_pack=pack)
 
                     elif not direct == True:
                         hmf = resolveurl.HostedMediaFile(url=u, include_disabled=True, include_universal=False)
                         if hmf.valid_url() == True: part = hmf.resolve()
+
                     urls.append(part)
 
                 url = 'stack://' + ' , '.join(urls) if len(urls) > 1 else urls[0]
@@ -1168,7 +1189,7 @@ class sources:
             self.url = url
             return url
         except:
-            log_utils.log('Resolve failure for url: {}'.format(url), 1)
+            log_utils.log('Resolve failure for url: {}'.format(item['url']), 1)
             if info == True: self.errorForSources()
             return
 
@@ -1284,9 +1305,6 @@ class sources:
         items = [i for i in items if not i in filter]
 
         items = [i for i in items if ('autoplay' in i and i['autoplay'] == True) or not 'autoplay' in i]
-
-        if control.setting('autoplay.sd') == 'true':
-            items = [i for i in items if not i['quality'] in ['4k', '1080p', '720p', 'hd', '4K', '1080P', '720P', 'HD']]
 
         u = None
 

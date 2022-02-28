@@ -445,6 +445,10 @@ def routing(_argv):
         from resources.lib.modules import sources
         sources.sources().playItem(title, source)
 
+    elif action == 'browseItem':
+        from resources.lib.modules import sources
+        sources.sources().playItem(title, source, browse=True)
+
     elif action == 'alterSources':
         from resources.lib.modules import sources
         sources.sources().alterSources(url, meta)
