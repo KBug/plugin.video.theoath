@@ -248,14 +248,25 @@ class sources:
             tvdb = meta['tvdb'] if 'tvdb' in meta else None
             tmdb = meta['tmdb'] if 'tmdb' in meta else None
 
+
             if browse:
                 try:
-                    self.url = self.sourcesResolve(json.loads(source)[0], browse=True)
+                    self.url, name = self.sourcesResolve(json.loads(source)[0], browse=True)
+                    name = cleantitle.get_title(name.split('/')[-1], sep=' ')
+
+                    try:
+                        s_e = re.findall(r"(?:\w\s*|^)(\d+)\s*(?:e|x|episode)\s*(\d+)\s+", name, flags=re.I|re.S)[0]
+                        season, episode = str(int(s_e[0])), str(int(s_e[1]))
+                        meta.update({'season': season, 'episode': episode, 'title': name})
+                    except:
+                        meta.update({'title': name})
+
                     from resources.lib.modules.player import player
                     player().run(title, year, season, episode, imdb, tmdb, self.url, meta)
                     return self.url
                 except:
                     return self.errorForSources()
+
 
             next = [] ; prev = [] ; total = []
 
@@ -1128,6 +1139,7 @@ class sources:
     def sourcesResolve(self, item, browse=False, info=False):
         try:
             self.url = None
+            name = ''
 
             u = url = item['url']
 
@@ -1152,9 +1164,11 @@ class sources:
                     if not d in ['', 'un', 'furk']:
                         if browse and pack:
                             url_list = debrid.resolver(part, d, from_pack=pack, return_list=True)
+                            url_list = sorted(url_list, key=lambda k: k['name'])
                             select = control.selectDialog([i['name'] for i in url_list], item.get('name', 'File list:'))
                             if select == -1: return
                             part = url_list[select]['link']
+                            name = url_list[select]['name']
                             pack = None
                         part = debrid.resolver(part, d, from_pack=pack)
 
@@ -1187,6 +1201,9 @@ class sources:
                 # if result == None: raise Exception()
 
             self.url = url
+
+            if browse:
+                return url, name
             return url
         except:
             log_utils.log('Resolve failure for url: {}'.format(item['url']), 1)

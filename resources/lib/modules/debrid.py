@@ -61,7 +61,7 @@ def resolver(url, debrid, from_pack=None, return_list=False):
 
 def matchEpisode(filename, season, episode):
     import re
-    filename = re.sub('[^A-Za-z0-9 ]+', ' ', filename.split('/')[-1]).lower() + ' '
+    filename = re.sub('[^A-Za-z0-9 ]+', ' ', filename.split('/')[-1]).lower()
     r = r"(?:[a-z\s*]|^)(?:%s|%s)\s*(?:e|x|episode)\s*(?:%s|%s)\s+" % (season.zfill(2), season, episode.zfill(2), episode)
     m = re.search(r, filename, flags=re.S)
 

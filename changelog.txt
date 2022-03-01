@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.11.02[/COLOR][/B]
+- Try to pass correct meta to the player when playing random file from pack
+
 [B][COLOR gold]v4.11.01[/COLOR][/B]
 - Added "Browse" context menu option on torrent pack sources
 - Removed "Autoplay sd-only" option
