@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.11.03[/COLOR][/B]
+- Downloading fix
+
 [B][COLOR gold]v4.11.02[/COLOR][/B]
 - Try to pass correct meta to the player when playing random file from pack
 

@@ -422,7 +422,7 @@ def routing(_argv):
         import simplejson as json
         from resources.lib.modules import sources
         from resources.lib.modules import downloader
-        try: downloader.download(name, image, sources.sources().sourcesResolve(json.loads(source)[0], True))
+        try: downloader.download(name, image, sources.sources().sourcesResolve(json.loads(source)[0], info=True))
         except: pass
 
     elif action == 'play':

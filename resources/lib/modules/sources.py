@@ -257,9 +257,9 @@ class sources:
                     try:
                         s_e = re.findall(r"(?:\w\s*|^)(\d+)\s*(?:e|x|episode)\s*(\d+)\s+", name, flags=re.I|re.S)[0]
                         season, episode = str(int(s_e[0])), str(int(s_e[1]))
-                        meta.update({'season': season, 'episode': episode, 'title': name})
+                        meta.update({'season': season, 'episode': episode, 'title': name, 'plot': name})
                     except:
-                        meta.update({'title': name})
+                        meta.update({'title': name, 'plot': name})
 
                     from resources.lib.modules.player import player
                     player().run(title, year, season, episode, imdb, tmdb, self.url, meta)
@@ -1136,7 +1136,7 @@ class sources:
         return self.sources
 
 
-    def sourcesResolve(self, item, browse=False, info=False):
+    def sourcesResolve(self, item, info=False, browse=False):
         try:
             self.url = None
             name = ''
