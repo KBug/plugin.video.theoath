@@ -4,6 +4,7 @@
     TheOath Add-on (C) 2021
 '''
 
+
 import re
 import requests
 from six.moves.urllib_parse import parse_qs, urlencode
@@ -11,19 +12,7 @@ from resources.lib.modules import api_keys
 from resources.lib.modules import control
 from resources.lib.modules import source_utils
 from resources.lib.modules import log_utils
-from resources.lib.modules.justwatch import JustWatch
-
-
-netflix_enabled = (control.condVisibility('System.HasAddon(plugin.video.netflix)') == True and control.setting('netflix') == 'true')
-prime_enabled = (control.condVisibility('System.HasAddon(plugin.video.amazon-test)') == True and control.setting('prime') == 'true')
-hbo_enabled = (control.condVisibility('System.HasAddon(slyguy.hbo.max)') == True and control.setting('hbo.max') == 'true')
-disney_enabled = (control.condVisibility('System.HasAddon(slyguy.disney.plus)') == True and control.setting('disney.plus') == 'true')
-iplayer_enabled = (control.condVisibility('System.HasAddon(plugin.video.iplayerwww)') == True and control.setting('iplayer') == 'true')
-curstream_enabled = (control.condVisibility('System.HasAddon(slyguy.curiositystream)') == True and control.setting('curstream') == 'true')
-hulu_enabled = (control.condVisibility('System.HasAddon(slyguy.hulu)') == True and control.setting('hulu') == 'true')
-paramount_enabled = (control.condVisibility('System.HasAddon(slyguy.paramount.plus)') == True and control.setting('paramount') == 'true')
-
-scraper_init = any(e for e in [netflix_enabled, prime_enabled, hbo_enabled, disney_enabled, iplayer_enabled, curstream_enabled, hulu_enabled, paramount_enabled])
+from resources.lib.modules.justwatch import JustWatch, providers
 
 
 class source:
@@ -39,7 +28,7 @@ class source:
 
 
     def movie(self, imdb, title, localtitle, aliases, year):
-        if not scraper_init:
+        if not providers.SCRAPER_INIT:
             return
 
         try:
@@ -52,7 +41,7 @@ class source:
 
 
     def tvshow(self, imdb, tvdb, tvshowtitle, localtvshowtitle, aliases, year):
-        if not scraper_init:
+        if not providers.SCRAPER_INIT:
             return
 
         try:
@@ -135,7 +124,7 @@ class source:
 
             streams = []
 
-            if netflix_enabled:
+            if providers.NETFLIX_ENABLED:
                 nfx = [o for o in offers if o['package_short_name'] in ['nfx', 'nfk']]
                 if nfx:
                     nfx_id = nfx[0]['urls']['standard_web']
@@ -148,7 +137,7 @@ class source:
                         #log_utils.log('official netflix_id: ' + netflix_id)
                         streams.append(('netflix', 'plugin://plugin.video.netflix/play_strm/%s/' % netflix_id))
 
-            if prime_enabled:
+            if providers.PRIME_ENABLED:
                 prv = [o for o in offers if o['package_short_name'] in ['amp', 'prv', 'aim']]
                 if prv:
                     prime_id = prv[0]['urls']['standard_web']
@@ -156,7 +145,7 @@ class source:
                     #log_utils.log('official prime_id: ' + prime_id)
                     streams.append(('amazon prime', 'plugin://plugin.video.amazon-test/?asin=%s&mode=PlayVideo&name=None&adult=0&trailer=0&selbitrate=0' % prime_id))
 
-            if hbo_enabled:
+            if providers.HBO_ENABLED:
                 hbm = [o for o in offers if o['package_short_name'] in ['hmf', 'hbm', 'hbo', 'hbn']]
                 if hbm:
                     hbo_id = hbm[0]['urls']['standard_web']
@@ -164,7 +153,7 @@ class source:
                     #log_utils.log('official hbo_id: ' + hbo_id)
                     streams.append(('hbo max', 'plugin://slyguy.hbo.max/?_=play&slug=' + hbo_id))
 
-            if disney_enabled:
+            if providers.DISNEY_ENABLED:
                 dnp = [o for o in offers if o['package_short_name'] == 'dnp']
                 if dnp:
                     disney_id = dnp[0]['urls']['deeplink_web']
@@ -172,14 +161,14 @@ class source:
                     #log_utils.log('official disney_id: ' + disney_id)
                     streams.append(('disney+', 'plugin://slyguy.disney.plus/?_=play&_play=1&content_id=' + disney_id))
 
-            if iplayer_enabled:
+            if providers.IPLAYER_ENABLED:
                 bbc = [o for o in offers if o['package_short_name'] == 'bbc']
                 if bbc:
                     iplayer_id = bbc[0]['urls']['standard_web']
                     #log_utils.log('official iplayer_id: ' + iplayer_id)
                     streams.append(('bbc iplayer', 'plugin://plugin.video.iplayerwww/?url=%s&mode=202&name=null&iconimage=null&description=null&subtitles_url=&logged_in=False' % iplayer_id))
 
-            if curstream_enabled:
+            if providers.CURSTREAM_ENABLED:
                 cts = [o for o in offers if o['package_short_name'] == 'cts']
                 if cts:
                     cts_id = cts[0]['urls']['standard_web']
@@ -187,7 +176,7 @@ class source:
                     #log_utils.log('official cts_id: ' + cts_id)
                     streams.append(('curiosity stream', 'plugin://slyguy.curiositystream/?_=play&_play=1&id=' + cts_id))
 
-            if hulu_enabled:
+            if providers.HULU_ENABLED:
                 hlu = [o for o in offers if o['package_short_name'] == 'hlu']
                 if hlu:
                     hulu_id = hlu[0]['urls']['standard_web']
@@ -195,7 +184,7 @@ class source:
                     #log_utils.log('official hulu_id: ' + hulu_id)
                     streams.append(('hulu', 'plugin://slyguy.hulu/?_=play&id=' + hulu_id))
 
-            if paramount_enabled:
+            if providers.PARAMOUNT_ENABLED:
                 pmp = [o for o in offers if o['package_short_name'] == 'pmp']
                 if pmp:
                     pmp_url = pmp[0]['urls']['standard_web']

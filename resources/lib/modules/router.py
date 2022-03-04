@@ -214,6 +214,10 @@ def routing(_argv):
         from resources.lib.indexers import movies
         movies.movies().languages()
 
+    elif action == 'movieServices':
+        from resources.lib.indexers import movies
+        movies.movies().services()
+
     elif action == 'movieCertificates':
         from resources.lib.indexers import movies
         movies.movies().certifications()
@@ -281,6 +285,10 @@ def routing(_argv):
     elif action == 'tvLanguages':
         from resources.lib.indexers import tvshows
         tvshows.tvshows().languages()
+
+    elif action == 'tvServices':
+        from resources.lib.indexers import tvshows
+        tvshows.tvshows().services()
 
     elif action == 'tvCertificates':
         from resources.lib.indexers import tvshows
