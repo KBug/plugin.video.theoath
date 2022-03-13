@@ -332,15 +332,7 @@ class navigator:
         if traktCredentials == False and imdbCredentials == False and providers.SCRAPER_INIT == False:
             control.idle()
             control.infoDialog(control.lang(32042), sound=True, icon='WARNING')
-            #sys.exit()
-
-
-    def infoCheck(self, version):
-        try:
-            control.infoDialog('', control.lang(32074), time=5000, sound=False)
-            return '1'
-        except:
-            return '1'
+            sys.exit()
 
 
     def clearCache(self):
@@ -358,8 +350,8 @@ class navigator:
         control.infoDialog(control.lang(32057), sound=True, icon='INFO')
 
     def clearCacheProviders(self):
-#        yes = control.yesnoDialog(control.lang(32056))
-#        if not yes: return
+        # yes = control.yesnoDialog(control.lang(32056))
+        # if not yes: return
         from resources.lib.modules import cache
         cache.cache_clear_providers()
         control.infoDialog(control.lang(32057), sound=True, icon='INFO')

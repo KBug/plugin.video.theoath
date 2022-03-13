@@ -1,3 +1,8 @@
+[B][COLOR gold]v4.11.05[/COLOR][/B]
+- Added Crackle to supported official providers/add-ons
+- Subtitles: do not convert to utf-8 if sub is already
+- Some metadata cacheing fixes - thx 123venom
+
 [B][COLOR gold]v4.11.04[/COLOR][/B]
 - Added My Services category under My Movies/My TV Shows.
   This category is activated only if there are any Official providers enabled,

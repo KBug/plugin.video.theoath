@@ -162,10 +162,6 @@ def routing(_argv):
         from resources.lib.indexers import navigator
         navigator.navigator().clearCacheAll()
 
-    elif action == 'infoCheck':
-        from resources.lib.indexers import navigator
-        navigator.navigator().infoCheck('')
-
     elif action == 'uploadLog':
         from resources.lib.indexers import navigator
         navigator.navigator().uploadLog()

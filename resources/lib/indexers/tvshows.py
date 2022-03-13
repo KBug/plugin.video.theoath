@@ -343,7 +343,7 @@ class tvshows:
             ('Channel 5', '99', 'https://i.imgur.com/5ubnvOh.png'),
             ('Cinemax', '359', 'https://i.imgur.com/zWypFNI.png'),
             ('Comedy Central', '47', 'https://i.imgur.com/ko6XN77.png'),
-            ('Crackle', '928', 'https://i.imgur.com/53kqZSY.png'),
+            ('Crackle', '928', 'https://i.imgur.com/HqfbTPh.png'),
             ('CTV', '110', 'https://i.imgur.com/qUlyVHz.png'),
             ('Curiosity Stream', '2349', 'https://i.imgur.com/k1iD7WI.png'),
             ('DC Universe', '2243', 'https://i.imgur.com/bhWIubn.png'),
@@ -544,6 +544,7 @@ class tvshows:
         services = [
             ('Amazon Prime', '9|119|613', 'https://i.imgur.com/ru9DDlL.png', providers.PRIME_ENABLED),
             ('BBC Iplayer', '38', 'https://i.imgur.com/X5je23Q.png', providers.IPLAYER_ENABLED),
+            ('Crackle', '12', 'https://i.imgur.com/HqfbTPh.png', providers.CRACKLE_ENABLED),
             ('Curiosity Stream', '190', 'https://i.imgur.com/k1iD7WI.png', providers.CURSTREAM_ENABLED),
             ('Disney+', '337', 'https://i.imgur.com/DVrPgbM.png', providers.DISNEY_ENABLED),
             ('HBO Max', '616|384|27', 'https://i.imgur.com/mmRMG75.png', providers.HBO_ENABLED),
@@ -1131,11 +1132,11 @@ class tvshows:
         for r in range(0, total, 40):
             threads = []
             for i in range(r, r+40):
-                if i <= total: threads.append(workers.Thread(self.super_info, i))
+                if i < total: threads.append(workers.Thread(self.super_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
 
-            if self.meta: metacache.insert(self.meta)
+        if self.meta: metacache.insert(self.meta)
 
         #self.list = [i for i in self.list if not i['imdb'] == '0']
 

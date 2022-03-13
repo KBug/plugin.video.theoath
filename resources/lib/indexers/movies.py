@@ -580,6 +580,7 @@ class movies:
         services = [
             ('Amazon Prime', '9|119|613', 'https://i.imgur.com/ru9DDlL.png', providers.PRIME_ENABLED),
             ('BBC Iplayer', '38', 'https://i.imgur.com/X5je23Q.png', providers.IPLAYER_ENABLED),
+            ('Crackle', '12', 'https://i.imgur.com/HqfbTPh.png', providers.CRACKLE_ENABLED),
             ('Curiosity Stream', '190', 'https://i.imgur.com/k1iD7WI.png', providers.CURSTREAM_ENABLED),
             ('Disney+', '337', 'https://i.imgur.com/DVrPgbM.png', providers.DISNEY_ENABLED),
             ('HBO Max', '616|384|27', 'https://i.imgur.com/mmRMG75.png', providers.HBO_ENABLED),
@@ -1068,11 +1069,11 @@ class movies:
         for r in range(0, total, 40):
             threads = []
             for i in range(r, r+40):
-                if i <= total: threads.append(workers.Thread(self.super_info, i))
+                if i < total: threads.append(workers.Thread(self.super_info, i))
             [i.start() for i in threads]
             [i.join() for i in threads]
 
-            if self.meta: metacache.insert(self.meta)
+        if self.meta: metacache.insert(self.meta)
 
         self.list = [i for i in self.list if not i['imdb'] == '0']
 

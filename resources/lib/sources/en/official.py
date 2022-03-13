@@ -7,7 +7,7 @@
 
 import re
 import requests
-from six.moves.urllib_parse import parse_qs, urlencode
+from six.moves.urllib_parse import parse_qs, urlencode, quote_plus
 from resources.lib.modules import api_keys
 from resources.lib.modules import control
 from resources.lib.modules import source_utils
@@ -74,7 +74,7 @@ class source:
             data = dict([(i, data[i][0]) if data[i] else (i, '') for i in data])
             title = data['tvshowtitle'] if 'tvshowtitle' in data else data['title']
             year = data['year']
-            content = 'movie' if not 'tvshowtitle' in data else 'show'
+            content = 'movies' if not 'tvshowtitle' in data else 'tvshows'
 
             result = None
 
@@ -82,7 +82,7 @@ class source:
             # r0 = jw.get_providers()
             # log_utils.log('justwatch {0} providers: {1}'.format(self.country, repr(r0)))
 
-            if content == 'movie':
+            if content == 'movies':
                 tmdb = requests.get(self.tmdb_by_imdb % data['imdb']).json()
                 tmdb = tmdb['movie_results'][0]['id']
 
@@ -129,7 +129,7 @@ class source:
                 if nfx:
                     nfx_id = nfx[0]['urls']['standard_web']
                     nfx_id = nfx_id.rstrip('/').split('/')[-1]
-                    if content == 'movie':
+                    if content == 'movies':
                         netflix_id = nfx_id
                     else: # justwatch returns show ids for nf - get episode ids from instantwatcher
                         netflix_id = self.get_nf_episode_id(nfx_id, data['season'], data['episode'])
@@ -166,7 +166,7 @@ class source:
                 if bbc:
                     iplayer_id = bbc[0]['urls']['standard_web']
                     #log_utils.log('official iplayer_id: ' + iplayer_id)
-                    streams.append(('bbc iplayer', 'plugin://plugin.video.iplayerwww/?url=%s&mode=202&name=null&iconimage=null&description=null&subtitles_url=&logged_in=False' % iplayer_id))
+                    streams.append(('bbc iplayer', 'plugin://plugin.video.iplayerwww/?url=%s&mode=202&name=null&iconimage=null&description=null&subtitles_url=&logged_in=False' % quote_plus(iplayer_id)))
 
             if providers.CURSTREAM_ENABLED:
                 cts = [o for o in offers if o['package_short_name'] == 'cts']
@@ -188,9 +188,21 @@ class source:
                 pmp = [o for o in offers if o['package_short_name'] == 'pmp']
                 if pmp:
                     pmp_url = pmp[0]['urls']['standard_web']
-                    pmp_id = pmp_url.split('?')[0].split('/')[-1] if content == 'movie' else re.findall('/video/(.+?)/', pmp_url)[0]
+                    pmp_id = pmp_url.split('?')[0].split('/')[-1] if content == 'movies' else re.findall('/video/(.+?)/', pmp_url)[0]
                     #log_utils.log('official pmp_url: {0} | pmp_id: {1}'.format(pmp_url, pmp_id))
                     streams.append(('paramount+', 'plugin://slyguy.paramount.plus/?_=play&id=' + pmp_id))
+
+            if providers.CRACKLE_ENABLED:
+                crk = [o for o in offers if o['package_short_name'] == 'crk']
+                if crk:
+                    if content == 'movies':
+                        crk_id = crk[0]['urls']['standard_web']
+                        crk_id = crk_id.rstrip('/').split('/')[-1]
+                    else:
+                        crk_id = crk[0]['urls']['deeplink_android_tv']
+                        crk_id = re.findall('intent://Media/(.+?)#', crk_id, flags=re.I)[0]
+                    #log_utils.log('official crk_id: ' + crk_id)
+                    streams.append(('crackle', 'plugin://plugin.video.crackle/?id=%s&mode=103&type=%s' % (crk_id, content)))
 
             if streams:
                 for s in streams:
