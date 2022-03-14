@@ -132,9 +132,8 @@ class source:
                     if content == 'movies':
                         netflix_id = nfx_id
                     else: # justwatch returns show ids for nf - get episode ids from instantwatcher
-                        netflix_id = self.get_nf_episode_id(nfx_id, data['season'], data['episode'])
+                        netflix_id = self.get_nf_ep_id(nfx_id, data['season'], data['episode'])
                     if netflix_id:
-                        #log_utils.log('official netflix_id: ' + netflix_id)
                         streams.append(('netflix', 'plugin://plugin.video.netflix/play_strm/%s/' % netflix_id))
 
             if providers.PRIME_ENABLED:
@@ -142,7 +141,6 @@ class source:
                 if prv:
                     prime_id = prv[0]['urls']['standard_web']
                     prime_id = prime_id.rstrip('/').split('gti=')[1]
-                    #log_utils.log('official prime_id: ' + prime_id)
                     streams.append(('amazon prime', 'plugin://plugin.video.amazon-test/?asin=%s&mode=PlayVideo&name=None&adult=0&trailer=0&selbitrate=0' % prime_id))
 
             if providers.HBO_ENABLED:
@@ -150,7 +148,6 @@ class source:
                 if hbm:
                     hbo_id = hbm[0]['urls']['standard_web']
                     hbo_id = hbo_id.rstrip('/').split('/')[-1]
-                    #log_utils.log('official hbo_id: ' + hbo_id)
                     streams.append(('hbo max', 'plugin://slyguy.hbo.max/?_=play&slug=' + hbo_id))
 
             if providers.DISNEY_ENABLED:
@@ -158,22 +155,24 @@ class source:
                 if dnp:
                     disney_id = dnp[0]['urls']['deeplink_web']
                     disney_id = disney_id.rstrip('/').split('/')[-1]
-                    #log_utils.log('official disney_id: ' + disney_id)
                     streams.append(('disney+', 'plugin://slyguy.disney.plus/?_=play&_play=1&content_id=' + disney_id))
 
             if providers.IPLAYER_ENABLED:
                 bbc = [o for o in offers if o['package_short_name'] == 'bbc']
                 if bbc:
-                    iplayer_id = bbc[0]['urls']['standard_web']
-                    #log_utils.log('official iplayer_id: ' + iplayer_id)
-                    streams.append(('bbc iplayer', 'plugin://plugin.video.iplayerwww/?url=%s&mode=202&name=null&iconimage=null&description=null&subtitles_url=&logged_in=False' % quote_plus(iplayer_id)))
+                    iplayer_url = bbc[0]['urls']['standard_web']
+                    if content == 'tvshows' and '/episodes/' in iplayer_url: # justwatch sometimes returns season url for bbciplayer - get episode url from bbc
+                        iplayer_id = self.get_bbc_ep_url(iplayer_url, data['season'], data['episode'])
+                    else:
+                        iplayer_id = iplayer_url
+                    if iplayer_id:
+                        streams.append(('bbc iplayer', 'plugin://plugin.video.iplayerwww/?mode=202&name=null&url=%s&iconimage=null&description=null' % quote_plus(iplayer_id)))
 
             if providers.CURSTREAM_ENABLED:
                 cts = [o for o in offers if o['package_short_name'] == 'cts']
                 if cts:
                     cts_id = cts[0]['urls']['standard_web']
                     cts_id = cts_id.rstrip('/').split('/')[-1]
-                    #log_utils.log('official cts_id: ' + cts_id)
                     streams.append(('curiosity stream', 'plugin://slyguy.curiositystream/?_=play&_play=1&id=' + cts_id))
 
             if providers.HULU_ENABLED:
@@ -181,7 +180,6 @@ class source:
                 if hlu:
                     hulu_id = hlu[0]['urls']['standard_web']
                     hulu_id = hulu_id.rstrip('/').split('/')[-1]
-                    #log_utils.log('official hulu_id: ' + hulu_id)
                     streams.append(('hulu', 'plugin://slyguy.hulu/?_=play&id=' + hulu_id))
 
             if providers.PARAMOUNT_ENABLED:
@@ -189,7 +187,6 @@ class source:
                 if pmp:
                     pmp_url = pmp[0]['urls']['standard_web']
                     pmp_id = pmp_url.split('?')[0].split('/')[-1] if content == 'movies' else re.findall('/video/(.+?)/', pmp_url)[0]
-                    #log_utils.log('official pmp_url: {0} | pmp_id: {1}'.format(pmp_url, pmp_id))
                     streams.append(('paramount+', 'plugin://slyguy.paramount.plus/?_=play&id=' + pmp_id))
 
             if providers.CRACKLE_ENABLED:
@@ -201,7 +198,6 @@ class source:
                     else:
                         crk_id = crk[0]['urls']['deeplink_android_tv']
                         crk_id = re.findall('intent://Media/(.+?)#', crk_id, flags=re.I)[0]
-                    #log_utils.log('official crk_id: ' + crk_id)
                     streams.append(('crackle', 'plugin://plugin.video.crackle/?id=%s&mode=103&type=%s' % (crk_id, content)))
 
             if streams:
@@ -226,13 +222,13 @@ class source:
         return code
 
 
-    def get_nf_episode_id(self, show_id, season, episode):
+    def get_nf_ep_id(self, show_id, season, episode):
         try:
             from resources.lib.modules import client
 
             code = self.get_nf_country()
             url = 'https://www.instantwatcher.com/netflix/%s/title/%s' % (code, show_id)
-            r = client.request(url)
+            r = requests.get(url, timeout=10).text
             r = client.parseDOM(r, 'div', attrs={'class': 'tdChildren-titles'})[0]
             seasons = re.findall(r'(<div class="iw-title netflix-title list-title".+?<div class="grandchildren-titles"></div></div>)', r, flags=re.I|re.S)
             _season = [s for s in seasons if re.findall(r'>Season (.+?)</a>', s, flags=re.I|re.S)[0] == season][0]
@@ -242,5 +238,34 @@ class source:
             return episode_id
         except:
             log_utils.log('get_nf_episode_id fail', 1)
+            return
+
+
+    def get_bbc_ep_url(self, url, season, episode):
+        try:
+            import simplejson as json
+
+            try: seriesId = url.split('seriesId=')[1]
+            except: seriesId = None
+
+            r = requests.get(url, timeout=10).text
+            eps = re.findall('__IPLAYER_REDUX_STATE__\s*=\s*({.+?});</script>', r)[0]
+            eps = json.loads(eps)
+
+            if seriesId:
+                seasons = eps['header']['availableSlices']
+                series_id = [s['id'] for s in seasons if re.sub('[^0-9]', '', s['title']) == season][0]
+                if not series_id == seriesId:
+                    url = url.replace(seriesId, series_id)
+                    r = requests.get(url, timeout=10).text
+                    eps = re.findall('__IPLAYER_REDUX_STATE__\s*=\s*({.+?});</script>', r)[0]
+                    eps = json.loads(eps)
+
+            eps = eps['entities']
+            eps = [e['props']['href'] for e in eps]
+            ep = [e for e in eps if re.compile(r'series-%s-%s-' % (season, episode)).findall(e)][0]
+            ep = 'https://www.bbc.co.uk' + ep if not ep.startswith('http') else ep
+            return ep
+        except:
             return
 

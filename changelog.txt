@@ -1,3 +1,6 @@
+[B][COLOR gold]v4.11.06[/COLOR][/B]
+- BBC IPlayer official provider: try to fetch episode url if API returned season
+
 [B][COLOR gold]v4.11.05[/COLOR][/B]
 - Added Crackle to supported official providers/add-ons
 - Subtitles: do not convert to utf-8 if sub is already
