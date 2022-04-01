@@ -560,6 +560,7 @@ class tvshows:
                         'name': i[0],
                         'url': self.tmdb_providers_link % i[1],
                         'image': i[2],
+                        'plot': '[I]Provided by JustWatch[/I]',
                         'action': 'tvshows'
                     })
         self.addDirectory(self.list)

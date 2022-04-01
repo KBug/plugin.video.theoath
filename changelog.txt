@@ -1,3 +1,7 @@
+[B][COLOR gold]v4.11.08[/COLOR][/B]
+- Crackle official provider: try to fetch episode id from alternative source
+- Code cleanup
+
 [B][COLOR gold]v4.11.07[/COLOR][/B]
 - Code cleanup
 
