@@ -589,8 +589,20 @@ class movies:
             ('Paramount+', '531', 'https://i.imgur.com/RpfpI9w.png', providers.PARAMOUNT_ENABLED)
         ]
 
-        for i in services:
-            if i[3]:
+        services = [s for s in services if s[3]]
+        if services:
+
+            if len(services) > 1:
+                self.list.append(
+                    {
+                        'name': 'Popular on My Services (mixed)',
+                        'url': self.tmdb_providers_link % '|'.join([i[1] for i in services]),
+                        'image': 'featured.png',
+                        'plot': '[I]Provided by JustWatch[/I]',
+                        'action': 'movies'
+                        })
+
+            for i in services:
                 self.list.append(
                     {
                         'name': i[0],
@@ -599,7 +611,8 @@ class movies:
                         'plot': '[I]Provided by JustWatch[/I]',
                         'action': 'movies'
                     })
-        self.addDirectory(self.list)
+
+            self.addDirectory(self.list)
         return self.list
 
 

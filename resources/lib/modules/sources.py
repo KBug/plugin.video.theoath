@@ -588,8 +588,8 @@ class sources:
                         # log_utils.log('Exception Raised: %s' % str(e))
                         # break
 
-                time.sleep(0.25)
-                #control.sleep(250)
+                #time.sleep(0.25)
+                control.sleep(250)
             except:
                 log_utils.log('sourcefail', 1)
                 pass
